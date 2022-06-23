@@ -77,7 +77,7 @@
             </li>
             @endcan
 
-  
+
 
             @can('manage-orders1')
             <li class="dropdown">
@@ -139,9 +139,9 @@
                     @can('view-cargo-delivering')
                     <li><a class="nav-link" href="{{url('delivering')}}">Delivery</a></li>
                     @endcan
-                     @can('view-cargo-wb')
+                    @can('view-cargo-wb')
                     <li><a class="nav-link" href="{{url('wb')}}">Create WB</a></li>
-                    @endcan                   
+                    @endcan
                     @can('view-cargo-activity')
                     <li><a class="nav-link" href="{{url('activity')}}">Track Logistic Activity</a></li>
                     @endcan
@@ -260,10 +260,10 @@
             @endcan
 
             @can('view-supplier')
-                    <li><a class="nav-link" href="{{url('supplier')}}"><i data-feather="command"></i>Suppliers</a></li>
-                    @endcan
+            <li><a class="nav-link" href="{{url('supplier')}}"><i data-feather="command"></i>Suppliers</a></li>
+            @endcan
 
-   
+
 
             @can('manage-inventory')
             <li class="dropdown">
@@ -343,8 +343,8 @@
                 </ul>
             </li>
             @endcan
-            
-                    @can('manage-farmer')
+
+            @can('manage-farmer')
             <li class="dropdown">
                 <a href="#" class="menu-toggle nav-link has-dropdown"><i
                         data-feather="command"></i><span>Manufacturing</span></a>
@@ -361,11 +361,12 @@
                     @can('view-purchase_inventory')
                     <li><a class="nav-link" href="{{url('bill_of_material')}}">Bill Of Material</a></li>
                     @endcan
-                     @can('view-purchase_inventory')
+                    @can('view-purchase_inventory')
                     <li><a class="nav-link" href="{{url('work_order')}}">Work Order</a></li>
                     @endcan
                     @can('view-purchase_inventory')
-                    <li><a class="nav-link" href="{{url('manufacturing_purchase_inventory')}}">Purchase Inventory</a></li>
+                    <li><a class="nav-link" href="{{url('manufacturing_purchase_inventory')}}">Purchase Inventory</a>
+                    </li>
                     @endcan
                     @can('view-inventory_list')
                     <li><a class="nav-link" href="{{url('inventory_list')}}">Inventory List</a></li>
@@ -393,110 +394,109 @@
                     @endcan
                 </ul>
             </li>
-            
-@endcan
+            @endcan
             @can('manage-cotton')
             <li class="dropdown">
-                <a href="#" class="menu-toggle nav-link has-dropdown"><i
-                        data-feather="command"></i><span>Cotton Collection</span></a>
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>Cotton
+                        Collection</span></a>
                 <ul class="dropdown-menu">
-                 
-                  
-                 
+
+
+
                     @can('view-top-up-operator')
                     <li><a class="nav-link" href="{{url('top_up_operator')}}">Top up Operators</a></li>
-                    @endcan                 
+                    @endcan
                     @can('view-top-up-center')
                     <li><a class="nav-link" href="{{url('top_up_center')}}">Top up Collection Center</a></li>
                     @endcan
-                
-               
+
+
                     @can('view-cotton-purchase')
                     <li><a class="nav-link" href="{{url('purchase_cotton')}}">Stock Control</a></li>
                     @endcan
                     @can('view-cotton-movement')
                     <li><a class="nav-link" href="{{url('cotton_movement')}}">Stock Movement</a></li>
                     @endcan
-                        @can('view-reverse-top-up-center')
-                    <li><a class="nav-link" href="{{url('reverse_top_up_center')}}"> Reversed  Collection Center</a></li>
+                    @can('view-reverse-top-up-center')
+                    <li><a class="nav-link" href="{{url('reverse_top_up_center')}}"> Reversed Collection Center</a></li>
                     @endcan
-                       @can('view-reverse-top-up-operator')
+                    @can('view-reverse-top-up-operator')
                     <li><a class="nav-link" href="{{url('reverse_top_up_operator')}}"> Reversed Operator </a></li>
                     @endcan
-                    
-                       @can('view-district')
+
+                    @can('view-district')
                     <li><a class="nav-link" href="{{url('district')}}"> Manage District </a></li>
                     @endcan
-                       @can('view-operator')
+                    @can('view-operator')
                     <li><a class="nav-link" href="{{url('operator')}}">Manage Operator</a></li>
                     @endcan
-                      @can('view-center')
+                    @can('view-center')
                     <li><a class="nav-link" href="{{url('collection_center')}}">Manage Collection Center</a></li>
                     @endcan
-                     @can('view-items')
+                    @can('view-items')
                     <li><a class="nav-link" href="{{url('cotton_list')}}">Stock List</a></li>
                     @endcan
-                          @can('view-items')
+                    @can('view-items')
                     <li><a class="nav-link" href="{{url('levy_list')}}">Manage Levy</a></li>
                     @endcan
-               
-                       @can('view-reverse-top-up-operator')
+
+                    @can('view-reverse-top-up-operator')
                     <li><a class="nav-link" href="{{url('complete_operator')}}"> Complete Top Up Operator </a></li>
                     @endcan
                     @can('view-reverse-top-up-center')
                     <li><a class="nav-link" href="{{url('complete_center')}}"> Complete Top Up Centers</a></li>
                     @endcan
-                @can('view-connect')
+                    @can('view-connect')
                     <li><a class="nav-link" href="{{url('assign_center')}}">Assign Equipment to Center</a></li>
                     @endcan
-                     @can('view-connect')
+                    @can('view-connect')
                     <li><a class="nav-link" href="{{url('reverse_assign_center')}}">Reversed Center Equiment</a></li>
                     @endcan
                 </ul>
             </li>
             @endcan
-                        @can('manage-cotton')
+            @can('manage-cotton')
             <li class="dropdown">
-                <a href="#" class="menu-toggle nav-link has-dropdown"><i
-                        data-feather="command"></i><span>Cotton Production</span></a>
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>Cotton
+                        Production</span></a>
                 <ul class="dropdown-menu">
-                 
-                  
-                 
+
+
+
                     @can('view-top-up-operator')
                     <li><a class="nav-link" href="{{url('costants')}}">Constants</a></li>
-                    @endcan                 
+                    @endcan
                     @can('view-top-up-center')
                     <li><a class="nav-link" href="{{url('production')}}">Make Production</a></li>
                     @endcan
 
-                
+
                 </ul>
             </li>
             @endcan
 
-      @can('manage-cotton')
+            @can('manage-cotton')
             <li class="dropdown">
                 <a href="#" class="menu-toggle nav-link has-dropdown"><i
                         data-feather="command"></i><span>Invoice</span></a>
                 <ul class="dropdown-menu">
- 
-                       
+
+
                     @can('view-cotton-invoice')
                     <li><a class="nav-link" href="{{url('cotton_sales')}}">Cotton Sales</a></li>
                     @endcan
-                 @can('view-seed-invoice')
+                    @can('view-seed-invoice')
                     <li><a class="nav-link" href="{{url('seed_list')}}">Seed List</a></li>
                     @endcan
-              @can('view-seed-invoice')
+                    @can('view-seed-invoice')
                     <li><a class="nav-link" href="{{url('seed_sales')}}">Seed Sales</a></li>
                     @endcan
-                
+
                 </ul>
             </li>
             @endcan
-            
-                     @can('manage-logistic')
+
+            @can('manage-logistic')
             <li class="dropdown">
                 <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>Truck &
                         Driver</span></a>
@@ -510,19 +510,19 @@
                     @can('view-fuel')
                     <li><a class="nav-link" href="{{url('fuel')}}">Fuel Control</a></li>
                     @endcan
-           @can('view-connect')
+                    @can('view-connect')
                     <li><a class="nav-link" href="{{url('connect_driver')}}">Assign & Remove Driver</a></li>
                     @endcan
-                      @can('view-connect')
+                    @can('view-connect')
                     <li><a class="nav-link" href="{{url('truck_report')}}">Truck Report</a></li>
                     @endcan
-          @can('view-connect')
+                    @can('view-connect')
                     <li><a class="nav-link" href="{{url('connect_trailer')}}">Connect & Disconnect Trailer</a></li>
                     @endcan
-                     @can('view-connect')
+                    @can('view-connect')
                     <li><a class="nav-link" href="{{url('assign_driver')}}">Assign Equipment to Truck</a></li>
                     @endcan
-                     @can('view-connect')
+                    @can('view-connect')
                     <li><a class="nav-link" href="{{url('reverse_assign_driver')}}">Reversed Truck Equipment</a></li>
                     @endcan
                 </ul>
@@ -536,7 +536,7 @@
             <li><a class="nav-link" href="{{url('training')}}"><i data-feather="command"></i>Training</a></li>
             @endcan
 
-              @can('manage-gl-setup')
+            @can('manage-gl-setup')
             <li class="dropdown">
                 <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>GL
                         SETUP</span></a>
@@ -570,8 +570,8 @@
                     @can('view-expenses')
                     <li class=" "><a class="nav-link" href="{{ url('expenses') }}">Payments</a></li>
                     @endcan
-                   @can('view-transfer')
-                 <li class=""><a class="nav-link" href="{{ url('transfer2') }}">Transfer</a></li>
+                    @can('view-transfer')
+                    <li class=""><a class="nav-link" href="{{ url('transfer2') }}">Transfer</a></li>
                     @endcan
                     @can('view-expenses')
                     <li class=" "><a class="nav-link" href="{{ url('account') }}">Bank & Cash</a></li>
@@ -593,7 +593,7 @@
             @endcan
 
 
-           
+
             @can('manage-accounting')
             <li class="dropdown">
                 <a href="#" class="menu-toggle nav-link has-dropdown"><i
@@ -614,8 +614,9 @@
                     <li class=""><a class="nav-link" href="{{url('financial_report/trial_balance')}}">Trial Balance </a>
                     </li>
                     @endcan
-                     @can('view-trial_balance')
-                    <li class=""><a class="nav-link" href="{{url('financial_report/trial_balance_summary')}}">Trial Balance Summary </a>
+                    @can('view-trial_balance')
+                    <li class=""><a class="nav-link" href="{{url('financial_report/trial_balance_summary')}}">Trial
+                            Balance Summary </a>
                     </li>
                     @endcan
                     @can('view-income_statement')
@@ -630,48 +631,50 @@
                     <li class=""><a class="nav-link" href="{{url('financial_report/balance_sheet')}}">Balance Sheet </a>
                     </li>
                     @endcan
-                      @can('view-balance_sheet')
-                    <li class=""><a class="nav-link" href="{{url('financial_report/balance_sheet_summary')}}">Balance Sheet Summary </a>
+                    @can('view-balance_sheet')
+                    <li class=""><a class="nav-link" href="{{url('financial_report/balance_sheet_summary')}}">Balance
+                            Sheet Summary </a>
                     </li>
                     @endcan
                 </ul>
             </li>
             @endcan
-               @can('manage-cotton')
+            @can('manage-cotton')
             <li class="dropdown">
                 <a href="#" class="menu-toggle nav-link has-dropdown"><i
                         data-feather="command"></i><span>Reports</span></a>
-                <ul class="dropdown-menu">                           
+                <ul class="dropdown-menu">
                     @can('view-stock-report')
                     <li><a class="nav-link" href="{{url('stock_report')}}"> Stock Report</a></li>
                     @endcan
-                   @can('view-invoice-report')
+                    @can('view-invoice-report')
                     <li><a class="nav-link" href="{{url('invoice_report')}}"> Invoice Report</a></li>
                     @endcan
                     @can('view-center-report')
                     <li><a class="nav-link" href="{{url('center_report')}}"> Collection Center Report</a></li>
                     <li><a class="nav-link" href="{{url('cotton_movement_report')}}"> Cotton Movement Report</a></li>
                     @endcan
-                      @can('view-levy-report')
+                    @can('view-levy-report')
                     <li><a class="nav-link" href="{{url('levy_report')}}"> Levy Report</a></li>
                     @endcan
-                       @can('view-levy-report')
+                    @can('view-levy-report')
                     <li><a class="nav-link" href="{{url('debtors_report')}}"> Debtors Report</a></li>
                     @endcan
                     @can('view-center-report')
                     <li><a class="nav-link" href="{{url('general_report')}}"> Report By District</a></li>
                     @endcan
-                     @can('view-center-report')
+                    @can('view-center-report')
                     <li><a class="nav-link" href="{{url('general_report2')}}"> General Report </a></li>
                     @endcan
-     </ul>
+                </ul>
             </li>
- @endcan
-   
-  <li><a class="nav-link" href="{{url('chatify')}}"><i class="fa fa-th-large"></i> <span class="nav-label">Chatting</span>  </a></li>
- 
+            @endcan
 
-         @can('manage-access-control')
+            <li><a class="nav-link" href="{{url('chatify')}}"><i class="fa fa-th-large"></i> <span
+                        class="nav-label">Chatting</span> </a></li>
+
+
+            @can('manage-access-control')
             <li class="dropdown{{ request()->is('setting/*') ? 'active' : '' }}">
                 <a href="#" class="menu-toggle nav-link has-dropdown"><i
                         data-feather="command"></i><span>{{__('permission.access_control')}}</span></a>
@@ -713,7 +716,7 @@
 
                 </ul>
             </li>
-@endcan
+            @endcan
 
 
     </aside>
