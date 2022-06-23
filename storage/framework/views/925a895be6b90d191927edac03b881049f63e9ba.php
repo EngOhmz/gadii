@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tire</title>
+   
+    <style type="text/css">
+        /*@page  {*/
+        /*    margin: 1in 0in 0in 0in;*/
+        /*}*/
+        @font-face {
+            font-family: "Source Sans Pro", sans-serif;
+        }
+
+        .h4 {
+            font-size: 14px;
+        }
+
+        .h3 {
+            font-size: 15px;
+        }
+
+        h2 {
+            font-size: 19px;
+        }
+
+        .clearfix:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        a {
+            color: #0087C3;
+            text-decoration: none;
+        }
+
+        body {
+            color: #555555;
+            background: #ffffff;
+            font-size: 12px;
+            font-family: "Source Sans Pro", sans-serif;
+            width: 100%;
+       
+        }
+
+        header {
+            padding: 10px 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #aaaaaa;
+       
+        }
+
+        #logo {
+       
+        }
+
+        #company {
+       text-align: right;
+
+        }
+
+        #details {
+            margin-bottom: 10px;
+       
+        }
+
+        #client {
+            padding-left: 6px;
+            /*border-left: 6px solid #0087C3;*/
+       
+        }
+
+        #client .to {
+            color: #777777;
+        }
+
+        h2.name {
+            font-size: 1em;
+            font-weight: normal;
+            margin: 0;
+       
+        }
+
+        #invoice {
+          text-align: right;
+
+        }
+
+        #invoice h1 {
+            color: #0087C3;
+            font-size: 1.5em;
+            line-height: 1em;
+            font-weight: normal;
+       
+        }
+
+        #invoice .date {
+            font-size: 1.1em;
+            color: #777777;
+       
+        }
+
+        table {
+            width: 100%;
+            border-spacing: 0;
+       
+        }
+
+        table.items {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            /*margin-bottom: 10px;*/
+       
+        }
+
+        table.items th,
+        table.items td {
+            padding: 5px;
+            /*background: #EEEEEE;*/
+            border-bottom: 1px solid #FFFFFF;
+        text-align: left;
+       
+
+        }
+
+        table.items th {
+            white-space: nowrap;
+            font-weight: normal;
+       
+        }
+
+        table.items td {
+         text-align: left;
+        
+        }
+
+        table.items td h3 {
+            color: #57B223;
+            font-size: 1em;
+            font-weight: normal;
+            margin-top: 2px;
+            margin-bottom: 2px;
+       
+        }
+
+        table.items .no {
+            background: #dddddd;
+        }
+
+        table.items .desc {
+          text-align: left;
+
+        }
+
+        table.items .unit {
+            background: #F3F3F3;
+            padding: 5px 10px 5px 5px;
+            word-wrap: break-word;
+        }
+
+        table.items .qty {
+        }
+
+        table.items td.unit,
+        table.items td.qty,
+        table.items td.total {
+            font-size: 1em;
+        }
+
+        table.items tbody tr:last-child td {
+            border: none;
+
+        }
+
+        table.items tfoot td {
+            padding: 5px 10px;
+            background: #ffffff;
+            border-bottom: none;
+            font-size: 14px;
+            white-space: nowrap;
+            border-top: 1px solid #aaaaaa;
+       
+        }
+
+        table.items tfoot tr:first-child td {
+            border-top: none;
+        }
+
+        table.items tfoot tr:last-child td {
+            color: #57B223;
+            font-size: 1.4em;
+            border-top: 1px solid #57B223;
+
+        }
+
+        table.items tfoot tr td:first-child {
+            border: none;
+         text-align: right;
+        
+        }
+
+        #thanks {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        #notices {
+            padding-left: 6px;
+            border-left: 0px solid #0087C3;
+
+        }
+
+        #notices .notice {
+            font-size: 1em;
+            color: #000000;
+        }
+
+        footer {
+            color: #777777;
+            width: 100%;
+            height: 30px;
+            position: absolute;
+            bottom: 0;
+            border-top: 1px solid #aaaaaa;
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        tr.total td, tr th.total, tr td.total {
+        text-align: right;
+       
+        }
+
+        .bg-items {
+            background: #303252 !important;
+            color: #ffffff
+        }
+
+        .p-md {
+            padding: 9px !important;
+        }
+
+        .left {
+         float: left;
+        
+        }
+
+        .right {
+           float: right;
+            padding-left: 10px;
+        
+        }
+
+        .num_word {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+    
+    </style>
+</head>
+<body>
+   <?php
+$settings= App\Models\System::first();
+
+?>
+<table class="clearfix">
+    <tr>
+        <td style="width: 60%;">
+            <div id="logo" class="left">
+                <img style="width: 170px;height: 80px;float: left !important;" src="<?php echo e(url('public/assets/img/logo')); ?>/<?php echo e($settings->picture); ?>">
+            </div>
+        </td>
+        
+         <td style="width: 40%;">
+            <div class="left" style="">
+        <div> <h1><b><?php echo e($purchases->user->name); ?></b></h1></div>
+        <div> <b>  <?php echo e($purchases->user->address); ?></b></div>
+        <div> <b><?php echo e($purchases->user->phone); ?></b></div>
+        <div><b>Email: <a href="mailto:<?php echo e($purchases->user->email); ?>"><?php echo e($purchases->user->email); ?></a></b></div>
+        <div><b>TIN : <?php echo e($settings->tin); ?></b></div>          
+        </td>
+        
+        
+    </tr>
+</table>
+
+<table id="details" class="clearfix">
+    <tr>
+        <td style="width: 80%;overflow: hidden">
+            <h4 class="p-md bg-items ">
+                Supplier Details
+            </h4>
+        </td>
+        <td style="width: 20%">
+            <h4 class="p-md bg-items ">
+                Purchase Details
+            </h4>
+        </td>
+    </tr>
+    <tr style="margin-top: 0px">
+      
+        <td style="width: 20%">
+            <div style="padding-left: 5px">
+              
+               <h3 style="margin: 0px"><?php echo e($purchases->supplier->name); ?></h3>
+                <div class="address"> <?php echo e($purchases->supplier->address); ?> </div>
+                <div class="address"><?php echo e($purchases->supplier->phone); ?>        </div>
+                <div class="email"><a href="mailto:<?php echo e($purchases->supplier->email); ?>"><?php echo e($purchases->supplier->email); ?></a></div>
+                    <div class="email" ><?php echo e(!empty($purchases->supplier->TIN)? $purchases->supplier->TIN : ''); ?></div>
+            </div>
+        </td>
+
+         <td style="width: 50%;">
+            <div class="left" style="">
+
+        
+        <h3 style="margin-bottom: 0;margin-top: 0">REF NO : <span style="text-align: right"><?php echo e($purchases->reference); ?></span></h3>
+                <div class="date">Purchase Date : <span style="text-align: right"> <?php echo e(Carbon\Carbon::parse($purchases->date)->format('d/m/Y')); ?></span></div>             
+                <div class="date">Due date : <span style="text-align: right"><?php echo e(Carbon\Carbon::parse($purchases->due_date)->format('d/m/Y')); ?></span></div>
+               <div class="date"> Sales Agent : <span style="text-align: right"><?php echo e($purchases->user->name); ?> </span></div>
+               
+
+               <div class="date"> Currency : <span style="text-align: right"><?php echo e($purchases->exchange_code); ?> </span> </div>
+                
+             
+            </div>
+        
+        </td>  
+          
+         
+    </tr>
+</table>
+
+
+<div id="notices">
+    <div class="notice"></div>
+</div><br><br>
+
+
+<?php
+                               
+                                 $sub_total = 0;
+                                 $gland_total = 0;
+                                 $tax=0;
+                                 $i =1;
+       
+                                 ?>
+
+
+<table class="items">
+    <thead class="p-md bg-items">
+    <tr>
+        <th> # </th>
+        <th>Items</th>      
+        <th style="text-align: right">Qty</th>
+        <th style="text-align: right">Price</th>
+        <th style="text-align: right">Tax</th>
+        <th style="text-align: right">Total</th>
+    </tr>
+    </thead>
+    <tbody>
+
+                                        <?php
+                                     $sub_total +=$purchases->due_amount - $purchases->purchase_tax;
+                                         $gland_total +=$purchases->due_amount;
+                                         $tax += $purchases->purchase_tax; 
+                                         ?>
+
+            <tr>
+                <td class="unit"><h3><?php echo e($i++); ?></h3>
+                 <?php
+                                            $item_name = App\Models\Cotton\Cotton::find($purchases->item_id);
+                                        ?>
+                <td class="unit"><h3><?php echo e($item_name->name); ?></h3>
+                </td>
+              
+                
+                <td class="unit" style="text-align: right"><?php echo e($purchases->quantity); ?></td>
+                <td class="unit" style="text-align: right"><?php echo e(number_format($purchases->price ,2)); ?></td>
+                <td class="unit" style="text-align: right">
+                       <?php if(!@empty($purchases->purchase_tax > 0)): ?>
+                              <small class="pr-sm">VAT (<?php echo e($purchases->tax_rate * 100); ?> %)</small> <?php echo e(number_format($purchases->purchase_tax ,2)); ?> 
+<?php endif; ?>
+</td>
+
+                    
+                <td class="unit" style="text-align: right"><?php echo e(number_format($purchases->due_amount ,2)); ?></td>
+                
+            </tr>
+          
+    </tbody>
+    <tfoot>
+    <tr class="total">
+        <td colspan="4"></td>
+        <td colspan="1">Sub Total</td>
+        <td><?php echo e(number_format($sub_total,2)); ?>  <?php echo e($purchases->exchange_code); ?></td>
+    </tr>
+    <?php if(!@empty($tax > 0)): ?>
+        <tr class="total">
+            <td colspan="4"></td>
+            <td colspan="1">Total Tax</td>
+            <td> <?php echo e(number_format($tax,2)); ?> <?php echo e($purchases->exchange_code); ?></td>
+        </tr>
+    <?php endif; ?>
+   
+
+            <tr class="total">
+        <td colspan="4"></td>
+        <td colspan="1">Total Amount</td>
+        <td><?php echo e(number_format($gland_total,2)); ?>  <?php echo e($purchases->exchange_code); ?></td>
+    </tr>
+    
+    <tr class="total">
+         <td colspan="4"></td>
+        <td colspan="1"><div>.<</div></td>
+         <td><div></div></td>
+
+     </tr>
+    
+     <?php if($purchases->exchange_code != 'TZS'): ?>
+    <tr class="total">
+         <td colspan="4"></td>
+        <td colspan="1">Exchange Rate 1 <?php echo e($purchases->exchange_code); ?></td>
+         <td>  <b>   <?php echo e($purchases->exchange_rate); ?> TZS</b></td>
+
+     </tr>
+     
+     <tr class="total">
+         <tr class="total">
+        <td colspan="4"></td>
+        <td colspan="1">Sub Total</td>
+        <td><?php echo e(number_format($sub_total * $purchases->exchange_rate,2)); ?>  TZS</td>
+    </tr>
+    <?php if(!@empty($tax > 0)): ?>
+        <tr class="total">
+            <td colspan="4"></td>
+            <td colspan="1">Total Tax</td>
+            <td> <?php echo e(number_format($tax * $purchases->exchange_rate,2)); ?>   TZS</td>
+        </tr>
+    <?php endif; ?>
+
+
+            <tr class="total">
+        <td colspan="4"></td>
+        <td colspan="1">Total Amount</td>
+        <td><?php echo e(number_format($purchases->exchange_rate * $gland_total ,2)); ?>   TZS</td>
+    </tr>
+    <?php endif; ?> 
+   
+    </tfoot>
+</table>
+
+
+
+<table class="clearfix">
+<tr>
+        <td style="width: 50%;">
+            <br><br> <br><br>
+        </td>
+    </tr>
+
+</table>
+
+  <!--
+<table class="clearfix">
+    <tr>
+        <td style="width: 50%;">
+            <div class="left" style="">
+        <div><u> <h3><b> Account Details For Us-Dollar</b></h3></u> </div>
+        <div><b>Account Name</b>:  Isumba Trans Ltd</div>
+        <div><b>Account Number</b>:  10201632013 </div>
+        <div><b>Bank Name</b>: Bank of Africa</div>
+        <div><b>Branch</b>: Business Centre</div>
+        <div><b>Swift Code</b>: EUAFTZ TZ</div>
+        <div></div>
+        </div></td>
+    </tr>
+      <tr>
+         <td style="width: 50%;">
+            <div class="right" style="">
+        <div><u>  <h3><b>Account Details For Tanzania Shillings</b></h3></u> </div>
+         <div><b>Account Name</b>:  Isumba Trans Ltd</div>
+        <div><b>Account Number</b>:  10201632005 </div>
+        <div><b>Bank Name</b>: Bank of Africa</div>
+        <div><b>Branch</b>: Business Centre</div>
+        <div><b>Swift Code</b>: EUAFTZ TZ</div>
+          </div>     
+        </td>
+</table>
+!-->
+
+<footer>
+
+</footer>
+</body>
+</html>
+<?php /**PATH /home/admin/web/gaki.ema.co.tz/public_html/resources/views/cotton/purchase_cotton_pdf.blade.php ENDPATH**/ ?>

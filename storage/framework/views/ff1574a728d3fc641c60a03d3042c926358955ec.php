@@ -1,0 +1,1 @@
+<?php /**PATH /home/admin/web/gaki.ema.co.tz/public_html/resources/views/user_details/tabs/tab10.blade.php ENDPATH**/ ?>

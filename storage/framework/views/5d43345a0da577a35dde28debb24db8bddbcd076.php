@@ -1,0 +1,33 @@
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+  <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>" />
+<?php
+$settings= App\Models\System::first();
+?>
+  <title><?php echo e(!empty($settings->name) ? $settings->name: ''); ?></title>
+  <!-- CSRF Token -->
+  <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+  
+  <!-- General CSS Files -->
+  <link rel="stylesheet" href="<?php echo e(asset('assets/css/app.min.css')); ?>">
+  <!-- Template CSS -->
+  <link rel="stylesheet" href="<?php echo e(asset('assets/css/style.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(asset('assets/css/components.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(asset('assets/bundles/prism/prism.css')); ?>">
+  <!-- Custom style CSS -->
+  <link rel="stylesheet" href="<?php echo e(asset('assets/css/custom.css')); ?>">
+  <link rel='shortcut icon' type='image/x-icon' href="<?php echo e(url('public/assets/img/logo')); ?>/<?php echo e($settings->picture); ?>" />
+
+  <link rel="stylesheet" href="<?php echo e(asset('assets/bundles/datatables/datatables.min.css')); ?>">
+  <link rel="stylesheet" href="<?php echo e(asset('assets/bundles/jquery-selectric/selectric.css')); ?>">
+  
+  <link rel="stylesheet" href="<?php echo e(asset('plugins/sweetalert2/sweetalert2.css')); ?>">
+
+  
+  <link rel="stylesheet" href="<?php echo e(asset('assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css')); ?>">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/css/datepicker.min.css" rel="stylesheet">
+   <link href="https://cdn.jsdelivr.net/npm/tom-select@2.0.0-rc.4/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.0.0-rc.4/dist/js/tom-select.complete.min.js"></script>
+    <?php $config = (new \LaravelPWA\Services\ManifestService)->generate(); echo $__env->make( 'laravelpwa::meta' , ['config' => $config])->render(); ?>
+</head><?php /**PATH /home/admin/web/app.ema.co.tz/public_html/resources/views/layouts/header.blade.php ENDPATH**/ ?>
