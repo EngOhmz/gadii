@@ -1,0 +1,887 @@
+[
+    {
+        "id": "1",
+        "region_id": "1",
+        "name": "Arusha CC"
+    },
+    {
+        "id": "2",
+        "region_id": "1",
+        "name": "Arusha DC"
+    },
+    {
+        "id": "3",
+        "region_id": "1",
+        "name": "Karatu DC"
+    },
+    {
+        "id": "4",
+        "region_id": "1",
+        "name": "Longido DC"
+    },
+    {
+        "id": "5",
+        "region_id": "1",
+        "name": "Arumeru"
+    },
+    {
+        "id": "6",
+        "region_id": "1",
+        "name": "Monduli DC"
+    },
+    {
+        "id": "7",
+        "region_id": "2",
+        "name": "Ilala MC"
+    },
+    {
+        "id": "8",
+        "region_id": "2",
+        "name": "Kinondoni MC"
+    },
+    {
+        "id": "9",
+        "region_id": "2",
+        "name": "Temeke MC"
+    },
+    {
+        "id": "10",
+        "region_id": "3",
+        "name": "Handeni DC"
+    },
+    {
+        "id": "11",
+        "region_id": "3",
+        "name": "Kilindi DC"
+    },
+    {
+        "id": "12",
+        "region_id": "3",
+        "name": "Lushoto DC"
+    },
+    {
+        "id": "13",
+        "region_id": "3",
+        "name": "Muheza DC"
+    },
+    {
+        "id": "14",
+        "region_id": "3",
+        "name": "Mkinga DC"
+    },
+    {
+        "id": "15",
+        "region_id": "3",
+        "name": "Pangani DC"
+    },
+    {
+        "id": "16",
+        "region_id": "3",
+        "name": "Tanga CC"
+    },
+    {
+        "id": "17",
+        "region_id": "4",
+        "name": "Bahi DC"
+    },
+    {
+        "id": "18",
+        "region_id": "4",
+        "name": "Chemba DC"
+    },
+    {
+        "id": "19",
+        "region_id": "4",
+        "name": "Dodoma MC"
+    },
+    {
+        "id": "20",
+        "region_id": "4",
+        "name": "Kondoa DC"
+    },
+    {
+        "id": "21",
+        "region_id": "4",
+        "name": "Kongwa DC"
+    },
+    {
+        "id": "22",
+        "region_id": "4",
+        "name": "Mpwapwa DC"
+    },
+    {
+        "id": "23",
+        "region_id": "4",
+        "name": "Chamwino DC"
+    },
+    {
+        "id": "24",
+        "region_id": "5",
+        "name": "Iringa MC"
+    },
+    {
+        "id": "25",
+        "region_id": "5",
+        "name": "Iringa DC"
+    },
+    {
+        "id": "26",
+        "region_id": "5",
+        "name": "Kilolo DC"
+    },
+    {
+        "id": "27",
+        "region_id": "5",
+        "name": "Mufindi DC"
+    },
+    {
+        "id": "28",
+        "region_id": "6",
+        "name": "Biharamulo DC"
+    },
+    {
+        "id": "29",
+        "region_id": "6",
+        "name": "Bukoba DC"
+    },
+    {
+        "id": "30",
+        "region_id": "6",
+        "name": "Bukoba MC"
+    },
+    {
+        "id": "31",
+        "region_id": "6",
+        "name": "Chato"
+    },
+    {
+        "id": "32",
+        "region_id": "6",
+        "name": "Karagwe DC"
+    },
+    {
+        "id": "33",
+        "region_id": "6",
+        "name": "Misenyi DC"
+    },
+    {
+        "id": "34",
+        "region_id": "6",
+        "name": "Muleba DC"
+    },
+    {
+        "id": "35",
+        "region_id": "6",
+        "name": "Ngara DC"
+    },
+    {
+        "id": "36",
+        "region_id": "7",
+        "name": "Kasulu DC"
+    },
+    {
+        "id": "37",
+        "region_id": "7",
+        "name": "Kibondo DC"
+    },
+    {
+        "id": "38",
+        "region_id": "7",
+        "name": "Kigoma DC"
+    },
+    {
+        "id": "39",
+        "region_id": "7",
+        "name": "Kigoma MC"
+    },
+    {
+        "id": "40",
+        "region_id": "8",
+        "name": "Hai DC"
+    },
+    {
+        "id": "41",
+        "region_id": "8",
+        "name": "Moshi DC"
+    },
+    {
+        "id": "42",
+        "region_id": "8",
+        "name": "Moshi MC"
+    },
+    {
+        "id": "43",
+        "region_id": "8",
+        "name": "Mwanga DC"
+    },
+    {
+        "id": "44",
+        "region_id": "8",
+        "name": "Rombo DC"
+    },
+    {
+        "id": "45",
+        "region_id": "8",
+        "name": "Same DC"
+    },
+    {
+        "id": "46",
+        "region_id": "8",
+        "name": "Siha DC"
+    },
+    {
+        "id": "47",
+        "region_id": "9",
+        "name": "Kilwa DC"
+    },
+    {
+        "id": "48",
+        "region_id": "9",
+        "name": "Lindi DC"
+    },
+    {
+        "id": "49",
+        "region_id": "9",
+        "name": "Lindi MC"
+    },
+    {
+        "id": "50",
+        "region_id": "9",
+        "name": "Liwale DC"
+    },
+    {
+        "id": "51",
+        "region_id": "9",
+        "name": "Nachingwea DC"
+    },
+    {
+        "id": "52",
+        "region_id": "9",
+        "name": "Ruangwa DC"
+    },
+    {
+        "id": "53",
+        "region_id": "10",
+        "name": "Babati DC"
+    },
+    {
+        "id": "54",
+        "region_id": "10",
+        "name": "Hanangi DC"
+    },
+    {
+        "id": "55",
+        "region_id": "10",
+        "name": "Kiteto DC"
+    },
+    {
+        "id": "56",
+        "region_id": "10",
+        "name": "Mbulu DC"
+    },
+    {
+        "id": "57",
+        "region_id": "10",
+        "name": "Simanjiro DC"
+    },
+    {
+        "id": "58",
+        "region_id": "11",
+        "name": "Bunda DC"
+    },
+    {
+        "id": "59",
+        "region_id": "11",
+        "name": "Musoma DC"
+    },
+    {
+        "id": "60",
+        "region_id": "11",
+        "name": "Musoma MC"
+    },
+    {
+        "id": "61",
+        "region_id": "11",
+        "name": "Serengeti DC"
+    },
+    {
+        "id": "62",
+        "region_id": "11",
+        "name": "Tarime DC"
+    },
+    {
+        "id": "63",
+        "region_id": "11",
+        "name": "Rorya DC"
+    },
+    {
+        "id": "64",
+        "region_id": "12",
+        "name": "Kilombero DC"
+    },
+    {
+        "id": "65",
+        "region_id": "12",
+        "name": "Kilosa DC"
+    },
+    {
+        "id": "66",
+        "region_id": "12",
+        "name": "Morogoro DC"
+    },
+    {
+        "id": "67",
+        "region_id": "12",
+        "name": "Morogoro MC"
+    },
+    {
+        "id": "68",
+        "region_id": "12",
+        "name": "Mvomero DC"
+    },
+    {
+        "id": "69",
+        "region_id": "12",
+        "name": "Ulanga DC"
+    },
+    {
+        "id": "70",
+        "region_id": "13",
+        "name": "Lulindi DC"
+    },
+    {
+        "id": "71",
+        "region_id": "13",
+        "name": "Masasi DC"
+    },
+    {
+        "id": "72",
+        "region_id": "13",
+        "name": "Mtwara DC"
+    },
+    {
+        "id": "73",
+        "region_id": "13",
+        "name": "Mtwara MC"
+    },
+    {
+        "id": "74",
+        "region_id": "13",
+        "name": "Nanyumbu DC"
+    },
+    {
+        "id": "75",
+        "region_id": "13",
+        "name": "Newala DC"
+    },
+    {
+        "id": "76",
+        "region_id": "13",
+        "name": "Tandahimba DC"
+    },
+    {
+        "id": "77",
+        "region_id": "14",
+        "name": "Ilemela MC"
+    },
+    {
+        "id": "78",
+        "region_id": "14",
+        "name": "Kwimba DC"
+    },
+    {
+        "id": "79",
+        "region_id": "14",
+        "name": "Magu DC"
+    },
+    {
+        "id": "80",
+        "region_id": "14",
+        "name": "Misungwi DC"
+    },
+    {
+        "id": "81",
+        "region_id": "14",
+        "name": "Nyamagana MC"
+    },
+    {
+        "id": "82",
+        "region_id": "14",
+        "name": "Sengerema DC"
+    },
+    {
+        "id": "83",
+        "region_id": "14",
+        "name": "Ukerewe DC"
+    },
+    {
+        "id": "84",
+        "region_id": "15",
+        "name": "Bagamoyo DC"
+    },
+    {
+        "id": "85",
+        "region_id": "15",
+        "name": "Kibaha DC"
+    },
+    {
+        "id": "86",
+        "region_id": "15",
+        "name": "Kisarawe DC"
+    },
+    {
+        "id": "87",
+        "region_id": "15",
+        "name": "Mafia DC"
+    },
+    {
+        "id": "88",
+        "region_id": "15",
+        "name": "Mkuranga DC"
+    },
+    {
+        "id": "89",
+        "region_id": "15",
+        "name": "Rufiji DC"
+    },
+    {
+        "id": "90",
+        "region_id": "16",
+        "name": "Mpanda DC"
+    },
+    {
+        "id": "91",
+        "region_id": "16",
+        "name": "Nkasi DC"
+    },
+    {
+        "id": "92",
+        "region_id": "16",
+        "name": "Sumbawanga DC"
+    },
+    {
+        "id": "93",
+        "region_id": "16",
+        "name": "Sumbawanga MC"
+    },
+    {
+        "id": "94",
+        "region_id": "17",
+        "name": "Mbinga DC"
+    },
+    {
+        "id": "95",
+        "region_id": "17",
+        "name": "Songea DC"
+    },
+    {
+        "id": "96",
+        "region_id": "17",
+        "name": "Songea MC"
+    },
+    {
+        "id": "97",
+        "region_id": "17",
+        "name": "Tunduru DC"
+    },
+    {
+        "id": "98",
+        "region_id": "17",
+        "name": "Namtumbo DC"
+    },
+    {
+        "id": "99",
+        "region_id": "17",
+        "name": "Nyasa DC"
+    },
+    {
+        "id": "100",
+        "region_id": "18",
+        "name": "Ushetu DC"
+    },
+    {
+        "id": "101",
+        "region_id": "18",
+        "name": "Kahama TC"
+    },
+    {
+        "id": "102",
+        "region_id": "18",
+        "name": "Kishapu DC"
+    },
+    {
+        "id": "103",
+        "region_id": "18",
+        "name": "Msalala DC"
+    },
+    {
+        "id": "104",
+        "region_id": "18",
+        "name": "Shinyanga DC"
+    },
+    {
+        "id": "105",
+        "region_id": "18",
+        "name": "Shinyanga MC"
+    },
+    {
+        "id": "106",
+        "region_id": "19",
+        "name": "Iramba DC"
+    },
+    {
+        "id": "107",
+        "region_id": "19",
+        "name": "Manyoni DC"
+    },
+    {
+        "id": "108",
+        "region_id": "19",
+        "name": "Singida DC"
+    },
+    {
+        "id": "109",
+        "region_id": "19",
+        "name": "Singida MC"
+    },
+    {
+        "id": "110",
+        "region_id": "20",
+        "name": "Igunga DC"
+    },
+    {
+        "id": "111",
+        "region_id": "20",
+        "name": "Nzega DC"
+    },
+    {
+        "id": "112",
+        "region_id": "20",
+        "name": "Sikonge DC"
+    },
+    {
+        "id": "113",
+        "region_id": "20",
+        "name": "Uyui DC"
+    },
+    {
+        "id": "114",
+        "region_id": "20",
+        "name": "Tabora MC"
+    },
+    {
+        "id": "115",
+        "region_id": "20",
+        "name": "Urambo DC"
+    },
+    {
+        "id": "116",
+        "region_id": "22",
+        "name": "Bukombe DC"
+    },
+    {
+        "id": "117",
+        "region_id": "22",
+        "name": "Chato DC"
+    },
+    {
+        "id": "118",
+        "region_id": "22",
+        "name": "Geita DC"
+    },
+    {
+        "id": "119",
+        "region_id": "22",
+        "name": "Mbogwe DC"
+    },
+    {
+        "id": "120",
+        "region_id": "22",
+        "name": "Nyang'hwale DC"
+    },
+    {
+        "id": "121",
+        "region_id": "21",
+        "name": "Mlele DC"
+    },
+    {
+        "id": "122",
+        "region_id": "21",
+        "name": "Mpanda DC"
+    },
+    {
+        "id": "123",
+        "region_id": "24",
+        "name": "Makete DC"
+    },
+    {
+        "id": "124",
+        "region_id": "24",
+        "name": "Njombe DC"
+    },
+    {
+        "id": "125",
+        "region_id": "24",
+        "name": "Ludewa DC"
+    },
+    {
+        "id": "126",
+        "region_id": "24",
+        "name": "Wanging'ombe DC"
+    },
+    {
+        "id": "127",
+        "region_id": "23",
+        "name": "Bariadi DC"
+    },
+    {
+        "id": "128",
+        "region_id": "23",
+        "name": "Busega DC"
+    },
+    {
+        "id": "129",
+        "region_id": "23",
+        "name": "Maswa DC"
+    },
+    {
+        "id": "130",
+        "region_id": "23",
+        "name": "Meatu DC"
+    },
+    {
+        "id": "131",
+        "region_id": "23",
+        "name": "Itilima DC"
+    },
+    {
+        "id": "132",
+        "region_id": "25",
+        "name": "Chunya DC"
+    },
+    {
+        "id": "133",
+        "region_id": "30",
+        "name": "Ileje DC"
+    },
+    {
+        "id": "134",
+        "region_id": "25",
+        "name": "Kyela DC"
+    },
+    {
+        "id": "135",
+        "region_id": "25",
+        "name": "Mbarali DC"
+    },
+    {
+        "id": "136",
+        "region_id": "25",
+        "name": "Mbeya DC"
+    },
+    {
+        "id": "137",
+        "region_id": "25",
+        "name": "Mbeya CC"
+    },
+    {
+        "id": "138",
+        "region_id": "30",
+        "name": "Mbozi DC"
+    },
+    {
+        "id": "139",
+        "region_id": "30",
+        "name": "Momba DC"
+    },
+    {
+        "id": "140",
+        "region_id": "25",
+        "name": "Rungwe DC"
+    },
+    {
+        "id": "141",
+        "region_id": "25",
+        "name": "Tunduma Town Council"
+    },
+    {
+        "id": "142",
+        "region_id": "26",
+        "name": "Zanzibar Central"
+    },
+    {
+        "id": "143",
+        "region_id": "26",
+        "name": "Zanzibar South"
+    },
+    {
+        "id": "144",
+        "region_id": "26",
+        "name": "Kaskazini A"
+    },
+    {
+        "id": "145",
+        "region_id": "26",
+        "name": "Kaskazini B"
+    },
+    {
+        "id": "146",
+        "region_id": "26",
+        "name": "Zanzibar West"
+    },
+    {
+        "id": "147",
+        "region_id": "26",
+        "name": "Zanzibar Urban"
+    },
+    {
+        "id": "148",
+        "region_id": "1",
+        "name": "Ngorongoro DC"
+    },
+    {
+        "id": "149",
+        "region_id": "6",
+        "name": "Kyerwa DC"
+    },
+    {
+        "id": "150",
+        "region_id": "7",
+        "name": "Buhigwe DC"
+    },
+    {
+        "id": "151",
+        "region_id": "7",
+        "name": "Kakonko DC"
+    },
+    {
+        "id": "152",
+        "region_id": "7",
+        "name": "Kasulu TC"
+    },
+    {
+        "id": "153",
+        "region_id": "7",
+        "name": "Uvinza DC"
+    },
+    {
+        "id": "154",
+        "region_id": "11",
+        "name": "Butiama DC"
+    },
+    {
+        "id": "155",
+        "region_id": "11",
+        "name": "Tarime TC"
+    },
+    {
+        "id": "156",
+        "region_id": "12",
+        "name": "Gairo DC"
+    },
+    {
+        "id": "157",
+        "region_id": "15",
+        "name": "Kibaha TC"
+    },
+    {
+        "id": "158",
+        "region_id": "23",
+        "name": "Bariadi TC"
+    },
+    {
+        "id": "159",
+        "region_id": "19",
+        "name": "Mkalama DC"
+    },
+    {
+        "id": "160",
+        "region_id": "19",
+        "name": "Ikungi DC"
+    },
+    {
+        "id": "161",
+        "region_id": "20",
+        "name": "Kaliua DC"
+    },
+    {
+        "id": "162",
+        "region_id": "3",
+        "name": "Korogwe DC"
+    },
+    {
+        "id": "163",
+        "region_id": "3",
+        "name": "Bumbuli DC"
+    },
+    {
+        "id": "164",
+        "region_id": "21",
+        "name": "Nsimbo DC"
+    },
+    {
+        "id": "165",
+        "region_id": "25",
+        "name": "Busokelo DC"
+    },
+    {
+        "id": "166",
+        "region_id": "13",
+        "name": "Masasi TC"
+    },
+    {
+        "id": "167",
+        "region_id": "24",
+        "name": "Makambako TC"
+    },
+    {
+        "id": "168",
+        "region_id": "24",
+        "name": "Njombe TC"
+    },
+    {
+        "id": "169",
+        "region_id": "16",
+        "name": "Kalambo DC"
+    },
+    {
+        "id": "170",
+        "region_id": "10",
+        "name": "Babati TC"
+    },
+    {
+        "id": "171",
+        "region_id": "27",
+        "name": "Micheweni"
+    },
+    {
+        "id": "172",
+        "region_id": "27",
+        "name": "Wete"
+    },
+    {
+        "id": "173",
+        "region_id": "28",
+        "name": "Chake Chake"
+    },
+    {
+        "id": "174",
+        "region_id": "28",
+        "name": "Mkoani"
+    },
+    {
+        "id": "175",
+        "region_id": "2",
+        "name": "Ubungo"
+    },
+    {
+        "id": "176",
+        "region_id": "2",
+        "name": "Kigamboni"
+    },
+    {
+        "id": "177",
+        "region_id": "30",
+        "name": "Songwe"
+    }
+]

@@ -1,1 +1,0 @@
-<?php /**PATH /home/admin/web/app.ema.co.tz/public_html/resources/views/user_details/tabs/tab7.blade.php ENDPATH**/ ?>

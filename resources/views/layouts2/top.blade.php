@@ -1,182 +1,132 @@
-<!-- Main navbar -->
-<div class="navbar navbar-expand-lg navbar-dark bg-indigo navbar-static">
-		<div class="d-flex flex-1 d-lg-none">
-			<button class="navbar-toggler sidebar-mobile-main-toggle" type="button">
-				<i class="icon-paragraph-justify3"></i>
-			</button>
+<div class="navbar-bg"></div>
+      <nav class="navbar navbar-expand-lg main-navbar sticky">
+        <div class="form-inline mr-auto">
+          <ul class="navbar-nav mr-3">
+            <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg
+									collapse-btn"> <i data-feather="align-justify"></i></a></li>
+            <li><a href="#" class="nav-link nav-link-lg fullscreen-btn">
+                <i data-feather="maximize"></i>
+              </a></li>
+            <li>
+              <form class="form-inline mr-auto">
+                <div class="search-element">
+                  <input class="form-control" type="search" placeholder="Search" aria-label="Search" data-width="200">
+                  <button class="btn" type="submit">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </form>
+            </li>
+          </ul>
+        </div>
+        <ul class="navbar-nav navbar-right">
+          {{-- <li class="dropdown dropdown-list-toggle"><a href="#" data-toggle="dropdown"
+              class="nav-link nav-link-lg message-toggle"><i data-feather="mail"></i>
+              <span class="badge headerBadge1">6 </span> </a>
+            <div class="dropdown-menu dropdown-list dropdown-menu-right pullDown">
+              <div class="dropdown-header">
+                Messages
+                <div class="float-right">
+                  <a href="#">Mark All As Read</a>
+                </div>
+              </div>
+              <div class="dropdown-list-content dropdown-list-message">
+                <a href="#" class="dropdown-item"> <span class="dropdown-item-avatar
+											text-white"> <img alt="image" src="assets/img/users/user-1.png" class="rounded-circle">
+                  </span> <span class="dropdown-item-desc"> <span class="message-user">John
+                      Deo</span>
+                    <span class="time messege-text">Please check your mail !!</span>
+                    <span class="time">2 Min Ago</span>
+                  </span>
+                </a> <a href="#" class="dropdown-item"> <span class="dropdown-item-avatar text-white">
+                    <img alt="image" src="assets/img/users/user-2.png" class="rounded-circle">
+                  </span> <span class="dropdown-item-desc"> <span class="message-user">Sarah
+                      Smith</span> <span class="time messege-text">Request for leave
+                      application</span>
+                    <span class="time">5 Min Ago</span>
+                  </span>
+                </a> <a href="#" class="dropdown-item"> <span class="dropdown-item-avatar text-white">
+                    <img alt="image" src="assets/img/users/user-5.png" class="rounded-circle">
+                  </span> <span class="dropdown-item-desc"> <span class="message-user">Jacob
+                      Ryan</span> <span class="time messege-text">Your payment invoice is
+                      generated.</span> <span class="time">12 Min Ago</span>
+                  </span>
+                </a> <a href="#" class="dropdown-item"> <span class="dropdown-item-avatar text-white">
+                    <img alt="image" src="assets/img/users/user-4.png" class="rounded-circle">
+                  </span> <span class="dropdown-item-desc"> <span class="message-user">Lina
+                      Smith</span> <span class="time messege-text">hii John, I have upload
+                      doc
+                      related to task.</span> <span class="time">30
+                      Min Ago</span>
+                  </span>
+                </a> <a href="#" class="dropdown-item"> <span class="dropdown-item-avatar text-white">
+                    <img alt="image" src="assets/img/users/user-3.png" class="rounded-circle">
+                  </span> <span class="dropdown-item-desc"> <span class="message-user">Jalpa
+                      Joshi</span> <span class="time messege-text">Please do as specify.
+                      Let me
+                      know if you have any query.</span> <span class="time">1
+                      Days Ago</span>
+                  </span>
+                </a> <a href="#" class="dropdown-item"> <span class="dropdown-item-avatar text-white">
+                    <img alt="image" src="assets/img/users/user-2.png" class="rounded-circle">
+                  </span> <span class="dropdown-item-desc"> <span class="message-user">Sarah
+                      Smith</span> <span class="time messege-text">Client Requirements</span>
+                    <span class="time">2 Days Ago</span>
+                  </span>
+                </a>
+              </div>
+              <div class="dropdown-footer text-center">
+                <a href="#">View All <i class="fas fa-chevron-right"></i></a>
+              </div>
+            </div>
+          </li> --}}
+          <?php 
+          $unseensms = \App\Models\ChMessage::where('to_id', Auth::user()->id )->where('seen', 0 )->get();
+          $numberofunseensms = $unseensms->count();
 
-			<button data-target="#navbar-search" type="button" class="navbar-toggler" data-toggle="collapse">
-				<i class="icon-search4"></i>
-			</button>
-		</div>
-
-		<div class="navbar-brand text-center text-lg-left">
-			<a href="index.html" class="d-inline-block">
-				<img src="{{asset('global_assets/images/logo_light.png')}}" class="d-none d-sm-block" alt="">
-				<img src="{{asset('global_assets/images/logo_icon_light.png')}}" class="d-sm-none" alt="">
-			</a>
-		</div>
-
-		<div class="navbar-collapse collapse flex-lg-1 mx-lg-3 order-2 order-lg-1" id="navbar-search">
-			<div class="navbar-search d-flex align-items-center py-2 py-lg-0">
-				<div class="form-group-feedback form-group-feedback-left flex-grow-1">
-					<input type="text" class="form-control" placeholder="Search">
-					<div class="form-control-feedback">
-						<i class="icon-search4 text-white opacity-50"></i>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="d-flex justify-content-end align-items-center flex-1 flex-lg-0 order-1 order-lg-2">
-			<ul class="navbar-nav flex-row">
-				<li class="nav-item nav-item-dropdown-lg dropdown">
-					<a href="#" class="navbar-nav-link navbar-nav-link-toggler dropdown-toggle" data-toggle="dropdown">
-						<i class="icon-make-group"></i>
-						<span class="d-none d-lg-inline-block ml-2">Connect</span>
-					</a>
-
-					<div class="dropdown-menu dropdown-menu-right dropdown-content wmin-lg-350">
-						<div class="dropdown-content-body p-2">
-							<div class="row no-gutters">
-								<div class="col-4">
-									<a href="#" class="d-block text-body text-center ripple-dark rounded p-3">
-										<i class="icon-github4 icon-2x"></i>
-										<div class="font-size-sm font-weight-semibold text-uppercase mt-2">Github</div>
-									</a>
-
-									<a href="#" class="d-block text-body text-center ripple-dark rounded p-3">
-										<i class="icon-dropbox text-primary icon-2x"></i>
-										<div class="font-size-sm font-weight-semibold text-uppercase mt-2">Dropbox</div>
-									</a>
-								</div>
-								
-								<div class="col-4">
-									<a href="#" class="d-block text-body text-center ripple-dark rounded p-3">
-										<i class="icon-dribbble3 text-pink icon-2x"></i>
-										<div class="font-size-sm font-weight-semibold text-uppercase mt-2">Dribbble</div>
-									</a>
-
-									<a href="#" class="d-block text-body text-center ripple-dark rounded p-3">
-										<i class="icon-google-drive text-success icon-2x"></i>
-										<div class="font-size-sm font-weight-semibold text-uppercase mt-2">Drive</div>
-									</a>
-								</div>
-
-								<div class="col-4">
-									<a href="#" class="d-block text-body text-center ripple-dark rounded p-3">
-										<i class="icon-twitter text-info icon-2x"></i>
-										<div class="font-size-sm font-weight-semibold text-uppercase mt-2">Twitter</div>
-									</a>
-
-									<a href="#" class="d-block text-body text-center ripple-dark rounded p-3">
-										<i class="icon-youtube text-danger icon-2x"></i>
-										<div class="font-size-sm font-weight-semibold text-uppercase mt-2">Youtube</div>
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
-				</li>
-
-				<li class="nav-item nav-item-dropdown-lg dropdown">
-					<a href="#" class="navbar-nav-link navbar-nav-link-toggler dropdown-toggle" data-toggle="dropdown">
-						<i class="icon-pulse2"></i>
-						<span class="d-none d-lg-inline-block ml-2">Activity</span>
-					</a>
-					
-					<div class="dropdown-menu dropdown-menu-right dropdown-content wmin-lg-350">
-						<div class="dropdown-content-header">
-							<span class="font-size-sm line-height-sm text-uppercase font-weight-semibold">Latest activity</span>
-							<a href="#" class="text-body"><i class="icon-search4 font-size-base"></i></a>
-						</div>
-
-						<div class="dropdown-content-body dropdown-scrollable">
-							<ul class="media-list">
-								<li class="media">
-									<div class="mr-3">
-										<a href="#" class="btn btn-success rounded-pill btn-icon"><i class="icon-mention"></i></a>
-									</div>
-
-									<div class="media-body">
-										<a href="#">Taylor Swift</a> mentioned you in a post "Angular JS. Tips and tricks"
-										<div class="font-size-sm text-muted mt-1">4 minutes ago</div>
-									</div>
-								</li>
-
-								<li class="media">
-									<div class="mr-3">
-										<a href="#" class="btn btn-pink rounded-pill btn-icon"><i class="icon-paperplane"></i></a>
-									</div>
-									
-									<div class="media-body">
-										Special offers have been sent to subscribed users by <a href="#">Donna Gordon</a>
-										<div class="font-size-sm text-muted mt-1">36 minutes ago</div>
-									</div>
-								</li>
-
-								<li class="media">
-									<div class="mr-3">
-										<a href="#" class="btn btn-primary rounded-pill btn-icon"><i class="icon-plus3"></i></a>
-									</div>
-									
-									<div class="media-body">
-										<a href="#">Chris Arney</a> created a new <span class="font-weight-semibold">Design</span> branch in <span class="font-weight-semibold">Limitless</span> repository
-										<div class="font-size-sm text-muted mt-1">2 hours ago</div>
-									</div>
-								</li>
-
-								<li class="media">
-									<div class="mr-3">
-										<a href="#" class="btn btn-purple rounded-pill btn-icon"><i class="icon-truck"></i></a>
-									</div>
-									
-									<div class="media-body">
-										Shipping cost to the Netherlands has been reduced, database updated
-										<div class="font-size-sm text-muted mt-1">Feb 8, 11:30</div>
-									</div>
-								</li>
-
-								<li class="media">
-									<div class="mr-3">
-										<a href="#" class="btn btn-warning rounded-pill btn-icon"><i class="icon-comment"></i></a>
-									</div>
-									
-									<div class="media-body">
-										New review received on <a href="#">Server side integration</a> services
-										<div class="font-size-sm text-muted mt-1">Feb 2, 10:20</div>
-									</div>
-								</li>
-
-								<li class="media">
-									<div class="mr-3">
-										<a href="#" class="btn btn-teal rounded-pill btn-icon"><i class="icon-spinner11"></i></a>
-									</div>
-									
-									<div class="media-body">
-										<strong>January, 2018</strong> - 1320 new users, 3284 orders, $49,390 revenue
-										<div class="font-size-sm text-muted mt-1">Feb 1, 05:46</div>
-									</div>
-								</li>
-							</ul>
-						</div>
-
-						<div class="dropdown-content-footer bg-light">
-							<a href="#" class="font-size-sm line-height-sm text-uppercase font-weight-semibold text-body mr-auto">All activity</a>
-							<div>
-								<a href="#" class="text-body" data-popup="tooltip" title="Clear list"><i class="icon-checkmark3"></i></a>
-								<a href="#" class="text-body ml-2" data-popup="tooltip" title="Settings"><i class="icon-gear"></i></a>
-							</div>
-						</div>
-					</div>
-				</li>
-
-				<li class="nav-item">
-					<a href="#" class="navbar-nav-link navbar-nav-link-toggler">
-						<i class="icon-switch2"></i>
-					</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-	<!-- /main navbar -->
+                ?>
+          <li class="dropdown dropdown-list-toggle">
+            <a href="" data-toggle="dropdown"
+              class="nav-link notification-toggle nav-link-lg  {{$numberofunseensms >0?'message-toggle' :''}}"><i data-feather="bell" class="{{$numberofunseensms >0?'bell' :''}}"></i>
+              <span class="badge headerBadge1">
+                {{$numberofunseensms >0?$numberofunseensms :""}} </span>
+            </a>
+            <div class="dropdown-menu dropdown-list dropdown-menu-right pullDown">
+              <div class="dropdown-header">
+                Notifications
+                
+              </div>
+              <div class="dropdown-list-content dropdown-list-icons">
+                <a href="{{url('chatify')}}" class="dropdown-item"> <span class="dropdown-item-icon bg-info text-white"> <i class="far
+                  fa-envelope"></i></i>
+                </span> <span class="dropdown-item-desc"> see all messages  </span>
+                </a>
+              </div>
+             
+            </div>
+          </li>
+          <li class="dropdown"><a href="#" data-toggle="dropdown"
+              class="nav-link dropdown-toggle nav-link-lg nav-link-user"> <img alt="image" src="assets/img/user.png"
+                class="user-img-radious-style"> <span class="d-sm-none d-lg-inline-block"></span></a>
+            <div class="dropdown-menu dropdown-menu-right pullDown">
+              <div class="dropdown-title">Hello Sarah Smith</div>
+              <a href="{{url('user_details')}}" class="dropdown-item has-icon"> <i class="far
+										fa-user"></i> Profile
+              </a> <a href="timeline.html" class="dropdown-item has-icon"> <i class="fas fa-bolt"></i>
+                Activities
+              </a> 
+              <div class="dropdown-divider"></div>
+             
+             
+                <a href="{{ route('logout') }}"   class="dropdown-item has-icon text-danger"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i> {{ __('Logout') }}
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+           
+            </div>
+          </li>
+        </ul>
+      </nav>

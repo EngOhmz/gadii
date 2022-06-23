@@ -1,812 +1,720 @@
-<!-- Main sidebar -->
-<div class="sidebar sidebar-light sidebar-main sidebar-expand-lg">
-
-<!-- Sidebar content -->
-<div class="sidebar-content">
-
-    <!-- User menu -->
-    <div class="sidebar-section">
-        <div class="sidebar-user-material">
-            <div class="sidebar-section-body">
-                <div class="d-flex">
-                    <div class="flex-1">
-                        <button type="button" class="btn btn-outline-light border-transparent btn-icon btn-sm rounded-pill">
-                            <i class="icon-wrench"></i>
-                        </button>
-                    </div>
-                    <a href="#" class="flex-1 text-center"><img src="{{asset('global_assets/images/placeholders/placeholder.jpg')}}" class="img-fluid rounded-circle shadow-sm" width="80" height="80" alt=""></a>
-                    <div class="flex-1 text-right">
-                        <button type="button" class="btn btn-outline-light border-transparent btn-icon rounded-pill btn-sm sidebar-control sidebar-main-resize d-none d-lg-inline-flex">
-                            <i class="icon-transmission"></i>
-                        </button>
-
-                        <button type="button" class="btn btn-outline-light border-transparent btn-icon rounded-pill btn-sm sidebar-mobile-main-toggle d-lg-none">
-                            <i class="icon-cross2"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <h6 class="mb-0 text-white text-shadow-dark mt-3">Victoria Baker</h6>
-                    <span class="font-size-sm text-white text-shadow-dark">Santa Ana, CA</span>
-                </div>
-            </div>
-                                        
-            <div class="sidebar-user-material-footer">
-                <a href="#user-nav" class="d-flex justify-content-between align-items-center text-shadow-dark dropdown-toggle" data-toggle="collapse"><span>My account</span></a>
-            </div>
+<div class="main-sidebar sidebar-style-2">
+    <aside id="sidebar-wrapper">
+        <div class="sidebar-brand">
+            <a href="{{url('home')}}">
+                <?php
+                  $settings= App\Models\System::first();
+                  //$settings= App\Models\System::all()->where('added_by',auth()->user()->user_id);
+?>
+                <img alt="image" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}" class="header-logo" />
+                <span class="logo-name"></span>
+            </a>
         </div>
+        <ul class="sidebar-menu active show">
+            @can('manage-dashboard')
+            <li class="dropdown {{  request()->is('/dashboard') ? 'active' : '' }}">
+                <a href="{{url('home')}}"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span></a>
+            </li>
+            @endcan
+            @can('manage-farmer')
+            <li class="dropdown {{  request()->is('farmer/') ? 'active' : '' }} ">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>{{__('farmer.farmer')}}</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-farmer')
+                    <li class="{{ request()->routeIs('farmer.*')? 'active': ''}} active"><a class="nav-link"
+                            href="{{url('farmer/')}}">{{__('farmer.manage_farmer')}}</a></li>
+                    @endcan
+                    @can('view-group')
+                    <li><a class="nav-link" href="{{url('manage-group')}}">{{__('farmer.manage_group')}}</a></li>
+                    @endcan
+                    @can('view-farmer')
+                    <li><a class="nav-link" href="{{url('assign_farmer/')}}">{{__('farmer.assign_farmer')}}</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
 
-        <div class="collapse border-bottom" id="user-nav">
-            <ul class="nav nav-sidebar">
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="icon-user-plus"></i>
-                        <span>My profile</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="icon-coins"></i>
-                        <span>My balance</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="icon-comment-discussion"></i>
-                        <span>Messages</span>
-                        <span class="badge badge-teal badge-pill align-self-center ml-auto">58</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="icon-cog5"></i>
-                        <span>Account settings</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="icon-switch2"></i>
-                        <span>Logout</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <!-- /user menu -->
+            @can('manage-farming')
+            <li class="dropdown">
+
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>{{__('farming.farming')}}</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-manage-farming')
+                    <li><a class="nav-link" href="{{url('crop_type')}}">Crop Type</a></li>
+                    @endcan
+                    @can('view-manage-farming')
+                    <li><a class="nav-link" href="{{url('seed_type')}}">Seed Type</a></li>
+                    @endcan
+                    @can('view-manage-farming')
+                    <li><a class="nav-link" href="{{url('pesticide_type')}}">Pesticide Type</a></li>
+                    @endcan
+                    @can('view-view-farmer-assets')
+                    <li><a class="nav-link" href="{{url('register_assets')}}">{{__('farming.farmer_assets')}}</a></li>
+                    @endcan
+                    @can('view-view-farming-cost')
+                    <li><a class="nav-link" href="{{url('farming_cost')}}">{{__('farming.farming_cost')}}</a></li>
+                    @endcan
+                    @can('view-view-cost-centre')
+                    <li><a class="nav-link" href="{{url('cost_centre')}}">{{__('farming.cost_centre')}}</a></li>
+                    @endcan
+                    @can('view-view-farming-process')
+                    <li><a class="nav-link" href="{{url('farming_process')}}">GAP</a></li>
+                    @endcan
+                    @can('view-view-crop-monitoring')
+                    <li><a class="nav-link" href="{{url('crops_monitoring')}}">{{__('farming.crop_monitoring')}}</a>
+                    </li>
+                    @endcan
+                    @can('view-manage-farming')
+                    <li><a class="nav-link" href="{{url('lime_base')}}">Lime Base</a></li>
+                    @endcan
+                    @can('view-manage_seasson')
+                    <li><a class="nav-link" href="{{url('seasson')}}">{{__('farming.manage_seasson')}}</a></li>
+                    @endcan
+                </ul>
+
+            </li>
+            @endcan
+
+  
+
+            @can('manage-orders1')
+            <li class="dropdown">
+
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>{{__('ordering.orders')}}</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-order_list')
+                    <li><a class="nav-link" href="{{url('orders')}}">{{__('ordering.order_list')}}</a></li>
+                    @endcan
+                    @can('view-quotation-list')
+                    <li><a class="nav-link" href="{{url('quotationList')}}">{{__('ordering.quotationList')}}</a></li>
+                    @endcan
+                    <li><a class="nav-link" href="{{url('crops_order')}}">Create Order</a></li>
+
+                </ul>
+
+            </li>
+            @endcan
+
+            @can('view-cargo-list')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>Cargo
+                        Management</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-cargo-list')
+                    <li><a class="nav-link" href="{{url('pacel_list')}}">Item List</a></li>
+                    @endcan
+                    @can('view-cargo-client-list')
+                    <li><a class="nav-link" href="{{url('client')}}">Client List</a></li>
+                    @endcan
+                    @can('view-cargo-quotation')
+                    <li><a class="nav-link" href="{{url('pacel_quotation')}}">Quotation</a></li>
+                    @endcan
+                    @can('view-cargo-invoice')
+                    <li><a class="nav-link" href="{{url('pacel_invoice')}}">Invoice</a></li>
+                    @endcan
+                    @can('view-cargo-mileage')
+                    <li><a class="nav-link" href="{{url('mileage')}}">Mileage List</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+
+            @can('manage-orders')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>Cargo
+                        Tracking</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-cargo-collection')
+                    <li><a class="nav-link" href="{{url('collection')}}"> Cargo List</a></li>
+                    @endcan
+                    @can('view-cargo-loading')
+                    <li><a class="nav-link" href="{{url('loading')}}"> Loading</a></li>
+                    @endcan
+                    @can('view-cargo-offloading')
+                    <li><a class="nav-link" href="{{url('offloading')}}"> Offloading</a></li>
+                    @endcan
+                    @can('view-cargo-delivering')
+                    <li><a class="nav-link" href="{{url('delivering')}}">Delivery</a></li>
+                    @endcan
+                     @can('view-cargo-wb')
+                    <li><a class="nav-link" href="{{url('wb')}}">Create WB</a></li>
+                    @endcan                   
+                    @can('view-cargo-activity')
+                    <li><a class="nav-link" href="{{url('activity')}}">Track Logistic Activity</a></li>
+                    @endcan
+                    @can('view-cargo-order_report')
+                    <li><a class="nav-link" href="{{url('order_report')}}">Uplift Report</a></li>
+                    @endcan
+                    @can('view-cargo-truck_mileage')
+                    <li><a class="nav-link" href="{{url('truck_mileage')}}">Return Truck Fuel & Mileage</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+
+            @can('manage-courier')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>Courier
+                        Management</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-courier_list')
+                    <li><a class="nav-link" href="{{url('courier_list')}}">Item List</a></li>
+                    @endcan
+                    @can('view-courier_client')
+                    <li><a class="nav-link" href="{{url('courier_client')}}">Client List</a></li>
+                    @endcan
+                    @can('view-courier_quotation')
+                    <li><a class="nav-link" href="{{url('courier_quotation')}}">Quotation</a></li>
+                    @endcan
+                    @can('view-courier_invoice')
+                    <li><a class="nav-link" href="{{url('courier_invoice')}}">Invoice</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+
+            @can('manage-courier')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>Courier
+                        Tracking</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-courier_collection')
+                    <li><a class="nav-link" href="{{url('courier_collection')}}"> Courier Collection</a></li>
+                    @endcan
+                    @can('view-courier_loading')
+                    <li><a class="nav-link" href="{{url('courier_loading')}}"> Courier Loading</a></li>
+                    @endcan
+                    @can('view-courier_offloading')
+                    <li><a class="nav-link" href="{{url('courier_offloading')}}"> Courier Offloading</a></li>
+                    @endcan
+                    @can('view-courier_delivering')
+                    <li><a class="nav-link" href="{{url('courier_delivering')}}"> Courier Delivery</a></li>
+                    @endcan
+                    @can('view-courier_activity')
+                    <li><a class="nav-link" href="{{url('courier_activity')}}">Track Courier Activity</a></li>
+                    @endcan
+                    @can('view-courier_activity')
+                    <li><a class="nav-link" href="{{url('courier_activity')}}"> Courier Uplift Report</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+            @can('manage-payroll')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>Payroll</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-salary_template')
+                    <li><a class="nav-link" href="{{url('payroll/salary_template')}}"> Salary Template</a></li>
+                    @endcan
+                    @can('view-manage_salary')
+                    <li><a class="nav-link" href="{{url('payroll/manage_salary')}}"> Manage Salary</a></li>
+                    @endcan
+                    @can('view-employee_salary_list')
+                    <li><a class="nav-link" href="{{ url('payroll/employee_salary_list') }}"> Employee Salary List</a>
+                    </li>
+                    @endcan
+                    @can('view-make_payment')
+                    <li><a class="nav-link" href="{{url('payroll/make_payment')}}">Make Payment</a></li>
+                    @endcan
+                    @can('view-generate_payslip')
+                    <li><a class="nav-link" href="{{url('payroll/generate_payslip')}}">Generate Payslip</a></li>
+                    @endcan
+                    @can('view-payroll_summary')
+                    <li><a class="nav-link" href="{{url('payroll/payroll_summary')}}">Payroll Summary</a></li>
+                    @endcan
+                    @can('view-advance_salary')
+                    <li><a class="nav-link" href="{{url('payroll/advance_salary')}}">Advance Salary</a></li>
+                    @endcan
+                    @can('view-employee_loan')
+                    <li><a class="nav-link" href="{{url('payroll/employee_loan')}}">Employee Loan</a></li>
+                    @endcan
+                    @can('view-overtime')
+                    <li><a class="nav-link" href="{{url('payroll/overtime')}}">Overtime</a></li>
+                    @endcan
+                    @can('view-nssf')
+                    <li><a class="nav-link" href="{{url('payroll/nssf')}}">Social Security (NSSF) </a></li>
+                    @endcan
+                    @can('view-tax')
+                    <li><a class="nav-link" href="{{url('payroll/tax')}}">Tax </a></li>
+                    @endcan
+                    @can('view-nhif')
+                    <li><a class="nav-link" href="{{url('payroll/nhif')}}">Health Contribution</a></li>
+                    @endcan
+                    @can('view-wcf')
+                    <li><a class="nav-link" href="{{url('payroll/wcf')}}">WCF Contribution</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+
+            @can('manage-warehouse')
+            <li><a class="nav-link" href="{{url('warehouse')}}"><i data-feather="command"></i>Warehouse</a></li>
+            @endcan
+
+            @can('manage-logistic')
+            <li><a class="nav-link" href="{{url('routes')}}"><i data-feather="command"></i>Routes</a></li>
+            @endcan
+
+            @can('view-supplier')
+                    <li><a class="nav-link" href="{{url('supplier')}}"><i data-feather="command"></i>Suppliers</a></li>
+                    @endcan
+
+   
+
+            @can('manage-inventory')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>Tire
+                        Management</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-tyre_brand')
+                    <li><a class="nav-link" href="{{url('tyre_brand')}}">Tire Brand</a></li>
+                    @endcan
+                    @can('view-purchase_tyre')
+                    <li><a class="nav-link" href="{{url('purchase_tyre')}}">Purchase Tire</a></li>
+                    @endcan
+                    @can('view-tyre_list')
+                    <li><a class="nav-link" href="{{url('tyre_list')}}">Tire List</a></li>
+                    @endcan
+                    @can('view-assign_truck')
+                    <li><a class="nav-link" href="{{url('assign_truck')}}">Assign Truck</a></li>
+                    @endcan
+                    @can('view-tyre_return')
+                    <li><a class="nav-link" href="{{url('tyre_return')}}">Tire Return</a></li>
+                    @endcan
+                    @can('view-tyre_reallocation')
+                    <li><a class="nav-link" href="{{url('tyre_reallocation')}}">Tire Reallocation</a></li>
+                    @endcan
+                    @can('view-tyre_disposal')
+                    <li><a class="nav-link" href="{{url('tyre_disposal')}}">Tire Disposal</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
 
 
-    <!-- Main navigation -->
-    <div class="sidebar-section">
-        <ul class="nav nav-sidebar" data-nav-type="accordion">
+            @can('manage-inventory')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>Inventory</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-location')
+                    <li><a class="nav-link" href="{{url('location')}}">Location</a></li>
+                    @endcan
+                    @can('view-inventory')
+                    <li><a class="nav-link" href="{{url('inventory')}}">Inventory Items</a></li>
+                    @endcan
+                    @can('view-fieldstaff')
+                    <li><a class="nav-link" href="{{url('fieldstaff')}}">Field Staff</a></li>
+                    @endcan
+                    @can('view-purchase_inventory')
+                    <li><a class="nav-link" href="{{url('purchase_inventory')}}">Purchase Inventory</a></li>
+                    @endcan
+                    @can('view-inventory_list')
+                    <li><a class="nav-link" href="{{url('inventory_list')}}">Inventory List</a></li>
+                    @endcan
+                    @can('view-inventory_list')
+                    <li><a class="nav-link" href="{{url('service_type')}}">Service Type</a></li>
+                    @endcan
+                    @can('view-maintainance')
+                    <li><a class="nav-link" href="{{url('maintainance')}}">Maintainance</a></li>
+                    @endcan
+                    @can('view-service')
+                    <li><a class="nav-link" href="{{url('service')}}">Service</a></li>
+                    @endcan
+                    @can('view-service')
+                    <li><a class="nav-link" href="{{url('good_issue')}}">Good Issue</a></li>
+                    @endcan
+                    @can('view-good_return')
+                    <li><a class="nav-link" href="{{url('good_return')}}">Good Return</a></li>
+                    @endcan
+                    @can('view-good_return')
+                    <li><a class="nav-link" href="{{url('good_movement')}}">Good Movement</a></li>
+                    @endcan
+                    @can('view-good_reallocation')
+                    <li><a class="nav-link" href="{{url('good_reallocation')}}">Good Reallocation</a></li>
+                    @endcan
+                    @can('view-good_disposal')
+                    <li><a class="nav-link" href="{{url('good_disposal')}}">Good Disposal</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+            
+                    @can('manage-farmer')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>Manufacturing</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-location')
+                    <li><a class="nav-link" href="{{url('manufacturing_location')}}">Location</a></li>
+                    @endcan
+                    @can('view-inventory')
+                    <li><a class="nav-link" href="{{url('manufacturing_inventory')}}">Inventory Items</a></li>
+                    @endcan
+                    @can('view-fieldstaff')
+                    <li><a class="nav-link" href="{{url('fieldstaff')}}">Field Staff</a></li>
+                    @endcan
+                    @can('view-purchase_inventory')
+                    <li><a class="nav-link" href="{{url('bill_of_material')}}">Bill Of Material</a></li>
+                    @endcan
+                     @can('view-purchase_inventory')
+                    <li><a class="nav-link" href="{{url('work_order')}}">Work Order</a></li>
+                    @endcan
+                    @can('view-purchase_inventory')
+                    <li><a class="nav-link" href="{{url('manufacturing_purchase_inventory')}}">Purchase Inventory</a></li>
+                    @endcan
+                    @can('view-inventory_list')
+                    <li><a class="nav-link" href="{{url('inventory_list')}}">Inventory List</a></li>
+                    @endcan
+                    @can('view-maintainance')
+                    <li><a class="nav-link" href="{{url('maintainance')}}">Maintainance</a></li>
+                    @endcan
+                    @can('view-service')
+                    <li><a class="nav-link" href="{{url('service')}}">Service</a></li>
+                    @endcan
+                    @can('view-service')
+                    <li><a class="nav-link" href="{{url('service')}}">Good Issue</a></li>
+                    @endcan
+                    @can('view-good_return')
+                    <li><a class="nav-link" href="{{url('good_return')}}">Good Return</a></li>
+                    @endcan
+                    @can('view-good_return')
+                    <li><a class="nav-link" href="{{url('good_movement')}}">Good Movement</a></li>
+                    @endcan
+                    @can('view-good_reallocation')
+                    <li><a class="nav-link" href="{{url('good_reallocation')}}">Good Reallocation</a></li>
+                    @endcan
+                    @can('view-good_disposal')
+                    <li><a class="nav-link" href="{{url('good_disposal')}}">Good Disposal</a></li>
+                    @endcan
+                </ul>
+            </li>
+            
+@endcan
+            @can('manage-cotton')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>Cotton Collection</span></a>
+                <ul class="dropdown-menu">
+                 
+                  
+                 
+                    @can('view-top-up-operator')
+                    <li><a class="nav-link" href="{{url('top_up_operator')}}">Top up Operators</a></li>
+                    @endcan                 
+                    @can('view-top-up-center')
+                    <li><a class="nav-link" href="{{url('top_up_center')}}">Top up Collection Center</a></li>
+                    @endcan
+                
+               
+                    @can('view-cotton-purchase')
+                    <li><a class="nav-link" href="{{url('purchase_cotton')}}">Stock Control</a></li>
+                    @endcan
+                    @can('view-cotton-movement')
+                    <li><a class="nav-link" href="{{url('cotton_movement')}}">Stock Movement</a></li>
+                    @endcan
+                        @can('view-reverse-top-up-center')
+                    <li><a class="nav-link" href="{{url('reverse_top_up_center')}}"> Reversed  Collection Center</a></li>
+                    @endcan
+                       @can('view-reverse-top-up-operator')
+                    <li><a class="nav-link" href="{{url('reverse_top_up_operator')}}"> Reversed Operator </a></li>
+                    @endcan
+                    
+                       @can('view-district')
+                    <li><a class="nav-link" href="{{url('district')}}"> Manage District </a></li>
+                    @endcan
+                       @can('view-operator')
+                    <li><a class="nav-link" href="{{url('operator')}}">Manage Operator</a></li>
+                    @endcan
+                      @can('view-center')
+                    <li><a class="nav-link" href="{{url('collection_center')}}">Manage Collection Center</a></li>
+                    @endcan
+                     @can('view-items')
+                    <li><a class="nav-link" href="{{url('cotton_list')}}">Stock List</a></li>
+                    @endcan
+                          @can('view-items')
+                    <li><a class="nav-link" href="{{url('levy_list')}}">Manage Levy</a></li>
+                    @endcan
+               
+                       @can('view-reverse-top-up-operator')
+                    <li><a class="nav-link" href="{{url('complete_operator')}}"> Complete Top Up Operator </a></li>
+                    @endcan
+                    @can('view-reverse-top-up-center')
+                    <li><a class="nav-link" href="{{url('complete_center')}}"> Complete Top Up Centers</a></li>
+                    @endcan
+                @can('view-connect')
+                    <li><a class="nav-link" href="{{url('assign_center')}}">Assign Equipment to Center</a></li>
+                    @endcan
+                     @can('view-connect')
+                    <li><a class="nav-link" href="{{url('reverse_assign_center')}}">Reversed Center Equiment</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+                        @can('manage-cotton')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>Cotton Production</span></a>
+                <ul class="dropdown-menu">
+                 
+                  
+                 
+                    @can('view-top-up-operator')
+                    <li><a class="nav-link" href="{{url('costants')}}">Constants</a></li>
+                    @endcan                 
+                    @can('view-top-up-center')
+                    <li><a class="nav-link" href="{{url('production')}}">Make Production</a></li>
+                    @endcan
 
-            <!-- Main -->
-            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs mt-1">Main</div> <i class="icon-menu" title="Main"></i></li>
-            <li class="nav-item">
-                <a href="index.html" class="nav-link active">
-                    <i class="icon-home4"></i>
-                    <span>
-                        Dashboard
-                    </span>
-                </a>
+                
+                </ul>
             </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Layouts</span></a>
+            @endcan
 
-                <ul class="nav nav-group-sub" data-submenu-title="Layouts">
-                    <li class="nav-item"><a href="index.html" class="nav-link active">Default layout</a></li>
-                    <li class="nav-item"><a href="../../../../layout_2/LTR/material/full/index.html" class="nav-link">Layout 2</a></li>
-                    <li class="nav-item"><a href="../../../../layout_3/LTR/material/full/index.html" class="nav-link">Layout 3</a></li>
-                    <li class="nav-item"><a href="../../../../layout_4/LTR/material/full/index.html" class="nav-link">Layout 4</a></li>
-                    <li class="nav-item"><a href="../../../../layout_5/LTR/material/full/index.html" class="nav-link">Layout 5</a></li>
-                    <li class="nav-item"><a href="../../../../layout_6/LTR/material/full/index.html" class="nav-link">Layout 6</a></li>
-                    <li class="nav-item"><a href="../../../../layout_7/LTR/material/full/index.html" class="nav-link disabled">Layout 7 <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
+      @can('manage-cotton')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>Invoice</span></a>
+                <ul class="dropdown-menu">
+ 
+                       
+                    @can('view-cotton-invoice')
+                    <li><a class="nav-link" href="{{url('cotton_sales')}}">Cotton Sales</a></li>
+                    @endcan
+                 @can('view-seed-invoice')
+                    <li><a class="nav-link" href="{{url('seed_list')}}">Seed List</a></li>
+                    @endcan
+              @can('view-seed-invoice')
+                    <li><a class="nav-link" href="{{url('seed_sales')}}">Seed Sales</a></li>
+                    @endcan
+                
                 </ul>
             </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-color-sampler"></i> <span>Themes</span></a>
+            @endcan
+            
+                     @can('manage-logistic')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>Truck &
+                        Driver</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-truck')
+                    <li><a class="nav-link" href="{{url('truck')}}">Truck Management</a></li>
+                    @endcan
+                    @can('view-driver')
+                    <li><a class="nav-link" href="{{url('driver')}}">Driver Management</a></li>
+                    @endcan
+                    @can('view-fuel')
+                    <li><a class="nav-link" href="{{url('fuel')}}">Fuel Control</a></li>
+                    @endcan
+           @can('view-connect')
+                    <li><a class="nav-link" href="{{url('connect_driver')}}">Assign & Remove Driver</a></li>
+                    @endcan
+                      @can('view-connect')
+                    <li><a class="nav-link" href="{{url('truck_report')}}">Truck Report</a></li>
+                    @endcan
+          @can('view-connect')
+                    <li><a class="nav-link" href="{{url('connect_trailer')}}">Connect & Disconnect Trailer</a></li>
+                    @endcan
+                     @can('view-connect')
+                    <li><a class="nav-link" href="{{url('assign_driver')}}">Assign Equipment to Truck</a></li>
+                    @endcan
+                     @can('view-connect')
+                    <li><a class="nav-link" href="{{url('reverse_assign_driver')}}">Reversed Truck Equipment</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
 
-                <ul class="nav nav-group-sub" data-submenu-title="Themes">
-                    <li class="nav-item"><a href="../../../LTR/default/full/index.html" class="nav-link">Default</a></li>
-                    <li class="nav-item"><a href="index.html" class="nav-link active">Material</a></li>
-                    <li class="nav-item"><a href="../../../LTR/dark/full/index.html" class="nav-link">Dark</a></li>
-                    <li class="nav-item"><a href="../../../LTR/clean/full/index.html" class="nav-link disabled">Clean <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-stack"></i> <span>Starter kit</span></a>
+            @can('view-leave')
+            <li><a class="nav-link" href="{{url('leave')}}"><i data-feather="command"></i>Leave Management</a></li>
+            @endcan
+            @can('view-training')
+            <li><a class="nav-link" href="{{url('training')}}"><i data-feather="command"></i>Training</a></li>
+            @endcan
 
-                <ul class="nav nav-group-sub" data-submenu-title="Starter kit">
-                    <li class="nav-item"><a href="../seed/layout_static.html" class="nav-link">Static layout</a></li>
-                    <li class="nav-item"><a href="../seed/layout_no_header.html" class="nav-link">No header</a></li>
-                    <li class="nav-item"><a href="../seed/layout_no_footer.html" class="nav-link">No footer</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="../seed/layout_fixed_header.html" class="nav-link">Fixed header</a></li>
-                    <li class="nav-item"><a href="../seed/layout_fixed_footer.html" class="nav-link">Fixed footer</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="../seed/layout_2_sidebars_1_side.html" class="nav-link">2 sidebars on 1 side</a></li>
-                    <li class="nav-item"><a href="../seed/layout_2_sidebars_2_sides.html" class="nav-link">2 sidebars on 2 sides</a></li>
-                    <li class="nav-item"><a href="../seed/layout_3_sidebars.html" class="nav-link">3 sidebars</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="../seed/layout_boxed_page.html" class="nav-link">Boxed page</a></li>
-                    <li class="nav-item"><a href="../seed/layout_boxed_content.html" class="nav-link">Boxed content</a></li>
-                </ul>
-            </li>
-            <li class="nav-item">
-                <a href="changelog.html" class="nav-link">
-                    <i class="icon-list-unordered"></i>
-                    <span>Changelog</span>
-                    <span class="badge badge-primary align-self-center ml-auto">3.0</span>
-                </a>
-            </li>
-            <li class="nav-item"><a href="../../../RTL/material/full/index.html" class="nav-link"><i class="icon-width"></i> <span>RTL version</span></a></li>
-            <!-- /main -->
+              @can('manage-gl-setup')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="command"></i><span>GL
+                        SETUP</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-class_account')
+                    <li class=""><a class="nav-link" href="{{ url('class_account') }}">Class Account </a></li>
+                    @endcan
+                    @can('view-group_account')
+                    <li class=" "><a class="nav-link" href="{{ url('group_account') }}">Group Account</a></li>
+                    @endcan
+                    @can('view-account_codes')
+                    <li class=""><a class="nav-link" href="{{ url('account_codes') }}">Account Codes</a></li>
+                    @endcan
+                    @can('view-chart_of_account')
+                    <li class=""><a class="nav-link" href="{{ url('chart_of_account') }}">Chart of Accounts </a></li>
+                    @endcan
 
-            <!-- Forms -->
-            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Forms</div> <i class="icon-menu" title="Forms"></i></li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-pencil3"></i> <span>Form components</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Form components">
-                    <li class="nav-item"><a href="form_inputs_outline.html" class="nav-link">Outline inputs</a></li>
-                    <li class="nav-item"><a href="form_inputs_filled.html" class="nav-link">Filled inputs</a></li>
-                    <li class="nav-item"><a href="form_inputs_material.html" class="nav-link">Material inputs</a></li>
-                    <li class="nav-item"><a href="form_checkboxes_radios.html" class="nav-link">Checkboxes &amp; radios</a></li>
-                    <li class="nav-item"><a href="form_select2.html" class="nav-link">Select2 selects</a></li>
-                    <li class="nav-item"><a href="form_multiselect.html" class="nav-link">Bootstrap multiselect</a></li>
-                    <li class="nav-item"><a href="form_input_groups.html" class="nav-link">Input groups</a></li>
-                    <li class="nav-item"><a href="form_controls_extended.html" class="nav-link">Extended controls</a></li>
-                    <li class="nav-item"><a href="form_floating_labels.html" class="nav-link">Floating labels</a></li>
-                    <li class="nav-item"><a href="form_tag_inputs.html" class="nav-link">Tag inputs</a></li>
-                    <li class="nav-item"><a href="form_dual_listboxes.html" class="nav-link">Dual Listboxes</a></li>
-                    <li class="nav-item"><a href="form_validation.html" class="nav-link">Validation</a></li>
-                    <li class="nav-item"><a href="form_wizard.html" class="nav-link">Form wizard</a></li>
-                    <li class="nav-item"><a href="form_actions.html" class="nav-link">Form actions</a></li>
-                    <li class="nav-item"><a href="form_inputs_grid.html" class="nav-link">Inputs grid</a></li>
                 </ul>
             </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-file-css"></i> <span>JSON forms</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="JSON forms">
-                    <li class="nav-item"><a href="alpaca_basic.html" class="nav-link">Basic inputs</a></li>
-                    <li class="nav-item"><a href="alpaca_advanced.html" class="nav-link">Advanced inputs</a></li>
-                    <li class="nav-item"><a href="alpaca_controls.html" class="nav-link">Controls</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-spell-check"></i> <span>Text editors</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Text editors">
-                    <li class="nav-item"><a href="editor_summernote.html" class="nav-link">Summernote editor</a></li>
-                    <li class="nav-item"><a href="editor_ckeditor.html" class="nav-link">CKEditor</a></li>
-                    <li class="nav-item"><a href="editor_trumbowyg.html" class="nav-link">Trumbowyg editor</a></li>
-                    <li class="nav-item"><a href="editor_code.html" class="nav-link">Code editor</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-select2"></i> <span>Pickers</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Pickers">
-                    <li class="nav-item"><a href="picker_date.html" class="nav-link">Date &amp; time pickers</a></li>
-                    <li class="nav-item"><a href="picker_color.html" class="nav-link">Color pickers</a></li>
-                    <li class="nav-item"><a href="picker_location.html" class="nav-link">Location pickers</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-insert-template"></i> <span>Form layouts</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Form layouts">
-                    <li class="nav-item"><a href="form_layout_vertical.html" class="nav-link">Vertical form</a></li>
-                    <li class="nav-item"><a href="form_layout_vertical_styled.html" class="nav-link disabled">Custom styles <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="form_layout_horizontal.html" class="nav-link">Horizontal form</a></li>
-                    <li class="nav-item"><a href="form_layout_horizontal_styled.html" class="nav-link disabled">Custom styles <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
-                </ul>
-            </li>
-            <!-- /forms -->
+            @endcan
 
-            <!-- Components -->
-            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Components</div> <i class="icon-menu" title="Components"></i></li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-grid"></i> <span>Basic components</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Basic components">
-                    <li class="nav-item"><a href="components_modals.html" class="nav-link">Modals</a></li>
-                    <li class="nav-item"><a href="components_dropdowns.html" class="nav-link">Dropdown menus</a></li>
-                    <li class="nav-item"><a href="components_tabs.html" class="nav-link">Tabs component</a></li>
-                    <li class="nav-item"><a href="components_pills.html" class="nav-link">Pills component</a></li>
-                    <li class="nav-item"><a href="components_collapsible.html" class="nav-link">Collapsible</a></li>
-                    <li class="nav-item"><a href="components_navs.html" class="nav-link">Navs</a></li>
-                    <li class="nav-item"><a href="components_buttons.html" class="nav-link">Buttons</a></li>
-                    <li class="nav-item"><a href="components_popups.html" class="nav-link">Tooltips and popovers</a></li>
-                    <li class="nav-item"><a href="components_alerts.html" class="nav-link">Alerts</a></li>
-                    <li class="nav-item"><a href="components_pagination.html" class="nav-link">Pagination</a></li>
-                    <li class="nav-item"><a href="components_badges.html" class="nav-link">Badges</a></li>
-                    <li class="nav-item"><a href="components_progress.html" class="nav-link">Progress</a></li>
-                    <li class="nav-item"><a href="components_breadcrumbs.html" class="nav-link">Breadcrumbs</a></li>
-                    <li class="nav-item"><a href="components_media.html" class="nav-link">Media objects</a></li>
-                    <li class="nav-item"><a href="components_scrollspy.html" class="nav-link">Scrollspy</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-puzzle2"></i> <span>Content styling</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Content styling">
-                    <li class="nav-item"><a href="content_page_header.html" class="nav-link">Page header</a></li>
-                    <li class="nav-item"><a href="content_page_footer.html" class="nav-link disabled">Page footer <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
-                    <li class="nav-item"><a href="content_page_panels.html" class="nav-link">Page panels</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="content_cards.html" class="nav-link">Cards</a></li>
-                    <li class="nav-item"><a href="content_cards_content.html" class="nav-link">Card content</a></li>
-                    <li class="nav-item"><a href="content_cards_layouts.html" class="nav-link">Card layouts</a></li>
-                    <li class="nav-item"><a href="content_cards_header.html" class="nav-link">Card header elements</a></li>
-                    <li class="nav-item"><a href="content_cards_footer.html" class="nav-link">Card footer elements</a></li>
-                    <li class="nav-item"><a href="content_cards_draggable.html" class="nav-link">Draggable cards</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="content_text_styling.html" class="nav-link">Text styling</a></li>
-                    <li class="nav-item"><a href="content_typography.html" class="nav-link">Typography</a></li>
-                    <li class="nav-item"><a href="content_helpers.html" class="nav-link">Helper classes</a></li>
-                    <li class="nav-item"><a href="content_helpers_flex.html" class="nav-link">Flex utilities</a></li>
-                    <li class="nav-item"><a href="content_syntax_highlighter.html" class="nav-link">Syntax highlighter</a></li>
-                    <li class="nav-item"><a href="content_grid.html" class="nav-link">Grid system</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-gift"></i> <span>Extra components</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Extra components">
-                    <li class="nav-item"><a href="extra_pnotify.html" class="nav-link">PNotify notifications</a></li>
-                    <li class="nav-item"><a href="extra_jgrowl_noty.html" class="nav-link">jGrowl and Noty notifications</a></li>
-                    <li class="nav-item"><a href="extra_sweetalert.html" class="nav-link">SweetAlert notifications</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="extra_sliders_noui.html" class="nav-link">NoUI sliders</a></li>
-                    <li class="nav-item"><a href="extra_sliders_ion.html" class="nav-link">Ion range sliders</a></li>
-                    <li class="nav-item"><a href="extra_trees.html" class="nav-link">Dynamic tree views</a></li>
-                    <li class="nav-item"><a href="extra_context_menu.html" class="nav-link">Context menu</a></li>
-                    <li class="nav-item"><a href="extra_fab.html" class="nav-link">Floating action buttons</a></li>
-                    <li class="nav-item"><a href="extra_session_timeout.html" class="nav-link">Session timeout</a></li>
-                    <li class="nav-item"><a href="extra_idle_timeout.html" class="nav-link">Idle timeout</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-droplet2"></i> <span>Color system</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Color system">
-                    <li class="nav-item"><a href="colors_primary.html" class="nav-link">Primary palette</a></li>
-                    <li class="nav-item"><a href="colors_secondary.html" class="nav-link">Secondary palette</a></li>
-                    <li class="nav-item"><a href="colors_danger.html" class="nav-link">Danger palette</a></li>
-                    <li class="nav-item"><a href="colors_success.html" class="nav-link">Success palette</a></li>
-                    <li class="nav-item"><a href="colors_warning.html" class="nav-link">Warning palette</a></li>
-                    <li class="nav-item"><a href="colors_info.html" class="nav-link">Info palette</a></li>
-                    <li class="nav-item"><a href="colors_dark.html" class="nav-link">Dark palette</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="colors_pink.html" class="nav-link">Pink palette</a></li>
-                    <li class="nav-item"><a href="colors_purple.html" class="nav-link">Purple palette</a></li>
-                    <li class="nav-item"><a href="colors_indigo.html" class="nav-link">Indigo palette</a></li>
-                    <li class="nav-item"><a href="colors_teal.html" class="nav-link">Teal palette</a></li>
-                    <li class="nav-item"><a href="colors_yellow.html" class="nav-link">Yellow palette</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-spinner2 spinner"></i> <span>Animations</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Animations">
-                    <li class="nav-item"><a href="animations_css3.html" class="nav-link">CSS3 animations</a></li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Velocity animations</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="animations_velocity_basic.html" class="nav-link">Basic usage</a></li>
-                            <li class="nav-item"><a href="animations_velocity_ui.html" class="nav-link">UI pack effects</a></li>
-                            <li class="nav-item"><a href="animations_velocity_examples.html" class="nav-link">Advanced examples</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-thumbs-up2"></i> <span>Icons</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Icons">
-                    <li class="nav-item"><a href="icons_icomoon.html" class="nav-link">Icomoon</a></li>
-                    <li class="nav-item"><a href="icons_material.html" class="nav-link">Material</a></li>
-                    <li class="nav-item"><a href="icons_fontawesome.html" class="nav-link">Font awesome</a></li>
-                </ul>
-            </li>
-            <!-- /components -->
 
-            <!-- Layout -->
-            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Layout</div> <i class="icon-menu" title="Layout options"></i></li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-stack2"></i> <span>Page layouts</span></a>
+            @can('manage-transaction')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>Transactions</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-deposit')
+                    <li class=""><a class="nav-link" href="{{ url('deposit') }}">Deposit</a></li>
+                    @endcan
+                    @can('view-expenses')
+                    <li class=" "><a class="nav-link" href="{{ url('expenses') }}">Payments</a></li>
+                    @endcan
+                   @can('view-transfer')
+                 <li class=""><a class="nav-link" href="{{ url('transfer2') }}">Transfer</a></li>
+                    @endcan
+                    @can('view-expenses')
+                    <li class=" "><a class="nav-link" href="{{ url('account') }}">Bank & Cash</a></li>
+                    @endcan
+                    @can('view-bank_statement')
+                    <li class=""><a class="nav-link" href="{{ url('accounting/bank_statement') }}">Bank Statement</a>
+                    </li>
+                    @endcan
+                    @can('view-bank_reconciliation')
+                    <li class=" "><a class="nav-link" href="{{ url('accounting/bank_reconciliation') }}">Bank
+                            Reconciliation</a></li>
+                    @endcan
+                    @can('view-reconciliation_report')
+                    <li class=" "><a class="nav-link" href="{{ url('accounting/reconciliation_report') }}">Bank
+                            Reconciliation Report</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
 
-                <ul class="nav nav-group-sub" data-submenu-title="Page layouts">
-                    <li class="nav-item"><a href="layout_static.html" class="nav-link">Static layout</a></li>
-                    <li class="nav-item"><a href="layout_no_header.html" class="nav-link">No header</a></li>
-                    <li class="nav-item"><a href="layout_no_footer.html" class="nav-link">No footer</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="layout_fixed_header.html" class="nav-link">Fixed header</a></li>
-                    <li class="nav-item"><a href="layout_fixed_footer.html" class="nav-link">Fixed footer</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="layout_2_sidebars_1_side.html" class="nav-link">2 sidebars on 1 side</a></li>
-                    <li class="nav-item"><a href="layout_2_sidebars_2_sides.html" class="nav-link">2 sidebars on 2 sides</a></li>
-                    <li class="nav-item"><a href="layout_3_sidebars.html" class="nav-link">3 sidebars</a></li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="layout_boxed_page.html" class="nav-link">Boxed page</a></li>
-                    <li class="nav-item"><a href="layout_boxed_content.html" class="nav-link">Boxed content</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-indent-decrease2"></i> <span>Sidebars</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Sidebars">
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Main sidebar</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="sidebar_default_resizable.html" class="nav-link">Resizable</a></li>
-                            <li class="nav-item"><a href="sidebar_default_resized.html" class="nav-link">Resized</a></li>
-                            <li class="nav-item"><a href="sidebar_default_collapsible.html" class="nav-link">Collapsible</a></li>
-                            <li class="nav-item"><a href="sidebar_default_collapsed.html" class="nav-link">Collapsed</a></li>
-                            <li class="nav-item"><a href="sidebar_default_hideable.html" class="nav-link">Hideable</a></li>
-                            <li class="nav-item"><a href="sidebar_default_hidden.html" class="nav-link">Hidden</a></li>
-                            <li class="nav-item-divider"></li>
-                            <li class="nav-item"><a href="sidebar_default_color_dark.html" class="nav-link">Dark color</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Secondary sidebar</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="sidebar_secondary_collapsible.html" class="nav-link">Collapsible</a></li>
-                            <li class="nav-item"><a href="sidebar_secondary_collapsed.html" class="nav-link">Collapsed</a></li>
-                            <li class="nav-item"><a href="sidebar_secondary_hideable.html" class="nav-link">Hideable</a></li>
-                            <li class="nav-item"><a href="sidebar_secondary_hidden.html" class="nav-link">Hidden</a></li>
-                            <li class="nav-item-divider"></li>
-                            <li class="nav-item"><a href="sidebar_secondary_color_dark.html" class="nav-link">Dark color</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Right sidebar</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="sidebar_right_collapsible.html" class="nav-link">Collapsible</a></li>
-                            <li class="nav-item"><a href="sidebar_right_collapsed.html" class="nav-link">Collapsed</a></li>
-                            <li class="nav-item"><a href="sidebar_right_hideable.html" class="nav-link">Hideable</a></li>
-                            <li class="nav-item"><a href="sidebar_right_hidden.html" class="nav-link">Hidden</a></li>
-                            <li class="nav-item-divider"></li>
-                            <li class="nav-item"><a href="sidebar_right_color_dark.html" class="nav-link">Dark color</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Content sidebar</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="sidebar_content_left.html" class="nav-link">Left aligned</a></li>
-                            <li class="nav-item"><a href="sidebar_content_left_stretch.html" class="nav-link">Left stretched</a></li>
-                            <li class="nav-item"><a href="sidebar_content_left_sections.html" class="nav-link">Left sectioned</a></li>
-                            <li class="nav-item"><a href="sidebar_content_right.html" class="nav-link">Right aligned</a></li>
-                            <li class="nav-item"><a href="sidebar_content_right_stretch.html" class="nav-link">Right stretched</a></li>
-                            <li class="nav-item"><a href="sidebar_content_right_sections.html" class="nav-link">Right sectioned</a></li>
-                            <li class="nav-item-divider"></li>
-                            <li class="nav-item"><a href="sidebar_content_color_dark.html" class="nav-link">Dark color</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Sticky areas</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="sidebar_sticky_header.html" class="nav-link">Header</a></li>
-                            <li class="nav-item"><a href="sidebar_sticky_footer.html" class="nav-link">Footer</a></li>
-                            <li class="nav-item"><a href="sidebar_sticky_header_footer.html" class="nav-link">Header and footer</a></li>
-                            <li class="nav-item"><a href="sidebar_sticky_custom.html" class="nav-link">Custom elements</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a href="sidebar_components.html" class="nav-link">Sidebar components</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-menu3"></i> <span>Navbars</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Navbars">
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Single navbar</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="navbar_single_bottom_fixed.html" class="nav-link">Bottom fixed</a></li>
-                            <li class="nav-item"><a href="navbar_single_header_before.html" class="nav-link">Before page header</a></li>
-                            <li class="nav-item"><a href="navbar_single_header_before_fixed.html" class="nav-link">Before page header fixed</a></li>
-                            <li class="nav-item"><a href="navbar_single_header_after.html" class="nav-link">After page header</a></li>
-                            <li class="nav-item"><a href="navbar_single_header_after_sticky.html" class="nav-link">After page header sticky</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Multiple navbars</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="navbar_multiple_top.html" class="nav-link">Multiple top</a></li>
-                            <li class="nav-item"><a href="navbar_multiple_bottom_static.html" class="nav-link">Multiple bottom static</a></li>
-                            <li class="nav-item"><a href="navbar_multiple_bottom_fixed.html" class="nav-link">Multiple bottom fixed</a></li>
-                            <li class="nav-item"><a href="navbar_multiple_top_bottom_fixed.html" class="nav-link">Top and bottom fixed</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Content navbar</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="navbar_component_single.html" class="nav-link">Single navbar</a></li>
-                            <li class="nav-item"><a href="navbar_component_multiple.html" class="nav-link">Multiple navbars</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item-divider"></li>
-                    <li class="nav-item"><a href="navbar_colors.html" class="nav-link">Color options</a></li>
-                    <li class="nav-item"><a href="navbar_sizes.html" class="nav-link">Sizing options</a></li>
-                    <li class="nav-item"><a href="navbar_components.html" class="nav-link">Navbar components</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-sort"></i> <span>Vertical navigation</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Vertical navigation">
-                    <li class="nav-item"><a href="navigation_vertical_collapsible.html" class="nav-link">Collapsible menu</a></li>
-                    <li class="nav-item"><a href="navigation_vertical_accordion.html" class="nav-link">Accordion menu</a></li>
-                    <li class="nav-item"><a href="navigation_vertical_bordered.html" class="nav-link">Bordered navigation</a></li>
-                    <li class="nav-item"><a href="navigation_vertical_right_icons.html" class="nav-link">Right icons</a></li>
-                    <li class="nav-item"><a href="navigation_vertical_badges.html" class="nav-link">Badges</a></li>
-                    <li class="nav-item"><a href="navigation_vertical_disabled.html" class="nav-link">Disabled items</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-transmission"></i> <span>Horizontal navigation</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Horizontal navigation">
-                    <li class="nav-item"><a href="navigation_horizontal_click.html" class="nav-link">Submenu on click</a></li>
-                    <li class="nav-item"><a href="navigation_horizontal_hover.html" class="nav-link">Submenu on hover</a></li>
-                    <li class="nav-item"><a href="navigation_horizontal_elements.html" class="nav-link">With custom elements</a></li>
-                    <li class="nav-item"><a href="navigation_horizontal_tabs.html" class="nav-link">Tabbed navigation</a></li>
-                    <li class="nav-item"><a href="navigation_horizontal_disabled.html" class="nav-link">Disabled navigation links</a></li>
-                    <li class="nav-item"><a href="navigation_horizontal_mega.html" class="nav-link">Horizontal mega menu</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-tree5"></i> <span>Menu levels</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Menu levels">
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="icon-IE"></i> Second level</a></li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link"><i class="icon-firefox"></i> Second level with child</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="#" class="nav-link"><i class="icon-android"></i> Third level</a></li>
-                            <li class="nav-item nav-item-submenu">
-                                <a href="#" class="nav-link"><i class="icon-apple2"></i> Third level with child</a>
-                                <ul class="nav nav-group-sub">
-                                    <li class="nav-item"><a href="#" class="nav-link"><i class="icon-html5"></i> Fourth level</a></li>
-                                    <li class="nav-item"><a href="#" class="nav-link"><i class="icon-css3"></i> Fourth level</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav-item"><a href="#" class="nav-link"><i class="icon-windows"></i> Third level</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="icon-chrome"></i> Second level</a></li>
-                </ul>
-            </li>
-            <!-- /layout -->
 
-            <!-- Data visualization -->
-            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Data visualization</div> <i class="icon-menu" title="Data visualization"></i></li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-graph"></i> <span>Echarts library</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="ECharts library">
-                    <li class="nav-item"><a href="echarts_lines.html" class="nav-link">Line charts</a></li>
-                    <li class="nav-item"><a href="echarts_areas.html" class="nav-link">Area charts</a></li>
-                    <li class="nav-item"><a href="echarts_columns_waterfalls.html" class="nav-link">Columns and waterfalls</a></li>
-                    <li class="nav-item"><a href="echarts_bars_tornados.html" class="nav-link">Bars and tornados</a></li>
-                    <li class="nav-item"><a href="echarts_scatter.html" class="nav-link">Scatter charts</a></li>
-                    <li class="nav-item"><a href="echarts_pies_donuts.html" class="nav-link">Pies and donuts</a></li>
-                    <li class="nav-item"><a href="echarts_funnels_calendars.html" class="nav-link">Funnels and calendars</a></li>
-                    <li class="nav-item"><a href="echarts_candlesticks_others.html" class="nav-link">Candlesticks and others</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-statistics"></i> <span>D3 library</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="D3 library">
-                    <li class="nav-item"><a href="d3_lines_basic.html" class="nav-link">Simple lines</a></li>
-                    <li class="nav-item"><a href="d3_lines_advanced.html" class="nav-link">Advanced lines</a></li>
-                    <li class="nav-item"><a href="d3_bars_basic.html" class="nav-link">Simple bars</a></li>
-                    <li class="nav-item"><a href="d3_bars_advanced.html" class="nav-link">Advanced bars</a></li>
-                    <li class="nav-item"><a href="d3_pies.html" class="nav-link">Pie charts</a></li>
-                    <li class="nav-item"><a href="d3_circle_diagrams.html" class="nav-link">Circle diagrams</a></li>
-                    <li class="nav-item"><a href="d3_tree.html" class="nav-link">Tree layout</a></li>
-                    <li class="nav-item"><a href="d3_other.html" class="nav-link">Other charts</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-stats-bars"></i> <span>C3 library</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="C3 library">
-                    <li class="nav-item"><a href="c3_lines_areas.html" class="nav-link">Lines and areas</a></li>
-                    <li class="nav-item"><a href="c3_bars_pies.html" class="nav-link">Bars and pies</a></li>
-                    <li class="nav-item"><a href="c3_advanced.html" class="nav-link">Advanced examples</a></li>
-                    <li class="nav-item"><a href="c3_axis.html" class="nav-link">Chart axis</a></li>
-                    <li class="nav-item"><a href="c3_grid.html" class="nav-link">Grid options</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-google"></i> <span>Google charts</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Google charts">
-                    <li class="nav-item"><a href="google_lines.html" class="nav-link">Line charts</a></li>
-                    <li class="nav-item"><a href="google_bars.html" class="nav-link">Bar charts</a></li>
-                    <li class="nav-item"><a href="google_pies.html" class="nav-link">Pie charts</a></li>
-                    <li class="nav-item"><a href="google_scatter_bubble.html" class="nav-link">Bubble &amp; scatter charts</a></li>
-                    <li class="nav-item"><a href="google_other.html" class="nav-link">Other charts</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-map5"></i> <span>Maps integration</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Maps integration">
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Google maps</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="maps_google_basic.html" class="nav-link">Basics</a></li>
-                            <li class="nav-item"><a href="maps_google_controls.html" class="nav-link">Controls</a></li>
-                            <li class="nav-item"><a href="maps_google_markers.html" class="nav-link">Markers</a></li>
-                            <li class="nav-item"><a href="maps_google_drawings.html" class="nav-link">Map drawings</a></li>
-                            <li class="nav-item"><a href="maps_google_layers.html" class="nav-link ">Layers</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a href="maps_vector.html" class="nav-link">Vector maps</a></li>
-                    <li class="nav-item"><a href="maps_echarts.html" class="nav-link disabled">ECharts maps <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
-                </ul>
-            </li>
-            <!-- /data visualization -->
+           
+            @can('manage-accounting')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>Accounting</span></a>
+                <ul class="dropdown-menu">
+                    @can('view-manual_entry')
+                    <li class=""><a class="nav-link" href="{{ url('accounting/manual_entry') }}">Journal Entry</a></li>
+                    @endcan
+                    @can('view-journal')
+                    <li class=" "><a class="nav-link" href="{{ url('accounting/journal') }}">Journal Entry Report</a>
 
-            <!-- Extensions -->
-            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Extensions</div> <i class="icon-menu" title="Extensions"></i></li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-puzzle4"></i> <span>Extensions</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Extensions">
-                    <li class="nav-item"><a href="extension_image_cropper.html" class="nav-link">Image cropper</a></li>
-                    <li class="nav-item"><a href="extension_blockui.html" class="nav-link">Block UI</a></li>
-                    <li class="nav-item"><a href="extension_dnd.html" class="nav-link">Drag and drop</a></li>
+                    </li>
+                    @endcan
+                    @can('view-ledger')
+                    <li class=""><a class="nav-link" href="{{ url('accounting/ledger') }}">Ledger</a></li>
+                    @endcan
+                    @can('view-trial_balance')
+                    <li class=""><a class="nav-link" href="{{url('financial_report/trial_balance')}}">Trial Balance </a>
+                    </li>
+                    @endcan
+                     @can('view-trial_balance')
+                    <li class=""><a class="nav-link" href="{{url('financial_report/trial_balance_summary')}}">Trial Balance Summary </a>
+                    </li>
+                    @endcan
+                    @can('view-income_statement')
+                    <li class=""><a class="nav-link" href="{{url('financial_report/income_statement')}}">Income
+                            Statement</a></li>
+                    @endcan
+                    @can('view-income_statement')
+                    <li class=""><a class="nav-link" href="{{url('financial_report/income_statement_summary')}}">Income
+                            Statement Summary</a></li>
+                    @endcan
+                    @can('view-balance_sheet')
+                    <li class=""><a class="nav-link" href="{{url('financial_report/balance_sheet')}}">Balance Sheet </a>
+                    </li>
+                    @endcan
+                      @can('view-balance_sheet')
+                    <li class=""><a class="nav-link" href="{{url('financial_report/balance_sheet_summary')}}">Balance Sheet Summary </a>
+                    </li>
+                    @endcan
                 </ul>
             </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-popout"></i> <span>JQuery UI</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="jQuery UI">
-                    <li class="nav-item"><a href="jqueryui_interactions.html" class="nav-link">Interactions</a></li>
-                    <li class="nav-item"><a href="jqueryui_forms.html" class="nav-link">Forms</a></li>
-                    <li class="nav-item"><a href="jqueryui_components.html" class="nav-link">Components</a></li>
-                    <li class="nav-item"><a href="jqueryui_sliders.html" class="nav-link">Sliders</a></li>
-                    <li class="nav-item"><a href="jqueryui_navigation.html" class="nav-link">Navigation</a></li>
-                </ul>
+            @endcan
+               @can('manage-cotton')
+            <li class="dropdown">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>Reports</span></a>
+                <ul class="dropdown-menu">                           
+                    @can('view-stock-report')
+                    <li><a class="nav-link" href="{{url('stock_report')}}"> Stock Report</a></li>
+                    @endcan
+                   @can('view-invoice-report')
+                    <li><a class="nav-link" href="{{url('invoice_report')}}"> Invoice Report</a></li>
+                    @endcan
+                    @can('view-center-report')
+                    <li><a class="nav-link" href="{{url('center_report')}}"> Collection Center Report</a></li>
+                    <li><a class="nav-link" href="{{url('cotton_movement_report')}}"> Cotton Movement Report</a></li>
+                    @endcan
+                      @can('view-levy-report')
+                    <li><a class="nav-link" href="{{url('levy_report')}}"> Levy Report</a></li>
+                    @endcan
+                       @can('view-levy-report')
+                    <li><a class="nav-link" href="{{url('debtors_report')}}"> Debtors Report</a></li>
+                    @endcan
+                    @can('view-center-report')
+                    <li><a class="nav-link" href="{{url('general_report')}}"> Report By District</a></li>
+                    @endcan
+                     @can('view-center-report')
+                    <li><a class="nav-link" href="{{url('general_report2')}}"> General Report </a></li>
+                    @endcan
+     </ul>
             </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-upload"></i> <span>File uploaders</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="File uploaders">
-                    <li class="nav-item"><a href="uploader_plupload.html" class="nav-link">Plupload</a></li>
-                    <li class="nav-item"><a href="uploader_bootstrap.html" class="nav-link">Bootstrap file uploader</a></li>
-                    <li class="nav-item"><a href="uploader_dropzone.html" class="nav-link">Dropzone</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-calendar3"></i> <span>Event calendars</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Event calendars">
-                    <li class="nav-item"><a href="fullcalendar_views.html" class="nav-link">Basic views</a></li>
-                    <li class="nav-item"><a href="fullcalendar_styling.html" class="nav-link">Event styling</a></li>
-                    <li class="nav-item"><a href="fullcalendar_formats.html" class="nav-link">Language and time</a></li>
-                    <li class="nav-item"><a href="fullcalendar_advanced.html" class="nav-link">Advanced usage</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-sphere"></i> <span>Internationalization</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Internationalization">
-                    <li class="nav-item"><a href="internationalization_switch_direct.html" class="nav-link">Direct translation</a></li>
-                    <li class="nav-item"><a href="internationalization_switch_query.html" class="nav-link">Querystring parameter</a></li>
-                    <li class="nav-item"><a href="internationalization_fallback.html" class="nav-link">Language fallback</a></li>
-                    <li class="nav-item"><a href="internationalization_callbacks.html" class="nav-link">Callbacks</a></li>
-                </ul>
-            </li>
-            <!-- /extensions -->
+ @endcan
+   
+  <li><a class="nav-link" href="{{url('chatify')}}"><i class="fa fa-th-large"></i> <span class="nav-label">Chatting</span>  </a></li>
+ 
 
-            <!-- Tables -->
-            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Tables</div> <i class="icon-menu" title="Tables"></i></li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-table2"></i> <span>Basic tables</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Basic tables">
-                    <li class="nav-item"><a href="table_basic.html" class="nav-link">Basic examples</a></li>
-                    <li class="nav-item"><a href="table_sizing.html" class="nav-link">Table sizing</a></li>
-                    <li class="nav-item"><a href="table_borders.html" class="nav-link">Table borders</a></li>
-                    <li class="nav-item"><a href="table_styling.html" class="nav-link">Table styling</a></li>
-                    <li class="nav-item"><a href="table_elements.html" class="nav-link">Table elements</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-grid7"></i> <span>Data tables</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Data tables">
-                    <li class="nav-item"><a href="datatable_basic.html" class="nav-link">Basic initialization</a></li>
-                    <li class="nav-item"><a href="datatable_styling.html" class="nav-link">Basic styling</a></li>
-                    <li class="nav-item"><a href="datatable_advanced.html" class="nav-link">Advanced examples</a></li>
-                    <li class="nav-item"><a href="datatable_sorting.html" class="nav-link">Sorting options</a></li>
-                    <li class="nav-item"><a href="datatable_api.html" class="nav-link">Using API</a></li>
-                    <li class="nav-item"><a href="datatable_data_sources.html" class="nav-link">Data sources</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-alignment-unalign"></i> <span>Data tables extensions</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Data tables extensions">
-                    <li class="nav-item"><a href="datatable_extension_reorder.html" class="nav-link">Columns reorder</a></li>
-                    <li class="nav-item"><a href="datatable_extension_row_reorder.html" class="nav-link">Row reorder</a></li>
-                    <li class="nav-item"><a href="datatable_extension_fixed_columns.html" class="nav-link">Fixed columns</a></li>
-                    <li class="nav-item"><a href="datatable_extension_autofill.html" class="nav-link">Auto fill</a></li>
-                    <li class="nav-item"><a href="datatable_extension_key_table.html" class="nav-link">Key table</a></li>
-                    <li class="nav-item"><a href="datatable_extension_scroller.html" class="nav-link">Scroller</a></li>
-                    <li class="nav-item"><a href="datatable_extension_select.html" class="nav-link">Select</a></li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Buttons</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="datatable_extension_buttons_init.html" class="nav-link">Initialization</a></li>
-                            <li class="nav-item"><a href="datatable_extension_buttons_flash.html" class="nav-link">Flash buttons</a></li>
-                            <li class="nav-item"><a href="datatable_extension_buttons_print.html" class="nav-link">Print buttons</a></li>
-                            <li class="nav-item"><a href="datatable_extension_buttons_html5.html" class="nav-link">HTML5 buttons</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item"><a href="datatable_extension_colvis.html" class="nav-link">Columns visibility</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-versions"></i> <span>Responsive tables</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Responsive tables">
-                    <li class="nav-item"><a href="table_responsive.html" class="nav-link">Responsive basic tables</a></li>
-                    <li class="nav-item"><a href="datatable_responsive.html" class="nav-link">Responsive data tables</a></li>
-                </ul>
-            </li>
-            <!-- /tables -->
+         @can('manage-access-control')
+            <li class="dropdown{{ request()->is('setting/*') ? 'active' : '' }}">
+                <a href="#" class="menu-toggle nav-link has-dropdown"><i
+                        data-feather="command"></i><span>{{__('permission.access_control')}}</span></a>
+                <ul class="dropdown-menu">
 
-            <!-- Page kits -->
-            <li class="nav-item-header"><div class="text-uppercase font-size-xs line-height-xs">Page kits</div> <i class="icon-menu" title="Page kits"></i></li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-grid6"></i> <span>General pages</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="General pages">
-                    <li class="nav-item"><a href="general_feed.html" class="nav-link">Feed</a></li>
-                    <li class="nav-item"><a href="general_embeds.html" class="nav-link">Embeds</a></li>
-                    <li class="nav-item"><a href="general_faq.html" class="nav-link">FAQ page</a></li>
-                    <li class="nav-item"><a href="general_knowledgebase.html" class="nav-link">Knowledgebase</a></li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Blog</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="blog_classic_v.html" class="nav-link">Classic vertical</a></li>
-                            <li class="nav-item"><a href="blog_classic_h.html" class="nav-link">Classic horizontal</a></li>
-                            <li class="nav-item"><a href="blog_grid.html" class="nav-link">Grid</a></li>
-                            <li class="nav-item"><a href="blog_single.html" class="nav-link">Single post</a></li>
-                            <li class="nav-item-divider"></li>
-                            <li class="nav-item"><a href="blog_sidebar_left.html" class="nav-link">Left sidebar</a></li>
-                            <li class="nav-item"><a href="blog_sidebar_right.html" class="nav-link">Right sidebar</a></li>
-                        </ul>
+                    <li class="{{ request()->is('setting/roleGroup') ? 'active' : '' }}"><a class="nav-link"
+                            href="{{url('roles')}}">
+                            {{__('permission.roles')}}</a>
                     </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Timelines</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="timelines_left.html" class="nav-link">Left timeline</a></li>
-                            <li class="nav-item"><a href="timelines_right.html" class="nav-link">Right timeline</a></li>
-                            <li class="nav-item"><a href="timelines_center.html" class="nav-link">Centered timeline</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Gallery</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="gallery_grid.html" class="nav-link">Media grid</a></li>
-                            <li class="nav-item"><a href="gallery_titles.html" class="nav-link">Media with titles</a></li>
-                            <li class="nav-item"><a href="gallery_description.html" class="nav-link">Media with description</a></li>
-                            <li class="nav-item"><a href="gallery_library.html" class="nav-link">Media library</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-wrench3"></i> <span>Service pages</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Service pages">
-                    <li class="nav-item"><a href="service_sitemap.html" class="nav-link">Sitemap</a></li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Invoicing</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="invoice_template.html" class="nav-link">Invoice template</a></li>
-                            <li class="nav-item"><a href="invoice_grid.html" class="nav-link">Invoice grid</a></li>
-                            <li class="nav-item"><a href="invoice_archive.html" class="nav-link">Invoice archive</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Authentication</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="login_simple.html" class="nav-link">Simple login</a></li>
-                            <li class="nav-item"><a href="login_advanced.html" class="nav-link">More login info</a></li>
-                            <li class="nav-item"><a href="login_registration.html" class="nav-link">Simple registration</a></li>
-                            <li class="nav-item"><a href="login_registration_advanced.html" class="nav-link">More registration info</a></li>
-                            <li class="nav-item"><a href="login_unlock.html" class="nav-link">Unlock user</a></li>
-                            <li class="nav-item"><a href="login_password_recover.html" class="nav-link">Reset password</a></li>
-                            <li class="nav-item"><a href="login_hide_navbar.html" class="nav-link">Hide navbar</a></li>
-                            <li class="nav-item"><a href="login_transparent.html" class="nav-link">Transparent box</a></li>
-                            <li class="nav-item"><a href="login_background.html" class="nav-link">Background option</a></li>
-                            <li class="nav-item"><a href="login_validation.html" class="nav-link">With validation</a></li>
-                            <li class="nav-item"><a href="login_tabbed.html" class="nav-link">Tabbed form</a></li>
-                            <li class="nav-item"><a href="login_modals.html" class="nav-link">Inside modals</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Error pages</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="error_403.html" class="nav-link">Error 403</a></li>
-                            <li class="nav-item"><a href="error_404.html" class="nav-link">Error 404</a></li>
-                            <li class="nav-item"><a href="error_405.html" class="nav-link">Error 405</a></li>
-                            <li class="nav-item"><a href="error_500.html" class="nav-link">Error 500</a></li>
-                            <li class="nav-item"><a href="error_503.html" class="nav-link">Error 503</a></li>
-                            <li class="nav-item"><a href="error_offline.html" class="nav-link">Offline page</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-people"></i> <span>User pages</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="User pages">
-                    <li class="nav-item"><a href="user_pages_list.html" class="nav-link">User list</a></li>
-                    <li class="nav-item"><a href="user_pages_cards.html" class="nav-link">User cards</a></li>
-                    <li class="nav-item"><a href="user_pages_profile.html" class="nav-link">Simple profile</a></li>
-                    <li class="nav-item"><a href="user_pages_profile_tabbed.html" class="nav-link">Tabbed profile</a></li>
-                    <li class="nav-item"><a href="user_pages_profile_cover.html" class="nav-link">Profile with cover</a></li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-cube3"></i> <span>Application pages</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Application pages">
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Task manager</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="task_manager_grid.html" class="nav-link">Task grid</a></li>
-                            <li class="nav-item"><a href="task_manager_list.html" class="nav-link">Task list</a></li>
-                            <li class="nav-item"><a href="task_manager_detailed.html" class="nav-link">Task detailed</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Inbox</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="mail_list.html" class="nav-link">Mail list</a></li>
-                            <li class="nav-item"><a href="mail_list_detached.html" class="nav-link">Mail list (detached)</a></li>
-                            <li class="nav-item"><a href="mail_read.html" class="nav-link">Read mail</a></li>
-                            <li class="nav-item"><a href="mail_write.html" class="nav-link">Write mail</a></li>
-                            <li class="nav-item-divider"></li>
-                            <li class="nav-item"><a href="chat_layouts.html" class="nav-link">Chat layouts</a></li>
-                            <li class="nav-item"><a href="chat_options.html" class="nav-link">Chat options</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Search</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="search_basic.html" class="nav-link">Basic search results</a></li>
-                            <li class="nav-item"><a href="search_users.html" class="nav-link">User search results</a></li>
-                            <li class="nav-item"><a href="search_images.html" class="nav-link">Image search results</a></li>
-                            <li class="nav-item"><a href="search_videos.html" class="nav-link">Video search results</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Job search</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="job_list_cards.html" class="nav-link">Cards view</a></li>
-                            <li class="nav-item"><a href="job_list_list.html" class="nav-link">List view</a></li>
-                            <li class="nav-item"><a href="job_detailed.html" class="nav-link">Job detailed</a></li>
-                            <li class="nav-item"><a href="job_apply.html" class="nav-link">Apply</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Learning</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="learning_list.html" class="nav-link">List view</a></li>
-                            <li class="nav-item"><a href="learning_grid.html" class="nav-link">Grid view</a></li>
-                            <li class="nav-item"><a href="learning_detailed.html" class="nav-link">Detailed course</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item nav-item-submenu">
-                        <a href="#" class="nav-link">Ecommerce set</a>
-                        <ul class="nav nav-group-sub">
-                            <li class="nav-item"><a href="ecommerce_product_list.html" class="nav-link">Product list</a></li>
-                            <li class="nav-item"><a href="ecommerce_product_grid.html" class="nav-link">Product grid</a></li>
-                            <li class="nav-item"><a href="ecommerce_orders_history.html" class="nav-link">Orders history</a></li>
-                            <li class="nav-item"><a href="ecommerce_customers.html" class="nav-link">Customers</a></li>
-                            <li class="nav-item"><a href="ecommerce_pricing.html" class="nav-link">Pricing tables</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item nav-item-submenu">
-                <a href="#" class="nav-link"><i class="icon-atom2"></i> <span>Widgets</span></a>
-                <ul class="nav nav-group-sub" data-submenu-title="Widgets">
-                    <li class="nav-item"><a href="widgets_content.html" class="nav-link">Content widgets</a></li>
-                    <li class="nav-item"><a href="widgets_stats.html" class="nav-link">Statistics widgets</a></li>
-                    <li class="nav-item"><a href="widgets_menu.html" class="nav-link disabled">Menu widgets <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
-                    <li class="nav-item"><a href="widgets_form.html" class="nav-link disabled">Form widgets <span class="badge bg-transparent align-self-center ml-auto">Coming soon</span></a></li>
-                </ul>
-            </li>
-            <!-- /page kits -->
 
-        </ul>
-    </div>
-    <!-- /main navigation -->
+                    @can('view-permission')
+                    <li class="{{ request()->is('setting/roleGroup') ? 'active' :''}} "><a class="nav-link"
+                            href="{{ url('permissions')}}">{{__('permission.permissions')}}</a>
 
+                    </li>
+                    @endcan
+                    @can('view-user')
+                    <li class=""><a class="nav-link" href="{{ url('system')}}">{{__('permission.system_setings')}}</a>
+
+                    </li>
+                    @endcan
+
+                    @can('view-user')
+                    <li class=""><a class="nav-link" href="{{url('departments')}}">Departments
+                        </a></li>
+                    @endcan
+
+                    @can('view-user')
+                    <li class=""><a class="nav-link" href="{{url('designations')}}">Designations
+                        </a></li>
+                    @endcan
+
+                    @can('view-user')
+                    <li class="{{ request()->is('users') ? 'active' : '' }}"><a class="nav-link"
+                            href="{{url('users')}}">{{__('permission.user')}}
+                            Management</a></li>
+                    @endcan
+
+
+                </ul>
+            </li>
+@endcan
+
+
+    </aside>
 </div>
-<!-- /sidebar content -->
-
-</div>
-<!-- /main sidebar -->

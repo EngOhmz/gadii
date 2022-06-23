@@ -1,32 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  @include('layouts.header')
+ @include('layouts.header')
 
-  <body>
-    <div class="loader"></div>
-    <div id="app">
-      <div class="main-wrapper main-wrapper-1">
-      
-        @include('layouts.top')
+<body>
+<!-- Main navbar -->
+	@include('layouts.main_navbar')
+<!-- /main navbar -->
 
-      @include('layouts.aside')
-      
-       <!-- Main Content -->
-      <div class="main-content">
-         @include('layouts.alerts.message')
-        @yield('content')
-        
-        @include('layouts.setting')
-       
-      </div>
-      @include('layouts.footer')
-    </div>
-</div>
-@include('layouts.script')
-@yield('scripts')
+
+	<!-- Page content -->
+	<div class="page-content">
+	<!-- Main sidebar -->
+	@include('layouts.aside2')
+	<!-- /main sidebar -->
+	
+
+
+		<!-- Main content -->
+		<div class="content-wrapper">
+
+			<!-- Inner content -->
+			<div class="content-inner">
+
+				<!-- Page header -->
+				<div class="page-header page-header-light">
+					<div class="page-header-content header-elements-lg-inline">
+						<div class="page-title d-flex">
+							<h4><i class="icon-arrow-left52 mr-2"></i> <span class="font-weight-semibold">@yield('title-left')</span> - @yield('title-right')</h4>
+							<a href="#" class="header-elements-toggle text-body d-lg-none"><i class="icon-more"></i></a>
+						</div>
+						</div>
+					</div>
+				</div>
+				<!-- /page header -->
+
+
+				<!-- Content area -->
+				<div class="content">
+				@include('layouts.alerts.message')
+				@yield('content')
+
+				</div>
+				<!-- /content area -->
+
+
+				<!-- Footer -->
+				<div class="navbar navbar-expand-lg navbar-light">
+					@include('layouts.footer2')
+				</div>
+				<!-- /footer -->
+
+			</div>
+			<!-- /inner content -->
+
+		</div>
+		<!-- /main content -->
+
+	</div>
+	<!-- /page content -->
+
 </body>
-
-
-<!-- index.html  21 Nov 2019 03:47:04 GMT -->
 </html>

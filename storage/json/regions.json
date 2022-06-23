@@ -1,0 +1,152 @@
+[
+    {
+        "id": "1",
+        "zone_id": "4",
+        "name": "Arusha"
+    },
+    {
+        "id": "2",
+        "zone_id": "2",
+        "name": "Dar es Salaam"
+    },
+    {
+        "id": "3",
+        "zone_id": "4",
+        "name": "Tanga"
+    },
+    {
+        "id": "4",
+        "zone_id": "1",
+        "name": "Dodoma"
+    },
+    {
+        "id": "5",
+        "zone_id": "1",
+        "name": "Iringa"
+    },
+    {
+        "id": "6",
+        "zone_id": "3",
+        "name": "Kagera"
+    },
+    {
+        "id": "7",
+        "zone_id": "7",
+        "name": "Kigoma"
+    },
+    {
+        "id": "8",
+        "zone_id": "4",
+        "name": "Kilimanjaro"
+    },
+    {
+        "id": "9",
+        "zone_id": "5",
+        "name": "Lindi"
+    },
+    {
+        "id": "10",
+        "zone_id": "4",
+        "name": "Manyara"
+    },
+    {
+        "id": "11",
+        "zone_id": "3",
+        "name": "Mara"
+    },
+    {
+        "id": "12",
+        "zone_id": "2",
+        "name": "Morogoro"
+    },
+    {
+        "id": "13",
+        "zone_id": "5",
+        "name": "Mtwara"
+    },
+    {
+        "id": "14",
+        "zone_id": "3",
+        "name": "Mwanza"
+    },
+    {
+        "id": "15",
+        "zone_id": "2",
+        "name": "Pwani"
+    },
+    {
+        "id": "16",
+        "zone_id": "6",
+        "name": "Rukwa"
+    },
+    {
+        "id": "17",
+        "zone_id": "6",
+        "name": "Ruvuma"
+    },
+    {
+        "id": "18",
+        "zone_id": "3",
+        "name": "Shinyanga"
+    },
+    {
+        "id": "19",
+        "zone_id": "1",
+        "name": "Singida"
+    },
+    {
+        "id": "20",
+        "zone_id": "1",
+        "name": "Tabora"
+    },
+    {
+        "id": "21",
+        "zone_id": "6",
+        "name": "Katavi"
+    },
+    {
+        "id": "22",
+        "zone_id": "3",
+        "name": "Geita"
+    },
+    {
+        "id": "23",
+        "zone_id": "3",
+        "name": "Simiyu"
+    },
+    {
+        "id": "24",
+        "zone_id": "6",
+        "name": "Njombe"
+    },
+    {
+        "id": "25",
+        "zone_id": "6",
+        "name": "Mbeya"
+    },
+    {
+        "id": "26",
+        "zone_id": "6",
+        "name": "Zanzibar Central\/South"
+    },
+    {
+        "id": "27",
+        "zone_id": "6",
+        "name": "Pemba North"
+    },
+    {
+        "id": "28",
+        "zone_id": "6",
+        "name": "Zanzibar North"
+    },
+    {
+        "id": "29",
+        "zone_id": "6",
+        "name": "Pemba South"
+    },
+    {
+        "id": "30",
+        "zone_id": "6",
+        "name": "Zanzibar Urban\/West"
+    }
+]
