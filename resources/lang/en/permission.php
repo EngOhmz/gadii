@@ -19,10 +19,23 @@ return [
 
     'system_setings'=>'System Settings',
     'user'=>'Users',
-   
-   
-    
 
+    'manage-dashboard'=>'Dashboard',
+    'manage-farmer'=>'Farmer',
+    'manage-farming'=>'Farming',
+    'manage-orders'=>'Orders',
+    'manage-warehouse'=>'Wherehouse',
+    'manage-shop'=>'Shop',
+    'manage-fuel'=>'Fuel',
+    'manage-access-control'=>'Access Control',
+    'manage-accounting'=>'Accounting',
 
+    'manage-gl-setup'=>'GL Setup',
+    'manage-transaction'=>'Transaction',
+    'manage-leave'=>'Leave',
+    'manage-inventory'=>'Inventory',
+    'manage-logistic'=>'Logistics',
+    'manage-payroll'=>'Payroll',
+    'manage-courier'=>'Courier',
 
 ];

@@ -106,58 +106,7 @@
                         </span>
                     </a>
                 </li>
-
-                <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Cargo Management</span></a>
-
-                    <ul class="nav nav-group-sub" data-submenu-title="Cargo Management">
-
-                        <li class="nav-item"><a class="nav-link" href="{{url('tracking/collection')}}"> Cargo List</a></li>
-
-
-                        <li class="nav-item"><a class="nav-link" href="{{url('tracking/loading')}}"> Loading</a></li>
-
-                        @can('view-cargo-offloading')
-                        <li class="nav-item"><a class="nav-link" href="{{url('tracking/offloading')}}"> Offloading</a></li>
-                        @endcan
-                        @can('view-cargo-delivering')
-                        <li class="nav-item"><a class="nav-link" href="{{url('tracking/delivering')}}">Delivery</a></li>
-                        @endcan
-                        @can('view-cargo-wb')
-                        <li class="nav-item"><a class="nav-link" href="{{url('tracking/wb')}}">Create WB</a></li>
-                        @endcan
-                        @can('view-cargo-activity')
-                        <li class="nav-item"><a class="nav-link" href="{{url('tracking/activity')}}">Track Logistic Activity</a>
-                        </li>
-                        @endcan
-                        @can('view-cargo-order_report')
-                        <li class="nav-item"><a class="nav-link" href="{{url('tracking/order_report')}}">Uplift Report</a></li>
-                        @endcan
-                        @can('view-cargo-truck_mileage')
-                        <li class="nav-item"><a class="nav-link" href="{{url('tracking/truck_mileage')}}">Return Truck Fuel &
-                                Mileage</a></li>
-                        @endcan
-                    </ul>
-                </li>
-                <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Cargo Management</span></a>
-
-                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
-
-
-                        <li class="nav-item"><a class="nav-link"
-                                href="{{url('farmer_management/farmer/')}}">{{__('farmer.manage_farmer')}}</a></li>
-
-                        @can('view-group')
-                        <li class="nav-item"><a class="nav-link"
-                                href="{{url('farmer_management/manage-group')}}">{{__('farmer.manage_group')}}</a></li>
-                        @endcan
-                        @can('view-farmer')
-                        <li class="nav-item"><a class="nav-link"
-                                href="{{url('farmer_management/assign_farmer/')}}">{{__('farmer.assign_farmer')}}</a></li>
-                        @endcan
-                    </ul>
-                </li>
+              
                 @can('manage-farmer')
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link"><i class="icon-copy"></i> <span>{{__('farmer.farmer')}}</span></a>
@@ -361,67 +310,6 @@
                     </ul>
                 </li>
                 @endcan
-
-
-                @can('manage-payroll')
-                <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Payroll</span></a>
-
-                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
-                        @can('view-salary_template')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/salary_template')}}"> Salary
-                                Template</a></li>
-                        @endcan
-                        @can('view-manage_salary')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/manage_salary')}}"> Manage
-                                Salary</a></li>
-                        @endcan
-                        @can('view-employee_salary_list')
-                        <li class="nav-item"><a class="nav-link" href="{{ url('payroll/employee_salary_list') }}">
-                                Employee Salary List</a>
-                        </li>
-                        @endcan
-                        @can('view-make_payment')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/make_payment')}}">Make Payment</a>
-                        </li>
-                        @endcan
-                        @can('view-generate_payslip')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/generate_payslip')}}">Generate
-                                Payslip</a></li>
-                        @endcan
-                        @can('view-payroll_summary')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/payroll_summary')}}">Payroll
-                                Summary</a></li>
-                        @endcan
-                        @can('view-advance_salary')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/advance_salary')}}">Advance
-                                Salary</a></li>
-                        @endcan
-                        @can('view-employee_loan')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/employee_loan')}}">Employee
-                                Loan</a></li>
-                        @endcan
-                        @can('view-overtime')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/overtime')}}">Overtime</a></li>
-                        @endcan
-                        @can('view-nssf')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/nssf')}}">Social Security (NSSF)
-                            </a></li>
-                        @endcan
-                        @can('view-tax')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/tax')}}">Tax </a></li>
-                        @endcan
-                        @can('view-nhif')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/nhif')}}">Health Contribution</a>
-                        </li>
-                        @endcan
-                        @can('view-wcf')
-                        <li class="nav-item"><a class="nav-link" href="{{url('payroll/wcf')}}">WCF Contribution</a></li>
-                        @endcan
-                    </ul>
-                </li>
-                @endcan
-
 
 
                 @can('manage-payroll')
@@ -980,7 +868,7 @@
                             class="nav-label">Chattings</span> </a></li>
 
 
-                @can('manage-cotton')
+               
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link"><i class="icon-copy"></i> <span>
                             {{__('permission.access_control')}}</span></a>
@@ -1024,7 +912,7 @@
 
                     </ul>
                 </li>
-                @endcan
+               
                 <!-- /page kits -->
 
             </ul>

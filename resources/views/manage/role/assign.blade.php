@@ -47,7 +47,7 @@
                   
                         <tr>
                             <td>{{ $i++ }}</td>
-                            <td width="25%">{{ $module->slug }}</td>
+                            <td width="25%">{{ __('password') }}</td>
                             <td>
                                 <div class="row">
                                     All<input type="checkbox" name="checkAlll" id="selectAll">
