@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controller\FarmerController;
@@ -32,10 +33,11 @@ Auth::routes();
 Route::get('/',"HomeController@index")->middleware('auth');
 
 //testing input
+Route::group(['prefix' => 'testing_input'], function () {
 Route::get('file-import','Admin\JournalImportController@importView')->name('import-view');
 Route::post('import','Admin\JournalImportController@import')->name('import');
 Route::post('sample','Admin\JournalImportController@sample')->name('sample');
-
+});
 /*
 Route::group(['prefix'=>'farmer'],function()
 {
@@ -48,6 +50,7 @@ Route::group(['prefix'=>'farmer'],function()
 
 
 // start farming routes
+Route::group(['prefix' => 'farmings'], function () {
 Route::resource('/farming_cost','farming\Farming_costController')->middleware('auth');
 Route::resource('/cost_centre','farming\Cost_CentreController')->middleware('auth');
 Route::resource('/farming_process','farming\Farming_processController')->middleware('auth');
@@ -65,13 +68,17 @@ Route::resource('seeds_type',"farming\Seeds_TypesController" )->middleware('auth
 Route::resource('pesticide_type',"farming\PesticideTypeController" )->middleware('auth');
 Route::get('download',array('as'=>'download','uses'=>'farming\Crops_MonitoringController@download'))->middleware('auth');
 // end farming routes
+});
 
 // start crop life cycle routes
+Route::group(['prefix' => 'crop_lifecycles'], function () {
 Route::resource('irrigation','CropLifeCycle\IrrigationController')->middleware('auth');
 // end crop life cycle routes
+});
 
 
 // start shop routes
+Route::group(['prefix' => 'shops'], function () {
 Route::resource('items', 'shop\ItemsController')->middleware('auth');
 Route::resource('purchase','shop\PurchaseController')->middleware('auth');
 Route::get('findPrice', 'shop\PurchaseController@findPrice')->middleware('auth');  
@@ -80,13 +87,18 @@ Route::resource('payments', 'shop\PaymentsController')->middleware('auth');
 Route::resource('invoice_payment', 'shop\Invoice_paymentController')->middleware('auth');
 Route::resource('invoicepdf', 'shop\PDFController')->middleware('auth');
 Route::get('pdfview',array('as'=>'pdfview','uses'=>'PDFController@pdfview'))->middleware('auth');
+});
 
 //Orders Routes
+Route::group(['prefix' => 'orders'], function () {
 Route::resource('orders','orders\OrdersController')->middleware('auth');
 Route::any('quotationList','orders\OrdersController@quotationList')->middleware('auth');
 Route::any('quotationDetails/{id}','orders\OrdersController@quotationDetails')->middleware('auth');
+});
 
 //Seasson Routes
+Route::group(['prefix' => 'farming_season'], function () {
+
 Route::resource('/seasson','farming\SeassonController')->middleware('auth');
 Route::resource('/cropslifecycle','farming\CropsLifeCycleController')->middleware('auth');
 Route::any('editLifeCycle',array('as'=>'editLifeCycle','uses'=>'farming\CropsLifeCycleController@editLifeCycle'))->middleware('auth');
@@ -97,8 +109,13 @@ Route::get('findSeed',"farming\CropsLifeCycleController@findSeed" )->middleware(
 Route::get('findPesticide',"farming\CropsLifeCycleController@findPesticide" )->middleware('auth');
 Route::get('monitorModal', 'farming\CropsLifeCycleController@discountModal')->middleware('auth');
 Route::post('save_monitor', 'farming\CropsLifeCycleController@save_monitor')->name('monitor.save')->middleware('auth');
+});
 
 Route::get('/home',"HomeController@index" )->middleware('auth');
+
+
+Route::group(['prefix' => 'farmer_management'], function () {
+
 Route::get('farmer','FarmerController@index')->middleware('auth');
 //Route::post('save','FarmerController@store')->middleware('auth');
 Route::get('farmer/{id}/edit','FarmerController@edit')->middleware('auth');
@@ -130,6 +147,8 @@ route::get('land/{id}/delete','LandController@destroy')->middleware('auth');
 route::post('land/{id}/edit','LandController@update')->middleware('auth');
 //oute::get('test',[App\Http\Livewire\Counter::class, 'render'])->middleware('auth');
 
+});
+
 
 //livewire
 Route::view('contacts', 'contacts')->middleware('auth');
@@ -137,16 +156,20 @@ Route::view('test','livewiretest')->middleware('auth');
 Route::view('input-order','agrihub.iorder')->middleware('auth');
 
 //supplier
+Route::group(['prefix' => 'supplier'], function () {
 Route::resource('supplier', 'shop\SupplierController')->middleware('auth');
-
+});
 
 //product
+Route::group(['prefix' => 'product'], function () {
 Route::get('manage/product','ProductController@index')->middleware('auth');
 Route::post('product/save','ProductController@store')->middleware('auth');
 Route::post('product/{id}/edit','ProductController@update')->middleware('auth');
 Route::get('product/{id}/delete','ProductController@destroy')->middleware('auth');
+});
 
 //input order management
+Route::group(['prefix' => 'order_management'], function () {
 //Route::get('purchase/','PurchaseController@index')->middleware('auth');
 Route::post('input/add','PurchaseController@store')->middleware('auth');
 Route::get('get',"PurchaseController@create")->middleware('auth');
@@ -154,26 +177,34 @@ Route::post('ajax-posts/{id}/edit','PurchaseController@edit')->middleware('auth'
 Route::get('order/{id}/{product}/{purchase}/delete','PurchaseController@destroy')->middleware('auth');
 Route::post('order/{id}/update','PurchaseController@update')->middleware('auth');
 Route::get('purchase/{id}/product','PurchaseController@show')->middleware('auth');
-//output order managemnet
+});
 
+//output order managemnet
+Route::group(['prefix' => 'output_order'], function () {
 Route::post('sales/add','SalesController@store')->middleware('auth');
 Route::get('get/sales',"SalesController@create")->middleware('auth');
 Route::get('sales/{id}/{product}/{sale}/delete','SalesController@destroy')->middleware('auth');
 Route::get('sales/{id}/product','SalesController@show')->middleware('auth');
+});
+
 // warehouse management
+Route::group(['prefix' => 'warehouse_management'], function () {
 Route::get('warehouse','WarehouseController@index')->middleware('auth');
 Route::post('warehouse/save','WarehouseController@store')->middleware('auth');
 Route::get('warehouse/{id}/show','WarehouseController@show')->middleware('auth');
 Route::resource('singlewarehouse','Single_warehouseController')->middleware('auth');
 Route::resource('warehouse_backend','warehouse\Warehouse_backendController')->middleware('auth');
-
+});
 
 // make crops orders
+Route::group(['prefix' => 'crop_order'], function () {
 Route::resource('crops_order','Client_OrderController')->middleware('auth');
 Route::resource('manipulation','Orders_Client_ManipulationsController')->middleware('auth');
+});
 
 //  logistic routes
 //  logistic-truck routes
+Route::group(['prefix' => 'logistic_truck'], function () {
 Route::resource('truck', 'Truck\TruckController')->middleware('auth');
 Route::get('connect_trailer', 'Truck\TruckController@connect')->name('truck.connect')->middleware('auth');
 Route::get('connectModal', 'Truck\TruckController@discountModal')->middleware('auth');
@@ -191,8 +222,10 @@ Route::resource('sticker', 'Truck\StickerController')->middleware('auth');
 Route::resource('truckinsurance', 'Truck\TruckInsuranceController')->middleware('auth');
 Route::get('sdownload',array('as'=>'sdownload','uses'=>'Truck\StickerControllerr@sdownload'))->middleware('auth');
 Route::get('tdownload',array('as'=>'tdownload','uses'=>'ruck\TruckInsuranceController@tdownload'))->middleware('auth');
+});
 
 //  logistic-driver routes
+Route::group(['prefix' => 'logistic_driver'], function () {
 Route::resource('driver', 'Driver\DriverController')->middleware('auth');
 Route::get('driver_licence/{id}', 'Driver\DriverController@licence')->name('driver.licence')->middleware('auth');
 Route::get('driver_performance/{id}', 'Driver\DriverController@performance')->name('driver.performance')->middleware('auth');
@@ -202,14 +235,17 @@ Route::get('ldownload',array('as'=>'ldownload','uses'=>'Driver\LicenceController
 Route::get('pdownload',array('as'=>'pdownload','uses'=>'Driver\PerformanceController@pdownload'))->middleware('auth');
 Route::any('driver_fuel_report/{id}', 'Driver\DriverController@fuel')->name('driver.fuel')->middleware('auth');
 Route::any('driver_route/{id}', 'Driver\DriverController@route')->name('driver.route')->middleware('auth');
-
+});
 // Manufacturing routes
+Route::group(['prefix' => 'manufacturing'], function () {
 Route::resource('manufacturing_location', 'Manufacturing\LocationController')->middleware('auth');
 Route::resource('manufacturing_inventory', 'Manufacturing\InventoryController')->middleware('auth');
 Route::resource('bill_of_material', 'Manufacturing\BillOfMaterialController')->middleware('auth');
 Route::resource('work_order', 'Manufacturing\WorkOrderController')->middleware('auth');
+});
 
 // inventory routes
+Route::group(['prefix' => 'inventory'], function () {
 Route::resource('location', 'Inventory\LocationController')->middleware('auth');
 Route::resource('inventory', 'Inventory\InventoryController')->middleware('auth');
 Route::resource('fieldstaff', 'Inventory\FieldStaffController')->middleware('auth');
@@ -244,9 +280,10 @@ Route::get('reallocation_approve/{id}', 'Inventory\GoodReallocationController@ap
 Route::resource('good_disposal', 'Inventory\GoodDisposalController')->middleware('auth');
 Route::get('disposal_approve/{id}', 'Inventory\GoodDisposalController@approve')->name('disposal.approve')->middleware('auth'); 
 Route::get('findReturnService', 'Inventory\GoodReturnController@findService')->middleware('auth');
-
+});
 
 // cotton routes
+Route::group(['prefix' => 'cotton_collection'], function () {
 Route::resource('costants', 'Cotton\CostantsController')->middleware('auth');
 Route::resource('production', 'Cotton\ProductionController')->middleware('auth');
 Route::get('production_pdfview',array('as'=>'production_pdfview','uses'=>'Cotton\ProductionController@inv_pdfview'))->middleware('auth');
@@ -319,8 +356,10 @@ Route::resource('assign_center', 'Cotton\AssignCenterController')->middleware('a
 Route::get('assign_center_approve/{id}', 'Cotton\AssignCenterController@approve')->name('assign_center.approve')->middleware('auth'); 
 Route::post('newreverseAssignCenter', 'Cotton\AssignCenterController@newdiscount')->middleware('auth');
 Route::get('reverse_assign_center', 'Cotton\AssignCenterController@reverse_assign_center')->middleware('auth'); 
+});
 
 //tracking
+Route::group(['prefix' => 'tracking'], function () {
 Route::get('collection', 'Activity\OrderMovementController@collection')->name('order.collection')->middleware('auth');
 Route::get('loading', 'Activity\OrderMovementController@loading')->name('order.loading')->middleware('auth');
 Route::get('offloading', 'Activity\OrderMovementController@offloading')->name('order.offloading')->middleware('auth');
@@ -335,7 +374,10 @@ Route::get('order_report', 'Activity\OrderMovementController@report')->name('ord
 Route::get('findReport', 'Activity\OrderMovementController@findReport')->middleware('auth');
 Route::get('findExp', 'Activity\OrderMovementController@findPrice')->middleware('auth');  
 Route::get('truck_mileage', 'Activity\OrderMovementController@return')->name('order.return')->middleware('auth');
+});
+
 //fuel
+Route::group(['prefix' => 'fuel'], function () {
 Route::resource('fuel', 'Fuel\FuelController')->middleware('auth');
 Route::get('addRoute', 'Fuel\FuelController@route')->middleware('auth');
 Route::resource('routes', 'RouteController')->middleware('auth');
@@ -343,21 +385,26 @@ Route::get('findFromRegion', 'RouteController@findFromRegion')->middleware('auth
 Route::get('findToRegion', 'RouteController@findToRegion')->middleware('auth');  
 Route::get('fuel_approve/{id}', 'Fuel\FuelController@approve')->name('fuel.approve')->middleware('auth');
 Route::get('discountModal', 'Fuel\FuelController@discountModal')->middleware('auth');
+});
 
 //leave
+Route::group(['prefix' => 'leave'], function () {
 Route::resource('leave', 'Leave\LeaveController')->middleware('auth');
 Route::post('addCategory', 'Leave\LeaveController@category')->middleware('auth');
 Route::get('leave_approve/{id}', 'Leave\LeaveController@approve')->name('leave.approve')->middleware('auth');
 Route::get('leave_reject/{id}', 'Leave\LeaveController@reject')->name('leave.reject')->middleware('auth');
+});
 
 //training
+Route::group(['prefix' => 'training'], function () {
 Route::resource('training', 'Training\TrainingController')->middleware('auth');
 Route::get('training_start/{id}', 'Training\TrainingController@start')->name('training.start')->middleware('auth');
 Route::get('training_approve/{id}', 'Training\TrainingController@approve')->name('training.approve')->middleware('auth');
 Route::get('training_reject/{id}', 'Training\TrainingController@reject')->name('training.reject')->middleware('auth');
-
+});
 
 // tyre routes
+Route::group(['prefix' => 'tyre'], function () {
 Route::resource('tyre_brand', 'Tyre\TyreBrandController')->middleware('auth');
 Route::get('tyre_list', 'Tyre\PurchaseTyreController@tyre_list')->name('tyre.list')->middleware('auth');
 Route::resource('purchase_tyre', 'Tyre\PurchaseTyreController')->middleware('auth');
@@ -380,8 +427,9 @@ Route::resource('tyre_return', 'Tyre\TyreReturnController')->middleware('auth');
 Route::get('findTyreDetails', 'Tyre\TyreReturnController@findPrice')->middleware('auth'); 
 Route::get('tyre_return_approve/{id}', 'Tyre\TyreReturnController@approve')->name('tyre_return.approve')->middleware('auth'); 
 Route::get('addSupp', 'Tyre\PurchaseTyreController@addSupp')->middleware('auth');
-
+});
 //pacel
+Route::group(['prefix' => 'pacel'], function () {
 Route::resource('pacel_list', 'Pacel\PacelListController')->middleware('auth');
 Route::resource('client', 'ClientController')->middleware('auth');
 Route::resource('pacel_quotation', 'Pacel\PacelController')->middleware('auth');
@@ -402,10 +450,12 @@ Route::resource('mileage_payment', 'MileagePaymentController')->middleware('auth
 Route::get('mileage', 'MileagePaymentController@mileage')->name('mileage')->middleware('auth'); ;
 Route::get('mileageModal', 'MileagePaymentController@discountModal')->middleware('auth');
 Route::get('mileage_approve/{id}', 'MileagePaymentController@approve')->name('mileage.approve')->middleware('auth');
-
+});
 
 
 //courier
+
+Route::group(['prefix' => 'courier'], function () {
 Route::resource('courier_list', 'Courier\CourierListController')->middleware('auth');
 Route::resource('courier_client', 'Courier\CourierClientController')->middleware('auth');
 Route::resource('courier_quotation', 'Courier\CourierController')->middleware('auth');
@@ -420,8 +470,9 @@ Route::get('courierModal', 'Courier\CourierController@discountModal')->middlewar
 Route::post('newCourierDiscount', 'Courier\CourierController@newdiscount')->middleware('auth');
 Route::get('addCourierSupplier', 'Courier\CourierController@addSupplier')->middleware('auth');
 Route::get('addCourierRoute', 'Courier\CourierController@addRoute')->middleware('auth');
-
+});
 //courier tracking
+Route::group(['prefix' => 'courier_tracking'], function () {
 Route::get('courier_collection', 'Courier\CourierMovementController@collection')->name('courier.collection')->middleware('auth');
 Route::get('courier_loading', 'Courier\CourierMovementController@loading')->name('courier.loading')->middleware('auth');
 Route::get('courier_offloading', 'Courier\CourierMovementController@offloading')->name('courier.offloading')->middleware('auth');
@@ -430,8 +481,10 @@ Route::resource('courier_movement', 'Courier\CourierMovementController')->middle
 Route::resource('courier_activity', 'Courier\CourierActivityController')->middleware('auth');
 Route::get('courier_report', 'Courier\CourierMovementController@report')->name('courier.report')->middleware('auth');
 Route::get('findCourierReport', 'Courier\CourierMovementController@findReport')->middleware('auth');
-
+});
 //GL SETUP
+
+Route::group(['prefix' => 'gl_setup'], function () {
 Route::resource('class_account', 'ClassAccountController')->middleware('auth');
 Route::resource('group_account', 'GroupAccountController')->middleware('auth');
 Route::resource('account_codes', 'AccountCodesController')->middleware('auth');
@@ -447,6 +500,7 @@ Route::resource('transfer', 'TransferController')->middleware('auth');
 Route::resource('transfer2', 'TransferController')->middleware('auth');
 Route::get('transfer_approve/{id}', 'TransferController@approve')->name('transfer.approve')->middleware('auth');
 Route::get('transfer_approve2/{id}', 'TransferController@approve')->name('transfer2.approve')->middleware('auth');
+});
 //route for reports
 Route::group(['prefix' => 'accounting'], function () {
 
@@ -535,6 +589,7 @@ Route::post('save_salary_details',array('as'=>'save_salary_details','uses'=>'Pay
         Route::any('provisioning/csv', 'ReportController@provisioning_csv')->middleware('auth');
     });
 
+    Route::group(['prefix' => 'access_control'], function () {
 Route::resource('permissions', 'PermissionController')->middleware('auth');
 Route::resource('departments', 'DepartmentController')->middleware('auth');
 Route::resource('designations', 'DesignationController')->middleware('auth');
@@ -550,3 +605,4 @@ Route::resource('system', 'SystemController')->middleware('auth');
 
 //user Details
 Route::resource('user_details', 'UserDetailsController')->middleware('auth');
+    });
