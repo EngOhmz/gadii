@@ -71,10 +71,17 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <!-- <a href="{{ route('logout') }}" class="nav-link">
                             <i class="icon-switch2"></i>
                             <span>Logout</span>
-                        </a>
+                        </a> -->
+                <a href="{{ route('logout') }}"   class="dropdown-item has-icon text-danger"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i> {{ __('Logout') }}
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
                     </li>
                 </ul>
             </div>
@@ -103,7 +110,7 @@
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Cargo Management</span></a>
 
-                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                    <ul class="nav nav-group-sub" data-submenu-title="Cargo Management">
 
                         <li class="nav-item"><a class="nav-link" href="{{url('collection')}}"> Cargo List</a></li>
 
@@ -155,7 +162,7 @@
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link"><i class="icon-copy"></i> <span>{{__('farmer.farmer')}}</span></a>
 
-                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                    <ul class="nav nav-group-sub" data-submenu-title="{{__('farmer.farmer')}}">
 
 
                         @can('view-farmer')
@@ -178,7 +185,7 @@
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link"><i class="icon-copy"></i> <span>{{__('farming.farming')}}</span></a>
 
-                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                    <ul class="nav nav-group-sub" data-submenu-title="{{__('farming.farming')}}">
 
 
                         @can('view-manage-farming')
@@ -633,10 +640,9 @@
 
                 @can('manage-cotton')
                 <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link"><i class="icon-copy"></i> <span>
-                            Cotton Collection</span></a>
+                    <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Cotton Collection</span></a>
 
-                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                    <ul class="nav nav-group-sub" data-submenu-title="Cotton Collection">
                         @can('view-top-up-operator')
                         <li class="nav-item"><a class="nav-link" href="{{url('top_up_operator')}}">Top up Operators</a>
                         </li>
@@ -707,7 +713,7 @@
                     <a href="#" class="nav-link"><i class="icon-copy"></i> <span>
                             Cotton Production</span></a>
 
-                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                    <ul class="nav nav-group-sub" data-submenu-title="Cotton Production">
 
 
                         @can('view-top-up-operator')
@@ -725,7 +731,7 @@
                     <a href="#" class="nav-link"><i class="icon-copy"></i> <span>
                             Invoice</span></a>
 
-                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                    <ul class="nav nav-group-sub" data-submenu-title="Invoice">
 
                         @can('view-cotton-invoice')
                         <li class="nav-item"><a class="nav-link" href="{{url('cotton_sales')}}">Cotton Sales</a></li>

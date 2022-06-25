@@ -190,7 +190,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => 'C:\\xampp\\htdocs\\app.ema\\storage\\framework/cache/data',
+        'path' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -361,7 +361,7 @@
       array (
         'driver' => 'sqlite',
         'url' => NULL,
-        'database' => 'admin_de',
+        'database' => 'fmsDB_db',
         'prefix' => '',
         'foreign_key_constraints' => true,
       ),
@@ -371,9 +371,9 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'admin_de',
-        'username' => 'root',
-        'password' => '',
+        'database' => 'fmsDB_db',
+        'username' => 'raja',
+        'password' => 'password',
         'unix_socket' => '',
         'charset' => 'utf8mb4',
         'collation' => 'utf8mb4_unicode_ci',
@@ -391,9 +391,9 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'admin_de',
-        'username' => 'root',
-        'password' => '',
+        'database' => 'fmsDB_db',
+        'username' => 'raja',
+        'password' => 'password',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -406,9 +406,9 @@
         'url' => NULL,
         'host' => '127.0.0.1',
         'port' => '3306',
-        'database' => 'admin_de',
-        'username' => 'root',
-        'password' => '',
+        'database' => 'fmsDB_db',
+        'username' => 'raja',
+        'password' => 'password',
         'charset' => 'utf8',
         'prefix' => '',
         'prefix_indexes' => true,
@@ -546,7 +546,7 @@
     ),
     'temporary_files' => 
     array (
-      'local_path' => 'C:\\xampp\\htdocs\\app.ema\\storage\\framework/cache/laravel-excel',
+      'local_path' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/framework/cache/laravel-excel',
       'remote_disk' => NULL,
       'remote_prefix' => NULL,
       'force_resync_remote' => NULL,
@@ -560,12 +560,12 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\xampp\\htdocs\\app.ema\\public',
+        'root' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/public',
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\xampp\\htdocs\\app.ema\\storage\\app/public',
+        'root' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/app/public',
         'url' => 'https://del.co.tz/storage',
         'visibility' => 'public',
       ),
@@ -583,7 +583,7 @@
     ),
     'links' => 
     array (
-      'C:\\xampp\\htdocs\\app.ema\\public\\storage' => 'C:\\xampp\\htdocs\\app.ema\\storage\\app/public',
+      '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/public/storage' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/app/public',
     ),
   ),
   'hashing' => 
@@ -712,13 +712,13 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => 'C:\\xampp\\htdocs\\app.ema\\storage\\logs/laravel.log',
+        'path' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/logs/laravel.log',
         'level' => 'debug',
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => 'C:\\xampp\\htdocs\\app.ema\\storage\\logs/laravel.log',
+        'path' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
       ),
@@ -769,7 +769,7 @@
       ),
       'emergency' => 
       array (
-        'path' => 'C:\\xampp\\htdocs\\app.ema\\storage\\logs/laravel.log',
+        'path' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/logs/laravel.log',
       ),
     ),
   ),
@@ -835,7 +835,7 @@
       'theme' => 'default',
       'paths' => 
       array (
-        0 => 'C:\\xampp\\htdocs\\app.ema\\resources\\views/vendor/mail',
+        0 => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/resources/views/vendor/mail',
       ),
     ),
   ),
@@ -940,7 +940,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => 'C:\\xampp\\htdocs\\app.ema\\storage\\framework/sessions',
+    'files' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -960,9 +960,9 @@
   array (
     'paths' => 
     array (
-      0 => 'C:\\xampp\\htdocs\\app.ema\\resources\\views',
+      0 => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/resources/views',
     ),
-    'compiled' => 'C:\\xampp\\htdocs\\app.ema\\storage\\framework\\views',
+    'compiled' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/framework/views',
   ),
   'dompdf' => 
   array (
@@ -971,10 +971,10 @@
     'convert_entities' => true,
     'defines' => 
     array (
-      'font_dir' => 'C:\\xampp\\htdocs\\app.ema\\storage\\fonts',
-      'font_cache' => 'C:\\xampp\\htdocs\\app.ema\\storage\\fonts',
-      'temp_dir' => 'C:\\Users\\SAMWEL~1\\AppData\\Local\\Temp',
-      'chroot' => 'C:\\xampp\\htdocs\\app.ema',
+      'font_dir' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/fonts',
+      'font_cache' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/storage/fonts',
+      'temp_dir' => '/tmp',
+      'chroot' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main',
       'enable_font_subsetting' => false,
       'pdf_backend' => 'CPDF',
       'default_media_type' => 'screen',
@@ -1031,7 +1031,7 @@
   'livewire' => 
   array (
     'class_namespace' => 'App\\Http\\Livewire',
-    'view_path' => 'C:\\xampp\\htdocs\\app.ema\\resources\\views/livewire',
+    'view_path' => '/home/raja/Documents/code/ujuzi/ujuzi2/Ema-main/resources/views/livewire',
     'layout' => 'layouts.app',
     'asset_url' => NULL,
     'app_url' => NULL,

@@ -687,10 +687,27 @@ function isTyping(status) {
 
 /**
  *-------------------------------------------------------------
+ * Handle visibility page
+ *-------------------------------------------------------------
+ */
+function handleVisibilityChange() {
+  if (!document?.hidden) {
+    makeSeen(true);
+  }
+}
+
+document.addEventListener("visibilitychange", handleVisibilityChange, false);
+
+/**
+ *-------------------------------------------------------------
  * Trigger seen event
  *-------------------------------------------------------------
  */
 function makeSeen(status) {
+  if (document?.hidden) {
+    return;
+  }
+
   // remove unseen counter for the user from the contacts list
   $(".messenger-list-item[data-contact=" + getMessengerId() + "]")
     .find("tr>td>b")

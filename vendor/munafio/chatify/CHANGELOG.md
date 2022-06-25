@@ -1,7 +1,22 @@
 # Change log
 
 All notable changes to this project will be documented in this file.
-v.1.4.0
+
+## v1.5.1 (2022-06-09)
+
+### Fixed
+
+- Sync the `sending a message form`'s allowed files/images with the `config` file (Update sendForm.blade.php [#190](https://github.com/munafio/chatify/pull/190))
+
+## v1.5.0 (2022-06-08)
+
+### Added
+
+- Page/Document visibility Support which improves (seen) feature #183
+
+### Fixed
+
+- fix: case insensitive file upload extension check #182
 
 ## v1.4.0 (2022-05-02)
 

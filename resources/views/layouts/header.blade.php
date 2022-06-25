@@ -38,4 +38,34 @@
 	<script src="{{asset('global_assets/js/demo_charts/pages/dashboard/light/bullets.js')}}"></script>
 	<!-- /theme JS files -->
 
+
+	 <script type="text/javascript" >
+    function CheckAll(obj){
+        var row = obj.parentNode.parentNode;
+        var inputs = row.getElementsByTagName("input");
+
+        for(var i = 0; i < inputs.length; i++){
+            if(inputs[i].type == "checkbox") {
+                inputs[i].checked = obj.checked;
+            }
+
+        }
+    }
+
+    </script>
+
+    <script>
+
+$(document).ready(function(){
+
+        $(#select-all).click( function()  {
+
+    $('input[type="checkbox"]').prop('checked', this.checked);
+
+})
+
+});
+
+</script>
+
 </head>
