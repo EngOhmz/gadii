@@ -139,25 +139,6 @@
                         @endcan
                     </ul>
                 </li>
-                <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link"><i class="icon-copy"></i> <span>Cargo Management</span></a>
-
-                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
-
-
-                        <li class="nav-item"><a class="nav-link"
-                                href="{{url('farmer/')}}">{{__('farmer.manage_farmer')}}</a></li>
-
-                        @can('view-group')
-                        <li class="nav-item"><a class="nav-link"
-                                href="{{url('manage-group')}}">{{__('farmer.manage_group')}}</a></li>
-                        @endcan
-                        @can('view-farmer')
-                        <li class="nav-item"><a class="nav-link"
-                                href="{{url('assign_farmer/')}}">{{__('farmer.assign_farmer')}}</a></li>
-                        @endcan
-                    </ul>
-                </li>
                 @can('manage-farmer')
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link"><i class="icon-copy"></i> <span>{{__('farmer.farmer')}}</span></a>
@@ -644,7 +625,7 @@
 
                     <ul class="nav nav-group-sub" data-submenu-title="Cotton Collection">
                         @can('view-top-up-operator')
-                        <li class="nav-item"><a class="nav-link" href="{{url('top_up_operator')}}">Top up Operators</a>
+                        <li class="nav-item {{ (request()->is('top_up_operator/*')) ? 'active' : '' }}"><a class="nav-link" href="{{url('top_up_operator')}}">Top up Operators</a>
                         </li>
                         @endcan
                         @can('view-top-up-center')
@@ -926,13 +907,13 @@
 
                 @can('manage-cotton')
                 <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link"><i class="icon-copy"></i> <span>
+                    <a href="#" class="nav-link active"><i class="icon-copy"></i> <span>
                             Reports</span></a>
 
                     <ul class="nav nav-group-sub" data-submenu-title="Layouts">
 
                         @can('view-stock-report')
-                        <li class="nav-item"><a class="nav-link" href="{{url('stock_report')}}"> Stock
+                        <li class="nav-item"><a class="nav-link {{ (request()->is('stock_report')) ? 'active' : '' }}" href="{{url('stock_report')}}"> Stock
                                 Report</a></li>
                         @endcan
                         @can('view-invoice-report')
@@ -963,15 +944,13 @@
                         @endcan
                       
 
-                        <li class="nav-item"><a class="nav-link" href="{{url('chatify')}}"><i
-                                    class="fa fa-th-large"></i> <span class="nav-label">Chatting</span> </a>
-                        </li>
+                       
                     </ul>
                 </li>
                 @endcan
 
-                <li><a class="nav-link" href="{{url('chatify')}}"><i class="icon-copy"></i> <span
-                            class="nav-label">Chatting</span> </a></li>
+                <li><a  href="{{url('chatify')}}" class="nav-link active"><i class="icon-copy"></i> <span
+                            class="nav-label">Chattings</span> </a></li>
 
 
                 @can('manage-cotton')

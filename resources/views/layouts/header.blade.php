@@ -36,6 +36,16 @@
 	<script src="{{asset('global_assets/js/demo_charts/pages/dashboard/light/heatmaps.js')}}"></script>
 	<script src="{{asset('global_assets/js/demo_charts/pages/dashboard/light/pies.js')}}"></script>
 	<script src="{{asset('global_assets/js/demo_charts/pages/dashboard/light/bullets.js')}}"></script>
+
+		<!-- Theme JS files -->
+	<script src="{{asset('global_assets/js/plugins/tables/datatables/datatables.min.js')}}"></script>
+
+    
+
+	<script src="{{asset('global_assets/js/plugins/tables/datatables/datatables.min.js')}}"></script>
+
+	<script src="{{asset('global_assets/js/demo_pages/datatables_basic.js')}}"></script>
+<!-- /theme JS files -->
 	<!-- /theme JS files -->
 
 

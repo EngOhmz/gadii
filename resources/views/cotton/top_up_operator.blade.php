@@ -1,8 +1,5 @@
 @extends('layouts.master')
 
-
-
-
 @section('content')
 
         <div class="row">
@@ -33,7 +30,7 @@
 
 
                                 <div class="table-responsive">
-                                    <table border="0" cellspacing="15" cellpadding="20">
+                                    <table class="table datatable-basic">
                                         <tbody>
 
                                             <tr>
@@ -50,7 +47,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic">
                                         <thead>
                                             <tr>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
@@ -86,6 +83,30 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                      
+                                <tr>
+									<td>Marth</td>
+									<td><a href="#">Enright</a></td>
+									<td>Traffic Court Referee</td>
+									<td>22 Jun 1972</td>
+                                    <td>22 Jun 1972</td>
+									<td><span class="badge badge-success">Active</span></td>
+									<td class="text-center">
+										<div class="list-icons">
+											<div class="dropdown">
+												<a href="#" class="list-icons-item" data-toggle="dropdown">
+													<i class="icon-menu9"></i>
+												</a>
+
+												<div class="dropdown-menu dropdown-menu-right">
+													<a href="#" class="dropdown-item"><i class="icon-file-pdf"></i> Export to .pdf</a>
+													<a href="#" class="dropdown-item"><i class="icon-file-excel"></i> Export to .csv</a>
+													<a href="#" class="dropdown-item"><i class="icon-file-word"></i> Export to .doc</a>
+												</div>
+											</div>
+										</div>
+									</td>
+								</tr>
                                             @if(!@empty($transfer))
                                             @foreach ($transfer as $row)
                                             <tr class="gradeA even" role="row">
@@ -430,7 +451,7 @@ $(document).ready(function() {
 
     });
 
-    var table = $('#table-1').DataTable();
+   // var table = $('#table-1').DataTable();
 
     // Refilter the table
     $('#min, #max').on('change', function() {
@@ -439,6 +460,7 @@ $(document).ready(function() {
 
 });
 </script>
+
 
 
 
