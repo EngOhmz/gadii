@@ -99,7 +99,7 @@
                         title="Main"></i>
                 </li>
                 <li class="nav-item">
-                    <a href="index.html" class="nav-link active">
+                    <a href="{{url('home')}}" class="nav-link  {{ (request()->is('farmer_management/*')) ? 'active' : ''  }}">
                         <i class="icon-home4"></i>
                         <span>
                             Dashboard

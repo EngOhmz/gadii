@@ -187,22 +187,22 @@ class PermisionSeeder extends Seeder
            
 
             #3.start manage-AccessControl permissions  
-            ['slug' => 'view-roles','sys_module_id'=>7],
-            ['slug' => 'add-roles','sys_module_id'=>7],
-            ['slug' => 'edit-roles','sys_module_id'=>7],
-            ['slug' => 'delete-roles','sys_module_id'=>7],
+            ['slug' => 'view-roles','sys_module_id'=>8],
+            ['slug' => 'add-roles','sys_module_id'=>8],
+            ['slug' => 'edit-roles','sys_module_id'=>8],
+            ['slug' => 'delete-roles','sys_module_id'=>8],
 
-            ['slug' => 'view-permission','sys_module_id'=>7],
-            ['slug' => 'add-permission','sys_module_id'=>7],
-            ['slug' => 'edit-permission','sys_module_id'=>7],
-            ['slug' => 'delete-permission','sys_module_id'=>7],
+            ['slug' => 'view-permission','sys_module_id'=>8],
+            ['slug' => 'add-permission','sys_module_id'=>8],
+            ['slug' => 'edit-permission','sys_module_id'=>8],
+            ['slug' => 'delete-permission','sys_module_id'=>8],
 
-            ['slug' => 'view-user','sys_module_id'=>7],
-            ['slug' => 'add-user','sys_module_id'=>7],
-            ['slug' => 'edit-user','sys_module_id'=>7],
-            ['slug' => 'delete-user','sys_module_id'=>7],
+            ['slug' => 'view-user','sys_module_id'=>8],
+            ['slug' => 'add-user','sys_module_id'=>8],
+            ['slug' => 'edit-user','sys_module_id'=>8],
+            ['slug' => 'delete-user','sys_module_id'=>8],
 
-            ['slug' => 'view-dashboard','sys_module_id'=>7],
+            ['slug' => 'view-dashboard','sys_module_id'=>8],
             
 
             

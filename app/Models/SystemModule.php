@@ -12,6 +12,7 @@ class SystemModule extends Model
     protected $table = 'sys_modules';
     protected $fillable = [
         'slug',
+        'name'
     ];
 
     public function permissions()
