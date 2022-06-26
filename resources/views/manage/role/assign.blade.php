@@ -47,13 +47,13 @@
                   
                         <tr>
                             <td>{{ $i++ }}</td>
-                            <td width="25%">{{ __('password') }}</td>
+                            <td width="25%">{{ $module->name }}</td>
                             <td>
                                 <div class="row">
                                     All<input type="checkbox" name="checkAlll" id="selectAll">
                                 </div>
                                 <br>
-                               <div class="row">
+                               <div class="row checkboxes">
 
                                     @foreach($permissions as $permission)
                                     <?php $p = $permission->slug  ?>
