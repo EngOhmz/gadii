@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<?php
+$settings= App\Models\System::first();
+?>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Limitless - Responsive Web Application Kit by Eugene Kopyov</title>
+    <title>EMA ERP - by Ujuzinet</title>
 
     <!-- Global stylesheets -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet"
@@ -26,15 +28,13 @@
 </head>
 
 <body>
-    <?php
-$settings= App\Models\System::first();
-?>
+
     <!-- Main navbar -->
     <div class="navbar navbar-expand-lg navbar-dark bg-indigo navbar-static">
         <div class="navbar-brand ml-2 ml-lg-0">
             <a href="index.html" class="d-inline-block">
  
-                <img src="../../../../global_assets/images/logo_light.png" alt="">            {{ !empty($settings->name) ? $settings->name: ''}}
+                <img src="{{url('public/assets/img/logo')}}/{{!empty($settings->picture) ? $settings->picture: ''}}" alt="">            {{ !empty($settings->name) ? $settings->name: ''}}
             </a>
         </div>
 
@@ -143,18 +143,18 @@ $settings= App\Models\System::first();
 
                     <div class="navbar-collapse collapse" id="navbar-footer">
                         <span class="navbar-text">
-                            &copy; 2015 - 2018. <a href="#">Limitless Web App Kit</a> by <a
-                                href="https://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
+                            &copy; <?php echo date('Y'); ?> <a href="#">EMA ERP</a> by <a
+                                href="https://ema.co.tz/" target="_blank">Ujuzinet  Company Limited</a>
                         </span>
 
                         <ul class="navbar-nav ml-lg-auto">
-                            <li class="nav-item"><a href="https://kopyov.ticksy.com/" class="navbar-nav-link"
+                            <li class="nav-item"><a href="https://ema.co.tz/" class="navbar-nav-link"
                                     target="_blank"><i class="icon-lifebuoy mr-2"></i> Support</a></li>
-                            <li class="nav-item"><a href="https://demo.interface.club/limitless/docs/"
+                            <li class="nav-item"><a href="https://ema.co.tz/"
                                     class="navbar-nav-link" target="_blank"><i class="icon-file-text2 mr-2"></i>
                                     Docs</a></li>
                             <li class="nav-item"><a
-                                    href="https://themeforest.net/item/limitless-responsive-web-application-kit/13080328?ref=kopyov"
+                                    href="https://ema.co.tz/"
                                     class="navbar-nav-link font-weight-semibold"><span class="text-pink"><i
                                             class="icon-cart2 mr-2"></i> Purchase</span></a></li>
                         </ul>
