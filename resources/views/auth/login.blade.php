@@ -1,160 +1,176 @@
-@extends('layouts.main2')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('contents')
-<div class="container">
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-12 col-md-6 col-lg-8">
-                <?php
-                    $settings= App\Models\System::first();
-                    //$settings= App\Models\System::first()->where('added_by',auth()->user()->user_id);
-                 ?>
-               
-               
-            
-                   <!-- <div class="card-body">
-                        <div id="carouselExampleIndicators2" class="carousel slide" data-ride="carousel">
-                            <ol class="carousel-indicators">
-                                <li data-target="#carouselExampleIndicators2" data-slide-to="0" class=""></li>
-                                <li data-target="#carouselExampleIndicators2" data-slide-to="1" class=""></li>
-                                <li data-target="#carouselExampleIndicators2" data-slide-to="2" class="active"></li>
-                            </ol>
-                            <div class="carousel-inner">
-                                <div class="carousel-item">
-                                    <img class="d-block w-100" src="{{url('assets/img/blog/img04.jpg') }}"
-                                        alt="First slide">
-                                    <div class="carousel-caption d-none d-md-block">
-                                        <h5>Heading</h5>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                            tempor incididunt ut labore et dolore magna aliqua.</p>
-                                    </div>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Limitless - Responsive Web Application Kit by Eugene Kopyov</title>
+
+    <!-- Global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet"
+        type="text/css">
+    <link href="asset('global_assets/css/icons/icomoon/styles.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{asset('assets2/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <!-- /global stylesheets -->
+
+    <!-- Core JS files -->
+    <script src="asset('global_assets/js/main/jquery.min.js') }}"></script>
+    <script src="asset('global_assets/js/main/bootstrap.bundle.min.js') }}"></script>
+    <!-- /core JS files -->
+
+    <!-- Theme JS files -->
+    <script src="{{asset('assets2/js/app.js') }}"></script>
+    <!-- /theme JS files -->
+
+</head>
+
+<body>
+    <?php
+$settings= App\Models\System::first();
+?>
+    <!-- Main navbar -->
+    <div class="navbar navbar-expand-lg navbar-dark bg-indigo navbar-static">
+        <div class="navbar-brand ml-2 ml-lg-0">
+            <a href="index.html" class="d-inline-block">
+ 
+                <img src="../../../../global_assets/images/logo_light.png" alt="">            {{ !empty($settings->name) ? $settings->name: ''}}
+            </a>
+        </div>
+
+        <div class="d-flex justify-content-end align-items-center ml-auto">
+            <ul class="navbar-nav flex-row">
+                <li class="nav-item">
+                    <a href="#" class="navbar-nav-link">
+                        <i class="icon-lifebuoy"></i>
+                        <span class="d-none d-lg-inline-block ml-2">Support</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="navbar-nav-link">
+                        <i class="icon-user-plus"></i>
+                        <span class="d-none d-lg-inline-block ml-2">Register</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="navbar-nav-link">
+                        <i class="icon-user-lock"></i>
+                        <span class="d-none d-lg-inline-block ml-2">Login</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /main navbar -->
+
+
+    <!-- Page content -->
+    <div class="page-content">
+
+        <!-- Main content -->
+        <div class="content-wrapper">
+
+            <!-- Inner content -->
+            <div class="content-inner">
+
+                <!-- Content area -->
+                <div class="content d-flex justify-content-center align-items-center">
+
+                    <!-- Login form -->
+                    <form class="login-form" method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <div class="text-center mb-3">
+         
+                                    <h5 class="mb-0">Login</h5>
+                                    <span class="d-block text-muted">Enter your credentials below</span>
                                 </div>
-                                <div class="carousel-item">
-                                    <img class="d-block w-100" src="{{url('assets/img/blog/img07.jpg') }}"
-                                        alt="Second slide">
-                                    <div class="carousel-caption d-none d-md-block">
-                                        <h5>Heading</h5>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                            tempor incididunt ut labore et dolore magna aliqua.</p>
-                                    </div>
-                                </div>
-                                <div class="carousel-item active">
-                                    <img class="d-block w-100" src="{{url('assets/img/blog/img06.jpg') }}"
-                                        alt="Third slide">
-                                    <div class="carousel-caption d-none d-md-block">
-                                        <h5>Heading</h5>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                            tempor incididunt ut labore et dolore magna aliqua.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <a class="carousel-control-prev" href="#carouselExampleIndicators2" role="button"
-                                data-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            <a class="carousel-control-next" href="#carouselExampleIndicators2" role="button"
-                                data-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>!-->
 
-           <!-- </div>!-->
-
-            
-              <!--  <div class="card">
-                    <div class="card-header">
-                        <h4>{{ !empty($settings->name) ? $settings->name: ''}}</h4>
-                    </div>!-->
-            
-              <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-4 col-xl-8 offset-xl-2">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h4>{{ !empty($settings->name) ? $settings->name: ''}} Login</h4>
-                    </div>
-           
-            <!--<div class="col-12 col-sm-8  col-md-6  col-lg-4">
-            <div class="card card-primary">
-              <div class="card-header">
-                <h4>Login</h4> 
-              </div>!-->
-              <div class="card-body">
-              <form method="POST" action="{{ route('login') }}">
-                @csrf
-                  <div class="form-group">
-                    <label for="email">User Name</label>
-                    <input id="email" type="text" class="form-control @error('email') is-invalid @enderror" name="email" tabindex="1" required autofocus>
-                    @error('email')
-                    <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                    @enderror
-                  </div>
-                  <div class="form-group">
-                    <div class="d-block">
-                      <label for="password" class="control-label">Password</label>
-                      <div class="float-right">
-                        <a href="auth-forgot-password.html" class="text-small">
-                          Forgot Password?
-                        </a>
-                      </div>
-                    </div>
-                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" tabindex="2" required>
-                    @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                    @enderror
-                  </div>
-                  <!--
-                          <div class="form-group ">
-                                    <label for="address">Select Company</label>
-                                    <?php
-                                       $roles = App\Models\Role::all();
-                                    ?>
-
-                                    <select class="form-control @error('register_as') is-invalid @enderror"
-                                        name="login_as" id="login_as">
-                                          <option value="">Select Company</option>
-                                        @foreach($roles as $row)
-                                        @if(($row->id == 35))
-                                            <option value="{{$row->id}}">
-                                                {{ $row->slug }}
-                                            </option>
-                                            @endif
-                                            @endforeach
-                                    </select>
-                                    @error('register_as')
+                                <div class="form-group form-group-feedback form-group-feedback-left">
+                                    <input id="email" type="text"
+                                        class="form-control @error('email') is-invalid @enderror" name="email"
+                                        tabindex="1" required autofocus>
+                                    @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
+                                    <div class="form-control-feedback">
+                                        <i class="icon-user text-muted"></i>
+                                    </div>
                                 </div>
-                                -->
-                  <div class="form-group">
-                    <div class="custom-control custom-checkbox">
-                      <input type="checkbox" name="remember" class="custom-control-input" tabindex="3" id="remember-me">
-                      <label class="custom-control-label" for="remember-me">Remember Me</label>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
-                      Login
-                    </button>
-                  </div>
-                </form>
-                <div class="text-center mt-4 mb-3">
-                  <div class="text-job text-muted"> Don't have an account? <a href="{{route('register')}}">Create One</a></div>
+
+                                <div class="form-group form-group-feedback form-group-feedback-left">
+                                    <input id="password" type="password"
+                                        class="form-control @error('password') is-invalid @enderror" name="password"
+                                        tabindex="2" required>
+                                    @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                    <div class="form-control-feedback">
+                                        <i class="icon-lock2 text-muted"></i>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+                                </div>
+
+                                <div class="text-center">
+                                    <a href="login_password_recover.html">Forgot password?</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- /login form -->
+
                 </div>
-               
-              </div>  
+                <!-- /content area -->
+
+
+                <!-- Footer -->
+                <div class="navbar navbar-expand-lg navbar-light">
+                    <div class="text-center d-lg-none w-100">
+                        <button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse"
+                            data-target="#navbar-footer">
+                            <i class="icon-unfold mr-2"></i>
+                            Footer
+                        </button>
+                    </div>
+
+                    <div class="navbar-collapse collapse" id="navbar-footer">
+                        <span class="navbar-text">
+                            &copy; 2015 - 2018. <a href="#">Limitless Web App Kit</a> by <a
+                                href="https://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
+                        </span>
+
+                        <ul class="navbar-nav ml-lg-auto">
+                            <li class="nav-item"><a href="https://kopyov.ticksy.com/" class="navbar-nav-link"
+                                    target="_blank"><i class="icon-lifebuoy mr-2"></i> Support</a></li>
+                            <li class="nav-item"><a href="https://demo.interface.club/limitless/docs/"
+                                    class="navbar-nav-link" target="_blank"><i class="icon-file-text2 mr-2"></i>
+                                    Docs</a></li>
+                            <li class="nav-item"><a
+                                    href="https://themeforest.net/item/limitless-responsive-web-application-kit/13080328?ref=kopyov"
+                                    class="navbar-nav-link font-weight-semibold"><span class="text-pink"><i
+                                            class="icon-cart2 mr-2"></i> Purchase</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- /footer -->
+
             </div>
-            
-            </div>
+            <!-- /inner content -->
+
         </div>
+        <!-- /main content -->
+
     </div>
-</div>
-@endsection
+    <!-- /page content -->
+
+</body>
+
+</html>
