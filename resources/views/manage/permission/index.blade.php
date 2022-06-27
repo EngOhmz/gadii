@@ -13,12 +13,13 @@
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                           
+                         <!--  
                         <button type="button" class="btn btn-outline-info btn-xs px-4"
                             data-toggle="modal" data-target="#addPermissionModal">
                         <i class="fa fa-plus-circle"></i>
                         Add
                     </button>
+-->
 
 
                         </ul>
@@ -45,6 +46,8 @@
                             <td>{{ $permission->slug }}</td>
                             <td>{{ $permission->modules->slug  ?? '' }}</td>
                             <td align="right">
+                                unmodified
+                                <!--
                                 {!! Form::open(['route' => ['permissions.destroy', $permission->id], 'method' => 'delete']) !!}
                                 <button type="button" class="btn btn-outline-info btn-xs edit_permission_btn"
                                         data-toggle="modal"
@@ -56,6 +59,7 @@
                                 </button>
                                 {{ Form::button('<i class="fas fa-trash"></i> Delete', ['type' => 'submit', 'class' => 'btn btn-outline-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) }}
                                 {{ Form::close() }}
+-->
                             </td>
                         </tr>
                     @endcan
