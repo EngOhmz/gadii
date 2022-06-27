@@ -137,7 +137,7 @@
                 </li>
                 @endcan
 
-                @can('manage-farming')
+                <!-- @can('manage-farming')
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link {{ (request()->is('farmings/*')) ? 'active' : ''  }}"><i
                             class="icon-copy"></i> <span>{{__('farming.farming')}}</span></a>
@@ -199,7 +199,7 @@
                         @endcan
                     </ul>
                 </li>
-                @endcan
+                @endcan -->
 
                 @can('manage-orders1')
                 <li class="nav-item nav-item-submenu">
@@ -342,7 +342,7 @@
                 </li>
                 @endcan
 
-                @can('manage-courier')
+                <!-- @can('manage-courier')
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link {{ (request()->is('courier_tracking/*')) ? 'active' : ''  }}"><i
                             class="icon-copy"></i> <span>Courier Tracking</span></a>
@@ -386,7 +386,7 @@
                         @endcan
                     </ul>
                 </li>
-                @endcan
+                @endcan -->
 
 
                 @can('manage-payroll')
@@ -471,12 +471,12 @@
                 </li>
                 @endcan
 
-                @can('manage-warehouse')
+                <!-- @can('manage-warehouse')
                 <li class="nav-item"><a
                         class="nav-link {{ (request()->is('warehouse_management/warehouse*')) ? 'active' : ''  }}"
                         href="{{url('warehouse_management/warehouse')}}"><i data-feather="command"></i>Warehouse</a>
                 </li>
-                @endcan
+                @endcan -->
 
                 @can('view-supplier')
                 <li class="nav-item nav-item-submenu">
@@ -625,7 +625,7 @@
                 @endcan
 
 
-                @can('manage-farmer')
+                <!-- @can('manage-farmer')
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link {{ (request()->is('manufacturing/*')) ? 'active' : ''  }}"><i
                             class="icon-copy"></i> <span>
@@ -710,7 +710,7 @@
                         @endcan
                     </ul>
                 </li>
-                @endcan
+                @endcan -->
 
 
                 @can('manage-cotton')
