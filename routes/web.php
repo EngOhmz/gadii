@@ -249,6 +249,7 @@ Route::group(['prefix' => 'inventory'], function () {
 Route::resource('location', 'Inventory\LocationController')->middleware('auth');
 Route::resource('inventory', 'Inventory\InventoryController')->middleware('auth');
 Route::resource('fieldstaff', 'Inventory\FieldStaffController')->middleware('auth');
+Route::resource('requisition', 'Inventory\RequisitionController')->middleware('auth');
 Route::resource('purchase_inventory', 'Inventory\PurchaseInventoryController')->middleware('auth');
 Route::get('findInvPrice', 'Inventory\PurchaseInventoryController@findPrice')->middleware('auth'); 
 Route::get('invModal', 'Inventory\PurchaseInventoryController@discountModal')->middleware('auth');

@@ -562,6 +562,11 @@
                                 class="nav-link {{ (request()->is('inventory/fieldstaff*')) ? 'active' : ''  }}"
                                 href="{{url('inventory/fieldstaff')}}">Field Staff</a></li>
                         @endcan
+                        @can('view-service')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('inventory/requisition*')) ? 'active' : ''  }}"
+                                href="{{url('inventory/requisition')}}">Requisition</a></li>
+                        @endcan
                         @can('view-purchase_inventory')
                         <li class="nav-item"><a
                                 class="nav-link {{ (request()->is('inventory/purchase_inventory*')) ? 'active' : ''  }}"
