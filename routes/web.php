@@ -111,7 +111,7 @@ Route::get('monitorModal', 'farming\CropsLifeCycleController@discountModal')->mi
 Route::post('save_monitor', 'farming\CropsLifeCycleController@save_monitor')->name('monitor.save')->middleware('auth');
 });
 
-Route::get('/home',"HomeController@index" )->middleware('auth');
+Route::get('home',"HomeController@index" )->middleware('auth');
 
 
 Route::group(['prefix' => 'farmer_management'], function () {
@@ -156,7 +156,7 @@ Route::view('test','livewiretest')->middleware('auth');
 Route::view('input-order','agrihub.iorder')->middleware('auth');
 
 //supplier
-Route::group(['prefix' => 'supplier'], function () {
+Route::group(['prefix' => 'purchases'], function () {
 Route::resource('supplier', 'shop\SupplierController')->middleware('auth');
 });
 

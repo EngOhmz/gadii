@@ -182,9 +182,14 @@
             </li>
 
             <li class="nav-item">
-                <a href="#" class="navbar-nav-link navbar-nav-link-toggler">
-                    <i class="icon-switch2"></i>
+            <a href="{{ route('logout') }}"   class="navbar-nav-link navbar-nav-link-toggler"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                   <i class="icon-switch2"></i>
                 </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+             
             </li>
         </ul>
     </div>

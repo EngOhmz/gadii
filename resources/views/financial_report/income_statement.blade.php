@@ -129,11 +129,9 @@
  <?php
                    
                         $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $second_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                              [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                              [$start_date, $second_date])->sum('debit');
                             
                         
                             
@@ -188,11 +186,9 @@
  <?php
                    
                         $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $second_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date,$second_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date,$second_date])->sum('debit');
 
 
                             
@@ -271,11 +267,9 @@ $gross=$total_incomes+$total_o-$total_cost;
  <?php
                    
                         $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $second_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $second_date])->sum('debit');
                             
                         
 
@@ -394,8 +388,7 @@ $tax=$profit*0.3;
 <tbody>
                     <?php                   
                         $account = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->orderBy('date','asc')->get();
+                            [$start_date, $second_date])->orderBy('date','asc')->get();
                         ?>  
                  @foreach($account  as $a)
                                  <tr>
@@ -410,11 +403,9 @@ $tax=$profit*0.3;
  <?php
                    
                         $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $second_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $second_date])->sum('debit');
                             
 
                         ?>  
@@ -485,8 +476,7 @@ $tax=$profit*0.3;
                               <tbody>
                     <?php                   
                         $account = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->orderBy('date','asc')->get();
+                            [$start_date, $second_date])->orderBy('date','asc')->get();
                         ?>  
                  @foreach($account  as $a)
                                  <tr>
@@ -501,11 +491,9 @@ $tax=$profit*0.3;
  <?php
                    
                         $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $second_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $second_date])->sum('debit');
 
                         ?>  
                     <tr>     
@@ -572,8 +560,7 @@ $tax=$profit*0.3;
                                <tbody>
                     <?php                   
                         $account = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->orderBy('date','asc')->get();
+                            [$start_date, $second_date])->orderBy('date','asc')->get();
                         ?>  
                  @foreach($account  as $a)
                                  <tr>
@@ -588,11 +575,9 @@ $tax=$profit*0.3;
  <?php
                    
                         $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $second_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $second_date])->sum('debit');
 
                         ?>  
                     <tr>     

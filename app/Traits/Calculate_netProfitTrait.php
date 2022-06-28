@@ -54,11 +54,9 @@ foreach($group->accountCodes as $account_code){
      
                             
                         $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            $start_date)->sum('credit');
                         $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            $start_date)->sum('debit');
                             
                             
                  
@@ -77,11 +75,9 @@ foreach($group->accountCodes as $account_code){
                             
                             
                         $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            $start_date)->sum('credit');
                         $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            $start_date)->sum('debit');
                             
                    
                         $income_balance1=$dr1- $cr1;
@@ -101,11 +97,9 @@ foreach($group->accountCodes as $account_code){
 
                             
                         $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            $start_date)->sum('credit');
                         $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            $start_date)->sum('debit');
                             
                             
                    
@@ -128,11 +122,9 @@ foreach($group->accountCodes as $account_code){
 
                             
                         $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            $start_date)->sum('credit');
                         $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            $start_date)->sum('debit');
                             
                             
                     

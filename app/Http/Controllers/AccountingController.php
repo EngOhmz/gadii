@@ -69,7 +69,7 @@ class AccountingController extends Controller
             $chart_of_accounts[$key->id] = $key->name;
         }
         if($request->isMethod('post')){
-            $data=JournalEntry::where('reversed', 0)->where('account_id', $request->account_id)->whereBetween('date',[$start_date,$end_date])->get();
+            $data=JournalEntry::where('account_id', $request->account_id)->whereBetween('date',[$start_date,$end_date])->get();
         }else{
             $data=[];
         }

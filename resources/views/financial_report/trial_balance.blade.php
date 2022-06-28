@@ -329,12 +329,10 @@ $d=0;
  <tbody>   
  <?php
                         $account = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->orderBy('date','asc')->get();
+                            [$start_date, $second_date])->orderBy('date','asc')->get();
                             
                        $account1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->orderBy('date','asc')->get();
+                            [$start_date, $second_date])->orderBy('date','asc')->get();
                         ?>  
                  @foreach($account  as $a)
                                  <tr>
@@ -351,18 +349,14 @@ $d=0;
  <?php
                    
                         $cr_modal = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $second_date])->sum('credit');
                         $dr_modal = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $second_date])->sum('debit');
                             
                          $cr_modal1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $second_date])->sum('credit');
                         $dr_modal1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $second_date])->sum('debit');
 
                         ?>  
                     <tr>     

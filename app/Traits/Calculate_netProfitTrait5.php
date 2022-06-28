@@ -72,11 +72,9 @@ foreach($group->accountCodes as $account_code){
      
      
                          $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $end_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $end_date])->sum('debit');
 
                          $total_debit_income_balance   +=$dr ;
                          $total_credit_income_balance  +=$cr;
@@ -95,11 +93,9 @@ if($group->group_id == 5110){
 foreach($group->accountCodes as $account_code){
    
                     $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $end_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $end_date])->sum('debit');
                    
                         $total_debit_other_income_balance   +=$dr ;
                          $total_credit_other_income_balance  +=$cr;
@@ -119,11 +115,9 @@ foreach($group->accountCodes as $account_code){
 
 
                    $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $end_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $end_date])->sum('debit');
                             
                         $total_debit_cost_balance   +=$dr ;
                          $total_credit_cost_balance  +=$cr;
@@ -141,11 +135,9 @@ if($group->group_id != 6180){
 foreach($group->accountCodes as $account_code){
 
                    $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->where('branch_id',
-                            session('branch_id'))->sum('credit');
+                            [$start_date, $end_date])->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->where('branch_id',
-                            session('branch_id'))->sum('debit');
+                            [$start_date, $end_date])->sum('debit');
                             
                            $total_debit_expense_balance   +=$dr ;
                          $total_credit_expense_balance  +=$cr;

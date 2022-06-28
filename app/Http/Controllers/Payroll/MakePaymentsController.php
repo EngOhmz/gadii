@@ -162,7 +162,7 @@ return view('payroll.employee_payment',compact('employee_info','allowance_info',
        $data['payment_type']=$request->payment_type ;
        $data['comments']=$request->comments ;
       $data['account_id']=$request->account_id ;
-       
+      $data['added_by']=auth()->user()->id ;
             $salary_payment=SalaryPayment::create($data);  ;
 
     $date = new DateTime($request->payment_month . '-01');
@@ -175,47 +175,6 @@ return view('payroll.employee_payment',compact('employee_info','allowance_info',
  $nssf_info = SalaryDeduction::where('salary_template_id',$payroll_info->salary_template_id)->where('deduction_label','NSSF')->first();
 $basic=SalaryTemplate::where('salary_template_id', $payroll_info->salary_template_id)->first();
 $month= date('F Y', strtotime($request->payment_month)) ;
-
-$account= Accounts::where('account_id',$request->account_id)->first();
-
-if(!empty($account)){
-$balance=$account->balance - $request->payment_amount ;
-$item_to['balance']=$balance;
-$account->update($item_to);
-}
-
-else{
-  $cr= AccountCodes::where('id',$request->account_id)->first();
-
-     $new['account_id']= $request->account_id;
-       $new['account_name']= $cr->account_name;
-      $new['balance']= 0- $request->payment_amount;
-       $new[' exchange_code']= 'TZS';
-        $new['added_by']=auth()->user()->id;
-$balance=0-$request->payment_amount;
-     Accounts::create($new);
-}
-        
-   // save into tbl_transaction
-
-                             $transaction= Transaction::create([
-                                'module' => 'Salary Payment',
-                                 'module_id' => $salary_payment->id,
-                               'account_id' => $request->account_id,
-                                'name' => 'Salary Payment for ' .$emp_info->name,
-                                'type' => 'Expense',
-                                'amount' =>$request->payment_amount ,
-                                'debit' => $request->payment_amount,
-                                 'total_balance' =>$balance,
-                                'date' => date('Y-m-d'),
-                                'paid_by' => auth()->user()->id,
-                                'payment_methods_id' =>$request->payment_type,
-                                   'status' => 'paid' ,
-                                'notes' => 'This expense is from salary payment.The Reference is payment to ' .$emp_info->name. '  for the month '.  $month  ,
-                                'user_id' => $request->user_id ,
-                                'added_by' =>auth()->user()->id,
-                            ]);
-
 
 if(!empty( $salary_payment)){ 
 $s=AccountCodes::where('account_name','Salaries And Wages')->first();   
@@ -336,7 +295,7 @@ $salary=AccountCodes::where('account_name','Salaries And Wages')->first();
         $journal->save();  
 
 
-$nssf_e=AccountCodes::where('account_codes',' 1524')->first();   
+$nssf_e=AccountCodes::where('account_name','NSSF - Employer Contribution')->first();   
                    
           $journal = new JournalEntry();
         $journal->account_id =$nssf_e->id;
@@ -346,13 +305,13 @@ $nssf_e=AccountCodes::where('account_codes',' 1524')->first();
         $journal->year = $date[0];
         $journal->month = $date[1];
        $journal->transaction_type = 'salary';
-        $journal->name = 'NSSF (Employer Contribution) Payment';
+        $journal->name = 'NSSF - Employer Contribution Payment';
         $journal->debit= $nssf_info->deduction_value ;
         $journal->payment_id= $salary_payment->id;
            $journal->payment_month=$request->payment_month;
          $journal->currency_code =  'TZS';
         $journal->exchange_rate= '1';
-        $journal->notes= "NSSF (Employer Contribution) Payment from " .$emp_info->name. "  for the month ".  $month ;
+        $journal->notes= "NSSF - Employer Contribution Payment from " .$emp_info->name. "  for the month ".  $month ;
         $journal->save();
 
 $nssf=AccountCodes::where('account_name','NSSF')->first();;
@@ -416,7 +375,7 @@ $wcf_e=AccountCodes::where('account_name','WCF contribution')->first();;
         $journal->notes= "WCF  Payment from " .$emp_info->name. "  for the month ".  $month ;
         $journal->save();
           
-$nhif_e=AccountCodes::where('account_codes','1517')->first();;
+$nhif_e=AccountCodes::where('account_name','NHIF - Heath Insurance Expense')->first();;
 
         $journal = new JournalEntry();
         $journal->account_id =$nhif_e->id;
@@ -426,13 +385,13 @@ $nhif_e=AccountCodes::where('account_codes','1517')->first();;
         $journal->year = $date[0];
         $journal->month = $date[1];
        $journal->transaction_type = 'salary';
-        $journal->name = 'NHIF (Heath Insurance Expense) Payment';
+        $journal->name = 'NHIF - Heath Insurance Expense Payment';
         $journal->debit=  0.03 * $basic->basic_salary ;
         $journal->payment_id= $salary_payment->id;
              $journal->payment_month=$request->payment_month;
          $journal->currency_code =  'TZS';
         $journal->exchange_rate= '1';
-        $journal->notes= "NHIF (Heath Insurance Expense) Payment from " .$emp_info->name. "  for the month ".  $month ;
+        $journal->notes= "NHIF - Heath Insurance Expense Payment from " .$emp_info->name. "  for the month ".  $month ;
         $journal->save();
          
 
@@ -735,7 +694,6 @@ if(!empty($salary_payment)){
                         ]
                         );                      
        }
-    
 return redirect(route('view.payment',['departments_id'=>$emp_info->department_id,'payment_month'=>$request->payment_month]))->with(['success'=>'Payment Updated Successfully']);
 }
 
