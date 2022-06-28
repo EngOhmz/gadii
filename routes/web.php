@@ -284,9 +284,30 @@ Route::get('findReturnService', 'Inventory\GoodReturnController@findService')->m
 });
 
 // cotton routes
-Route::group(['prefix' => 'cotton_collection'], function () {
+Route::group(['prefix' => 'cotton_production'], function () {
 Route::resource('costants', 'Cotton\CostantsController')->middleware('auth');
 Route::resource('production', 'Cotton\ProductionController')->middleware('auth');
+});
+
+Route::group(['prefix' => 'cotton_invoice'], function () {
+Route::resource('cotton_sales', 'Cotton\InvoiceController')->middleware('auth');
+Route::resource('seed_list', 'Cotton\SeedListController')->middleware('auth');
+Route::resource('seed_sales', 'Cotton\SeedInvoiceController')->middleware('auth');
+});
+
+Route::group(['prefix' => 'report'], function () {
+Route::any('stock_report', 'Cotton\CollectionCenterController@stock_report')->middleware('auth');
+Route::any('invoice_report', 'Cotton\ReportController@invoice_report')->middleware('auth');
+Route::any('center_report', 'Cotton\CollectionCenterController@center_report')->middleware('auth');
+Route::any('cotton_movement_report', 'Cotton\CollectionCenterController@cotton_movement_report')->middleware('auth');
+Route::any('levy_report', 'Cotton\ReportController@levy_report')->middleware('auth');
+Route::any('debtors_report', 'Cotton\ReportController@debtors_report')->middleware('auth');
+Route::any('general_report', 'Cotton\ReportController@general_report')->middleware('auth');
+Route::any('general_report2', 'Cotton\ReportController@general_report2')->middleware('auth');
+});
+
+
+Route::group(['prefix' => 'cotton_collection'], function () {
 Route::get('production_pdfview',array('as'=>'production_pdfview','uses'=>'Cotton\ProductionController@inv_pdfview'))->middleware('auth');
 Route::resource('operator', 'Cotton\OperatorController')->middleware('auth');
 Route::resource('collection_center', 'Cotton\CollectionCenterController')->middleware('auth');
@@ -328,23 +349,16 @@ Route::get('reverseOperatorModal', 'Cotton\TopUpOperatorController@discountModal
 Route::post('newreverseOperator', 'Cotton\TopUpOperatorController@newdiscount')->middleware('auth');
 Route::get('operator_complete/{id}', 'Cotton\TopUpOperatorController@complete')->name('operator.complete')->middleware('auth'); 
 Route::get('reverse_top_up_operator', 'Cotton\TopUpOperatorController@reverse_top_operator')->middleware('auth'); 
-Route::any('stock_report', 'Cotton\CollectionCenterController@stock_report')->middleware('auth');
-Route::any('invoice_report', 'Cotton\ReportController@invoice_report')->middleware('auth');
-Route::any('center_report', 'Cotton\CollectionCenterController@center_report')->middleware('auth');
-Route::any('cotton_movement_report', 'Cotton\CollectionCenterController@cotton_movement_report')->middleware('auth');
-Route::any('levy_report', 'Cotton\ReportController@levy_report')->middleware('auth');
-Route::any('debtors_report', 'Cotton\ReportController@debtors_report')->middleware('auth');
-Route::any('general_report', 'Cotton\ReportController@general_report')->middleware('auth');
-Route::any('general_report2', 'Cotton\ReportController@general_report2')->middleware('auth');
+
+
 Route::resource('general_report_table', 'Cotton\ReportController')->middleware('auth');
 Route::resource('cotton_client', 'Cotton\CottonClientController')->middleware('auth');
-Route::resource('cotton_sales', 'Cotton\InvoiceController')->middleware('auth');
+
 Route::get('findSalesPrice', 'Cotton\InvoiceController@findPrice')->middleware('auth'); 
 Route::get('cotton_payment/{id}', 'Cotton\InvoiceController@make_payment')->name('invoice.pay')->middleware('auth'); 
 Route::get('sales_pdfview',array('as'=>'sales_pdfview','uses'=>'Cotton\InvoiceController@sales_pdfview'))->middleware('auth');
 Route::resource('cotton_sales_payment', 'Cotton\InvoicePaymentController')->middleware('auth');
-Route::resource('seed_list', 'Cotton\SeedListController')->middleware('auth');
-Route::resource('seed_sales', 'Cotton\SeedInvoiceController')->middleware('auth');
+
 Route::get('findSeedPrice', 'Cotton\SeedInvoiceController@findPrice')->middleware('auth'); 
 Route::get('seed_payment/{id}', 'Cotton\SeedInvoiceController@make_payment')->name('seed.pay')->middleware('auth'); 
 Route::get('seed_pdfview',array('as'=>'seed_pdfview','uses'=>'Cotton\SeedInvoiceController@seed_pdfview'))->middleware('auth');
