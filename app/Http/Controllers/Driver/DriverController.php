@@ -61,8 +61,6 @@ class DriverController extends Controller
 
         $data['driver_name']=$request->driver_name;
         $data['address']=$request->address;
-    $data['mobile_no']=$request->mobile_no;
-  $data['licence']=$request->licence;
         $data['referee']=$request->referee;
         $data['experience']=$request->experience;
          $data['type']=$request->type;
@@ -127,8 +125,6 @@ class DriverController extends Controller
 
         $data['driver_name']=$request->driver_name;
         $data['address']=$request->address;
-     $data['mobile_no']=$request->mobile_no;
-  $data['licence']=$request->licence;
         $data['referee']=$request->referee;
         $data['experience']=$request->experience;
         $data['driver_status']=$request->driver_status;  

@@ -488,6 +488,16 @@ class PurchaseInventoryController extends Controller
                    $notes =   MechanicalRecommedation::where('module_id',$id)->where('module','service')->get();   
                     return view('inventory.viewreport',compact('id','item','type','notes'));
       }
+     elseif($type == 'requisition_maintainance'){
+                    $item =  Inventory::all(); 
+                   $module =   'Maintainance';   
+                    return view('inventory.addrequistion',compact('id','item','module','id'));
+      }
+  elseif($type == 'requisition_service'){
+                    $item =  Inventory::all(); 
+                   $module =   'Service';   
+                    return view('inventory.addrequistion',compact('id','item','module','id'));
+      }
                  }
 
            public function save_reference (Request $request){

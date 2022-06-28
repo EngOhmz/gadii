@@ -75,7 +75,7 @@ class AssignDriverController extends Controller
           $random = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(4/strlen($x)) )),1,4);
          $data['reference'] = "AD_".$random;
          $data['due_amount'] =$request->amount;
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
        $transfer=AssignDriver::create($data);
      return redirect(route('assign_driver.index'))->with(['success'=>' Created Successfully']);
 
@@ -201,7 +201,7 @@ $price='' ;
         $journal->exchange_rate=   $transfer->exchange_rate;
          $journal->notes='Assign Equipment to Truck '.$driver->reg_no;
         $journal->debit=     $transfer->amount;
-          $journal->added_by=auth()->user()->id;
+          $journal->added_by=auth()->user()->added_by;
         $journal->save();
 
         $journal = new JournalEntry();
@@ -213,12 +213,12 @@ $price='' ;
          $journal->transaction_type = 'assign_truck';
         $journal->name = 'Assign Equipment to Truck';
         $journal->income_id =    $transfer->id;
-      $journal->truck_id =    $transfer->driver_id;
+        $journal->truck_id =    $transfer->driver_id;
        $journal->currency_code =    $transfer->exchange_code;
         $journal->exchange_rate=   $transfer->exchange_rate;
          $journal->notes='Assign Equipment to Truck '.$driver->reg_no;
         $journal->credit=    $transfer->amount;
-       $journal->added_by=auth()->user()->id;
+       $journal->added_by=auth()->user()->added_by;
         $journal->save();
     
        
@@ -263,7 +263,7 @@ $item['notes']=$request->notes;
 $item['date']=$request->date;
 $item['status']='1';
  $item['approve_by']=auth()->user()->id;
- $item['added_by']=auth()->user()->id;
+ $item['added_by']=auth()->user()->added_by;
 $item['assign_id']=$request->id;
 $item['assign_reference']=$transfer->reference_no;
 $item['reference']=$request->reference_no;
@@ -287,12 +287,12 @@ $rev=ReverseAssignDriver::create($item);
          $journal->transaction_type = 'reverse_assign_truck';
         $journal->name = 'Reverse Assign Equipment to Truck';
         $journal->income_id =    $rev->id;
-       $journal->truck_id =    $transfer->driver_id;
        $journal->currency_code =    $transfer->exchange_code;
         $journal->exchange_rate=   $transfer->exchange_rate;
+       $journal->truck_id =    $transfer->driver_id;
          $journal->notes='Reverse Assignment From Truck '.$driver->reg_no;
         $journal->debit=     $request->amount;
-        $journal->added_by=auth()->user()->id;
+        $journal->added_by=auth()->user()->added_by;
         $journal->save();
 
         $journal = new JournalEntry();
@@ -304,12 +304,12 @@ $rev=ReverseAssignDriver::create($item);
        $journal->transaction_type = 'reverse_assign_truck';
         $journal->name = 'Reverse Assign Equipment to Truck';
         $journal->income_id =    $rev->id;
-       $journal->truck_id =    $transfer->driver_id;
        $journal->currency_code =    $transfer->exchange_code;
         $journal->exchange_rate=   $transfer->exchange_rate;
+        $journal->truck_id =    $transfer->driver_id;
          $journal->notes='Reverse Assignment From Truck '.$driver->reg_no;
         $journal->credit=    $request->amount;
- $journal->added_by=auth()->user()->id;
+ $journal->added_by=auth()->user()->added_by;
         $journal->save();
     
        

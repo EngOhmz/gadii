@@ -61,7 +61,7 @@ class ServiceController extends Controller
 
         $driver=Truck::where('id',$request->truck)->first();
         $data['driver']=$driver->driver;
-        $data['added_by']= auth()->user()->id;
+        $data['added_by']= auth()->user()->added_by;
         $data['truck_name']=$driver->truck_name;
        $data['reg_no']=$driver->reg_no;
         $service = Service::create($data);
@@ -79,7 +79,7 @@ class ServiceController extends Controller
                         'minor' => $nameArr[$i],
                         'truck' =>    $data['truck'],
                            'order_no' => $i,
-                           'added_by' => auth()->user()->id,
+                           'added_by' => auth()->user()->added_by,
                         'service_id' =>$service->id);
                        
                     ServiceItem::create($items);  ;
@@ -102,7 +102,7 @@ class ServiceController extends Controller
                         'item_name' => $itemArr[$i],
                           'quantity' => $qtyArr[$i],
                            'order_no' => $i,
-                           'added_by' => auth()->user()->id,
+                           'added_by' => auth()->user()->added_by,
                         'service_id' =>$service->id);
                        
                    ServiceInventory::create($report);  ;
@@ -168,7 +168,7 @@ class ServiceController extends Controller
 
         $driver=Truck::where('id',$request->truck)->first();
         $data['driver']=$driver->driver;
-        $data['added_by']= auth()->user()->id;
+        $data['added_by']= auth()->user()->added_by;
         $data['truck_name']=$driver->truck_name;
         $data['reg_no']=$driver->reg_no;
         $service->update($data);
@@ -196,7 +196,7 @@ class ServiceController extends Controller
                         'minor' => $nameArr[$i],
                         'truck' =>    $data['truck'],
                            'order_no' => $i,
-                           'added_by' => auth()->user()->id,
+                           'added_by' => auth()->user()->added_by,
                         'service_id' =>$id);
                        
                         if(!empty($expArr[$i])){
@@ -236,7 +236,7 @@ $qtyArr =$request->quantity ;
                         'item_name' => $itemArr[$i],
                            'quantity' => $qtyArr[$i],
                            'order_no' => $i,
-                           'added_by' => auth()->user()->id,
+                           'added_by' => auth()->user()->added_by,
                         'service_id' =>$id);
 
                     if(!empty($invexpArr[$i])){

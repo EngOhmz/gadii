@@ -703,6 +703,7 @@ class ComposerStaticInitf23cf27139e659cb4bf3f1cf81d9fdf6
         'App\\Http\\Controllers\\Inventory\\LocationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Inventory/LocationController.php',
         'App\\Http\\Controllers\\Inventory\\MaintainanceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Inventory/MaintainanceController.php',
         'App\\Http\\Controllers\\Inventory\\PurchaseInventoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/Inventory/PurchaseInventoryController.php',
+        'App\\Http\\Controllers\\Inventory\\RequisitionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Inventory/RequisitionController.php',
         'App\\Http\\Controllers\\Inventory\\ServiceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Inventory/ServiceController.php',
         'App\\Http\\Controllers\\Inventory\\ServiceTypeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Inventory/ServiceTypeController.php',
         'App\\Http\\Controllers\\LandController' => __DIR__ . '/../..' . '/app/Http/Controllers/LandController.php',

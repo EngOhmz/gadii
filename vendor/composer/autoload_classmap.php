@@ -80,6 +80,7 @@ return array(
     'App\\Http\\Controllers\\Inventory\\LocationController' => $baseDir . '/app/Http/Controllers/Inventory/LocationController.php',
     'App\\Http\\Controllers\\Inventory\\MaintainanceController' => $baseDir . '/app/Http/Controllers/Inventory/MaintainanceController.php',
     'App\\Http\\Controllers\\Inventory\\PurchaseInventoryController' => $baseDir . '/app/Http/Controllers/Inventory/PurchaseInventoryController.php',
+    'App\\Http\\Controllers\\Inventory\\RequisitionController' => $baseDir . '/app/Http/Controllers/Inventory/RequisitionController.php',
     'App\\Http\\Controllers\\Inventory\\ServiceController' => $baseDir . '/app/Http/Controllers/Inventory/ServiceController.php',
     'App\\Http\\Controllers\\Inventory\\ServiceTypeController' => $baseDir . '/app/Http/Controllers/Inventory/ServiceTypeController.php',
     'App\\Http\\Controllers\\LandController' => $baseDir . '/app/Http/Controllers/LandController.php',
