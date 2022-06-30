@@ -470,33 +470,42 @@ Route::get('mileage_approve/{id}', 'MileagePaymentController@approve')->name('mi
 
 //courier
 
-// Route::group(['prefix' => 'courier'], function () {
-// Route::resource('courier_list', 'Courier\CourierListController')->middleware('auth');
-// Route::resource('courier_client', 'Courier\CourierClientController')->middleware('auth');
-// Route::resource('courier_quotation', 'Courier\CourierController')->middleware('auth');
-// Route::get('courier_invoice', 'Courier\CourierController@invoice')->name('courier.invoice')->middleware('auth');
-// Route::get('findCourierPrice', 'Courier\CourierController@findPrice')->middleware('auth'); 
-// Route::get('courier_approve/{id}', 'Courier\CourierController@approve')->name('courier.approve')->middleware('auth'); 
-// Route::get('courier_cancel/{id}', 'Courier\CourierController@cancel')->name('courier.cancel')->middleware('auth');  
-// Route::get('make_courier_payment/{id}', 'Courier\CourierController@make_payment')->name('courier.pay')->middleware('auth'); 
-// Route::get('courier_pdfview',array('as'=>'courier_pdfview','uses'=>'Courier\CourierController@courier_pdfview'))->middleware('auth');
-// Route::resource('courier_payment', 'Courier\CourierPaymentController')->middleware('auth');
-// Route::get('courierModal', 'Courier\CourierController@discountModal')->middleware('auth');
-// Route::post('newCourierDiscount', 'Courier\CourierController@newdiscount')->middleware('auth');
-// Route::get('addCourierSupplier', 'Courier\CourierController@addSupplier')->middleware('auth');
-// Route::get('addCourierRoute', 'Courier\CourierController@addRoute')->middleware('auth');
-// });
+Route::group(['prefix' => 'courier'], function () {
+Route::resource('courier_list', 'Courier\CourierListController')->middleware('auth');
+Route::resource('courier_client', 'Courier\CourierClientController')->middleware('auth');
+Route::resource('courier_quotation', 'Courier\CourierController')->middleware('auth');
+Route::get('courier_invoice', 'Courier\CourierController@invoice')->name('courier.invoice')->middleware('auth');
+Route::get('findCourierPrice', 'Courier\CourierController@findPrice')->middleware('auth'); 
+Route::get('courier_approve/{id}', 'Courier\CourierController@approve')->name('courier.approve')->middleware('auth'); 
+Route::get('courier_cancel/{id}', 'Courier\CourierController@cancel')->name('courier.cancel')->middleware('auth');  
+Route::get('make_courier_payment/{id}', 'Courier\CourierController@make_payment')->name('courier.pay')->middleware('auth'); 
+Route::get('courier_pdfview',array('as'=>'courier_pdfview','uses'=>'Courier\CourierController@courier_pdfview'))->middleware('auth');
+Route::resource('courier_payment', 'Courier\CourierPaymentController')->middleware('auth');
+Route::get('courierModal', 'Courier\CourierController@discountModal')->middleware('auth');
+Route::post('newCourierDiscount', 'Courier\CourierController@newdiscount')->middleware('auth');
+Route::get('addCourierSupplier', 'Courier\CourierController@addSupplier')->middleware('auth');
+Route::get('addCourierRoute', 'Courier\CourierController@addRoute')->middleware('auth');
+
+Route::get('courier_collection', 'Courier\CourierMovementController@collection')->name('courier.collection')->middleware('auth');
+Route::get('courier_loading', 'Courier\CourierMovementController@loading')->name('courier.loading')->middleware('auth');
+Route::get('courier_offloading', 'Courier\CourierMovementController@offloading')->name('courier.offloading')->middleware('auth');
+Route::get('courier_delivering', 'Courier\CourierMovementController@delivering')->name('courier.delivering')->middleware('auth');
+Route::resource('courier_movement', 'Courier\CourierMovementController')->middleware('auth'); 
+Route::resource('courier_activity', 'Courier\CourierActivityController')->middleware('auth');
+Route::get('courier_report', 'Courier\CourierMovementController@report')->name('courier.report')->middleware('auth');
+Route::get('findCourierReport', 'Courier\CourierMovementController@findReport')->middleware('auth');
+
+
+
+});
 //courier tracking
 // Route::group(['prefix' => 'courier_tracking'], function () {
-// Route::get('courier_collection', 'Courier\CourierMovementController@collection')->name('courier.collection')->middleware('auth');
-// Route::get('courier_loading', 'Courier\CourierMovementController@loading')->name('courier.loading')->middleware('auth');
-// Route::get('courier_offloading', 'Courier\CourierMovementController@offloading')->name('courier.offloading')->middleware('auth');
-// Route::get('courier_delivering', 'Courier\CourierMovementController@delivering')->name('courier.delivering')->middleware('auth');
-// Route::resource('courier_movement', 'Courier\CourierMovementController')->middleware('auth'); 
-// Route::resource('courier_activity', 'Courier\CourierActivityController')->middleware('auth');
-// Route::get('courier_report', 'Courier\CourierMovementController@report')->name('courier.report')->middleware('auth');
-// Route::get('findCourierReport', 'Courier\CourierMovementController@findReport')->middleware('auth');
+
+
+
 // });
+
+
 //GL SETUP
 
 Route::group(['prefix' => 'gl_setup'], function () {

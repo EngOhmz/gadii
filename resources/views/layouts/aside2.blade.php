@@ -338,6 +338,43 @@
                                 class="nav-link {{ (request()->is('courier/courier_invoice*')) ? 'active' : ''  }}"
                                 href="{{url('courier/courier_invoice')}}">Invoice</a></li>
                         @endcan
+
+                          @can('view-courier_collection')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_collection*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_collection')}}"> Courier
+                                Collection</a></li>
+                        @endcan
+                        @can('view-courier_loading')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_loading*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_loading')}}"> Courier Loading</a>
+                        </li>
+                        @endcan
+                        @can('view-courier_offloading')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_offloading*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_offloading')}}"> Courier
+                                Offloading</a></li>
+                        @endcan
+                        @can('view-courier_delivering')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_delivering*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_delivering')}}"> Courier
+                                Delivery</a></li>
+                        @endcan
+                        @can('view-courier_activity')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_activity*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_activity')}}">Track Courier
+                                Activity</a></li>
+                        @endcan
+                        @can('view-courier_activity')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_activity*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_activity')}}"> Courier Uplift
+                                Report</a></li>
+                        @endcan
                     </ul>
                 </li>
                 @endcan
@@ -385,6 +422,8 @@
                                 Report</a></li>
                         @endcan
                     </ul>
+               
+               
                 </li>
                 @endcan -->
 

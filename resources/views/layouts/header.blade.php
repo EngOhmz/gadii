@@ -48,6 +48,8 @@
 <!-- /theme JS files -->
 	<!-- /theme JS files -->
 
+<script type="text/javascript" src="{{asset('assets2/js/downloadFile.js')}}"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.0.0-rc.4/dist/js/tom-select.complete.min.js"></script>
    
 	  

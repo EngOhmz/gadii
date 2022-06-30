@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Courier;
 
 use App\Http\Controllers\Controller;
-use App\Models\Route;
+use App\Models\Courier\CourierRoute;
 use App\Models\Region;
 use App\Models\District;
+
 use Illuminate\Http\Request;
 
-class RouteController extends Controller
+class CourierRouteController extends Controller
 {
-    /**
+   /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -19,7 +20,7 @@ class RouteController extends Controller
    {
        //
    $region = Region::all();   
-       $route = Route::all();     
+       $route = CourierRoute::all();     
        return view('route.route',compact('route','region'));
    }
 
@@ -54,7 +55,7 @@ class RouteController extends Controller
       
       $data['from']=$from_region->name ." - ". $from_district->name ;
       $data['to']=$to_region->name ." - ". $to_district->name ;
-      $route = Route::create($data);
+      $route = CourierRoute::create($data);
 
       return redirect(route('routes.index'))->with(['success'=>'Route Created Successfully']);
 }
@@ -85,7 +86,7 @@ else{
     */
    public function edit($id)
    {
-  $data =  Route::find($id);
+  $data =  CourierRoute::find($id);
  $region = Region::all(); 
  $from_district= District::where('region_id', $data->from_region_id)->get(); 
   $to_district= District::where('region_id', $data->to_region_id)->get();   
@@ -103,7 +104,7 @@ else{
    public function update(Request $request, $id)
    {
        //
-       $route = Route::find($id);
+       $route = CourierRoute::find($id);
     if($request->from_district_id != $request->to_district_id){
       $data=$request->post();
       $data['added_by']=auth()->user()->id;
@@ -138,7 +139,7 @@ else{
    {
        //
 
-       $route = Route::find($id);
+       $route = CourierRoute::find($id);
        $route->delete();
 
        return redirect(route('route.index'))->with(['success'=>'Route Deleted Successfully']);
