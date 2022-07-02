@@ -156,8 +156,58 @@ Route::view('test','livewiretest')->middleware('auth');
 Route::view('input-order','agrihub.iorder')->middleware('auth');
 
 //supplier
+Route::group(['prefix' => 'pos'], function () {
+
 Route::group(['prefix' => 'purchases'], function () {
 Route::resource('supplier', 'shop\SupplierController')->middleware('auth');
+Route::resource('items', 'POS\ItemsController')->middleware('auth');
+Route::resource('purchase', 'POS\PurchaseController')->middleware('auth');
+
+Route::get('findInvPrice', 'POS\PurchaseController@findPrice')->middleware('auth'); 
+Route::get('invModal', 'POS\PurchaseController@discountModal')->middleware('auth');
+Route::get('approve_purchase/{id}', 'POS\PurchaseController@approve')->name('purchase.approve')->middleware('auth'); 
+Route::get('cancel/{id}', 'POS\PurchaseController@cancel')->name('purchase.cancel')->middleware('auth'); 
+Route::get('receive/{id}', 'POS\PurchaseController@receive')->name('purchase.receive')->middleware('auth'); 
+Route::get('make_payment/{id}', 'POS\PurchaseController@make_payment')->name('purchase.pay')->middleware('auth'); 
+Route::get('purchase_pdfview',array('as'=>'purchase_pdfview','uses'=>'POS\PurchaseController@inv_pdfview'))->middleware('auth');
+Route::get('order_payment/{id}', 'orders\OrdersController@order_payment')->name('purchase_order.pay')->middleware('auth');
+Route::resource('purchase_payment', 'POS\PurchasePaymentController')->middleware('auth');
+});
+Route::group(['prefix' => 'sales'], function () {
+
+  Route::resource('client', 'ClientController')->middleware('auth');
+
+  Route::resource('profoma_invoice', 'POS\ProfomaInvoiceController')->middleware('auth');
+  Route::get('convert_to_invoice/{id}', 'POS\ProfomaInvoiceController@convert_to_invoice')->name('invoice.convert_to_invoice')->middleware('auth'); 
+
+
+
+  Route::resource('invoice', 'POS\InvoiceController')->middleware('auth');
+
+
+
+
+  
+  Route::resource('items', 'POS\ItemsController')->middleware('auth');
+  Route::resource('purchase', 'POS\InvoiceController')->middleware('auth');
+  
+  Route::get('findInvPrice', 'POS\InvoiceController@findPrice')->middleware('auth'); 
+  Route::get('invModal', 'POS\InvoiceController@discountModal')->middleware('auth');
+  Route::get('approve_purchase/{id}', 'POS\InvoiceController@approve')->name('invoice.approve')->middleware('auth'); 
+  
+ 
+  Route::get('cancel/{id}', 'POS\InvoiceController@cancel')->name('invoice.cancel')->middleware('auth'); 
+  Route::get('receive/{id}', 'POS\InvoiceController@receive')->name('invoice.receive')->middleware('auth'); 
+  Route::get('make_payment/{id}', 'POS\InvoiceController@make_payment')->name('pos_invoice.pay')->middleware('auth'); 
+
+  Route::get('pos_profoma_pdfview',array('as'=>'pos_profoma_pdfview','uses'=>'POS\ProfomaInvoiceController@invoice_pdfview'))->middleware('auth');
+  Route::get('pos_invoice_pdfview',array('as'=>'pos_invoice_pdfview','uses'=>'POS\InvoiceController@invoice_pdfview'))->middleware('auth');
+  Route::get('order_payment/{id}', 'orders\OrdersController@order_payment')->name('purchase_order.pay')->middleware('auth');
+  Route::resource('pos_invoice_payment', 'POS\InvoicePaymentController')->middleware('auth');
+  });
+
+
+
 });
 
 //product
