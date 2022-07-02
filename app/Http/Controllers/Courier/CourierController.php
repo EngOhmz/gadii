@@ -445,7 +445,7 @@ $cr= AccountCodes::where('account_name','Courier')->first();
         $journal->income_id= $id;
          $journal->currency_code =  $purchase->currency_code;
         $journal->exchange_rate= $purchase->exchange_rate;
-       $journal->added_by=auth()->user()->id;
+             $journal->added_by=auth()->user()->id;
            $journal->notes= "Courier Invoice with reference no " .$purchase->pacel_number. "  by Client ".  $client->name ;
         $journal->save();
 
@@ -463,7 +463,7 @@ if($purchase->tax > 0){
         $journal->income_id= $id;
          $journal->currency_code =  $purchase->currency_code;
         $journal->exchange_rate= $purchase->exchange_rate;
-       $journal->added_by=auth()->user()->id;
+        $journal->added_by=auth()->user()->id;
            $journal->notes= "Courier Invoice Tax with reference no " .$purchase->pacel_number. "  by Client ".  $client->name ;
         $journal->save();
 }

@@ -28,6 +28,10 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
+                                    <button onclick="exportTableToCSV('members.csv')"><span>
+                                        <i class="icon-folder-download mr-3 icon-2x"></i>Export HTML Table To CSV File
+                                    </span></button>
+
                                     <table class="table table-striped" id="table-1">
                                        <thead>
                                             <tr>
@@ -217,6 +221,6 @@ $(document).ready(function() {
 
 });
 </script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+
 
 @endsection

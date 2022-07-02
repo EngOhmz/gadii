@@ -50,31 +50,31 @@ Route::group(['prefix'=>'farmer'],function()
 
 
 // start farming routes
-Route::group(['prefix' => 'farmings'], function () {
-Route::resource('/farming_cost','farming\Farming_costController')->middleware('auth');
-Route::resource('/cost_centre','farming\Cost_CentreController')->middleware('auth');
-Route::resource('/farming_process','farming\Farming_processController')->middleware('auth');
-Route::resource('/crop_type','farming\CropTypeController')->middleware('auth');
-Route::resource('/seed_type','farming\FeedTypeController')->middleware('auth');
-Route::resource('/farm_program','farming\FarmProgramController')->middleware('auth');
-Route::resource('/crops_monitoring','farming\Crops_MonitoringController')->middleware('auth');
-Route::resource('/register_assets','farming\Farmer_assetsController')->middleware('auth');
-Route::resource('/lime_base','farming\LimeBaseController')->middleware('auth');
-Route::get('/landview',"farming\Farmer_assetsController@index1" )->middleware('auth');
-Route::get('/landdelete/{$id}',"farming\Farmer_assetsController@destroy2" )->middleware('auth');
-Route::get('getFarm',"farming\Farmer_assetsController@getFarm" )->middleware('auth');
+// Route::group(['prefix' => 'farmings'], function () {
+// Route::resource('/farming_cost','farming\Farming_costController')->middleware('auth');
+// Route::resource('/cost_centre','farming\Cost_CentreController')->middleware('auth');
+// Route::resource('/farming_process','farming\Farming_processController')->middleware('auth');
+// Route::resource('/crop_type','farming\CropTypeController')->middleware('auth');
+// Route::resource('/seed_type','farming\FeedTypeController')->middleware('auth');
+// Route::resource('/farm_program','farming\FarmProgramController')->middleware('auth');
+// Route::resource('/crops_monitoring','farming\Crops_MonitoringController')->middleware('auth');
+// Route::resource('/register_assets','farming\Farmer_assetsController')->middleware('auth');
+// Route::resource('/lime_base','farming\LimeBaseController')->middleware('auth');
+// Route::get('/landview',"farming\Farmer_assetsController@index1" )->middleware('auth');
+// Route::get('/landdelete/{$id}',"farming\Farmer_assetsController@destroy2" )->middleware('auth');
+// Route::get('getFarm',"farming\Farmer_assetsController@getFarm" )->middleware('auth');
 
-Route::resource('seeds_type',"farming\Seeds_TypesController" )->middleware('auth');
-Route::resource('pesticide_type',"farming\PesticideTypeController" )->middleware('auth');
-Route::get('download',array('as'=>'download','uses'=>'farming\Crops_MonitoringController@download'))->middleware('auth');
-// end farming routes
-});
+// Route::resource('seeds_type',"farming\Seeds_TypesController" )->middleware('auth');
+// Route::resource('pesticide_type',"farming\PesticideTypeController" )->middleware('auth');
+// Route::get('download',array('as'=>'download','uses'=>'farming\Crops_MonitoringController@download'))->middleware('auth');
+// // end farming routes
+// });
 
 // start crop life cycle routes
-Route::group(['prefix' => 'crop_lifecycles'], function () {
-Route::resource('irrigation','CropLifeCycle\IrrigationController')->middleware('auth');
-// end crop life cycle routes
-});
+// Route::group(['prefix' => 'crop_lifecycles'], function () {
+// Route::resource('irrigation','CropLifeCycle\IrrigationController')->middleware('auth');
+// // end crop life cycle routes
+// });
 
 
 // start shop routes
@@ -238,13 +238,13 @@ Route::get('sales/{id}/product','SalesController@show')->middleware('auth');
 });
 
 // warehouse management
-Route::group(['prefix' => 'warehouse_management'], function () {
-Route::get('warehouse','WarehouseController@index')->middleware('auth');
-Route::post('warehouse/save','WarehouseController@store')->middleware('auth');
-Route::get('warehouse/{id}/show','WarehouseController@show')->middleware('auth');
-Route::resource('singlewarehouse','Single_warehouseController')->middleware('auth');
-Route::resource('warehouse_backend','warehouse\Warehouse_backendController')->middleware('auth');
-});
+// Route::group(['prefix' => 'warehouse_management'], function () {
+// Route::get('warehouse','WarehouseController@index')->middleware('auth');
+// Route::post('warehouse/save','WarehouseController@store')->middleware('auth');
+// Route::get('warehouse/{id}/show','WarehouseController@show')->middleware('auth');
+// Route::resource('singlewarehouse','Single_warehouseController')->middleware('auth');
+// Route::resource('warehouse_backend','warehouse\Warehouse_backendController')->middleware('auth');
+// });
 
 // make crops orders
 Route::group(['prefix' => 'crop_order'], function () {
@@ -287,18 +287,19 @@ Route::any('driver_fuel_report/{id}', 'Driver\DriverController@fuel')->name('dri
 Route::any('driver_route/{id}', 'Driver\DriverController@route')->name('driver.route')->middleware('auth');
 });
 // Manufacturing routes
-Route::group(['prefix' => 'manufacturing'], function () {
-Route::resource('manufacturing_location', 'Manufacturing\LocationController')->middleware('auth');
-Route::resource('manufacturing_inventory', 'Manufacturing\InventoryController')->middleware('auth');
-Route::resource('bill_of_material', 'Manufacturing\BillOfMaterialController')->middleware('auth');
-Route::resource('work_order', 'Manufacturing\WorkOrderController')->middleware('auth');
-});
+// Route::group(['prefix' => 'manufacturing'], function () {
+// Route::resource('manufacturing_location', 'Manufacturing\LocationController')->middleware('auth');
+// Route::resource('manufacturing_inventory', 'Manufacturing\InventoryController')->middleware('auth');
+// Route::resource('bill_of_material', 'Manufacturing\BillOfMaterialController')->middleware('auth');
+// Route::resource('work_order', 'Manufacturing\WorkOrderController')->middleware('auth');
+// });
 
 // inventory routes
 Route::group(['prefix' => 'inventory'], function () {
 Route::resource('location', 'Inventory\LocationController')->middleware('auth');
 Route::resource('inventory', 'Inventory\InventoryController')->middleware('auth');
 Route::resource('fieldstaff', 'Inventory\FieldStaffController')->middleware('auth');
+Route::resource('requisition', 'Inventory\RequisitionController')->middleware('auth');
 Route::resource('purchase_inventory', 'Inventory\PurchaseInventoryController')->middleware('auth');
 Route::get('findInvPrice', 'Inventory\PurchaseInventoryController@findPrice')->middleware('auth'); 
 Route::get('invModal', 'Inventory\PurchaseInventoryController@discountModal')->middleware('auth');
@@ -333,9 +334,30 @@ Route::get('findReturnService', 'Inventory\GoodReturnController@findService')->m
 });
 
 // cotton routes
-Route::group(['prefix' => 'cotton_collection'], function () {
+Route::group(['prefix' => 'cotton_production'], function () {
 Route::resource('costants', 'Cotton\CostantsController')->middleware('auth');
 Route::resource('production', 'Cotton\ProductionController')->middleware('auth');
+});
+
+Route::group(['prefix' => 'cotton_invoice'], function () {
+Route::resource('cotton_sales', 'Cotton\InvoiceController')->middleware('auth');
+Route::resource('seed_list', 'Cotton\SeedListController')->middleware('auth');
+Route::resource('seed_sales', 'Cotton\SeedInvoiceController')->middleware('auth');
+});
+
+Route::group(['prefix' => 'report'], function () {
+Route::any('stock_report', 'Cotton\CollectionCenterController@stock_report')->middleware('auth');
+Route::any('invoice_report', 'Cotton\ReportController@invoice_report')->middleware('auth');
+Route::any('center_report', 'Cotton\CollectionCenterController@center_report')->middleware('auth');
+Route::any('cotton_movement_report', 'Cotton\CollectionCenterController@cotton_movement_report')->middleware('auth');
+Route::any('levy_report', 'Cotton\ReportController@levy_report')->middleware('auth');
+Route::any('debtors_report', 'Cotton\ReportController@debtors_report')->middleware('auth');
+Route::any('general_report', 'Cotton\ReportController@general_report')->middleware('auth');
+Route::any('general_report2', 'Cotton\ReportController@general_report2')->middleware('auth');
+});
+
+
+Route::group(['prefix' => 'cotton_collection'], function () {
 Route::get('production_pdfview',array('as'=>'production_pdfview','uses'=>'Cotton\ProductionController@inv_pdfview'))->middleware('auth');
 Route::resource('operator', 'Cotton\OperatorController')->middleware('auth');
 Route::resource('collection_center', 'Cotton\CollectionCenterController')->middleware('auth');
@@ -377,23 +399,16 @@ Route::get('reverseOperatorModal', 'Cotton\TopUpOperatorController@discountModal
 Route::post('newreverseOperator', 'Cotton\TopUpOperatorController@newdiscount')->middleware('auth');
 Route::get('operator_complete/{id}', 'Cotton\TopUpOperatorController@complete')->name('operator.complete')->middleware('auth'); 
 Route::get('reverse_top_up_operator', 'Cotton\TopUpOperatorController@reverse_top_operator')->middleware('auth'); 
-Route::any('stock_report', 'Cotton\CollectionCenterController@stock_report')->middleware('auth');
-Route::any('invoice_report', 'Cotton\ReportController@invoice_report')->middleware('auth');
-Route::any('center_report', 'Cotton\CollectionCenterController@center_report')->middleware('auth');
-Route::any('cotton_movement_report', 'Cotton\CollectionCenterController@cotton_movement_report')->middleware('auth');
-Route::any('levy_report', 'Cotton\ReportController@levy_report')->middleware('auth');
-Route::any('debtors_report', 'Cotton\ReportController@debtors_report')->middleware('auth');
-Route::any('general_report', 'Cotton\ReportController@general_report')->middleware('auth');
-Route::any('general_report2', 'Cotton\ReportController@general_report2')->middleware('auth');
+
+
 Route::resource('general_report_table', 'Cotton\ReportController')->middleware('auth');
 Route::resource('cotton_client', 'Cotton\CottonClientController')->middleware('auth');
-Route::resource('cotton_sales', 'Cotton\InvoiceController')->middleware('auth');
+
 Route::get('findSalesPrice', 'Cotton\InvoiceController@findPrice')->middleware('auth'); 
 Route::get('cotton_payment/{id}', 'Cotton\InvoiceController@make_payment')->name('invoice.pay')->middleware('auth'); 
 Route::get('sales_pdfview',array('as'=>'sales_pdfview','uses'=>'Cotton\InvoiceController@sales_pdfview'))->middleware('auth');
 Route::resource('cotton_sales_payment', 'Cotton\InvoicePaymentController')->middleware('auth');
-Route::resource('seed_list', 'Cotton\SeedListController')->middleware('auth');
-Route::resource('seed_sales', 'Cotton\SeedInvoiceController')->middleware('auth');
+
 Route::get('findSeedPrice', 'Cotton\SeedInvoiceController@findPrice')->middleware('auth'); 
 Route::get('seed_payment/{id}', 'Cotton\SeedInvoiceController@make_payment')->name('seed.pay')->middleware('auth'); 
 Route::get('seed_pdfview',array('as'=>'seed_pdfview','uses'=>'Cotton\SeedInvoiceController@seed_pdfview'))->middleware('auth');
@@ -520,9 +535,7 @@ Route::get('courierModal', 'Courier\CourierController@discountModal')->middlewar
 Route::post('newCourierDiscount', 'Courier\CourierController@newdiscount')->middleware('auth');
 Route::get('addCourierSupplier', 'Courier\CourierController@addSupplier')->middleware('auth');
 Route::get('addCourierRoute', 'Courier\CourierController@addRoute')->middleware('auth');
-});
-//courier tracking
-Route::group(['prefix' => 'courier_tracking'], function () {
+
 Route::get('courier_collection', 'Courier\CourierMovementController@collection')->name('courier.collection')->middleware('auth');
 Route::get('courier_loading', 'Courier\CourierMovementController@loading')->name('courier.loading')->middleware('auth');
 Route::get('courier_offloading', 'Courier\CourierMovementController@offloading')->name('courier.offloading')->middleware('auth');
@@ -531,7 +544,18 @@ Route::resource('courier_movement', 'Courier\CourierMovementController')->middle
 Route::resource('courier_activity', 'Courier\CourierActivityController')->middleware('auth');
 Route::get('courier_report', 'Courier\CourierMovementController@report')->name('courier.report')->middleware('auth');
 Route::get('findCourierReport', 'Courier\CourierMovementController@findReport')->middleware('auth');
+
+
+
 });
+//courier tracking
+// Route::group(['prefix' => 'courier_tracking'], function () {
+
+
+
+// });
+
+
 //GL SETUP
 
 Route::group(['prefix' => 'gl_setup'], function () {

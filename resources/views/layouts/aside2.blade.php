@@ -137,7 +137,7 @@
                 </li>
                 @endcan
 
-                @can('manage-farming')
+                <!-- @can('manage-farming')
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link {{ (request()->is('farmings/*')) ? 'active' : ''  }}"><i
                             class="icon-copy"></i> <span>{{__('farming.farming')}}</span></a>
@@ -199,7 +199,7 @@
                         @endcan
                     </ul>
                 </li>
-                @endcan
+                @endcan -->
 
                 @can('manage-orders1')
                 <li class="nav-item nav-item-submenu">
@@ -338,11 +338,48 @@
                                 class="nav-link {{ (request()->is('courier/courier_invoice*')) ? 'active' : ''  }}"
                                 href="{{url('courier/courier_invoice')}}">Invoice</a></li>
                         @endcan
+
+                          @can('view-courier_collection')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_collection*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_collection')}}"> Courier
+                                Collection</a></li>
+                        @endcan
+                        @can('view-courier_loading')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_loading*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_loading')}}"> Courier Loading</a>
+                        </li>
+                        @endcan
+                        @can('view-courier_offloading')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_offloading*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_offloading')}}"> Courier
+                                Offloading</a></li>
+                        @endcan
+                        @can('view-courier_delivering')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_delivering*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_delivering')}}"> Courier
+                                Delivery</a></li>
+                        @endcan
+                        @can('view-courier_activity')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_activity*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_activity')}}">Track Courier
+                                Activity</a></li>
+                        @endcan
+                        @can('view-courier_activity')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/courier_activity*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_activity')}}"> Courier Uplift
+                                Report</a></li>
+                        @endcan
                     </ul>
                 </li>
                 @endcan
 
-                @can('manage-courier')
+                <!-- @can('manage-courier')
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link {{ (request()->is('courier_tracking/*')) ? 'active' : ''  }}"><i
                             class="icon-copy"></i> <span>Courier Tracking</span></a>
@@ -385,8 +422,10 @@
                                 Report</a></li>
                         @endcan
                     </ul>
+               
+               
                 </li>
-                @endcan
+                @endcan -->
 
 
                 @can('manage-payroll')
@@ -471,12 +510,12 @@
                 </li>
                 @endcan
 
-                @can('manage-warehouse')
+                <!-- @can('manage-warehouse')
                 <li class="nav-item"><a
                         class="nav-link {{ (request()->is('warehouse_management/warehouse*')) ? 'active' : ''  }}"
                         href="{{url('warehouse_management/warehouse')}}"><i data-feather="command"></i>Warehouse</a>
                 </li>
-                @endcan
+                @endcan -->
 
                 @can('view-supplier')
                 <li class="nav-item nav-item-submenu">
@@ -586,6 +625,11 @@
                                 class="nav-link {{ (request()->is('inventory/fieldstaff*')) ? 'active' : ''  }}"
                                 href="{{url('inventory/fieldstaff')}}">Field Staff</a></li>
                         @endcan
+                        @can('view-service')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('inventory/requisition*')) ? 'active' : ''  }}"
+                                href="{{url('inventory/requisition')}}">Requisition</a></li>
+                        @endcan
                         @can('view-purchase_inventory')
                         <li class="nav-item"><a
                                 class="nav-link {{ (request()->is('inventory/purchase_inventory*')) ? 'active' : ''  }}"
@@ -644,7 +688,7 @@
                 @endcan
 
 
-                @can('manage-farmer')
+                <!-- @can('manage-farmer')
                 <li class="nav-item nav-item-submenu">
                     <a href="#" class="nav-link {{ (request()->is('manufacturing/*')) ? 'active' : ''  }}"><i
                             class="icon-copy"></i> <span>
@@ -729,7 +773,7 @@
                         @endcan
                     </ul>
                 </li>
-                @endcan
+                @endcan -->
 
 
                 @can('manage-cotton')
@@ -836,7 +880,7 @@
 
                 @can('manage-cotton')
                 <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link {{ (request()->is('cotton_collection/*')) ? 'active' : ''  }}"><i
+                    <a href="#" class="nav-link {{ (request()->is('cotton_production/*')) ? 'active' : ''  }}"><i
                             class="icon-copy"></i> <span>
                             Cotton Production</span></a>
 
@@ -845,13 +889,13 @@
 
                         @can('view-top-up-operator')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/costants*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/costants')}}">Constants</a></li>
+                                class="nav-link {{ (request()->is('cotton_production/costants*')) ? 'active' : ''  }}"
+                                href="{{url('cotton_production/costants')}}">Constants</a></li>
                         @endcan
                         @can('view-top-up-center')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/production*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/production')}}">Make Production</a></li>
+                                class="nav-link {{ (request()->is('cotton_production/production*')) ? 'active' : ''  }}"
+                                href="{{url('cotton_production/production')}}">Make Production</a></li>
                         @endcan
                     </ul>
                 </li>
@@ -859,7 +903,7 @@
 
                 @can('manage-cotton')
                 <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link {{ (request()->is('cotton_collection/*')) ? 'active' : ''  }}"><i
+                    <a href="#" class="nav-link {{ (request()->is('cotton_invoice/*')) ? 'active' : ''  }}"><i
                             class="icon-copy"></i> <span>
                             Invoice</span></a>
 
@@ -867,18 +911,18 @@
 
                         @can('view-cotton-invoice')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/cotton_sales*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/cotton_sales')}}">Cotton Sales</a></li>
+                                class="nav-link {{ (request()->is('cotton_invoice/cotton_sales*')) ? 'active' : ''  }}"
+                                href="{{url('cotton_invoice/cotton_sales')}}">Cotton Sales</a></li>
                         @endcan
                         @can('view-seed-invoice')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/seed_list*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/seed_list')}}">Seed List</a></li>
+                                class="nav-link {{ (request()->is('cotton_invoice/seed_list*')) ? 'active' : ''  }}"
+                                href="{{url('cotton_invoice/seed_list')}}">Seed List</a></li>
                         @endcan
                         @can('view-seed-invoice')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/seed_sales*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/seed_sales')}}">Seed Sales</a></li>
+                                class="nav-link {{ (request()->is('cotton_invoice/seed_sales*')) ? 'active' : ''  }}"
+                                href="{{url('cotton_invoice/seed_sales')}}">Seed Sales</a></li>
                         @endcan
                     </ul>
                 </li>
@@ -1117,7 +1161,7 @@
 
                 @can('manage-cotton')
                 <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link {{ (request()->is('cotton_collection/*')) ? 'active' : ''  }} active"><i
+                    <a href="#" class="nav-link {{ (request()->is('report/*')) ? 'active' : ''  }} active"><i
                             class="icon-copy"></i> <span>
                             Reports</span></a>
 
@@ -1125,49 +1169,49 @@
 
                         @can('view-stock-report')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/stock_report*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/stock_report')}}"> Stock
+                                class="nav-link {{ (request()->is('report/stock_report*')) ? 'active' : ''  }}"
+                                href="{{url('report/stock_report')}}"> Stock
 
                                 Report</a></li>
                         @endcan
                         @can('view-invoice-report')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/invoice_report*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/invoice_report')}}"> Invoice
+                                class="nav-link {{ (request()->is('report/invoice_report*')) ? 'active' : ''  }}"
+                                href="{{url('report/invoice_report')}}"> Invoice
                                 Report</a></li>
                         @endcan
                         @can('view-center-report')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/center_report*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/center_report')}}"> Collection
+                                class="nav-link {{ (request()->is('report/center_report*')) ? 'active' : ''  }}"
+                                href="{{url('report/center_report')}}"> Collection
                                 Center Report</a></li>
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/cotton_movement_report*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/cotton_movement_report')}}">
+                                class="nav-link {{ (request()->is('report/cotton_movement_report*')) ? 'active' : ''  }}"
+                                href="{{url('report/cotton_movement_report')}}">
                                 Cotton Movement Report</a></li>
                         @endcan
                         @can('view-levy-report')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/levy_report*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/levy_report')}}"> Levy Report</a>
+                                class="nav-link {{ (request()->is('report/levy_report*')) ? 'active' : ''  }}"
+                                href="{{url('report/levy_report')}}"> Levy Report</a>
                         </li>
                         @endcan
                         @can('view-levy-report')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/debtors_report*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/debtors_report')}}"> Debtors
+                                class="nav-link {{ (request()->is('report/debtors_report*')) ? 'active' : ''  }}"
+                                href="{{url('report/debtors_report')}}"> Debtors
                                 Report</a></li>
                         @endcan
                         @can('view-center-report')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/general_report*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/general_report')}}"> Report By
+                                class="nav-link {{ (request()->is('report/general_report*')) ? 'active' : ''  }}"
+                                href="{{url('report/general_report')}}"> Report By
                                 District</a></li>
                         @endcan
                         @can('view-center-report')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('cotton_collection/general_report2*')) ? 'active' : ''  }}"
-                                href="{{url('cotton_collection/general_report2')}}"> General
+                                class="nav-link {{ (request()->is('report/general_report2*')) ? 'active' : ''  }}"
+                                href="{{url('report/general_report2')}}"> General
                                 Report </a></li>
                         @endcan
 

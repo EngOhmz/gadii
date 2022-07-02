@@ -68,7 +68,7 @@ class CourierPaymentController extends Controller
                  
                 $payment = CourierPayment::create($receipt);
 
-        $cr= AccountCodes::where('id','$request->account_id')->first();
+           $cr= AccountCodes::where('id','$request->account_id')->first();
           $journal = new JournalEntry();
         $journal->account_id = $request->account_id;
         $date = explode('-',$request->date);
@@ -144,8 +144,6 @@ $balance=$payment->amount;
                                 'added_by' =>auth()->user()->id,
                             ]);
 
-
-
                 return redirect(route('courier.invoice'))->with(['success'=>'Payment Added successfully']);
             }else{
                 return redirect(route('courier.invoice'))->with(['error'=>'Amount should not be equal or less to zero']);
@@ -216,11 +214,6 @@ $balance=$payment->amount;
                 $data['due_amount'] =  $sales->due_amount + $diff;
                 }
 
-         if($payment->amount > $receipt['amount']){
-                    $diff=$payment->amount - $receipt['amount'];
-                $data['due_amount'] =  $sales->due_amount + $diff;
-                }
-
                $account= Accounts::where('account_id',$request->account_id)->first();
 
 if(!empty($account)){
@@ -251,6 +244,7 @@ else{
 $balance=$receipt['amount'];
      Accounts::create($new);
 }
+
               
                 if($data['due_amount'] != 0 ){
                 $data['status'] = 1;
@@ -263,7 +257,7 @@ $balance=$receipt['amount'];
                  
                 $payment->update($receipt);
 
-                        $cr= AccountCodes::where('id','$request->account_id')->first();
+                         $cr= AccountCodes::where('id','$request->account_id')->first();
           $journal =JournalEntry::where('transaction_type','courier_payment')->where('payment_id', $payment->id)->whereNotNull('debit')->first();
         $journal->account_id = $request->account_id;
         $date = explode('-',$request->date);
