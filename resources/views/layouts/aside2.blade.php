@@ -480,14 +480,38 @@
 
                 @can('view-supplier')
                 <li class="nav-item nav-item-submenu">
-                    <a href="#" class="nav-link {{ (request()->is('purchases/*')) ? 'active' : ''  }}"><i
+                    <a href="#" class="nav-link {{ (request()->is('pos/sales/*')) ? 'active' : ''  }}"><i
+                            class="icon-basket"></i> <span>Sales
+                        </span></a>
+                    <ul class="nav nav-group-sub" data-submenu-title="Layouts">
+                    <li class="nav-item"><a class="nav-link {{ (request()->is('pos/sales/invoice*')) ? 'active' : ''  }}"
+                        href="{{url('pos/sales/client')}}"><i></i></i>Clients List</a></li>
+                    <li class="nav-item"><a class="nav-link {{ (request()->is('pos/sales/invoice*')) ? 'active' : ''  }}"
+                        href="{{url('pos/sales/invoice')}}"><i></i></i>Invoices</a></li>
+ 
+                        <li class="nav-item"><a class="nav-link {{ (request()->is('pos/sales/profoma_invoice*')) ? 'active' : ''  }}"
+                        href="{{url('pos/sales/profoma_invoice')}}"><i></i></i>Profoma Invoice</a></li>
+                       <!-- <li class="nav-item"><a class="nav-link {{ (request()->is('pos/sales/payments*')) ? 'active' : ''  }}"
+                        href="{{url('pos/purchases/payments')}}"><i></i></i>Manage Payments</a></li> -->
+                
+                    </ul>
+                    </li>
+                <li class="nav-item nav-item-submenu">
+                    <a href="#" class="nav-link {{ (request()->is('pos/purchases/*')) ? 'active' : ''  }}"><i
                             class="icon-basket"></i> <span>Purchases
                         </span></a>
                     <ul class="nav nav-group-sub" data-submenu-title="Layouts">
-                    <li class="nav-item"><a class="nav-link {{ (request()->is('purchases/supplier*')) ? 'active' : ''  }}"
-                        href="{{url('purchases/supplier')}}"><i></i></i>Suppliers</a></li>
-                </li>
+                    <li class="nav-item"><a class="nav-link {{ (request()->is('pos/purchases/items*')) ? 'active' : ''  }}"
+                        href="{{url('pos/purchases/items')}}"><i></i></i>Manage Items</a></li>
+                    <li class="nav-item"><a class="nav-link {{ (request()->is('pos/purchases/supplier*')) ? 'active' : ''  }}"
+                        href="{{url('pos/purchases/supplier')}}"><i></i></i>Manage Suppliers</a></li>
+                        <li class="nav-item"><a class="nav-link {{ (request()->is('pos/purchases/purchase*')) ? 'active' : ''  }}"
+                        href="{{url('pos/purchases/purchase')}}"><i></i></i>Manage Purchases</a></li>
+                    <!--    <li class="nav-item"><a class="nav-link {{ (request()->is('pos/purchases/payments*')) ? 'active' : ''  }}"
+                        href="{{url('pos/purchases/payments')}}"><i></i></i>Manage Payments</a></li> -->
+                
                     </ul>
+                    </li>
               
 
                 @endcan
