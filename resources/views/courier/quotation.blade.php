@@ -28,15 +28,14 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped">
                                         <thead>
-                                            <tr>
-                                              
+                                            <tr>                                              
                                               
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Reference No</th>
+                                                    style="width: 90.484px;">Reference</th>
 
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
@@ -45,18 +44,18 @@
                                                       <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Client Name</th>
+                                                    style="width: 120.484px;">Client Name</th>
                                                
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Route</th>
+                                                    style="width: 186.219px;">Route</th>
                                                
                                                
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Receiver name</th> 
+                                                    style="width: 141.219px;">Date</th> 
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
@@ -66,11 +65,11 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Status</th>
+                                                    style="width: 50.219px;">Status</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Actions</th>
+                                                    style="width: 200.1094px;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -83,7 +82,7 @@
                                                 <td>{{$row->supplier->name}}</td>
                                                 <td>From {{$row->route->from}} to {{$row->route->to}}</td>
                                                 
-                                                <td>{{$row->receiver_name}}</td>
+                                                <td>{{Carbon\Carbon::parse($row->date)->format('M d, Y')}}</td>
                                                 <td>{{number_format($row->due_amount,2)}} {{$row->currency_code}}</td>
                                                 
 
@@ -96,20 +95,24 @@
                                                     @endif
                                                 </td>
                                                 @if($row->status != 7)
-                                        <td>
- <a  class="btn btn-xs btn-outline-info text-uppercase px-2 rounded" title="Edit" onclick="return confirm('Are you sure?')" href="{{ route('courier_quotation.edit', $row->id)}}"><i class="fa fa-edit"></i></a>
+                                        <td><div class="form-inline">
+ <a class="list-icons-item text-primary" title="Edit" onclick="return confirm('Are you sure?')" href="{{ route('courier_quotation.edit', $row->id)}}"> <i class="icon-pencil7"></i></a>&nbsp
 
  {!! Form::open(['route' => ['courier_quotation.destroy',$row->id], 'method' => 'delete']) !!}
-{{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+{{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
 {{ Form::close() }}
+&nbsp
 
-                 <div class="btn-group">
-        <button class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">Change<span class="caret"></span></button>
-        <ul class="dropdown-menu animated zoomIn">
-         <li class="nav-item"><a  class="nav-link" title="Edit" data-toggle="modal" class="discount"  href="" onclick="model({{ $row->id }},'discount')" value="{{ $row->id}}" data-target="#appFormModal" >Discount Quotation</a></li>
-          <li class="nav-item"><a  class="nav-link" title="Convert to Invoice" onclick="return confirm('Are you sure? you want to convert Quotation To Invoice')"  href="{{ route('courier.approve', $row->id)}}">Convert to Invoice</a></li>
-          <li class="nav-item"><a  class="nav-link" title="Cancel" onclick="return confirm('Are you sure?')"   href="{{ route('courier.cancel', $row->id)}}">Cancel Quotation</a></li>                                       
-                          </ul></div>
+                                                                                                                <div class="dropdown">
+							                		<a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+
+													<div class="dropdown-menu">
+				<!--<a href="#" class="dropdown-item" title="Discount" data-toggle="modal"  onclick="model({{ $row->id }},'discount')" value="{{ $row->id}}" data-target="#appFormModal" >Discount Quotation</a>-->
+		                 <a  class="dropdown-item" title="Convert to Invoice" onclick="return confirm('Are you sure? you want to convert Quotation To Invoice')"  href="{{ route('courier.approve', $row->id)}}">Convert to Invoice</a>
+			      <a  class="dropdown-item" title="Cancel" onclick="return confirm('Are you sure?')"   href="{{ route('courier.cancel', $row->id)}}">Cancel Quotation</a>
+													</div>
+					                			</div>
+ </div>
 
                                                 </td>
                                                 @else
@@ -218,7 +221,7 @@
 
                                                     <div class="col-lg-10">
                                                     <div class="input-group">
-                                         <select class="form-control supplier" name="owner_id" required id="supplier">
+                                         <select class=" form-control m-b supplier " name="owner_id" required id="supplier">
                                                 <option value="">Select</option>
                                                           @if(!empty($users))
                                                           @foreach($users as $row)
@@ -230,7 +233,8 @@
 
                                                         </select>
                                                   <div class="input-group-append">
-                                                  <button class="btn btn-primary" type="button" data-toggle="modal" onclick="model({{ $row->id }},'supplier')" value="{{ $row->id}}" data-target="#appFormModal"><i class="fa fa-plus-circle"></i></button>
+
+
                                                   </div>
                                                  </div>
                                                     </div>
@@ -242,7 +246,7 @@
                                                     <div class="col-lg-10">
                                                     <div class="input-group">
                                                         
-                           <select class="form-control route" name="route_id" id="route" required>
+                           <select class="form-control m-b route" name="route_id" id="route" required>
                             <option value="">Select</option>
                                                             @if(!empty($route))
                                                             @foreach($route as $row)
@@ -254,8 +258,9 @@
                                                             @endforeach
                                                             @endif
                                                         </select>
+<?php $a=1;?>
                                                   <div class="input-group-append">
-                                                  <button class="btn btn-primary" type="button" data-toggle="modal" onclick="model({{ $row->id }},'route')" value="{{ $row->id}}" data-target="#appFormModal"><i class="fa fa-plus-circle"></i></button>
+                                                  <button class="btn btn-primary" href="" type="button" data-toggle="modal" onclick="model({{ $a }},'route')" value="{{ $a}}" data-target="#appFormModal"><i class="icon-plus-circle2"></i></button>
                                                   </div>
                                                  </div>
                                                     </div>
@@ -304,7 +309,7 @@
                                                     <div class="col-lg-4">
                                  @if(!empty($data->currency_code))
 
-                              <select class="form-control" name="currency_code" id="currency_code" required >
+                              <select class="form-control m-b" name="currency_code" id="currency_code" required >
                             <option value="{{ old('currency_code')}}" disabled selected>Choose option</option>
                             @if(isset($currency))
                             @foreach($currency as $row)
@@ -314,7 +319,7 @@
                         </select>
 
                          @else
-                       <select class="form-control" name="currency_code" id="currency_code" required >
+                       <select class="form-control m-b" name="currency_code" id="currency_code" required >
                             <option value="{{ old('currency_code')}}" disabled >Choose option</option>
                             @if(isset($currency))
                             @foreach($currency as $row)
@@ -367,18 +372,18 @@
    @if(!@empty($items))
     @foreach ($items as $i)
  <tr class="line_items">
-<td><select name="item_name[]" class="form-control item_name" required  data-sub_category_id={{$i->order_no}}><option value="">Select Item</option>@foreach($name as $n) <option value="{{ $n->id}}" @if(isset($i))@if($n->id == $i->item_name) selected @endif @endif >{{$n->name}}</option>@endforeach</select></td>
+<td><select name="item_name[]" class="form-control m-b item_name" required  data-sub_category_id={{$i->order_no}}><option value="">Select Item</option>@foreach($name as $n) <option value="{{ $n->id}}" @if(isset($i))@if($n->id == $i->item_name) selected @endif @endif >{{$n->name}}</option>@endforeach</select></td>
  <td><input type="text" name="quantity[]" class="form-control item_quantity{{$i->order_no}}"  placeholder ="quantity" id ="quantity"  value="{{ isset($i) ? $i->quantity : ''}}" required /></td>
 <td><input type="text" name="price[]" class="form-control item_price{{$i->order_no}}" placeholder ="price" required  value="{{ isset($i) ? $i->price : ''}}"/></td>
 <td><input type="text" name="unit[]" class="form-control item_unit{{$i->order_no}}" placeholder ="unit" required value="{{ isset($i) ? $i->unit : ''}}"/>
-<td><select name="tax_rate[]" class="form-control item_tax'+count{{$i->order_no}}" required ><option value="0">Select Tax Rate</option>
+<td><select name="tax_rate[]" class="form-control m-b item_tax'+count{{$i->order_no}}" required ><option value="0">Select Tax Rate</option>
 <option value="0" @if(isset($i))@if('0' == $i->tax_rate) selected @endif @endif>No tax</option>
 <option value="0.18" @if(isset($i))@if('0.18' == $i->tax_rate) selected @endif @endif>18%</option></select></td>
 <input type="hidden" name="total_tax[]" class="form-control item_total_tax{{$i->order_no}}'" placeholder ="total" required value="{{ isset($i) ? $i->total_tax : ''}}" readonly jAutoCalc="{quantity} * {price} * {tax_rate}"   />
 <input type="hidden" name="items_id[]" class="form-control item_saved{{$i->order_no}}"   value="{{ isset($i) ? $i->items_id : ''}}" required   />
 <td><input type="text" name="total_cost[]" class="form-control item_total{{$i->order_no}}" placeholder ="total" required value="{{ isset($i) ? $i->total_cost : ''}}" readonly jAutoCalc="{quantity} * {price}" /></td>
  <input type="hidden" name="pacel_item_id[]"  class="form-control name_list"  value= "{{ isset($i) ? $i->id : ''}}" />  
-<td><button type="button" name="remove" class="btn btn-danger btn-xs rem" value= "{{ isset($i) ? $i->id : ''}}"><i class="fas fa-trash"></i></button></td>
+<td><button type="button" name="remove" class="btn btn-danger btn-xs rem" value= "{{ isset($i) ? $i->id : ''}}"><i class="icon-trash"></i></button></td>
 </tr>
 
 @endforeach
@@ -450,7 +455,7 @@
 </section>
 
  <!-- discount Modal -->
-  <div class="modal inmodal show " id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
                           <div class="modal-dialog">
     </div>
 </div></div>
@@ -458,7 +463,7 @@
 
 
  <!-- route Modal -->
-  <div class="modal inmodal show" id="routeModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade" id="routeModal" tabindex="-1" role="dialog" aria-hidden="true">
                           <div class="modal-dialog">
 <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -514,43 +519,21 @@
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 <script>
@@ -564,7 +547,7 @@ $(document).ready(function() {
         var id = $(this).val();
         var sub_category_id = $(this).data('sub_category_id');
         $.ajax({
-            url: '{{url("findCourierPrice")}}',
+            url: '{{url("courier/findCourierPrice")}}',
                     type: "GET",
           data:{id:id},
              dataType: "json",
@@ -606,18 +589,27 @@ $(document).ready(function() {
         count++;
         var html = '';
         html += '<tr class="line_items">';
-        html += '<td><select name="item_name[]" class="form-control item_name" required  data-sub_category_id="'+count+'"><option value="">Select Item</option>@foreach($name as $n) <option value="{{ $n->id}}">{{$n->name}}</option>@endforeach</select></td>';
+        html += '<td><select name="item_name[]" class="form-control m-b item_name" required  data-sub_category_id="'+count+'"><option value="">Select Item Name</option>@foreach($name as $n) <option value="{{ $n->id}}">{{$n->name}}</option>@endforeach</select></td>';
         html += '<td><input type="text" name="quantity[]" class="form-control item_quantity" data-category_id="'+count+'"placeholder ="quantity" id ="quantity" required /></td>';
        html += '<td><input type="text" name="price[]" class="form-control item_price'+count+'" placeholder ="price" required  value=""/></td>';
        html += '<td><input type="text" name="unit[]" class="form-control item_unit'+count+'" placeholder ="unit" required /></td>';
-       html += '<td><select name="tax_rate[]" class="form-control item_tax'+count+'" required ><option value="0">Select Tax Rate</option><option value="0">No tax</option><option value="0.18">18%</option></select></td>';
+       html += '<td><select name="tax_rate[]" class="form-control m-b  item_tax'+count+'" required ><option value="0">Select Tax Rate</option><option value="0">No tax</option><option value="0.18">18%</option></select></td>';
  html += '<input type="hidden" name="total_tax[]" class="form-control item_total_tax'+count+'" placeholder ="total" required readonly jAutoCalc="{quantity} * {price} * {tax_rate}"   />';
  html += '<input type="hidden" name="items_id[]" class="form-control item_saved'+count+'"  required   />';
        html += '<td><input type="text" name="total_cost[]" class="form-control item_total'+count+'" placeholder ="total" required readonly jAutoCalc="{quantity} * {price}" /></td>';
-        html += '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove"><i class="fas fa-trash"></i></button></td>';
+        html += '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove"><i class="icon-trash"></i></button></td>';
 
         $('tbody').append(html);
 autoCalcSetup();
+
+/*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+          
+ 
+
       });
 
   $(document).on('click', '.remove', function(){
@@ -646,7 +638,7 @@ autoCalcSetup();
 
         $.ajax({
             type: 'GET',
-            url: '{{url("courierModal")}}',
+            url: '{{url("courier/courierModal")}}',
             data: {
                 'id': id,
                 'type':type,
@@ -689,7 +681,7 @@ console.log(price);
      
           $.ajax({
             type: 'GET',
-            url: '{{url("addCourierSupplier")}}',
+            url: '{{url("courier/addCourierSupplier")}}',
              data: {
                  'name':name,
                  'phone':phone,
@@ -752,5 +744,6 @@ console.log(price);
         });
 }
     </script>
+
 
 @endsection

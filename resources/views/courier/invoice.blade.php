@@ -24,7 +24,7 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr>
                                               
@@ -93,9 +93,9 @@
                                                     <div class="badge badge-success badge-shadow">Paid Invoice</div>
                                                     @endif
                                                 </td>
-
+                                                 <td>
                                                 @if($row->status == 0 || $row->status == 1 )
-                                        <td>
+                                        
                                             <a class="nav-link" 
                                             href="{{ route('courier.pay',$row->id)}}" 
                                             aria-selected="false">Make

@@ -28,13 +28,13 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
-                                       <thead>
+                                     <table class="table datatable-basic table-striped">
+                                           <thead>
                                             <tr>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 38.531px;">#</th>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
@@ -51,11 +51,11 @@
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Account Status</th>
+                                                    style="width: 91.219px;">Account Status</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Actions</th>
+                                                    style="width: 128.1094px;">Actions</th>
                                             </tr>
                                         </thead>
                                          <tbody>
@@ -66,28 +66,22 @@
                                                 <td>{{$row->account_codes}}</td>
                                                 <td>{{$row->account_name}}</td>
                                                 <td>{{$row->account_group}}</td>                                           
-                                                  <td>{{$row->account_status}}</td>
-                                              
+                                                  <td>{{$row->account_status}}</td>                                              
 
-                                                <td>
-                                                    <div class="row">
-                                                       
-                                                        <div class="col-lg-6">
-<a class="btn btn-icon btn-info" title="Edit" onclick="return confirm('Are you sure?')"   href="{{ route("account_codes.edit", $row->id)}}"><i class="fa fa-edit"></i></a>
-                                                        </div>
-                                                     
-                                                        <div class="col-lg-6">
-                                                            {!! Form::open(['route' => ['account_codes.destroy',$row->id], 'method' => 'delete']) !!}
-                                                            {{ Form::button('<i class="fas fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-icon btn-danger', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                            {{ Form::close() }}
-                                                        </div>
-                                                     
-                                                    </div>
-                                                  
+                                                 <td><div class="form-inline">
+                                                    <a class="list-icons-item text-primary"
+                                                        href="{{ route("account_codes.edit", $row->id)}}">
+                                                      <i class="icon-pencil7"></i>
+                                                    </a>&nbsp
 
-                                             
+                                              {!! Form::open(['route' => ['account_codes.destroy',$row->id], 'method' => 'delete']) !!}
+                                {{ Form::button(' <i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')",]) }}
+                                                  {{ Form::close() }}
+                                                    
 
+                                                </div>
                                                 </td>
+                                                 
                                             </tr>
                                             @endforeach
 
@@ -136,7 +130,7 @@
                                                         class="col-lg-2 col-form-label">Account Group</label>
 
                                                     <div class="col-lg-8">
-                                                    <select class="m-b" id="account_group" name="account_group" required>
+                                                    <select class="form-control m-b" id="account_group" name="account_group" required>
                                                     <option value="">Select Account Group</option>                                                     
                                                             @foreach ($group_account as $group)                                                             
                                                                 <option value="{{$group->name}}" @if(isset($data))@if($data->account_group == $group->name) selected @endif @endif >{{$group->name}}</option>
@@ -188,51 +182,22 @@
 @endsection
 
 @section('scripts')
-<script>
-$(document).ready(function() {
-    new TomSelect("#account_group",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
-        }
-    });
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+ <script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 @endsection

@@ -18,6 +18,8 @@ class CourierActivity extends Model
     'activity',
     'notes',   
 'loading_id',
+'costs',
+'bank_id',
     'added_by'];
     
    

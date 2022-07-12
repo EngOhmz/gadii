@@ -25,8 +25,9 @@ class GroupAccountController extends Controller
     public function index()
     {
       $user=auth()->user()->id;;
-        $group = GroupAccount::where('added_by',$user)->orderBy('group_id','asc')->get();
-          $class_account=ClassAccount::where('added_by',$user)->get();
+        //$group = GroupAccount::where('added_by',$user)->orderBy('group_id','asc')->get();
+       $group = GroupAccount::orderBy('group_id','asc')->get();
+          $class_account=ClassAccount::all();
         return view('group_account.data', compact('group','class_account'));
     }
 
@@ -86,7 +87,7 @@ class GroupAccountController extends Controller
            
             $group_account->save();
             //Flash::success(trans('general.successfully_saved'));
-            return redirect('group_account')->with(['success'=>'Group Account Created.']);
+            return redirect(route('group_account.index'))->with(['success'=>'Group Account Created.']);
         
     }
 
@@ -106,7 +107,7 @@ class GroupAccountController extends Controller
     {
        $user=auth()->user()->id;;
         $data=  GroupAccount::find($id);       
-          $class_account=ClassAccount::where('added_by',$user)->get();
+              $class_account=ClassAccount::all();
         return View::make('group_account.data', compact('data','class_account','id'))->render();
     }
 
@@ -157,7 +158,7 @@ else{
         
         $group_account->save();
         //Flash::success(trans('general.successfully_saved'));
-        return redirect('group_account')->with(['success'=>'Group Account Updated.']);
+       return redirect(route('group_account.index'))->with(['success'=>'Group Account Updated.']);
 
  
     }
@@ -173,6 +174,6 @@ else{
       
         GroupAccount::destroy($id);
         //Flash::success(trans('general.successfully_deleted'));
-        return redirect('group_account')->with(['success'=>'Group Account Deleted.']);
+        return redirect(route('group_account.index'))->with(['success'=>'Group Account Deleted.']);
     }
 }

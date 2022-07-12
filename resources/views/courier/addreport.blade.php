@@ -1,4 +1,4 @@
- <table class="table table-striped" id="table-1">
+ <table class="table datatable-basic table-striped">
                             <thead>
                                 <tr role="row">
 

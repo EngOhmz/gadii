@@ -214,7 +214,7 @@ class ProfomaInvoiceController extends Controller
             if (!empty($remArr)) {
                 for($i = 0; $i < count($remArr); $i++){
                    if(!empty($remArr[$i])){        
-                    InvoiceItem::where('id',$remArr[$i])->delete();        
+                    InvoiceItems::where('id',$remArr[$i])->delete();        
                        }
                    }
                }
@@ -243,7 +243,7 @@ class ProfomaInvoiceController extends Controller
           
           }
           else{
-            InvoiceItem::create($items);   
+            InvoiceItems::create($items);   
           }
                       
 
@@ -403,7 +403,7 @@ class ProfomaInvoiceController extends Controller
       
       }
       else{
-        invoiceItem::create($items);   
+        invoiceItems::create($items);   
       }
                     
                 }

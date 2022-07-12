@@ -25,8 +25,10 @@ class AccountCodesController extends Controller
     public function index()
     {
         $user=auth()->user()->id;;
-        $codes = AccountCodes::where('added_by',$user)->orderBy('account_codes','asc')->get();
-          $group_account = GroupAccount::where('added_by',$user)->get();
+        //$codes = AccountCodes::where('added_by',$user)->orderBy('account_codes','asc')->get();
+         $codes = AccountCodes::orderBy('account_codes','asc')->get();
+          //$group_account = GroupAccount::where('added_by',$user)->get();
+      $group_account = GroupAccount::all();
         return view('account_codes.data', compact('codes','group_account'));
     }
 
@@ -105,7 +107,8 @@ class AccountCodesController extends Controller
             
             
             //Flash::success(trans('general.successfully_saved'));
-            return redirect('account_codes')->with(['success'=>'Account Codes Created.']);
+            return redirect(route('account_codes.index'))->with(['success'=>'Account Codes Created.']);
+            
         }
    
 
@@ -126,7 +129,7 @@ class AccountCodesController extends Controller
   $user=auth()->user()->id;;
 
        $data= AccountCodes::find($id);
-            $group_account = GroupAccount::where('added_by',$user)->get();
+              $group_account = GroupAccount::all();
         return View::make('account_codes.data', compact('data','group_account','id'))->render();
     }
 
@@ -185,7 +188,7 @@ $account_codes->account_codes =   $old->account_codes;
                     'active' =>$request->account_status,
           ]);
         //Flash::success(trans('general.successfully_saved'));
-        return redirect('account_codes')->with(['success'=>'Account Codes Updated.']);
+      return redirect(route('account_codes.index'))->with(['success'=>'Account Codes Updated.']);
   
 
         
@@ -205,6 +208,6 @@ $account_codes->account_codes =   $old->account_codes;
         AccountCodes::destroy($id);
           ChartOfAccount::where('id',$id)->delete();
         //Flash::success(trans('general.successfully_deleted'));
-        return redirect('account_codes')->with(['success'=>'Account Codes Deleted.']);
+       return redirect(route('account_codes.index'))->with(['success'=>'Account Codes Deleted.']);
     }
 }

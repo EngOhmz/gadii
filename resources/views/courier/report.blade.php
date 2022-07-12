@@ -4,7 +4,6 @@
 @section('content')
 <section class="section">
     <div class="section-body">
-        @include('layouts.alerts.message')
         <div class="row">
             <div class="col-12 col-sm-6 col-lg-12">
                 <div class="card">
@@ -14,11 +13,12 @@
                     <div class="card-body">
                         <form id="addFormAppForm" method="post" action="javascript:void(0)">
                             @csrf
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="form-group">
+
+                                
+                             <div class="form-group row">
+                                 <div class="col-lg-4">
                                         <label class="col-form-label" for="order_id">From</label>
-                                        <select class="form-control" name="from" id="from">
+                                        <select class="form-control m-b" name="from" id="from">
                                             <option value="">Select Region</option>
                                             @if(!empty($region))
                                             @foreach($region as $row)
@@ -28,11 +28,10 @@
                                             @endif
                                         </select>
                                     </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="form-group">
+                               
+                                    <div class="col-lg-4">
                                         <label class="col-form-label" for="status">To</label>
-                                        <select class="form-control" name="to" id="to">
+                                        <select class="form-control m-b" name="to" id="to">
                                             <option value="">Select Region</option>
                                             @if(!empty($region))
                                             @foreach($region as $row)
@@ -42,12 +41,10 @@
                                             @endif
                                         </select>
                                     </div>
-                                </div>
 
-                                <div class="col-sm-4">
-                                    <div class="form-group">
+                                    <div class="col-lg-4">
                                         <label class="col-form-label" for="customer">Status</label>
-                                        <select class="form-control" name="status" id="status">
+                                        <select class="form-control m-b" name="status" id="status">
                                            <option value="">Select Status</option>
                                             <option value="3">Collected</option>
                                             <option value="4">On Transit</option>
@@ -57,8 +54,10 @@
 
                                         </select>
                                     </div>
+
                                 </div>
-                            </div>
+                            
+
                             <div class="row">
                                 <div class="col-sm-4">
                                     <div class="form-group">
@@ -87,7 +86,7 @@
                         </form>
 <br><br>
                      <div class="table-responsive">
-                        <table class="table table-striped" id="table-1">
+                         <table class="table datatable-basic table-striped">
                             <thead>
                                 <tr role="row">
 
@@ -157,45 +156,22 @@
 @endsection
 
 @section('scripts')
-<script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        searching: false,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+ <script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-    
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
+        
+        });
+    </script>
 <script>
 $(document).ready(function() {
 
@@ -209,7 +185,7 @@ $(document).ready(function() {
                 var status = $('#status').val();
 
         $.ajax({
-            url: '{{url("findCourierReport")}}',
+            url: '{{url("courier/findCourierReport")}}',
             type: "GET",
             data: {
                start_date: start_date,

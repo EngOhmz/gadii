@@ -419,8 +419,8 @@ class CourierController extends Controller
                 $result['pacel_number']=$quot->pacel_number;
                 $result['weight']=$quot->weight;
                $result['due_weight']=$quot->weight;
-                $result['start_location']= $region_from->id;
-                $result['end_location']=$region_to->id;
+                $result['start_location']= $route->from_region_id;
+                $result['end_location']=$route->to_region_id;
                 $result['owner_id']=$quot->owner_id;
               $result['receiver_name']=$quot->receiver_name;
                 $result['amount']=$quot->amount;

@@ -1,355 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8">
-    <title>Cargo</title>
+    <title>Larave Generate Invoice PDF - Nicesnippest.com</title>
+</head>
+<style type="text/css">
+    body{
+        font-family: 'Roboto Condensed', sans-serif;
+    }
+    .m-0{
+        margin: 0px;
+    }
+    .p-0{
+        padding: 0px;
+    }
+    .pt-5{
+        padding-top:5px;
+    }
+    .mt-10{
+        margin-top:10px;
+    }
+    .text-center{
+        text-align:center !important;
+    }
+    .w-100{
+        width: 100%;
+    }
    
-    <style type="text/css">
-        /*@page {*/
-        /*    margin: 1in 0in 0in 0in;*/
-        /*}*/
-        @font-face {
-            font-family: "Source Sans Pro", sans-serif;
-        }
-
-        .h4 {
-            font-size: 14px;
-        }
-
-        .h3 {
-            font-size: 15px;
-        }
-
-        h2 {
-            font-size: 19px;
-        }
-
-        .clearfix:after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-
-        a {
-            color: #0087C3;
-            text-decoration: none;
-        }
-
-        body {
-            color: #555555;
-            background: #ffffff;
-            font-size: 12px;
-            font-family: "Source Sans Pro", sans-serif;
-            width: 100%;
-       
-        }
-
-        header {
-            padding: 10px 0;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #aaaaaa;
-       
-        }
-
-        #logo {
-       
-        }
-
-        #company {
-       text-align: right;
-
-        }
-
-        #details {
-            margin-bottom: 10px;
-       
-        }
-
-        #client {
-            padding-left: 6px;
-            /*border-left: 6px solid #0087C3;*/
-       
-        }
-
-        #client .to {
-            color: #777777;
-        }
-
-        h2.name {
-            font-size: 1em;
-            font-weight: normal;
-            margin: 0;
-       
-        }
-
-        #invoice {
-          text-align: right;
-
-        }
-
-        #invoice h1 {
-            color: #0087C3;
-            font-size: 1.5em;
-            line-height: 1em;
-            font-weight: normal;
-       
-        }
-
-        #invoice .date {
-            font-size: 1.1em;
-            color: #777777;
-       
-        }
-
-        table {
-            width: 100%;
-            border-spacing: 0;
-       
-        }
-
-        table.items {
-            width: 100%;
-            border-collapse: collapse;
-            border-spacing: 0;
-            /*margin-bottom: 10px;*/
-       
-        }
-
-        table.items th,
-        table.items td {
-            padding: 5px;
-            /*background: #EEEEEE;*/
-            border-bottom: 1px solid #FFFFFF;
-        text-align: left;
-       
-
-        }
-
-        table.items th {
-            white-space: nowrap;
-            font-weight: normal;
-       
-        }
-
-        table.items td {
-         text-align: left;
-        
-        }
-
-        table.items td h3 {
-            color: #57B223;
-            font-size: 1em;
-            font-weight: normal;
-            margin-top: 2px;
-            margin-bottom: 2px;
-       
-        }
-
-        table.items .no {
-            background: #dddddd;
-        }
-
-        table.items .desc {
-          text-align: left;
-
-        }
-
-        table.items .unit {
-            background: #F3F3F3;
-            padding: 5px 10px 5px 5px;
-            word-wrap: break-word;
-        }
-
-        table.items .qty {
-        }
-
-        table.items td.unit,
-        table.items td.qty,
-        table.items td.total {
-            font-size: 1em;
-        }
-
-        table.items tbody tr:last-child td {
-            border: none;
-
-        }
-
-        table.items tfoot td {
-            padding: 5px 10px;
-            background: #ffffff;
-            border-bottom: none;
-            font-size: 14px;
-            white-space: nowrap;
-            border-top: 1px solid #aaaaaa;
-       
-        }
-
-        table.items tfoot tr:first-child td {
-            border-top: none;
-        }
-
-        table.items tfoot tr:last-child td {
-            color: #57B223;
-            font-size: 1.4em;
-            border-top: 1px solid #57B223;
-
-        }
-
-        table.items tfoot tr td:first-child {
-            border: none;
-         text-align: right;
-        
-        }
-
-        #thanks {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        #notices {
-            padding-left: 6px;
-            border-left: 0px solid #0087C3;
-
-        }
-
-        #notices .notice {
-            font-size: 1em;
-            color: #000000;
-        }
-
-        footer {
+    .w-85{
+        width:85%;   
+    }
+    .w-15{
+        width:15%;   
+    }
+    
+    .gray-color{
+        color:#5D5D5D;
+    }
+    .text-bold{
+        font-weight: bold;
+    }
+    .border{
+        border:1px solid black;
+    }
+    table tbody tr, table thead th, table tbody td{
+        border: 1px solid #d2d2d2;
+        border-collapse:collapse;
+        padding:7px 8px;
+    }
+    table tr th{
+        background: #F4F4F4;
+        font-size:15px;
+    }
+    table tr td{
+        font-size:13px;
+    }
+    table{
+        border-collapse:collapse;
+    }
+    .box-text p{
+        line-height:10px;
+    }
+    .float-left{
+        float:left;
+    }
+      .float-right{
+        float:right;
+    }
+    .total-part{
+        font-size:16px;
+        line-height:12px;
+    }
+    .total-right p{
+        padding-right:30px;
+    }
+footer {
             color: #777777;
             width: 100%;
             height: 30px;
             position: absolute;
-            bottom: 0;
+            bottom: -20px;
             border-top: 1px solid #aaaaaa;
             padding: 8px 0;
             text-align: center;
         }
 
-        tr.total td, tr th.total, tr td.total {
-        text-align: right;
-       
+        table tfoot tr:first-child td {
+            border-top: none;
+        }
+ table tfoot tr td {
+  padding:7px 8px;
         }
 
-        .bg-items {
-            background: #303252 !important;
-            color: #ffffff
+
+        table tfoot tr td:first-child {
+            border: none;
         }
 
-        .p-md {
-            padding: 9px !important;
-        }
-
-        .left {
-         float: left;
-        
-        }
-
-        .right {
-           float: right;
-            padding-left: 10px;
-        
-        }
-
-        .num_word {
-            margin-top: 5px;
-            margin-bottom: 5px;
-        }
-    
-    </style>
-</head>
+</style>
 <body>
-   <?php
+ <?php
 $settings= App\Models\System::first();
 
 ?>
-<table class="clearfix">
-    <tr>
-        <td style="width: 60%;">
-            <div id="logo" class="left">
-                <img style="width: 170px;height: 80px;float: left !important;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
-            </div>
-        </td>
-        
-         <td style="width: 40%;">
-            <div class="left" style="">
-        <div> <h1><b>{{$purchases->user->name}}</b></h1></div>
-        <div> <b>  {{ $purchases->user->address }}</b></div>
-        <div> <b>{{ $purchases->user->phone}}</b></div>
-        <div><b>Email: <a href="mailto:{{$purchases->user->email}}">{{$purchases->user->email}}</a></b></div>
-        <div><b>TIN : {{$settings->tin}}</b></div>          
-        </td>
-        
-        
-    </tr>
-</table>
-
-<table id="details" class="clearfix">
-    <tr>
-        <td style="width: 80%;overflow: hidden">
-            <h4 class="p-md bg-items ">
-                Customer Details
-            </h4>
-        </td>
-        <td style="width: 20%">
-            <h4 class="p-md bg-items ">
-                Invoice Details
-            </h4>
-        </td>
-    </tr>
-    <tr style="margin-top: 0px">
-      
-        <td style="width: 20%">
-            <div style="padding-left: 5px">
-              
-               <h3 style="margin: 0px">{{$purchases->supplier->name}}</h3>
-                <div class="address"> {{$purchases->supplier->address}} </div>
-                <div class="address">{{$purchases->supplier->phone}}        </div>
-                <div class="email"><a href="mailto:{{$purchases->supplier->email}}">{{$purchases->supplier->email}}</a></div>
-                    <div class="email" >{{!empty($purchases->supplier->TIN)? $purchases->supplier->TIN : ''}}</div>
-            </div>
-        </td>
-
-         <td style="width: 50%;">
-            <div class="left" style="">
-
-        
-        <h3 style="margin-bottom: 0;margin-top: 0">Invoice : <span style="text-align: right">{{$purchases->pacel_number}}</span></h3>
-                <div class="date">Date : <span style="text-align: right"> {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}</span></div>             
-                <div class="date">Due date : <span style="text-align: right">{{Carbon\Carbon::parse($purchases->due_date)->format('d/m/Y')}}</span></div>
-               <div class="date"> Sales Agent : <span style="text-align: right">{{$purchases->user->name }} </span></div>
-                <div class="date">Status: <span style="text-align: right">  
-                                      @if($purchases->good_receive == 0 && $purchases->status == 0)
-                                            Not Invoiced
-                                            @elseif($purchases->status == 0 )
-                                             Invoiced
-                                            @elseif($purchases->status == 1)
-                                             Partially Paid
-                                            @elseif($purchases->status == 2)
-                                              Paid Invoice
-                                            @elseif($purchases->status == 7)
-                                            Cancelled
-                                            @endif
-                                          </span></div>
-
-               <div class="date"> Currency : <span style="text-align: right">{{$purchases->currency_code }} </span> </div>
-                
-             
-            </div>
-        
-        </td>  
-          
-         
-    </tr>
-</table>
+<div class="head-title">
+    <h2 class="text-center m-0 p-0">Courier Invoice</h1>
+</div>
 
 
-<div id="notices">
-    <div class="notice"></div>
-</div><br><br>
+<div class="add-detail ">
+   <table class="table w-100 ">
+<tfoot>
+       
+        <tr>
+            <td class="w-50">
+                <div class="box-text">
+                        <img class="pl-lg" style="width: 133px;height:120px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
+                </div>
+            </td>
+  
+                  <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td>
+                 
+            <td class="w-50">
+                <div class="box-text">
+                   <p> <strong>Invoice : {{$purchases->pacel_number}}</strong></p>
+      <p> <strong>Invoice Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}</strong></p>
+                </div>
+            </td>
+        </tr>
+</tfoot>
+    </table>
 
+</div>
+
+
+<div class="table-section bill-tbl w-100 ">
+    <table class="table w-100">
+<tbody>
+        <tr>
+            <th class="w-50">From</th>
+            <th class="w-50">To</th>
+        </tr>
+        <tr>
+            <td>
+                <div class="box-text">
+                    <p>{{$settings->name}}</p>
+                    <p>{{ $settings->address }}</p>               
+                    <p>Contact :{{  $settings->phone}}</p>
+                 <p>Email: <a href="mailto:{{$settings->email}}">{{$settings->email}}</p>
+                    <p>TIN : {{$settings->tin}}</p>
+                </div>
+            </td>
+            <td>
+                <div class="box-text">
+                    <p>{{$purchases->supplier->name}}</p>
+                    <p>{{$purchases->supplier->address}}</p>
+                     <p>Contact : {{$purchases->supplier->phone}}</p>
+                 <p>Email: <a href="mailto:{{$purchases->supplier->email}}">{{$purchases->supplier->email}}</p>
+                    <p>TIN : {{!empty($purchases->supplier->TIN)? $purchases->supplier->TIN : ''}}</p>
+                </div>
+            </td>
+        </tr>
+</tbody>
+    </table>
+</div>
+<!--
+<div class="table-section bill-tbl w-100 mt-10">
+    <table class="table w-100 mt-10">
+        <tr>
+            <th class="w-50">Payment Method</th>
+            <th class="w-50">Shipping Method</th>
+        </tr>
+        <tr>
+            <td>Cash On Delivery</td>
+            <td>Free Shipping - Free Shipping</td>
+        </tr>
+    </table>
+</div>
+-->
 
 <?php
                                
@@ -360,20 +187,20 @@ $settings= App\Models\System::first();
        
                                  ?>
 
-
-<table class="items">
-    <thead class="p-md bg-items">
-    <tr>
-        <th> # </th>
-        <th>Items</th>      
-        <th style="text-align: right">Qty</th>
-        <th style="text-align: right">Price</th>
-        <th style="text-align: right">Tax</th>
-        <th style="text-align: right">Total</th>
-    </tr>
-    </thead>
-    <tbody>
-     @if(!empty($purchase_items))
+<div class="table-section bill-tbl w-100 mt-10">
+    <table class="table w-100 mt-10">
+<thead>
+        <tr>
+             <th class="col-sm-1 w-50">#</th>
+            <th class=" col-sm-2 w-50" >Item Name</th>
+            <th class="w-50">Price</th>
+            <th class="w-50">Qty</th>
+            <th class="w-50">Tax</th>
+            <th class="w-50">Total</th>
+        </tr>
+</thead>
+        <tbody>
+             @if(!empty($purchase_items))
                                         @foreach($purchase_items as $row)
                                         <?php
                                          $sub_total +=$row->total_cost;
@@ -381,118 +208,68 @@ $settings= App\Models\System::first();
                                          $tax += $row->total_tax; 
                                          ?>
 
-            <tr>
-                <td class="unit"><h3>{{$i++}}</h3>
+            <tr align="center">
+                <td>{{$i++}}</td>
                  <?php
-                                          $item_name = App\Models\Courier\CourierList::find($row->item_name);
+                                        $item_name = App\Models\Courier\CourierList::find($row->item_name);
                                         ?>
-                <td class="unit"><h3>{{$item_name->name}}</h3>
-                </td>
-              
-                
-                <td class="unit" style="text-align: right">{{ $row->quantity }}</td>
-                <td class="unit" style="text-align: right">{{number_format($row->price ,2)}}</td>
-                <td class="unit" style="text-align: right">
-                       @if(!@empty($row->total_tax > 0))
-                              <small class="pr-sm">VAT ({{ $row->tax_rate * 100 }} %)</small> {{number_format($row->total_tax ,2)}} 
-@endif
-</td>
-
-                    
-                <td class="unit" style="text-align: right">{{number_format($row->total_cost ,2)}}</td>
+                <td>{{$item_name->name}} </td>
+             <td >{{number_format($row->price ,2)}}</td>               
+                <td >{{ $row->quantity }}</td>
+                <td>  {{number_format($row->total_tax ,2)}} {{$purchases->currency_code}}</td>                           
+                <td >{{number_format($row->total_cost ,2)}} {{$purchases->currency_code}}</td>
                 
             </tr>
            @endforeach
                                         @endif
-    </tbody>
-    <tfoot>
-    <tr class="total">
-        <td colspan="4"></td>
-        <td colspan="1">Sub Total</td>
-        <td>{{number_format($sub_total,2)}}  {{$purchases->currency_code}}</td>
-    </tr>
-    @if(!@empty($tax > 0))
-        <tr class="total">
-            <td colspan="4"></td>
-            <td colspan="1">Total Tax</td>
-            <td> {{number_format($tax,2)}}  {{$purchases->currency_code}}</td>
-        </tr>
-    @endif
-     @if(!@empty($purchases->discount > 0))
-                <tr class="total">
-                    <td colspan="4"></td>
-                    <td colspan="1">Discount</td>
-                    <td> {{number_format($purchases->discount,2)}}  {{$purchases->currency_code}}</td>
-        @endif      
-       
+       </tbody>
 
-            <tr class="total">
-        <td colspan="4"></td>
-        <td colspan="1">Total Amount</td>
-        <td>{{number_format($gland_total- $purchases->discount,2)}}  {{$purchases->currency_code}}</td>
-    </tr>
-    
-    <tr class="total">
-         <td colspan="4"></td>
-        <td colspan="1"><div>.<</div></td>
-         <td><div></div></td>
-
-     </tr>
-    
-     @if($purchases->currency_code != 'TZS')
-    <tr class="total">
-         <td colspan="4"></td>
-        <td colspan="1">Exchange Rate 1 {{$purchases->currency_code}}</td>
-         <td>  <b>   {{$purchases->exchange_rate}} TZS</b></td>
-
-     </tr>
-     
-     <tr class="total">
-         <tr class="total">
-        <td colspan="4"></td>
-        <td colspan="1">Sub Total</td>
-        <td>{{number_format($sub_total * $purchases->exchange_rate,2)}}  TZS</td>
-    </tr>
-    @if(!@empty($tax > 0))
-        <tr class="total">
-            <td colspan="4"></td>
-            <td colspan="1">Total Tax</td>
-            <td> {{number_format($tax * $purchases->exchange_rate,2)}}   TZS</td>
-        </tr>
-    @endif
-     @if(!@empty($purchases->discount > 0))
-                <tr class="total">
-                    <td colspan="4"></td>
-                    <td colspan="1">Discount</td>
-                    <td> {{number_format($purchases->discount * $purchases->exchange_rate,2)}} TZS</td>
-        @endif      
-       
-
-            <tr class="total">
-        <td colspan="4"></td>
-        <td colspan="1">Total Amount</td>
-        <td>{{number_format($purchases->exchange_rate * ($gland_total-$purchases->discount) ,2)}}   TZS</td>
-    </tr>
-    @endif 
-   
-    </tfoot>
-</table>
-
-
-
-<table class="clearfix">
+  <tfoot>
 <tr>
-        <td style="width: 50%;">
-            <br><br> <br><br>
-        </td>
-    </tr>
+            <td colspan="4">  </td>
+                <td> </td>
+               <td></td> 
+            </td>
+        </tr>
+  <tr>
+       <tr>
+            <td colspan="4">  </td>
+                <td> <b> Sub Total</b></td>
+               <td>{{number_format($sub_total,2)}}  {{$purchases->currency_code}}</td> 
+            </td>
+        </tr>
+  <tr>
+            <td colspan="4">  </td>
+                <td><b>  VAT  (18%)</b></td>
+               <td>{{number_format($tax,2)}}  {{$purchases->currency_code}}</td> 
+            </td>
+        </tr>
 
-</table>
+  <tr>
+            <td colspan="4">  </td>
+                <td><b>  Total Amount</b></td>
+               <td>{{number_format($gland_total,2)}}  {{$purchases->currency_code}}</td> 
+            </td>
+        </tr>
+  </tfoot>
+    </table>
 
-<table class="clearfix">
+<table class="table w-100 mt-10">
+<tr>
+         <td style="width: 50%;">
+            <div class="left" style="">
+        <div><u>  <h3><b>BANK DETAILS</b></h3></u> </div>
+         <div><b>Account Name</b>:  EMA LOGISTIC</div>
+        <div><b>Account Number</b>:  0150386968400 </div>
+        <div><b>Bank Name</b>: CRDB BANK</div>
+        <div><b>Branch</b>: OYSTERBAY BRANCH</div>
+        <div><b>Swift Code</b>: Corutztz</div>
+          </div>     
+        </tr>
+<!--
     <tr>
         <td style="width: 50%;">
-            <div class="left" style="">
+            <div class="right" style="">
         <div><u> <h3><b> Account Details For Us-Dollar</b></h3></u> </div>
         <div><b>Account Name</b>:  Isumba Trans Ltd</div>
         <div><b>Account Number</b>:  10201632013 </div>
@@ -502,22 +279,16 @@ $settings= App\Models\System::first();
         <div></div>
         </div></td>
     </tr>
-      <tr>
-         <td style="width: 50%;">
-            <div class="right" style="">
-        <div><u>  <h3><b>Account Details For Tanzania Shillings</b></h3></u> </div>
-         <div><b>Account Name</b>:  Isumba Trans Ltd</div>
-        <div><b>Account Number</b>:  10201632005 </div>
-        <div><b>Bank Name</b>: Bank of Africa</div>
-        <div><b>Branch</b>: Business Centre</div>
-        <div><b>Swift Code</b>: EUAFTZ TZ</div>
-          </div>     
-        </td>
+-->
+
+      
 </table>
 
 
-<footer>
+</div>
 
+<footer>
+This is a computer generated invoice
 </footer>
 </body>
 </html>

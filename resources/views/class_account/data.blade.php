@@ -31,19 +31,19 @@
                                     <button onclick="exportTableToCSV('members.csv')"><span>
                                         <i class="icon-folder-download mr-3 icon-2x"></i>Export HTML Table To CSV File
                                     </span></button>
-
-                                    <table class="table table-striped" id="table-1">
+                                
+                                  <table class="table datatable-basic table-striped">
                                        <thead>
                                             <tr>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 38.531px;">#</th>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Class ID</th>
+                                                    style="width: 120.484px;">Class ID</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
@@ -51,11 +51,11 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Class Type</th>
+                                                    style="width: 101.219px;">Class Type</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Actions</th>
+                                                    style="width: 120.1094px;">Actions</th>
                                             </tr>
                                         </thead>
                                          <tbody>
@@ -70,23 +70,19 @@
                                               
 
                                                 <td>
-                                                    <div class="row">
-                                                       
-                                                        <div class="col-lg-6">
-<a class="btn btn-icon btn-info" title="Edit" onclick="return confirm('Are you sure?')"   href="{{ route("class_account.edit", $row->id)}}"><i class="fa fa-edit"></i></a>
-                                                        </div>
-                                                     
-                                                        <div class="col-lg-6">
-                                                            {!! Form::open(['route' => ['class_account.destroy',$row->id], 'method' => 'delete']) !!}
-                                                            {{ Form::button('<i class="fas fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-icon btn-danger', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                            {{ Form::close() }}
-                                                        </div>
-                                                     
-                                                    </div>
-                                                  
+                                                 <div class="form-inline">
+                                                    <a class="list-icons-item text-primary"
+                                                        href="{{ route("class_account.edit", $row->id)}}">
+                                                      <i class="icon-pencil7"></i>
+                                                    </a>&nbsp
 
-                                             
+                                              {!! Form::open(['route' => ['class_account.destroy',$row->id], 'method' => 'delete']) !!}
+                                {{ Form::button(' <i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')",]) }}
+                                                  {{ Form::close() }}
+                                                    
 
+                                                </div>
+                                                 
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -136,7 +132,7 @@
                                                         class="col-lg-2 col-form-label">Class Type</label>
 
                                                     <div class="col-lg-8">
-                                                    <select class="form-control" name="class_type" required>
+                                                    <select class="form-control m-b" name="class_type" required>
                                                  <option value="">Select Class Type</option>
                                                        <option value="Assets" @if(isset($data))@if($data->class_type == 'Assets') selected @endif @endif >Assets</option>
                                                     <option value="Liability" @if(isset($data))@if($data->class_type == 'Liability') selected @endif @endif>Liability</option>
@@ -184,43 +180,21 @@
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
+        
+        });
+    </script>
 
 
 @endsection

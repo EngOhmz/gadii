@@ -567,10 +567,12 @@ $journal->added_by=auth()->user()->id;
 public function save_wb(Request $request)
     {
 
+$item_id=$request->item_id;
 
   if(!empty($item_id)){
     for($i = 0; $i < count($item_id); $i++){
-     $client_one=CargoCollection::where('item_id',$item_id[0])->first(); 
+     if(count($item_id) > 1){
+$client_one=CargoCollection::where('item_id',$item_id[0])->first(); 
       $client=CargoCollection::where('item_id',$item_id[$i+1])->first(); 
        $exchange_one=Pacel::find($client_one->pacel_id);
      $exchange=Pacel::find($client->pacel_id);
@@ -587,7 +589,7 @@ return redirect()->back()->with(['error'=>'You have Chosen invoice with differen
 }
 
 }
-
+}
 
   if(!empty($item_id)){
     for($i = 0; $i < 1; $i++){

@@ -16,6 +16,8 @@ use App\Models\Route;
 use App\Models\Courier\Courier;
 use App\Models\JournalEntry;
 use App\Models\AccountCodes;
+use App\Models\Transaction;
+use App\Models\Accounts;
 use App\Models\Courier\CourierClient;
 use App\Models\Region;
 use App\Models\User;
@@ -78,19 +80,21 @@ class CourierMovementController extends Controller
     public function show($id,Request $request)
     {
         //
+         $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
+
         switch ($request->type) {
             case 'collection':
            $collect=CourierCollection::find($id);
-                    return view('courier.addcollection',compact('id'));
+                    return view('courier.addcollection',compact('id','bank_accounts'));
                     break;
             case 'loading':
-                        return view('courier.addloading',compact('id'));
+                        return view('courier.addLoading',compact('id','bank_accounts'));
                         break;
             case 'offloading':
-                            return view('courier.addoffloading',compact('id'));
+                            return view('courier.addoffloading',compact('id','bank_accounts'));
                             break;
             case 'delivering':
-                                return view('courier.adddelivering',compact('id'));
+                                return view('courier.adddelivering',compact('id','bank_accounts'));
                                 break;
               case 'fuel':
                         return view('courier.addfuel',compact('id'));
@@ -209,13 +213,86 @@ class CourierMovementController extends Controller
                             'module'=>'Courier',
                             'activity'=>"Confirm Collection",
                             'notes'=>$request->notes,
+                             'costs'=>$request->costs,
+                               'bank_id'=>$request->bank_id,
                           'loading_id'=>$loading_cargo->id,
                            'date'=>$request->collection_date,
                         ]
                         );                      
        }
 
-              
+       
+if($request->costs > 0){
+
+        $codes= AccountCodes::where('account_name','Pickup Cost')->first();
+        $journal = new JournalEntry();
+        $journal->account_id = $codes->id;
+          $date = explode('-',$request->collection_date);
+        $journal->date =  $request->collection_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+       $journal->transaction_type = 'courier_costs';
+        $journal->name = 'Pickup Cost';
+        $journal->debit =$request->costs;
+          $journal->payment_id=$movement->pacel_id;
+        $journal->added_by=auth()->user()->id;
+           $journal->notes= "Courier Pickup Costs  with reference no " .$movement->pacel_number  ;
+        $journal->save();
+
+$cr= AccountCodes::where('id',$request->bank_id)->first();
+          $journal = new JournalEntry();
+        $journal->account_id =$request->bank_id;
+          $date = explode('-',$request->collection_date);
+        $journal->date =  $request->collection_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+    $journal->transaction_type = 'courier_costs';
+        $journal->name = 'Pickup Cost';
+        $journal->credit = $request->costs;
+        $journal->payment_id= $movement->pacel_id;
+          $journal->added_by=auth()->user()->id;
+           $journal->notes= "Courier Pickup Costs  with reference no " .$movement->pacel_number  ;
+        $journal->save();
+        
+$account= Accounts::where('account_id',$request->bank_id)->first();
+
+if(!empty($account)){
+$balance=$account->balance -  $request->costs;
+$item_to['balance']=$balance;
+$account->update($item_to);
+}
+
+else{
+  $cr= AccountCodes::where('id',$request->bank_id)->first();
+
+     $new['account_id']= $request->bank_id;
+       $new['account_name']= $cr->account_name;
+      $new['balance']=  0-$request->costs;
+       $new[' exchange_code']= 'TZS';
+        $new['added_by']=auth()->user()->id;
+$balance=0-$request->costs;
+     Accounts::create($new);
+}
+        
+   // save into tbl_transaction
+
+                             $transaction= Transaction::create([
+                                'module' => 'Pickup Cost',
+                                 'module_id' => $movement->pacel_id,
+                               'account_id' => $request->bank_id,
+                                'code_id' => $codes->id,
+                                'name' => 'Courier Pickup Costs  with reference no ' .$movement->pacel_number,
+                                'type' => 'Expense',
+                                'amount' =>$request->costs,
+                                'debit' => $request->costs,
+                                 'total_balance' =>$balance,
+                                'date' => date('Y-m-d', strtotime($request->collection_date)),
+                                   'status' => 'paid' ,
+                                'notes' => 'This expense is from courier pickup cost.The Reference is ' .$movement->pacel_number ,
+                                'added_by' =>auth()->user()->id,
+                            ]);       
+
+}
 
 
 
@@ -326,12 +403,88 @@ $items['payment_status']='0';
                                     'module'=>'Courier',
                                     'activity'=>"Confirm Loading",
                                     'notes'=>$request->notes,
+                               'costs'=>$request->costs,
+                               'bank_id'=>$request->bank_id,
                                 'loading_id'=>$id,
                                    'date'=>$request->collection_date,
                                 ]
                                 );                      
                }
         
+
+           if($request->costs > 0){
+
+        $codes= AccountCodes::where('account_name','Loading Cost')->first();
+        $journal = new JournalEntry();
+        $journal->account_id = $codes->id;
+          $date = explode('-',$request->collection_date);
+        $journal->date =  $request->collection_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+       $journal->transaction_type = 'courier_costs';
+        $journal->name = 'Loading Cost';
+        $journal->debit =$request->costs;
+          $journal->payment_id=$movement->pacel_id;
+        $journal->added_by=auth()->user()->id;
+           $journal->notes= "Courier Loading Cost  with reference no " .$movement->pacel_number  ;
+        $journal->save();
+
+$cr= AccountCodes::where('id',$request->bank_id)->first();
+          $journal = new JournalEntry();
+        $journal->account_id =$request->bank_id;
+          $date = explode('-',$request->collection_date);
+        $journal->date =  $request->collection_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+    $journal->transaction_type = 'courier_costs';
+        $journal->name = 'Loading Cost';
+        $journal->credit = $request->costs;
+        $journal->payment_id= $movement->pacel_id;
+          $journal->added_by=auth()->user()->id;
+           $journal->notes= "Courier Loading Cost  with reference no " .$movement->pacel_number  ;
+        $journal->save();
+        
+$account= Accounts::where('account_id',$request->bank_id)->first();
+
+if(!empty($account)){
+$balance=$account->balance -  $request->costs;
+$item_to['balance']=$balance;
+$account->update($item_to);
+}
+
+else{
+  $cr= AccountCodes::where('id',$request->bank_id)->first();
+
+     $new['account_id']= $request->bank_id;
+       $new['account_name']= $cr->account_name;
+      $new['balance']=  0-$request->costs;
+       $new[' exchange_code']= 'TZS';
+        $new['added_by']=auth()->user()->id;
+$balance=0-$request->costs;
+     Accounts::create($new);
+}
+        
+   // save into tbl_transaction
+
+                             $transaction= Transaction::create([
+                                'module' => 'Loading Cost',
+                                 'module_id' => $movement->pacel_id,
+                               'account_id' => $request->bank_id,
+                                'code_id' => $codes->id,
+                                'name' => 'Courier Loading Cost  with reference no ' .$movement->pacel_number,
+                                'type' => 'Expense',
+                                'amount' =>$request->costs,
+                                'debit' => $request->costs,
+                                 'total_balance' =>$balance,
+                                'date' => date('Y-m-d', strtotime($request->collection_date)),
+                                   'status' => 'paid' ,
+                                'notes' => 'This expense is from courier loading cost.The Reference is ' .$movement->pacel_number ,
+                                'added_by' =>auth()->user()->id,
+                            ]);       
+
+}
+
+
                         $user_id=auth()->user()->id;
                         $quotation = CourierLoading::where('status','4')->get();
                        
@@ -351,13 +504,86 @@ $items['payment_status']='0';
                                             'activity'=>"Confirm Offloading",
                                             'notes'=>$request->notes,
                                             'loading_id'=>$id,
+                                          'costs'=>$request->costs,
+                               'bank_id'=>$request->bank_id,
                                            'date'=>$request->collection_date,
                                         ]
                                         );                      
                        }
 
  
-    
+                                if($request->costs > 0){
+
+        $codes= AccountCodes::where('account_name','Offloading Cost')->first();
+        $journal = new JournalEntry();
+        $journal->account_id = $codes->id;
+          $date = explode('-',$request->collection_date);
+        $journal->date =  $request->collection_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+       $journal->transaction_type = 'courier_costs';
+        $journal->name = 'Offloading Cost';
+        $journal->debit =$request->costs;
+          $journal->payment_id=$movement->pacel_id;
+        $journal->added_by=auth()->user()->id;
+           $journal->notes= "Courier Offloading Cost  with reference no " .$movement->pacel_number  ;
+        $journal->save();
+
+$cr= AccountCodes::where('id',$request->bank_id)->first();
+          $journal = new JournalEntry();
+        $journal->account_id =$request->bank_id;
+          $date = explode('-',$request->collection_date);
+        $journal->date =  $request->collection_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+    $journal->transaction_type = 'courier_costs';
+        $journal->name = 'Offloading Cost';
+        $journal->credit = $request->costs;
+        $journal->payment_id= $movement->pacel_id;
+          $journal->added_by=auth()->user()->id;
+           $journal->notes= "Courier Offloading Cost with reference no " .$movement->pacel_number  ;
+        $journal->save();
+        
+$account= Accounts::where('account_id',$request->bank_id)->first();
+
+if(!empty($account)){
+$balance=$account->balance -  $request->costs;
+$item_to['balance']=$balance;
+$account->update($item_to);
+}
+
+else{
+  $cr= AccountCodes::where('id',$request->bank_id)->first();
+
+     $new['account_id']= $request->bank_id;
+       $new['account_name']= $cr->account_name;
+      $new['balance']=  0-$request->costs;
+       $new[' exchange_code']= 'TZS';
+        $new['added_by']=auth()->user()->id;
+$balance=0-$request->costs;
+     Accounts::create($new);
+}
+        
+   // save into tbl_transaction
+
+                             $transaction= Transaction::create([
+                                'module' => 'Offloading Cost',
+                                 'module_id' => $movement->pacel_id,
+                               'account_id' => $request->bank_id,
+                                'code_id' => $codes->id,
+                                'name' => 'Courier Offloading Cost  with reference no ' .$movement->pacel_number,
+                                'type' => 'Expense',
+                                'amount' =>$request->costs,
+                                'debit' => $request->costs,
+                                 'total_balance' =>$balance,
+                                'date' => date('Y-m-d', strtotime($request->collection_date)),
+                                   'status' => 'paid' ,
+                                'notes' => 'This expense is from courier offloading cost.The Reference is ' .$movement->pacel_number ,
+                                'added_by' =>auth()->user()->id,
+                            ]);       
+
+}
+
 
                 
                                 $user_id=auth()->user()->id;
@@ -381,11 +607,87 @@ $items['payment_status']='0';
                                                     'module'=>'Courier',
                                                     'activity'=>"Confirm Delivery",
                                                  'loading_id'=>$id,
+                                                 'costs'=>$request->costs,
+                                                'bank_id'=>$request->bank_id,
                                                     'notes'=>$request->notes,
                                                    'date'=>$request->collection_date,
                                                 ]
                                                 );                      
                                }
+
+
+ 
+                                if($request->costs > 0){
+
+        $codes= AccountCodes::where('account_name','Delivery Cost')->first();
+        $journal = new JournalEntry();
+        $journal->account_id = $codes->id;
+          $date = explode('-',$request->collection_date);
+        $journal->date =  $request->collection_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+       $journal->transaction_type = 'courier_costs';
+        $journal->name = 'Delivery Cost';
+        $journal->debit =$request->costs;
+          $journal->payment_id=$movement->pacel_id;
+        $journal->added_by=auth()->user()->id;
+           $journal->notes= "Courier Delivery Cost  with reference no " .$movement->pacel_number  ;
+        $journal->save();
+
+$cr= AccountCodes::where('id',$request->bank_id)->first();
+          $journal = new JournalEntry();
+        $journal->account_id =$request->bank_id;
+          $date = explode('-',$request->collection_date);
+        $journal->date =  $request->collection_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+    $journal->transaction_type = 'courier_costs';
+        $journal->name = 'Delivery Cost';
+        $journal->credit = $request->costs;
+        $journal->payment_id= $movement->pacel_id;
+          $journal->added_by=auth()->user()->id;
+           $journal->notes= "Courier Delivery Cost with reference no " .$movement->pacel_number  ;
+        $journal->save();
+        
+$account= Accounts::where('account_id',$request->bank_id)->first();
+
+if(!empty($account)){
+$balance=$account->balance -  $request->costs;
+$item_to['balance']=$balance;
+$account->update($item_to);
+}
+
+else{
+  $cr= AccountCodes::where('id',$request->bank_id)->first();
+
+     $new['account_id']= $request->bank_id;
+       $new['account_name']= $cr->account_name;
+      $new['balance']=  0-$request->costs;
+       $new[' exchange_code']= 'TZS';
+        $new['added_by']=auth()->user()->id;
+$balance=0-$request->costs;
+     Accounts::create($new);
+}
+        
+   // save into tbl_transaction
+
+                             $transaction= Transaction::create([
+                                'module' => 'Delivery Cost',
+                                 'module_id' => $movement->pacel_id,
+                               'account_id' => $request->bank_id,
+                                'code_id' => $codes->id,
+                                'name' => 'Courier Delivery Cost  with reference no ' .$movement->pacel_number,
+                                'type' => 'Expense',
+                                'amount' =>$request->costs,
+                                'debit' => $request->costs,
+                                 'total_balance' =>$balance,
+                                'date' => date('Y-m-d', strtotime($request->collection_date)),
+                                   'status' => 'paid' ,
+                                'notes' => 'This expense is from courier delivery cost.The Reference is ' .$movement->pacel_number ,
+                                'added_by' =>auth()->user()->id,
+                            ]);       
+
+}
                         
                                         $user_id=auth()->user()->id;
                                         $quotation = CourierLoading::where('status','5')->orwhere('status','6')->get();
@@ -547,6 +849,28 @@ $data['report']=$data['report']->get();
 
     }
 
+public function cost_report(Request $request)
+    {
+       
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        $account_id=$request->account_id;
+        $chart_of_accounts = [];
+        foreach (CourierLoading ::all() as $key) {
+          $chart_of_accounts[$key->id] = $key->pacel_number;
+        }
+        if($request->isMethod('post')){
+            $data=CourierLoading::whereBetween('collection_date',[$start_date,$end_date])->get();
+           // $data=CourierLoading::where('id', $request->account_id)->get();
+        }else{
+            $data=[];
+        }
 
+       
+
+        return view('courier.cost_report',
+            compact('start_date',
+                'end_date','chart_of_accounts','data','account_id'));
+    }
 
 }

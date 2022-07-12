@@ -28,18 +28,18 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                   <table class="table datatable-basic table-striped">
                                        <thead>
                                             <tr>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 38.531px;">#</th>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Group ID</th>
+                                                    style="width: 120.484px;">Group ID</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
@@ -51,7 +51,7 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Actions</th>
+                                                    style="width: 120.1094px;">Actions</th>
                                             </tr>
                                         </thead>
                                          <tbody>
@@ -62,27 +62,23 @@
                                                 <td>{{$row->group_id}}</td>
                                                 <td>{{$row->name}}</td>
                                                 <td>{{$row->class}}</td>                                           
-                                              
-                                              
+                                                                                           
 
                                                 <td>
-                                                    <div class="row">
-                                                       
-                                                        <div class="col-lg-6">
-<a class="btn btn-icon btn-info" title="Edit" onclick="return confirm('Are you sure?')"   href="{{ route("group_account.edit", $row->id)}}"><i class="fa fa-edit"></i></a>
-                                                        </div>
-                                                     
-                                                        <div class="col-lg-6">
-                                                            {!! Form::open(['route' => ['group_account.destroy',$row->id], 'method' => 'delete']) !!}
-                                                            {{ Form::button('<i class="fas fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-icon btn-danger', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                            {{ Form::close() }}
-                                                        </div>
-                                                     
-                                                    </div>
-                                                  
 
-                                             
+                                                 <div class="form-inline">
+                                                    <a class="list-icons-item text-primary"
+                                                        href="{{ route("group_account.edit", $row->id)}}">
+                                                      <i class="icon-pencil7"></i>
+                                                    </a>&nbsp
 
+                                              {!! Form::open(['route' => ['group_account.destroy',$row->id], 'method' => 'delete']) !!}
+                                {{ Form::button(' <i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')",]) }}
+                                                  {{ Form::close() }}
+                                                    
+
+                                                </div>
+                                               
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -132,7 +128,7 @@
                                                         class="col-lg-2 col-form-label">Account Group</label>
 
                                                     <div class="col-lg-8">
-                                                    <select class="m-b" id="group_account_id" name="class" required>
+                                                    <select class="form-control m-b" id="group_account_id" name="class" required>
                                                  <option value="">Select Class </option>
                                                   @foreach ($class_account as $class)                                                             
                                                                 <option value="{{$class->class_name}}" @if(isset($data))@if($data->class == $class->class_name) selected @endif @endif >{{$class->class_name}}</option>
@@ -178,51 +174,25 @@
 @endsection
 
 @section('scripts')
+
 <script>
-$(document).ready(function() {
-    new TomSelect("#group_account_id",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
-        }
-    });
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
+        
+        });
+    </script>
 
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
 
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 @endsection

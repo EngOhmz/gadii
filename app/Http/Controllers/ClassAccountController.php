@@ -81,7 +81,7 @@ class ClassAccountController extends Controller
 
             $class_account->save();
           // Alert::success('class account created');
-              return redirect('class_account')->with(['success'=>'Class Account Created.']);
+               return redirect(route('class_account.index'))->with(['success'=>'Class Account Created.']);
            
         
     }
@@ -149,7 +149,7 @@ else{
 }
         $class_account->save();
         //Flash::success(trans('general.successfully_saved'));
-        return redirect('class_account')->with(['success'=>'Class Account Updated.']);
+        return redirect(route('class_account.index'))->with(['success'=>'Class Account Updated.']);
 
  
     }
@@ -165,6 +165,6 @@ else{
         
         ClassAccount::destroy($id);
         //Flash::success(trans('general.successfully_deleted'));
-        return redirect('class_account')->with(['success'=>'Class Account Deleted.']);
+        return redirect(route('class_account.index'))->with(['success'=>'Class Account Deleted.']);
     }
 }

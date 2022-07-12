@@ -161,7 +161,7 @@ class InvoiceController extends Controller
         $name = Inventory::all();
        
         $data=Invoice::find($id);
-        $items=InvoiceItems::where('invoiece_id',$id)->get();
+        $items=InvoiceItems::where('invoice_id',$id)->get();
         $type="";
        return view('pos.sales.invoice',compact('name','client','currency','data','id','items','type'));
     }
@@ -243,7 +243,7 @@ class InvoiceController extends Controller
           
           }
           else{
-            invoiceItem::create($items);   
+            invoiceItems::create($items);   
           }
                       
                   if(!empty($qtyArr[$i])){
@@ -405,11 +405,11 @@ class InvoiceController extends Controller
                         'invoice_id' =>$id);
                        
                         if(!empty($expArr[$i])){
-                            invoiceItem::where('id',$expArr[$i])->update($items);  
+                            invoiceItems::where('id',$expArr[$i])->update($items);  
       
       }
       else{
-        invoiceItem::create($items);   
+        invoiceItems::create($items);   
       }
                     
                 }

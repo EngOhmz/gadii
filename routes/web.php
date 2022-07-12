@@ -543,6 +543,7 @@ Route::get('courier_delivering', 'Courier\CourierMovementController@delivering')
 Route::resource('courier_movement', 'Courier\CourierMovementController')->middleware('auth'); 
 Route::resource('courier_activity', 'Courier\CourierActivityController')->middleware('auth');
 Route::get('courier_report', 'Courier\CourierMovementController@report')->name('courier.report')->middleware('auth');
+Route::any('cost_report', 'Courier\CourierMovementController@cost_report')->name('courier.report')->middleware('auth');
 Route::get('findCourierReport', 'Courier\CourierMovementController@findReport')->middleware('auth');
 
 

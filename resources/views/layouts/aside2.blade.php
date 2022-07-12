@@ -369,10 +369,16 @@
                                 href="{{url('courier/courier_activity')}}">Track Courier
                                 Activity</a></li>
                         @endcan
-                        @can('view-courier_activity')
+                        @can('view-courier_report')
                         <li class="nav-item"><a
-                                class="nav-link {{ (request()->is('courier/courier_activity*')) ? 'active' : ''  }}"
-                                href="{{url('courier/courier_activity')}}"> Courier Uplift
+                                class="nav-link {{ (request()->is('courier/courier_report*')) ? 'active' : ''  }}"
+                                href="{{url('courier/courier_report')}}"> Courier Uplift
+                                Report</a></li>
+                        @endcan
+                          @can('view-courier_report')
+                        <li class="nav-item"><a
+                                class="nav-link {{ (request()->is('courier/cost_report*')) ? 'active' : ''  }}"
+                                href="{{url('courier/cost_report')}}"> Courier Cost
                                 Report</a></li>
                         @endcan
                     </ul>

@@ -11,7 +11,7 @@
 
           
      <div class="form-group">
-                <label class="col-lg-6 col-form-label">Truck Reg No</label>
+                <label class="col-lg-6 col-form-label">Vehicle/Bike Reg No</label>
 
                 <div class="col-lg-12">
                  <input type="text" class="form-control truck_id" name="truck_id" id="truck" required>
@@ -43,6 +43,31 @@
                     <input type="date" name="collection_date" value="" required class="form-control">
                     <input type="hidden" name="type" value="collection" required class="form-control">
                     <input type="hidden" name="id" value="{{ $id}}" required class="form-control" id="collection">
+</div>
+            </div>
+
+
+   <div class="form-group">
+                <label class="col-lg-6 col-form-label">Pickup Cost</label>
+
+                <div class="col-lg-12">
+                 <input type="number" name="costs"   value="" class="form-control" required>
+                                          
+
+</div>
+            </div>
+
+
+   <div class="form-group">
+                <label class="col-lg-6 col-form-label">Payment</label>
+
+                <div class="col-lg-12">
+                   <select class="form-control m-b" name="bank_id" required>
+                                                    <option value="">Select Payment Account</option> 
+                                                          @foreach ($bank_accounts as $bank)                                                             
+                                                            <option value="{{$bank->id}}" >{{$bank->account_name}}</option>
+                                                               @endforeach
+                                                              </select>
 </div>
             </div>
 

@@ -15,7 +15,7 @@
                 @php
                    $data=App\Models\Courier\CourierLoading::find($id); 
                 @endphp
-                <li>Truck : {{ $data->truck_id}} </li>
+                <li>Vehicle/Bike : {{ $data->truck_id}} </li>
                <li>Driver Name: {{ $data->driver_id}} </li>
               <li>Route Name: From {{ $data->route->from}} to  {{ $data->route->to}} </li>
             </ul>
@@ -36,6 +36,31 @@
                     <input type="date" name="collection_date" value="" required class="form-control">
                     <input type="hidden" name="type" value="offloading" required class="form-control">
                 </div>
+            </div>
+
+
+        <div class="form-group">
+                <label class="col-lg-6 col-form-label">Agents Cost</label>
+
+                <div class="col-lg-12">
+                 <input type="number" name="costs"   value="" class="form-control" >
+                                          
+
+</div>
+            </div>
+
+
+   <div class="form-group">
+                <label class="col-lg-6 col-form-label">Payment</label>
+
+                <div class="col-lg-12">
+                   <select class="form-control m-b" name="bank_id" >
+                                                    <option value="">Select Payment Account</option> 
+                                                          @foreach ($bank_accounts as $bank)                                                             
+                                                            <option value="{{$bank->id}}" >{{$bank->account_name}}</option>
+                                                               @endforeach
+                                                              </select>
+</div>
             </div>
 
 

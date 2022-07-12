@@ -46,12 +46,12 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 38.531px;">#</th>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Reference</th>
+                                                    style="width: 156.484px;">Reference</th>
                                                
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
@@ -60,7 +60,7 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Payment Account</th>
+                                                    style="width: 181.219px;">Payment Account</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -68,11 +68,11 @@
                                                       <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Date</th>
+                                                    style="width: 128.1094px;">Date</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Actions</th>
+                                                    style="width: 158.1094px;">Actions</th>
                                             </tr>
                                         </thead>
                                          <tbody>
@@ -94,29 +94,25 @@
 
                                                 <td>
                                                     @if($row->status == 0)
-                                                    <div class="row">
-                                                       
-                                                        <div class="col-lg-6">
-<a class="btn btn-icon btn-info" title="Edit" onclick="return confirm('Are you sure?')"   href="{{ route("expenses.edit", $row->id)}}"><i class="fa fa-edit"></i></a>
-                                                        </div>
-                                                     
-                                                        <div class="col-lg-6">
-                                                            {!! Form::open(['route' => ['expenses.destroy',$row->id], 'method' => 'delete']) !!}
-                                                            {{ Form::button('<i class="fas fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-icon btn-danger', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                            {{ Form::close() }}
-                                                        </div>
-                                                     
-                                                    </div>
-                                                  
-                                                    <div class="btn-group">
-                                                        <button class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">Change<span class="caret"></span></button>
-                                                        <ul class="dropdown-menu animated zoomIn">
-                                                            <a  class="nav-link" title="Convert to Invoice" onclick="return confirm('Are you sure? you want to confirm')"  href="{{ route('expenses.approve', $row->id)}}">Confirm Payment</a></li>
-                                                                          </ul></div>
-                                                
+                                                   <div class="form-inline">
+ <a class="list-icons-item text-primary" title="Edit" onclick="return confirm('Are you sure?')" href="{{ route('expenses.edit', $row->id)}}"> <i class="icon-pencil7"></i></a>&nbsp
+
+ {!! Form::open(['route' => ['expenses.destroy',$row->id], 'method' => 'delete']) !!}
+{{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+{{ Form::close() }}
+&nbsp
+
+                                                                                                                <div class="dropdown">
+							                		<a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+
+													<div class="dropdown-menu">
+			      <a  class="dropdown-item" title="Confirm" onclick="return confirm('Are you sure?')"  onclick="return confirm('Are you sure? you want to confirm')"  href="{{ route('expenses.approve', $row->id)}}">Confirm Payment</a>
+													</div>
+					                			</div>
+ </div>
+                                                 
                                                  
                                                     @endif
-                                             
 
                                                 </td>
                                             </tr>

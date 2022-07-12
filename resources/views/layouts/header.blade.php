@@ -3,9 +3,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-   
+   <?php
+$settings= App\Models\System::first();
 
-	<title>DASH</title>
+?>
+
+	<title>{{$settings->name}}</title>
 
 	<!-- Global stylesheets -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
@@ -40,11 +43,17 @@
 		<!-- Theme JS files -->
 	<script src="{{asset('global_assets/js/plugins/tables/datatables/datatables.min.js')}}"></script>
 
+
     
 
 	<script src="{{asset('global_assets/js/plugins/tables/datatables/datatables.min.js')}}"></script>
 
 	<script src="{{asset('global_assets/js/demo_pages/datatables_basic.js')}}"></script>
+
+
+
+
+
 <!-- /theme JS files -->
 	<!-- /theme JS files -->
 
@@ -66,6 +75,8 @@
   <!-- Custom JS File -->
   <script src="{{url('assets/js/custom.js')}}"></script>
  <script src="{{url('assets/js/jautocalc.js')}}"></script>
+
+
 
   <script src="{{url('assets/bundles/datatables/datatables.min.js')}}"></script>
   <script src="{{url('assets/bundles/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js')}}"></script>
@@ -156,5 +167,20 @@ $(document).ready(function(){
 });
 
 </script>
+
+  <!-- select2 JS File -->
+  <script src="{{url('assets/js/select2.min.js')}}"></script>
+ <script src="{{url('assets/js/form_select2.js')}}"></script>
+<script>
+    $(document).ready(function(){
+   /*
+                * Multiple drop down select
+                */
+$('.m-b').select2({ width: '100%', });
+ 
+
+   
+    });
+   </script>
 
 </head>
