@@ -349,7 +349,9 @@ $i = 1; // Initialize $i here
     </table>
     <div style="margin-top:15px; width: 50%; margin-left:auto; text-align:right; font-size:14px;">
         <p style="margin:1px 0;"><b>Sub Total:</b> {{ number_format($sub_total, 2) }} {{ $invoices->exchange_code }}</p>
+        @if($tax > 0)
         <p style="margin:1px 0;"><b>VAT {{ $invoices->exchange_code == 'TZS' ? '18%' : '16%' }}:</b> {{ number_format($tax, 2) }} {{ $invoices->exchange_code }}</p>
+        @endif
         @if ($invoices->adjustment != 0)
             <p style="margin:1px 0;"><b>Total Before Adjustment:</b> {{ number_format($gland_total + $invoices->shipping_cost - $invoices->discount, 2) }} {{ $invoices->exchange_code }}</p>
             <p style="margin:1px 0;"><b>Adjustment:</b> {{ number_format($invoices->adjustment, 2) }} {{ $invoices->exchange_code }}</p>
