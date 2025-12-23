@@ -11,7 +11,7 @@
             <p><strong>Make sure you enter valid information</strong> .</p>
                      
                  <div class="form-group">
-                <label class="col-lg-6 col-form-label">Mileage Amoount Adjustment (TZS)</label>
+                <label class="col-lg-6 col-form-label">Mileage Amount Adjustment (TZS)</label>
 
                 <div class="col-lg-12">
                     <input type="number" name="fuel_adjustment"   step="0.001" value="{{ isset($data) ? $data->fuel_adjustment : ''}}" required class="form-control">

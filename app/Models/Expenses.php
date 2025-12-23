@@ -10,22 +10,8 @@ class Expenses extends Model
 
     public $timestamps = false;
 
-    protected $fillable = [
-        'bank_id',
-        'trans_id',
-        'amount',
-        'date',
-        'type',
-        'status',
-        'exchange_rate',
-        'exchange_code',
-        'payment_method',
-        'notes',   
-       'name',
-       'ref',
-        'account_id', 
-      'refill_id', 
-        'added_by'];
+  protected $guarded = ['id','_token'];
+
     
       public function classAccount()
     {

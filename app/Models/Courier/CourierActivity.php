@@ -11,16 +11,7 @@ class CourierActivity extends Model
 
     protected $table = "courier_activities";
 
-    protected $fillable = [
-    'module_id',
-    'module',
-    'date',
-    'activity',
-    'notes',   
-'loading_id',
-'costs',
-'bank_id',
-    'added_by'];
+    protected $guarded = ['id'];
     
    
     public function user(){
@@ -28,5 +19,22 @@ class CourierActivity extends Model
         return $this->belongsTo('App\Models\User','added_by');
       }
 
+public function start(){
+        return $this->belongsTo('App\Models\Region','start_location');
+      }
+       public function end(){
+    
+        return $this->belongsTo('App\Models\Region','end_location');
+      }
+
+       public function route(){
+    
+        return $this->belongsTo('App\Models\Tariff','tariff_id');
+      }
+         
+           public function  courier(){
+    
+        return $this->belongsTo('App\Models\Courier\Courier','module_id');
+      }
      
 }

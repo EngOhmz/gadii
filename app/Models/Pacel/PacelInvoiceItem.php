@@ -28,4 +28,8 @@ class PacelInvoiceItem extends Model
     
         return $this->belongsTo('App\Models\User','added_by');
       }
+ public function truck()
+    {
+        return $this->belongsTo('App\Models\Truck', 'truck_id');
+    }
 }

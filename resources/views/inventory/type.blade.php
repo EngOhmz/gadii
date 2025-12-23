@@ -28,18 +28,18 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped" id="table-1">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Name</th>
+                                                    style="width: 156.484px;">Name</th>
                                                
                                                
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
@@ -56,17 +56,19 @@
                                                 <td>{{$row->name }}</td>
                                                 
                                                 <td>
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        href="{{ route("service_type.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                   
+                                                 <div class="form-inline">
 
+                                                    <a class="list-icons-item text-primary"
+                                                        href="{{ route("service_type.edit", $row->id)}}">
+                                                        <i class="icon-pencil7"></i>
+                                                    </a>&nbsp
+                                                   
                                                     {!! Form::open(['route' => ['service_type.destroy',$row->id],
                                                     'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                  {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
                                                     {{ Form::close() }}
 
+                                                  </div>
                                                 </td>
                                             </tr>
                                             @endforeach

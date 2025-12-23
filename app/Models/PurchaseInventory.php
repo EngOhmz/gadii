@@ -11,24 +11,11 @@ class PurchaseInventory extends Model
 
     protected $table = "purchase_inventories";
 
-    protected $fillable = [
-    'reference_no',
-    'supplier_id',
-    'purchase_date',
-    'due_date',
-    'location',
-    'exchange_code',
-    'exchange_rate',
-    'purchase_amount',
-    'due_amount',
-    'purchase_tax',
-    'status',
-    'good_receive',    
-    'added_by'];
+   protected  $guarded = ['id'];
     
   public function user()
     {
-        return $this->belongsTo('App\Models\User','added_by');
+        return $this->belongsTo('App\Models\User','user_agent');
     }
 
  public function  supplier(){

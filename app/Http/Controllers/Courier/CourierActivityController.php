@@ -16,7 +16,7 @@ class CourierActivityController extends Controller
     public function index()
     {
         //
-        $activity = CourierActivity::all();
+        $activity = CourierActivity::where('added_by',auth()->user()->added_by)->get();
 
        
         return view('courier.activity',compact('activity'));

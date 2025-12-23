@@ -28,6 +28,15 @@ class PacelItem extends Model
     
     public function user()
     {
-        return $this->belongsTo('App\Models\user');
+        return $this->belongsTo('App\Models\user');  
+    }
+    
+    public function pacel(){
+    
+        return $this->belongsTo('App\Models\Pacel','pacel_id');
+      }
+       public function route()
+    {
+        return $this->belongsTo('App\Models\Route','item_name');
     }
 }

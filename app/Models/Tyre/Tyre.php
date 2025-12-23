@@ -11,18 +11,7 @@ class Tyre extends Model
 
     protected $table = "tyres";
 
-    protected $fillable = [
-    'serial_no',
-   'reference',
-    'brand_id',
-    'purchase_id',
-    'purchase_date',
-    'location',
-    'truck_id',
-     'position',
-    'assign_reference',
-    'status',  
-    'added_by'];
+    protected  $guarded = ['id'];
     
     public function brand(){
 

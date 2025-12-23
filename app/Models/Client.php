@@ -10,7 +10,7 @@ class Client extends Model
     use HasFactory;
     protected $table = 'clients';
 
-    protected $fillable = ['user_id','name','address','phone','TIN','email'];
+    protected  $guarded = ['id'];
     public function user()
     {
         return $this->belongsTo('App\Models\User');

@@ -23,6 +23,8 @@
                             </thead>
                             <tbody>
                                 @if(!empty($invoice))
+                                
+                               
                       
                                 <tr>
 
@@ -90,7 +92,8 @@
                                 <div class="form-group row"><label class="col-lg-2 col-form-label">Payment Date</label>
 
                                     <div class="col-lg-10">
-                                        <input type="date" name="date" value="{{ isset($data) ? $data->date : date('d/m/y')}}"
+                 
+                                        <input type="date" name="date"  value="{{ isset($data) ? $data->date : date('Y-m-d')}}"  
                                             class="form-control" required>
                                     </div>
                                 </div>
@@ -130,7 +133,7 @@
                                 <div class="form-group row"><label  class="col-lg-2 col-form-label">Bank/Cash Account</label>
 
                                     <div class="col-lg-10">
-                                       <select class="form-control" name="account_id" required>
+                                       <select class="form-control m-b" name="account_id" required>
                                     <option value="">Select Payment Account</option> 
                                           @foreach ($bank_accounts as $bank)                                                             
                                             <option value="{{$bank->id}}" @if(isset($data))@if($data->account_id == $bank->id) selected @endif @endif >{{$bank->account_name}}</option>

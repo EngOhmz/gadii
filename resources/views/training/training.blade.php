@@ -32,26 +32,26 @@
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
                                
-                                    <table class="table table-striped" id="table-1">
+                                   <table class="table datatable-basic table-striped" id="table-1">
                                         <thead>
                                             <tr>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">#</th>
+                                                    style="width: 28.484px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Staff Name</th>
+                                                    style="width: 156.484px;">Staff Name</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Course/Training</th>
+                                                    style="width: 156.484px;">Course/Training</th>
                                                      <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Vendor</th>
+                                                    style="width: 156.484px;">Vendor</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -103,19 +103,19 @@
 
                                                 <td>
                                                    @if($row->status == 1 || $row->status == 0)
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
+                                                    <a class="list-icons-item text-primary"
                                                         title="Edit" onclick="return confirm('Are you sure?')"
                                                         href="{{ route('training.edit', $row->id)}}"><i
-                                                            class="fa fa-edit"></i></a>
+                                                            class="icon-pencil7"></i></a>
                                                            
 
                                                     {!! Form::open(['route' => ['training.destroy',$row->id],
                                                     'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
                                                     {{ Form::close() }}
 
                                                       
-                                                    <div class="btn-group">
+                                                   <div class="form-inline">
                                                         <button class="btn btn-xs btn-success dropdown-toggle"
                                                             data-toggle="dropdown">Change Status<span
                                                                 class="caret"></span></button>
@@ -179,8 +179,8 @@
                                                 <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Staff</label>
                                                     <div class="col-lg-4">
-                                                        <select class="form-control" name="staff_id" required
-                                                        id="supplier_id">
+                                                        <select class="form-control m-b" name="staff_id" required
+                                                        id="staff_id">
                                                         <option value="">Select</option>
                                                         @if(!empty($staff))
                                                         @foreach($staff as $row)
@@ -234,7 +234,7 @@
                                            <label class="col-lg-2 col-form-label">Performance</label>
                                                     <div class="col-lg-4">
                                                         
-                                                            <select class="form-control" name="performance" 
+                                                            <select class="form-control m-b" name="performance" 
                                                                 id="route">
                                                                <option value="0" @if(isset($data)){{  $data->performance == '0'  ? 'selected' : ''}}  @endif >Not Concluded</option>
                                                                                     <option value="1" @if(isset($data)){{  $data->performance == '1'  ? 'selected' : ''}}  @endif >Satisfactory</option>

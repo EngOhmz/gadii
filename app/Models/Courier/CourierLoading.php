@@ -10,49 +10,39 @@ class CourierLoading extends Model
     use HasFactory;
     protected $table = "courier_loading";
 
-    protected $fillable = [      
-        'truck_id',
-     'driver_id',
-        'weight',
-     'total_weight',
-        'status',
-       'amount',
-    'fuel',
- 'type',
-  'route_id',
-'start_location',
-'end_location',
- 'collection_date',
-'receiver_name',
-'owner_id',
-    'pacel_id', 
-   'pacel_name', 
-  'pacel_number', 
-        'added_by'];
+  
+   protected $guarded = ['id','_token'];
 
-      
-   public function  client(){
+
+       public function  client(){
     
         return $this->belongsTo('App\Models\Courier\CourierClient','owner_id');
       }
-      public function route(){
+     public function  courier(){
     
-        return $this->belongsTo('App\Models\Route','route_id');
+        return $this->belongsTo('App\Models\Courier\Courier','pacel_id');
       }
-        
-         
-    public function region_s(){
+        public function start(){
     
         return $this->belongsTo('App\Models\Region','start_location');
       }
-
-    public function region_e(){
+       public function end(){
     
         return $this->belongsTo('App\Models\Region','end_location');
+      }
+
+       public function route(){
+    
+        return $this->belongsTo('App\Models\Tariff','tariff_id');
       }
     
     public function user()
     {
         return $this->belongsTo('App\Models\user');
     }
+
+public function collect(){
+    
+        return $this->belongsTo('App\Models\Courier\CourierCollection','collection_id');
+      }
 }

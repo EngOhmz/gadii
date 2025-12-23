@@ -5,6 +5,8 @@ namespace App\Permissions;
 
 use App\Models\Permission;
 use App\Models\Role;
+use Illuminate\Support\Facades\DB;
+
 trait HasPermissionsTrait {
 
  
@@ -52,6 +54,17 @@ trait HasPermissionsTrait {
         if ($module == '' || $module == null) {
             return false;
         }
+        // foreach($this->roles()->get() as $row){
+            
+        //     //dd($row->permissions->contains('modules.slug', $module->slug));
+        //     //dd($row->permissions);
+            
+            
+        //     if (!$row->permissions->contains('modules.slug', $module->slug)) {
+        //         return false;
+        //     }
+            
+        // }
         if (!$this->roles()->first()->permissions->contains('modules.slug', $module->slug)) {
             return false;
         }
@@ -61,7 +74,7 @@ trait HasPermissionsTrait {
    public function givePermissionsTo(... $permissions) {
 
     $permissions = $this->getAllPermissions($permissions);
-    dd($permissions);
+    // dd($permissions);
     if($permissions === null) {
       return $this;
     }
@@ -84,9 +97,24 @@ trait HasPermissionsTrait {
   }
 
   public function hasPermissionTo($permission) {
- 
+      
+     
+    
+    
+    $permission_id = $permission->id;
+    $user_id = auth()->user()->id;
+    $query =  " SELECT rp.* from roles_permissions rp,users_roles ur where rp.role_id = ur.role_id and ur.user_id = '".$user_id."' and rp.permission_id  = '".$permission_id."' and rp.status = 1";
+    $row = DB::select(DB::raw($query));
+    
+    //  dd($row);
+    if(count($row) > 0){
+        // return true;
+        return $this->hasPermissionThroughRole($permission);
+    }else{
+        return false;
+    }
 
-    return $this->hasPermissionThroughRole($permission);
+    
   
     
   }
@@ -102,6 +130,7 @@ trait HasPermissionsTrait {
   }
 
   public function permissions() {
+      
 
     return $this->belongsToMany(Permission::class,'users_permissions');
 

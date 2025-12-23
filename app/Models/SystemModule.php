@@ -10,10 +10,8 @@ class SystemModule extends Model
     use SoftDeletes;
 
     protected $table = 'sys_modules';
-    protected $fillable = [
-        'slug',
-        'name'
-    ];
+   protected $guarded = ['id','_token'];
+
 
     public function permissions()
     {

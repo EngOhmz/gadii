@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Courier;
 use App\Http\Controllers\Controller;
 use App\Models\Courier\CourierMovement;
 use App\Models\Courier\Courier;
+use App\Models\Courier\CourierInvoice;
 use App\Models\Courier\CourierPayment;
 use App\Models\Payment_methodes;
 use App\Models\Route;
@@ -47,13 +48,16 @@ class CourierPaymentController extends Controller
         //
 
         $receipt = $request->all();
-        $sales =Courier::find($request->pacel_id);
+        $sales =CourierInvoice::find($request->pacel_id);
+
+      $count=CourierPayment::count();
+        $pro=$count+1;
 
         if(($receipt['amount'] <= $sales->amount)){
-            if( $receipt['amount'] >= 0){
+            if( $receipt['amount'] > 0){
                 $random = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(4/strlen($x)) )),1,4);
-                $receipt['trans_id'] = "TRANS_CM_".$request->pacel_id.'_'.$random;
-                $receipt['added_by'] = auth()->user()->id;
+                $receipt['trans_id'] = "TRANS_CM_".$pro;
+                $receipt['added_by'] = auth()->user()->added_by;
                 
                 //update due amount from invoice table
                 $data['due_amount'] =  $sales->due_amount-$receipt['amount'];
@@ -81,12 +85,13 @@ class CourierPaymentController extends Controller
         $journal->payment_id= $payment->id;
          $journal->currency_code =   $sales->currency_code;
         $journal->exchange_rate=  $sales->exchange_rate;
-          $journal->added_by=auth()->user()->id;
-           $journal->notes= "Courier Payment for Clear Credit  with reference no " .$sales->pacel_number  ;
+          $journal->added_by=auth()->user()->added_by;
+           $journal->notes= "Courier Payment for Clear Credit  with reference no " .$sales->confirmation_number  ;
         $journal->save();
 
 
-        $codes= AccountCodes::where('account_group','Receivables')->first();
+        $codes= AccountCodes::where('account_group','Receivables')->where('added_by', auth()->user()->added_by)->first();
+        //dd($codes);
         $journal = new JournalEntry();
         $journal->account_id = $codes->id;
           $date = explode('-',$request->date);
@@ -99,8 +104,8 @@ class CourierPaymentController extends Controller
           $journal->payment_id= $payment->id;
          $journal->currency_code =   $sales->currency_code;
         $journal->exchange_rate=  $sales->exchange_rate;
-        $journal->added_by=auth()->user()->id;
-           $journal->notes= "Clear Courier Debitor  with reference no " .$sales->pacel_number  ;
+        $journal->added_by=auth()->user()->added_by;
+           $journal->notes= "Clear Courier Debtor  with reference no " .$sales->confirmation_number  ;
         $journal->save();
         
 $account= Accounts::where('account_id',$request->account_id)->first();
@@ -118,7 +123,7 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= $payment->amount;
        $new[' exchange_code']= $sales->currency_code;
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 $balance=$payment->amount;
      Accounts::create($new);
 }
@@ -141,7 +146,7 @@ $balance=$payment->amount;
                                 'payment_methods_id' =>$payment->payment_method,
                                    'status' => 'paid' ,
                                 'notes' => 'This deposit is from courier payment.The Reference is ' .$sales->pacel_number ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
 
                 return redirect(route('courier.invoice'))->with(['success'=>'Payment Added successfully']);
@@ -177,7 +182,7 @@ $balance=$payment->amount;
     {
         //
         $data=CourierPayment::find($id);
-        $invoice = Courier::find($data->pacel_id);
+        $invoice = CourierInvoice::find($data->pacel_id);
         $payment_method = Payment_methodes::all();
        $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
         return view('courier.pacel_edit_payment',compact('invoice','payment_method','data','id','bank_accounts'));
@@ -196,12 +201,12 @@ $balance=$payment->amount;
         $payment=CourierPayment::find($id);
 
         $receipt = $request->all();
-        $sales =Courier::find($request->pacel_id);
+        $sales =CourierInvoice::find($request->pacel_id);
 
         if(($receipt['amount'] <= $sales->amount)){
-            if( $receipt['amount'] >= 0){
+            if( $receipt['amount'] > 0){
                 $random = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(4/strlen($x)) )),1,4);
-                $receipt['added_by'] = auth()->user()->id;
+                $receipt['added_by'] = auth()->user()->added_by;
                 
                 //update due amount from invoice table
                 if($payment->amount <= $receipt['amount']){
@@ -239,7 +244,7 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= $receipt['amount'];
        $new[' exchange_code']=$sales->exchange_code;
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 
 $balance=$receipt['amount'];
      Accounts::create($new);
@@ -270,7 +275,7 @@ $balance=$receipt['amount'];
         $journal->payment_id= $payment->id;
          $journal->currency_code =   $sales->currency_code;
         $journal->exchange_rate=  $sales->exchange_rate;
-      $journal->added_by=auth()->user()->id;
+      $journal->added_by=auth()->user()->added_by;
            $journal->notes= "Courier Payment for Clear Credit  with reference no " .$sales->pacel_number  ;
         $journal->update();
 
@@ -288,7 +293,7 @@ $balance=$receipt['amount'];
           $journal->payment_id= $payment->id;
          $journal->currency_code =   $sales->currency_code;
         $journal->exchange_rate=  $sales->exchange_rate;
-        $journal->added_by=auth()->user()->id;
+        $journal->added_by=auth()->user()->added_by;
            $journal->notes= "Clear Courier Creditor  with reference no " .$sales->pacel_number  ;
        $journal->update();
 
@@ -309,7 +314,7 @@ $balance=$receipt['amount'];
                                 'payment_methods_id' =>$payment->payment_method,
                                    'status' => 'paid' ,
                                 'notes' => 'This deposit is from courier payment.The Reference is ' .$sales->pacel_number ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
 
 

@@ -5,17 +5,17 @@
 <section class="section">
     <div class="section-body">
         <div class="row">
-            <div class="col-12 col-sm-6 col-lg-12">
+            <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Courier Collection</h4>
+                        <h4>Courier Packaging</h4>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="myTab2" role="tablist">
                             @if(empty($id))
                             <li class="nav-item">
                                 <a class="nav-link @if(empty($id)) active show @endif" id="home-tab2" data-toggle="tab"
-                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Courier Collection</a>
+                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Courier Packaging</a>
                             </li>
                             @else
                            <li class="nav-item">
@@ -27,10 +27,14 @@
 
                         </ul>
                         <div class="tab-content tab-bordered" id="myTab3Content">
-                            <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
+<?php $id=1; ?>
+
+                       {{ Form::model($id, array('route' => array('courier_movement.update', $id), 'method' => 'PUT', 'id' => 'frm-example' , 'name' => 'frm-example')) }}
+                         
+                            <div class="tab-pane fade active show " id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                  <table class="table datatable-basic table-striped">
+                                  <table class="table datatable-basic table-striped" id="table-1">
                                         <thead>
                                             <tr>
 
@@ -42,23 +46,28 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 126.484px;">REF NO</th>
+                                                    style="width: 106.484px;">Ref</th>
+                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 106.484px;">WBN No</th>
+                                             <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 96.484px;">Date</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 86.484px;">Weight</th>
+                                                    style="width: 141.484px;">Location</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Route</th>
+                                                    style="width: 141.219px;">Tariff</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
                                                     style="width: 141.219px;">Client</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Amount</th>
+                                                   
 
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
@@ -80,11 +89,18 @@
                                             <tr class="gradeA even" role="row">
 
                                                 <td> {{$loop->iteration}}</td>
-                                                <td>{{$row->pacel_number}}</td>              
-                                               <td>{{$row->due_weight}} kgs</td>
-                                                <td>From {{$row->route->from}} to {{$row->route->to}}</td>
+                                                <td>  <div class="form-inline">
+                                                
+                                                {{$row->pacel_number}}
+                                               
+                                                 </div>
+                                                </td>   
+                                               <td>{{$row->wbn_no}}</td> 
+                                             <td>{{Carbon\Carbon::parse($row->collection_date)->format('d/m/Y')}}</td>           
+                                               <td>{{$row->start->name}} - {{$row->end->name}}</td>
+                                                <td>@if(!empty($row->route->zone_name)) {{$row->route->zone_name}} - {{$row->route->weight}}  @else {{$row->tariff_id }} @endif</td>
                                                 <td>{{$row->client->name}}</td>           
-                                                <td>{{$row->amount}}TZS</td>  
+
                                                     <!--<td>{{$row->receiver_name}}</td>-->
 
 
@@ -97,13 +113,12 @@
                                           
 
                                                 <td>
+                                                <div class="form-inline">
                                                     @if($row->status == 2  )                                              
-                                                      <button type="button" class="btn btn-primary"
-                                            data-toggle="modal" data-target="#appFormModal"
-                                            data-id="{{ $row->id }}" data-type="collection"
-                                            onclick="model({{ $row->id }},'collection')">
-                                            
-                                            Mobilization
+                                                      <input name="item_id[]" type="checkbox"  class="checks" value="{{$row->id}}">
+                                                     
+                                                      </div>
+                                                      </td>
                                         </button>
                                                    
 
@@ -123,10 +138,101 @@
                             </div>
                           
 
+
+                   <div class="card" >
+                                    <div class="card-header">
+                                        <h5>Create Courier Packaging Details</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-sm-12 ">   
+
+            
+                                                      
+
+           <div class="form-group">
+          
+
+
+            <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Description</label>
+
+                <div class="col-lg-4">
+                    <textarea name="notes" value="" required class="form-control"></textarea>                    
+                </div>
+            
+                <label class="col-lg-2 col-form-label">Packaging Date</label>
+
+                <div class="col-lg-4">
+                   <input type="date" name="collection_date" value="<?php echo date('Y-m-d');  ?>"  required class="form-control">
+                                                                                   
+                    <input type="hidden" name="type" value="collection" required class="form-control">
+                    <input type="hidden" name="id" value="{{ $id}}" required class="form-control" id="collection">
+                </div>
+            </div>
+
+        <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Packaging Cost</label>
+
+                <div class="col-lg-4">
+                 <input type="number" name="costs"   value="0" class="form-control costs" required>
+                     
+</div>
+         
+ 
+                <label class="col-lg-2 col-form-label payment1"  style="display:none;">Payment Type</label>
+
+                <div class="col-lg-4 payment2"  style="display:none;">
+                   <select class="form-control type m-b payment_type" name="payment_type"  id="payment_type" >
+                <option value="">Select Payment Type</option>                                                            
+                        <option value="cash">On Cash</option>
+                           <option value="credit">On Credit</option>
+                          </select>
+
+            </div>
+</div>
+
+<div class="form-group row account" id="account" style="display:none;">
+<label  class="col-lg-2 col-form-label">Bank/Cash Account</label>
+
+                <div class="col-lg-4">
+                   <select class="form-control m-b" name="bank_id" id="bank_id">
+                <option value="">Select Payment Account</option> 
+                      @foreach ($bank_accounts as $bank)                                                             
+                        <option value="{{$bank->id}}">{{$bank->account_name}}</option>
+                           @endforeach
+                          </select>
+                </div>
+            </div>
+
+
+       <br><div class="form-group row">
+                                                    <div class="col-lg-offset-2 col-lg-12">
+                                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs"
+                                                            type="submit" id="freight" >Save</button>
+                                               
+                                                    </div>
+                                                </div>
+
+       
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+ </div>
+
+ {!! Form::close() !!}
+
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
+                          
 
                         </div>
                     </div>
@@ -137,41 +243,19 @@
     </div>
 </section>
 
+
+
+
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
     </div>
 </div>
-</div>
-</div>
 
-<div id="dialog" title="Confirmation Required">
-  Are you sure about this?
-</div>
 
-<!-- continue Modal -->
-<div class="modal inmodal show" id="newFormModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog-new">
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="formModal">Order Collection</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-      
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="submit" class="btn btn-primary"  data-dismiss="modal">Yes</button>
-            <a href="{{ route("courier.collection")}}" class="btn btn-danger">No</a>
-        </div>
-       
-    </div>
-</div>
-    </div>
-</div>
-</div>
-</div>
+
+
+
 
 
 @endsection
@@ -193,7 +277,122 @@
         
         });
     </script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+<script>
+$(document).ready(function (){
+   var table = $('.datatable-basic').DataTable();
+   
+   // Handle form submission event 
+   $('#frm-example').on('submit', function(e){
+      var form = this;
+    var rowCount = $('#table-1 >tbody >tr').length;
+console.log(rowCount);
+
+
+if(rowCount == '1'){
+var c= $('#table-1 >tbody >tr').find('input[type=checkbox]');
+
+  if(c.is(':checked')){ 
+var tick=c.val();
+console.log(tick);
+
+$(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'checked_item_id[]')
+                  .val(tick)  );
+
+}
+
+}
+
+
+else if(rowCount > '1'){
+
+      // Encode a set of form elements from all pages as an array of names and values
+      var params = table.$('input').serializeArray();
+
+      // Iterate over all form elements
+      $.each(params, function(){     
+         // If element doesn't exist in DOM
+         if(!$.contains(document, form[this.name])){
+            // Create a hidden element 
+            $(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'checked_item_id[]')
+                  .val(this.value)
+            );
+         } 
+      });      
+}
+   
+
+   });  
+    
+});
+
+
+</script>
+
+<script>
+    $(document).ready(function(){
+   
+
+ $(document).on('change', '.payment_type', function(){
+var id=$(this).val() ;
+console.log(id);
+         if($(this).val() == 'cash') {
+          $('.account').show(); 
+          $("#bank_id").prop('required',true);
+        } else {
+            $('.account').hide(); 
+            $("#bank_id").prop('required',false);
+        } 
+
+
+});
+
+
+    });
+</script>
+
+
+<script>
+    $(document).ready(function(){
+   
+
+ $(document).on('change', '.costs', function(){
+var id=$(this).val() ;
+console.log(id);
+         if($(this).val() > 0) {      
+          $('.payment1').show(); 
+       $('.payment2').show(); 
+        $("#payment_type").prop('required',true);
+        } else {
+           $('.payment1').hide(); 
+       $('.payment2').hide(); 
+      $('.account').hide();
+      $("#payment_type").prop('required',false);
+        } 
+
+
+});
+
+
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+   /*
+                * Multiple drop down select
+                */
+$('.m-b').select2({ width: '100%', });
+ 
+
+   
+    });
+   </script>
 
 <script type="text/javascript">
     function model(id, type) {
@@ -211,7 +410,7 @@
             async: true,
             success: function(data) {
                 //alert(data);
-                $('.modal-dialog').html(data);
+                $('#appFormModal >.modal-dialog').html(data);
             },
             error: function(error) {
                 $('#appFormModal').modal('toggle');
@@ -302,16 +501,17 @@ $(document).on('change', '.type', function() {
 
 });
 </script>
-<script>
-    $(document).ready(function(){
-   /*
-                * Multiple drop down select
-                */
-$('.m-b').select2({ width: '100%', });
- 
 
-   
-    });
-   </script>
+ <script>
+        function printDiv(divName) {
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }
+    </script>
+
+
 
 @endsection

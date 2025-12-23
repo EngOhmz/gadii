@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document">
+
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">Order Collection</h5>
@@ -13,7 +13,7 @@
                 <label class="col-lg-6 col-form-label">Transport Type </label>
 
                 <div class="col-lg-12">
-                    <select class="form-control type" name="owner_type" id="type" required>
+                    <select class="form-control m-b type" name="owner_type" id="type" required>
                                                    <option value="">Select</option>
                                             <option @if(isset($data))
                                                    {{$data->type == 'owned'  ? 'selected' : ''}}
@@ -30,7 +30,7 @@
                 <label class="col-lg-6 col-form-label">Truck </label>
 
                 <div class="col-lg-12">
-                    <select class="form-control truck_id" name="truck_id"  id="truck" required>
+                    <select class="form-control m-b truck_id" name="truck_id"  id="truck" required>
                                                       
                                                         <option value="">Select Truck</option>
                                                      
@@ -60,6 +60,14 @@
                 </div>
             </div>
 
+                   <div class="form-group">
+                <label class="col-lg-6 col-form-label">Receipt</label>
+
+                <div class="col-lg-12">
+           <input type="text" name="receipt" id=""  value=""  class="form-control ">
+                 
+                </div>
+            </div>
             <div class="form-group">
                 <label class="col-lg-6 col-form-label">Description</label>
 
@@ -89,3 +97,12 @@
         {!! Form::close() !!}
     </div>
 </div>
+
+@yield('scripts')
+<script>
+/*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+</script>

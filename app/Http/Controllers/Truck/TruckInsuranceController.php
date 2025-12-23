@@ -8,6 +8,7 @@ use App\Models\TruckInsurance;
 use Illuminate\Http\Request;
 use App\Models\AccountCodes;
 use App\Models\JournalEntry;
+use App\Models\Supplier;
 
 class TruckInsuranceController extends Controller
 {
@@ -41,42 +42,62 @@ class TruckInsuranceController extends Controller
     {
         //
         $data = $request->all();
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $truck= TruckInsurance::create($data);
 
 $supp=Truck::find($truck->truck_id);
+
+   $before=$truck->value/1.18;
+    $tax=$truck->value -  $before;
  
-$dr= AccountCodes::where('account_name','Insurance')->first();
+$dr= AccountCodes::where('account_name','Insurance')->where('added_by',auth()->user()->added_by)->first();
 $journal = new JournalEntry();
   $journal->account_id = $dr->id;
-  $date = explode('-',$truck->created_at);
-  $journal->date =   $truck->created_at ;
+  $date = explode('-',$truck->cover_date);
+  $journal->date =   $truck->cover_date ;
   $journal->year = $date[0];
   $journal->month = $date[1];
   $journal->transaction_type = 'truck_insurance';
   $journal->name = 'Truck Insurance';
-  $journal->debit = $truck->value;
-  $journal->payment_id= $truck->id;
+  $journal->debit = $before;
+  $journal->income_id= $truck->id;
   $journal->truck_id= $truck->truck_id;
-  $journal->added_by=auth()->user()->id;
+ $journal->supplier_id  = $request->broker_name ;
+  $journal->added_by=auth()->user()->added_by;
   $journal->notes= "Truck Insurance for the truck " .$supp->truck_name ." - ". $supp->reg_no ;
   $journal->save();
 
+$tax_code= AccountCodes::where('account_name','VAT IN')->where('added_by',auth()->user()->added_by)->first();
+$journal = new JournalEntry();
+  $journal->account_id = $tax_code->id;
+  $date = explode('-',$truck->cover_date);
+  $journal->date =   $truck->cover_date ;
+  $journal->year = $date[0];
+   $journal->month = $date[1];
+   $journal->transaction_type = 'truck_insurance';
+  $journal->name = 'Truck Insurance';
+  $journal->debit= $tax ;
+  $journal->income_id= $truck->id;
+  $journal->truck_id= $truck->truck_id;
+ $journal->supplier_id  = $request->broker_name ;
+  $journal->added_by=auth()->user()->added_by;
+  $journal->notes= "Truck Insurance for the truck " .$supp->truck_name ." - ". $supp->reg_no ;;
+          $journal->save();
 
-
-  $codes= AccountCodes::where('account_name','Payables')->first();
+  $codes= AccountCodes::where('account_name','Payables')->where('added_by',auth()->user()->added_by)->first();
   $journal = new JournalEntry();
   $journal->account_id = $codes->id;
-  $date = explode('-',$truck->created_at);
-  $journal->date =   $truck->created_at ;
+  $date = explode('-',$truck->cover_date);
+  $journal->date =   $truck->cover_date ;
   $journal->year = $date[0];
   $journal->month = $date[1];
   $journal->transaction_type = 'truck_insurance';
   $journal->name = 'Truck Insurance';
   $journal->credit =$truck->value;
-  $journal->payment_id= $truck->id;
+  $journal->income_id= $truck->id;
   $journal->truck_id= $truck->truck_id;
-  $journal->added_by=auth()->user()->id;
+ $journal->supplier_id  = $request->broker_name ;
+  $journal->added_by=auth()->user()->added_by;
   $journal->notes= "Truck Insurance for the truck " .$supp->truck_name ." - ". $supp->reg_no ;
   $journal->save();
   
@@ -106,7 +127,8 @@ $journal = new JournalEntry();
         $data =  TruckInsurance::find($id);      
         $truck=  Truck::where('id',$data->truck_id)->first();
         $type = "edit-insurance";
-        return view('truck.insurance',compact('data','id','type','truck'));
+          $client=Supplier::where('user_id', auth()->user()->added_by)->get();
+        return view('truck.insurance',compact('data','id','type','truck','client'));
     }
 
     /**
@@ -122,42 +144,62 @@ $journal = new JournalEntry();
         $truck= TruckInsurance::find($id);   
 
         $data = $request->all();   
-        $data['added_by']=auth()->user()->id;
-
-       
+        $data['added_by']=auth()->user()->added_by;
+      
         $truck->update($data);
+       
+$before=$truck->value/1.18;
+    $tax=$truck->value -  $before; 
+ $supp=Truck::find($truck->truck_id);       
 
-     $dr= AccountCodes::where('account_name','Insurance')->first();
-$journal = JournalEntry::where('transaction_type','truck_insurance')->where('payment_id', $truck->truck_id)->whereNotNull('debit')->first();
+     $dr= AccountCodes::where('account_name','Insurance')->where('added_by',auth()->user()->added_by)->first();
+$journal = JournalEntry::where('transaction_type','truck_insurance')->where('income_id', $truck->id)->whereNotNull('debit')->first();
   $journal->account_id = $dr->id;
-  $date = explode('-',$truck->created_at);
-  $journal->date =   $truck->created_at ;
+  $date = explode('-',$truck->cover_date);
+  $journal->date =   $truck->cover_date ;
   $journal->year = $date[0];
   $journal->month = $date[1];
   $journal->transaction_type = 'truck_insurance';
   $journal->name = 'Truck Insurance';
-  $journal->debit = $truck->value;
-  $journal->payment_id= $truck->id;
+  $journal->debit = $before;
+  $journal->income_id= $truck->id;
   $journal->truck_id= $truck->truck_id;
-  $journal->added_by=auth()->user()->id;
+ $journal->supplier_id  = $request->broker_name ;
+  $journal->added_by=auth()->user()->added_by;
   $journal->notes= "Truck Insurance for the truck " .$supp->truck_name ." - ". $supp->reg_no ;
   $journal->update();
 
+$tax_code= AccountCodes::where('account_name','VAT IN')->where('added_by',auth()->user()->added_by)->first();
+$journal = where('transaction_type','truck_insurance')->where('income_id', $truck->id)->where('account_id', $tax_code->id)->whereNotNull('debit')->first();
+  $journal->account_id = $tax_code->id;
+  $date = explode('-',$truck->cover_date);
+  $journal->date =   $truck->cover_date ;
+  $journal->year = $date[0];
+   $journal->month = $date[1];
+   $journal->transaction_type = 'truck_insurance';
+  $journal->name = 'Truck Insurance';
+  $journal->debit= $tax ;
+  $journal->income_id= $truck->id;
+  $journal->truck_id= $truck->truck_id;
+ $journal->supplier_id  = $request->broker_name ;
+  $journal->added_by=auth()->user()->added_by;
+  $journal->notes= "Truck Insurance for the truck " .$supp->truck_name ." - ". $supp->reg_no ;;
+          $journal->save();
 
-
-  $codes= AccountCodes::where('account_name','Payables')->first();
-  $journal = JournalEntry::where('transaction_type','truck_insurance')->where('payment_id', $truck->truck_id)->whereNotNull('credit')->first();
+  $codes= AccountCodes::where('account_name','Payables')->where('added_by',auth()->user()->added_by)->first();
+  $journal = JournalEntry::where('transaction_type','truck_insurance')->where('income_id', $truck->id)->whereNotNull('credit')->first();
   $journal->account_id = $codes->id;
-  $date = explode('-',$truck->created_at);
-  $journal->date =   $truck->created_at ;
+  $date = explode('-',$truck->cover_date);
+  $journal->date =   $truck->cover_date ;
   $journal->year = $date[0];
   $journal->month = $date[1];
   $journal->transaction_type = 'truck_insurance';
   $journal->name = 'Truck Insurance';
   $journal->credit = $truck->value;
-  $journal->payment_id= $truck->id;
+  $journal->income_id= $truck->id;
   $journal->truck_id= $truck->truck_id;
-  $journal->added_by=auth()->user()->id;
+ $journal->supplier_id  = $request->broker_name ;
+  $journal->added_by=auth()->user()->added_by;
   $journal->notes= "Truck Insurance for the truck " .$supp->truck_name ." - ". $supp->reg_no ;
   $journal->update();
  
@@ -174,8 +216,9 @@ $journal = JournalEntry::where('transaction_type','truck_insurance')->where('pay
     {
         //
         $truck= TruckInsurance::find($id);
-         JournalEntry::where('transaction_type','truck_insurance')->where('payment_id', $id)->delete();
+         $a=$truck->truck_id;
+         JournalEntry::where('transaction_type','truck_insurance')->where('income_id', $id)->delete();
         $truck->delete();
-        return redirect(route('truck.insurance'))->with(['success'=>"Licence Deleted Successfully",'type'=>"insurance"]);
+        return redirect(route('truck.insurance',  $a))->with(['success'=>"Licence Deleted Successfully",'type'=>"insurance"]);
     }
 }

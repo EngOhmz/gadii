@@ -8,7 +8,7 @@
             <div class="col-12 col-sm-6 col-lg-4">
                 <div class="card row">
                     <div class="card-header">
-                        <h4>Parcel Amount</h4>
+                        <h4>Cargo Invoice Amount</h4>
                     </div>
                     <div class="card-body">
                         <table class="table">
@@ -27,7 +27,7 @@
                                 <tr>
 
 
-                                    <td><a href="{{ route('invoice.details',$invoice->id)}}">{{ $invoice->pacel_number}}
+                                    <td><a href="{{ route('invoice.details',$invoice->id)}}">{{ $invoice->confirmation_number}}
                                             </a></td>
                                     <td>{{ number_format($invoice->due_amount,2)}} {{ $invoice->currency_code}} </td>
                                     <td> 
@@ -128,7 +128,7 @@
                         <div class="form-group row"><label  class="col-lg-2 col-form-label">Bank/Cash Account</label>
 
                                                     <div class="col-lg-10">
-                                                       <select class="form-control" name="account_id" required>
+                                                       <select class="form-control m-b" name="account_id" required>
                                                     <option value="">Select Payment Account</option> 
                                                           @foreach ($bank_accounts as $bank)                                                             
                                                             <option value="{{$bank->id}}" @if(isset($data))@if($data->account_id == $bank->id) selected @endif @endif >{{$bank->account_name}}</option>

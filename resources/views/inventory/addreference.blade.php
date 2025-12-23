@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document">
+
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">Assign Inventory Serial No </h5>
@@ -16,7 +16,7 @@
 
                 <div class="col-lg-12">
                     
-               <input type="text" name="reference" value="" required class="form-control">
+               <input type="text" name="reference"  value="{{ isset($data) ? $data->serial_no : '' }}" required class="form-control">
                 <input type="hidden" name="id" value="{{$id}}" required class="form-control">
                 </div>
             </div>
@@ -25,9 +25,9 @@
 
 
         </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+     <div class="modal-footer ">
+             <button class="btn btn-primary"  type="submit" id="save" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
         {!! Form::close() !!}
     </div>

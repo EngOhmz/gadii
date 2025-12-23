@@ -1,6 +1,8 @@
 <div class="tab-pane fade @if($type =='basic' || $type =='edit-basic') active show  @endif" id="tab1" role="tabpanel"
     aria-labelledby="tab1">
     <?php $id = 1; ?>
+<div class="row">
+                        <div class="col-lg-12 col-md-12">
     <div class="card">
         <div class="card-header">
             <h4>Basic Details</h4>
@@ -8,7 +10,7 @@
         <div class="card-body">
             <ul class="nav nav-tabs" id="myTab2" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link @if($type =='basic')active show @endif" id="home-tab2" data-toggle="tab"
+                    <a class="nav-link @if($type =='basic' || $type =='bank'  || $type =='salary' || $type =='notification')active show @endif" id="home-tab2" data-toggle="tab"
                         href="#home1" role="tab" aria-controls="home" aria-selected="true">Details
                     </a>
                 </li>
@@ -20,75 +22,45 @@
 
             </ul>
             <div class="tab-content tab-bordered" id="myTab3Content">
-                <div class="tab-pane fade @if($type =='basic') active show @endif" id="home1" role="tabpanel"
+                <div class="tab-pane fade @if($type =='basic' || $type =='bank'  || $type =='salary' || $type =='notification') active show @endif" id="home1" role="tabpanel"
                     aria-labelledby="home-tab2">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <table>
-                                <tr>
-                                    <td>Emp ID: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->emp_id : ''}}</td>
+                    
+                     <div class="table-responsive">
+                                        <table class="table datatable-basic table-striped">
+                                       
+                                        <tbody>
+                                           
+                                          
+                                          
+                             <tr>
+                       <td>Employee ID: </td><td>{{ !empty($basic_details) ? $basic_details->emp_id : ''}}</td>
+<td>Date Of Birth: </td> <td >{{ !empty($basic_details) ? $basic_details->birth_date : ''}}</td>                                   
+</tr>
+
+
+                <tr>
+                                    <td>Gender: </td><td >{{ !empty($basic_details) ? $basic_details->gender : ''}}</td>                                                                    
+                                    <td>Marital Status: </td>  <td >{{ !empty($basic_details) ? $basic_details->marital_status : ''}}</td>                                  
                                 </tr>
+               
                                 <tr>
-                                    <td>User Name: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->user_name : ''}}</td>
+                                    <td>Father Name: </td><td >{{ !empty($basic_details) ? $basic_details->father_name : ''}}</td>
+                                    <td>Mother Name: </td><td>{{ !empty($basic_details) ? $basic_details->mother_name : ''}}</td>
                                 </tr>
+                                
+                        
+                             
                                 <tr>
-                                    <td>Joining Date: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->join_date : ''}}</td>
+                                    <td>National ID/Passport: </td><td >{{ !empty($basic_details) ? $basic_details->national_id : ''}}</td>
+                                    
                                 </tr>
-                                <tr>
-                                    <td>Date Of Birth: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->birth_date : ''}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Father Name: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->father_name : ''}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Email: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->email : ''}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Mobile: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->mobile : ''}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <table>
-                                <tr>
-                                    <td>Full Name: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->full_name : ''}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Password: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->password : ''}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Gender: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->gender : ''}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Marital Status: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->marital_status : ''}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Mother Name: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->mother_name : ''}}</td>
-                                </tr>
-                                <tr>
-                                    <td>Phone: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->phone : ''}}</td>
-                                </tr>
-                                <tr>
-                                    <td>National ID/Pasport: </td>
-                                    <td colspan="1">{{ !empty($basic_details) ? $basic_details->national_id : ''}}</td>
-                                </tr>
-                            </table>
+
+                                        </tbody>
+
+                                    </table>
                         </div>
                     </div>
-                </div>
+                
                 <div class="tab-pane fade @if($type =='edit-basic') active show @endif" id="profile1"
                     role="tabpanel" aria-labelledby="profile-tab2">
 
@@ -104,73 +76,73 @@
                                    
                                    
                                     
-                                    {{ Form::open(['route' => 'user_details.store']) }}
+                                    {{ Form::open(['route' => 'details.store']) }}
                                     @method('POST')
 
-                                    <div class="row">
-                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                  
                         <input type="hidden" value="basic" name="type">
-                            <table>
-                                <tr>
-                                    <td>Emp ID: </td>
-                                    <td colspan="1"><input type="text" value="{{ !empty($basic_details) ? $basic_details->emp_id : ''}}" name="emp_id" ></td>
-                                </tr>
-                                <tr>
-                                    <td>User Name: </td>
-                                    <td colspan="1"><input type="text" value="{{ !empty($basic_details) ? $basic_details->user_name : ''}}" name="user_name" ></td>
-                                </tr>
-                                <tr>
-                                    <td>Joining Date: </td>
-                                    <td colspan="1"><input type="date" value="{{ !empty($basic_details) ? $basic_details->join_date : ''}}" name="join_date" ></td>
-                                </tr>
-                                <tr>
-                                    <td>Date Of Birth: </td>
-                                    <td colspan="1"><input type="date" value="{{ !empty($basic_details) ? $basic_details->birth_date : ''}}" name="birth_date" ></td>
-                                </tr>
-                                <tr>
-                                    <td>Father Name: </td>
-                                    <td colspan="1"><input type="text" value="{{ !empty($basic_details) ? $basic_details->father_name : ''}}" name="father_name" ></td>
-                                </tr>
-                                <tr>
-                                    <td>Email: </td>
-                                    <td colspan="1"><input type="email" value="{{ !empty($basic_details) ? $basic_details->email : ''}}" name="email" ></td>
-                                </tr>
-                                <tr>
-                                    <td>Mobile: </td>
-                                    <td colspan="1"><input type="phone" value="{{ !empty($basic_details) ? $basic_details->mobile : ''}}" name="mobile" ></td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <table>
-                                <tr>
-                                    <td>Full Name: </td>
-                                    <td colspan="1"><input type="text" value="{{ !empty($basic_details) ? $basic_details->full_name : ''}}" name="full_name" ></td>
-                                </tr>
+                         <input type="hidden" value="{{$user_id}}" name="user_id">
+
+                              <div class="form-group row">
+                                                    <label class="col-lg-2 col-form-label">Employee ID</label>
+                                                    <div class="col-lg-4">
+                                                      <input type="text" class="form-control" value="{{ !empty($basic_details) ? $basic_details->emp_id : ''}}" name="emp_id" >
+                                                    </div>
+                                                    <label class="col-lg-2 col-form-label">Date Of Birth</label>
+                                                    <div class="col-lg-4">
+                                                        <input type="date" class="form-control" value="{{ !empty($basic_details) ? $basic_details->birth_date : ''}}" name="birth_date" required>
+                                                    </div>
+                                                </div>
+
+
+                                     <div class="form-group row">
+                                                    <label class="col-lg-2 col-form-label">Gender</label>
+                                                    <div class="col-lg-4">
+                                                       <select class="form-control m-b" name="gender" required    id="gender">                                                           
+                                                                <option value="">Select Gender</option>
+                                                                <option @if(isset($basic_details))  {{ $basic_details->gender == 'Male'  ? 'selected' : ''}}    @endif value="Male">Male</option>
+                                                              <option @if(isset($basic_details))  {{ $basic_details->gender == 'Female'  ? 'selected' : ''}}    @endif value="Female">Female</option>
+                                                          </select>
+                                                    </div>
+                                                    <label class="col-lg-2 col-form-label">Marital Status</label>
+                                                    <div class="col-lg-4">
+                                                       <select class="form-control m-b" name="marital_status" required    id="marital_status">                                                           
+                                                                <option value="">Select Marital Status</option>
+                                                                    <option @if(isset($basic_details))  {{ $basic_details->marital_status == 'Single'  ? 'selected' : ''}}    @endif value="Single">Single</option>
+                                                                <option @if(isset($basic_details))  {{ $basic_details->marital_status == 'Married'  ? 'selected' : ''}}    @endif value="Married">Married</option>
+                                                              <option @if(isset($basic_details))  {{ $basic_details->marital_status == 'Divorced'  ? 'selected' : ''}}    @endif value="Divorced">Divorced</option>
+                                                             <option @if(isset($basic_details))  {{ $basic_details->marital_status == 'Widowed'  ? 'selected' : ''}}    @endif value="Married">Married</option>
+                                                             
+                                                          </select>
+                                                    </div>
+                                                </div>
+
+
+                                       <div class="form-group row">
+                                                    <label class="col-lg-2 col-form-label">Father's Name</label>
+                                                    <div class="col-lg-4">
+                                                      <input type="text" class="form-control"  value="{{ !empty($basic_details) ? $basic_details->father_name : ''}}" name="father_name" >
+                                                    </div>
+                                                    <label class="col-lg-2 col-form-label">Mother's Name</label>
+                                                    <div class="col-lg-4">
+                                                       <input type="text"  class="form-control" value="{{ !empty($basic_details) ? $basic_details->mother_name : ''}}" name="mother_name" >
+                                                    </div>
+                                                </div>
+
+
+                                            <div class="form-group row">
+                                                    <label class="col-lg-2 col-form-label">National ID/Passport</label>
+                                                    <div class="col-lg-4">
+                                                     <input type="text"  class="form-control" value="{{ !empty($basic_details) ? $basic_details->national_id : ''}}" name="national_id" required>
+                                                    </div>
+                                                   
+                                                </div>
+
+                        
                               
-                                <tr>
-                                    <td>Gender: </td>
-                                    <td colspan="1"><input type="text" value="{{ !empty($basic_details) ? $basic_details->gender : ''}}" name="gender" ></td>
-                                </tr>
-                                <tr>
-                                    <td>Marital Status: </td>
-                                    <td colspan="1"><input type="text" value="{{ !empty($basic_details) ? $basic_details->marital_status : ''}}" name="marital_status" ></td>
-                                </tr>
-                                <tr>
-                                    <td>Mother Name: </td>
-                                    <td colspan="1"><input type="text" value="{{ !empty($basic_details) ? $basic_details->mother_name : ''}}" name="mother_name" ></td>
-                                </tr>
-                                <tr>
-                                    <td>Phone: </td>
-                                    <td colspan="1"><input type="text" value="{{ !empty($basic_details) ? $basic_details->phone : ''}}" name="phone" ></td>
-                                </tr>
-                                <tr>
-                                    <td>National ID/Pasport: </td>
-                                    <td colspan="1"><input type="text" value="{{ !empty($basic_details) ? $basic_details->national_id : ''}}" name="national_id" ></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
+                         
+                                
+                     
 
                                     <div class="form-group row">
                                         <div class="col-lg-offset-2 col-lg-12">
@@ -194,5 +166,6 @@
             </div>
         </div>
     </div>
-
+ </div>
+</div>
 </div>

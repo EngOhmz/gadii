@@ -11,20 +11,10 @@ class BankReconciliation extends Model
 
     protected $table = "bank_reconciliations";
 
-    protected $fillable = [
-        'transaction_type',
-        'name',
-        'debit',
-        'date',
-        'credit',
-        'currency_code',
-        'payment_id',
-        'notes',   
-        'account_id', 
-        'added_by'];
+     protected $guarded = ['id','_token'];
 
         public function chart()
     {
-        return $this->hasOne(ChartOfAccount::class, 'id', 'account_id');
+        return $this->hasOne(AccountCodes::class, 'id', 'account_id');
     }
 }

@@ -11,17 +11,23 @@ class GoodIssue extends Model
 
     protected $table = "good_issues";
 
-    protected $fillable = [
-         'date',
-        'staff',   
-        'location',
-        'type',  
-        'type_id',  
-     'status',
-        'added_by'];
+    protected $guarded = [
+         'id',      
+       'token'];
     
-    public function user()
-    {
-        return $this->belongsTo('App\Models\user');
-    }
+   public function store(){
+
+    return $this->BelongsTo('App\Models\Location','location');
+}
+
+public function approve(){
+
+    return $this->BelongsTo('App\Models\FieldStaff','staff');
+   //return $this->BelongsTo('App\Models\User','staff');
+}
+
+public function truck(){
+
+    return $this->BelongsTo('App\Models\Truck','truck_id');
+}
 }

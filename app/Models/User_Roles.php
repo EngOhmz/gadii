@@ -10,9 +10,9 @@ class User_Roles extends Model
     //
      protected $table = "users_roles";
      
-     protected $filable = ['role_id','user_id'];
+     protected $fillable = ['user_id', 'role_id', 'updated_at'];
 
-
+    public $timestamps = false;
 
 
 

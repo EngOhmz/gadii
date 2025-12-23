@@ -5,7 +5,7 @@
 <section class="section">
     <div class="section-body">
         <div class="row">
-            <div class="col-12 col-sm-6 col-lg-12">
+            <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Good Reallocation</h4>
@@ -28,36 +28,35 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                       <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
+                                              <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 106.484px;">Reference</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Date</th>
-                                               
-                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    style="width: 106.484px;">Date</th>
+                                       <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Item Name</th>
-                                                 
-                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                        rowspan="1" colspan="1"
-                                                        aria-label="Engine version: activate to sort column ascending"
-                                                        style="width: 141.219px;">Source Truck</th>
+                                                    style="width: 101.219px;">Source Truck</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
-                                                    aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Destination Truck</th>
+                                                    aria-label="Engine version: activate to sort column ascending"
+                                                    style="width: 101.219px;">Destination Truck</th>                                                    
+                                              
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Mechanical</th>
+                                                    style="width: 98.1094px;">Staff</th>
                                                    
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
@@ -66,68 +65,48 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if(!@empty($reallocation))
-                                            @foreach ($reallocation as $row)
+                                            @if(!@empty($issue))
+                                            @foreach ($issue as $row)
                                             <tr class="gradeA even" role="row">
                                                 <th>{{ $loop->iteration }}</th>
-                                                <td>{{Carbon\Carbon::parse($row->date)->format('M d, Y')}}</td>
-                                                <td>
-                                                    @php    
-                                                    $it=App\Models\InventoryList::where('id', $row->source_item)->get();   
-                                                  @endphp
-                                                     @foreach($it as $i)
-                                                     {{$i->serial_no}}
-                                                    @endforeach
-                                                </td>
-                                               
-                                          
-                                                <td>
-                                                    @php    
-                                                    $tr=App\Models\Truck::where('id', $row->source_truck)->get();   
-                                                  @endphp
-                                                     @foreach($tr as $t)
-                                                     {{$t->truck_name}} - {{$t->reg_no}}
-                                                    @endforeach
-                                                </td>
-                                                    
-                                                <td>
-                                                   
-                                                    @php
-                                                         
-                                                    $dr=App\Models\Truck::where('id', $row->destination_truck)->get();   
-                                                  @endphp
-                                                     @foreach($dr as $d)
-                                                     {{$d->truck_name}} - {{$d->reg_no}}
-                                                    @endforeach
-                                                      
-                                                </td>
-
-                                                <td>
-                                                    @php    
-                                                    $st=App\Models\FieldStaff::where('id', $row->staff)->get();   
-                                                  @endphp
-                                                     @foreach($st as $s)
-                                                    {{$s->name}}
-                                                    @endforeach
-                                                </td>
+                                                    <td>{{ $row->name }}</td>
+                                                <td>{{Carbon\Carbon::parse($row->movement_date)->format('M d, Y')}}</td>
+                                                    <td>@if(!empty($row->source->truck_name)) {{$row->source->truck_name}} - {{$row->source->reg_no}} @endif </td>
+                                                <td>@if(!empty($row->destination->truck_name)) {{$row->destination->truck_name}} - {{$row->destination->reg_no}} @endif</td>
+                                                <td> @if(!empty($row->staff)){{$row->approve->name}}@endif</td>
 
                                                       <td>
-                                                  @if($row->status == 0)
-                                                          <a class="btn btn-xs btn-outline-primary text-uppercase px-2 rounded"
-                                                    href="{{ route("reallocation.approve", $row->id)}}" title="Approve" onclick="return confirm('Are you sure?')">
-                                                    <i class="fa fa-check"></i>
-                                                </a>
+                                            <div class="form-inline">
+                                                    @if($row->status == 0)
+                                               <a class="list-icons-item text-success" href="{{ route("good_reallocation.approve", $row->id)}}" onclick="return confirm('Are you sure, You want to Approve')" title="Approve">
+                                                    <i class="icon-checkmark3"></i>
+                                                </a>&nbsp&nbsp                                             
 
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
+                                                    <a class="list-icons-item text-primary"
                                                         href="{{ route("good_reallocation.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                                        <i class="icon-pencil7"></i>
+                                                    </a>&nbsp
                                                    
                                                     {!! Form::open(['route' => ['good_reallocation.destroy',$row->id],
                                                     'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                  {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
                                                     {{ Form::close() }}
-                                             @endif
+
+                                                    @else
+                                                    
+                                             
+                                               
+                                                <div class="dropdown">
+                                                <a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+
+                                                            <div class="dropdown-menu">
+
+                            <a class="nav-link" href=""  data-toggle="modal" href=""  value="{{ $row->id}}" data-type="issue" data-target="#appFormModal" onclick="model({{ $row->id }},'reallocation')">View  Items</a>
+                           
+                                                                        </div>
+                                                                    </div>
+                                                                      @endif
+                                                </div>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -159,48 +138,14 @@
                                                 @method('POST')
                                                 @endif
 
-                                                <div class="form-group row">
-                                                    <label class="col-lg-2 col-form-label">Date</label>
-                                                    <div class="col-lg-4">
-                                                        <input type="date" name="date"
-                                                            placeholder="0 if does not exist"
-                                                            value="{{ isset($data) ? $data->date : ''}}"
-                                                            class="form-control" required>
-                                                    </div>
-                                                    <label class="col-lg-2 col-form-label">Mechanical</label>
-                                                    <div class="col-lg-4">
-                                                     <select class="form-control type" name="staff" required
-                                                         id="">
-                                                 <option value="">Select 
-                                                    @if(!empty($staff))
-                                                    @foreach($staff as $row)
-
-                                                    <option @if(isset($data))
-                                                        {{ $data->staff == $row->id  ? 'selected' : ''}}
-                                                        @endif value="{{$row->id}}">{{$row->name}}</option>
-
-                                                    @endforeach
-                                                    @endif                                              
- 
-                                             </select>
-                                                   
-                                                </div>
-                                            </div>
-
-                                                
-
-                                                <div class="form-group row">
+                                                 <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Source Truck</label>
                                                     <div class="col-lg-4">
-                                                        <select class="form-control source" name="source_truck" required
-                                                                id="">
+                                                        <select class="form-control source m-b " name="source_truck" required id="source">
                                                         <option value="">Select Source</option>
                                                         @if(!empty($truck))
                                                         @foreach($truck as $row)
-
-                                                        <option @if(isset($data))
-                                                            {{ $data->source_truck == $row->id  ? 'selected' : ''}}
-                                                            @endif value="{{$row->id}}">{{$row->truck_name}} - {{$row->reg_no}}</option>
+                                                <option @if(isset($data)) {{ $data->source_truck == $row->id  ? 'selected' : ''}} @endif value="{{$row->id}}">{{$row->truck_name}} - {{$row->reg_no}}</option>
 
                                                         @endforeach
                                                         @endif
@@ -212,64 +157,132 @@
                                                     class="col-lg-2 col-form-label">Destination Truck</label>
 
                                                 <div class="col-lg-4">
-                                                    <select class="form-control destination" name="destination_truck" required
-                                                    id="">
+                                                <select class="form-control destination m-b" name="destination_truck" required id="destination">
                                                     <option value="">Select Destination</option>
                                                     @if(!empty($truck))
                                                     @foreach($truck as $row)
-
-                                                    <option @if(isset($data))
-                                                        {{ $data->destination_truck == $row->id  ? 'selected' : ''}}
-                                                        @endif value="{{$row->id}}">{{$row->truck_name}}  - {{$row->reg_no}}</option>
+                                                <option @if(isset($data)) {{ $data->destination_truck == $row->id  ? 'selected' : ''}} @endif value="{{$row->id}}">{{$row->truck_name}}  - {{$row->reg_no}}</option>
 
                                                     @endforeach
                                                     @endif
                                             </select>
                                                     </div>
                                                 </div>
+
+                                                
+
+                                                 <div class="form-group row">
+                                                    <label class="col-lg-2 col-form-label">Date</label>
+                                                    <div class="col-lg-4">
+                                                        <input type="date" name="date"
+                                                            placeholder="0 if does not exist"
+                                                            value="{{ isset($data) ? $data->movement_date : date('Y-m-d')}}"
+                                                            class="form-control" required>
+                                                    </div>
+
+                                                    <label class="col-lg-2 col-form-label">Staff</label>
+                                                   <div class="col-lg-4">
+                                                    <select class="form-control m-b staff" name="staff"
+                                                        id="staff" required>
+                                                <option value="">Select </option>
+                                                    @if(!empty($staff))
+                                                    @foreach($staff as $row)
+
+                                                    <option @if(isset($data))
+                                                        {{ $data->staff == $row->id  ? 'selected' : ''}}
+                                                        @endif value="{{$row->id}}">{{$row->name}}</option>
+
+                                                    @endforeach
+                                                    @endif
+                                                  
+
+                                                </select>
+                                                    </div>
+                                                
+                                                    
+                                                </div>
                                           
-                                              <div class="form-group row">
-                <label class="col-lg-2 col-form-label">Source Item Name</label>
+                                                 <div class="form-group row">
+                                                   
+                                               <label class="col-lg-2 col-form-label">Branch</label>
+                                                         <div class="form-group col-md-4">
+                                                            <select  class="form-control m-b" name="branch_id">
+                                                                <option>Select Branch</option>
+                                                                @if (!empty($branch))
+                                                                    @foreach ($branch as $row)
+                                                                        <option value="{{ $row->id }}">{{ $row->name }}</option>
+                                                                    @endforeach
+                                                                @endif
+                                                            </select>
+                                                        </div>
+                                                         </div>
+                                                         
+                                                         
 
-                <div class="col-lg-4">
-                  @if(!empty($data->source_item))
-                                   <select id="source_item" name="source_item" class="form-control item" required>
-                                      <option value="">Select Source Item Name</option>
-                                       @foreach($list as $l)
-                                  <option value="{{$l->id}}" @if(isset($data))@if($data->source_item == $l->id) selected @endif @endif >{{$l->serial_no}} </option>
-                                   @endforeach
-                                    </select>
-                                   @else                              
-                                  <select id="source_item" name="source_item" class="form-control item" required>
-                                     <option value="">Select Source Item Name</option>
-                                    
-                                    </select>
-                                   @endif 
-                    
-                </div>
-
- <label class="col-lg-2 col-form-label">Destination Item Name</label>
-
-                <div class="col-lg-4">
-                  @if(!empty($data->destination_item))
-                                   <select id="destination_item" name="destination_item" class="form-control dest_item">
-                                      <option >Select Destination Item Name</option>
-                                       @foreach($dest_list as $d_l)
-                                  <option value="{{$d_l->id}}" @if(isset($data))@if($data->destination_item == $d_l->id) selected @endif @endif >{{$d_l->serial_no}} </option>
-                                   @endforeach
-                                    </select>
-                                   @else                              
-                                    <select id="destination_item" name="destination_item" class="form-control dest_item">
-                                      <option value="">Select Destination Item Name</option>
-                                    
-                                    </select>
-                                   @endif 
-                    
-                </div>
+                                            <br>
+                                            <h4 align="center">Enter  Details</h4>
+                                            <hr>
+                                            
+                                            
+                                            <button type="button" name="add" class="btn btn-success btn-xs add"><i
+                                                    class="fas fa-plus"> Add item</i></button><br>
+                                            <br>
+                                            <div class="table-responsive">
+                                            <table class="table table-bordered" id="cart">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Item Name</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
 
 
-            </div>    
+                                               
+                                               
+                                                    @if(!empty($id))
+                                                    @if(!empty($items))
+                                                    @foreach ($items as $i)
+                                                    <tr class="line_items">
+                                                        
+                                                <td class="rtype_{{ $i->id }}_edit">
+                                                <select name="item_id[]" class="form-control m-b item_name"  data-sub_category_id="{{ $i->id }}_edit" required >
+                                                <option value="">Select Item</option>
+                                                @foreach($inventory as $n) 
+                                                <option value="{{ $n->id}}" @if(isset($i))@if($n->id == $i->item_id) selected @endif @endif >{{$n->brand->name}} - {{ $n->serial_no }}</option>
+                                                @endforeach
+                                                        </select>
+                                                <div class=""> <p class="form-control-static errors{{ $i->id }}_edit" id="errors" style="text-align:center;color:red;"></p></div>
+                                                </td>
+                                                  <input type="hidden" name="quantity[]"
+                                                            class="form-control item_quantity" data-category_id="{{$i->order_no}}"
+                                                            placeholder="quantity" id="quantity"
+                                                            value="{{ isset($i) ? $i->quantity : ''}}"
+                                                            required />       
+                                                            
+                                                    
+                                                    <input type="hidden" id="item_id"  class="form-control item_id{{ $i->id }}_edit" value="{{$i->item_id}}" />
 
+                                                                <input type="hidden" name="saved_id[]"
+                                                                class="form-control item_saved{{$i->order_no}}"
+                                                                value="{{ isset($i) ? $i->id : ''}}"
+                                                                required />
+                                                        <td><button type="button" name="remove"
+                                                                class="btn btn-danger btn-xs rem"
+                                                                value="{{ isset($i) ? $i->id : ''}}"><i
+                                                                    class="icon-trash"></i></button></td>
+                                                    </tr>
+
+                                                    @endforeach
+                                                    @endif
+                                                    @endif
+
+                                                 </tbody>   
+                                            </table>
+                                        </div>
+
+
+                                            <br>
 
 
                                                 <div class="form-group row">
@@ -280,7 +293,7 @@
                                                             type="submit">Update</button>
                                                         @else
                                                         <button class="btn btn-sm btn-primary float-right m-t-n-xs"
-                                                            type="submit">Save</button>
+                                                            type="submit" id="save">Save</button>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -301,119 +314,146 @@
     </div>
 </section>
 
-
+<!-- discount Modal -->
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+    </div>
+</div>
 
 @endsection
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
+        
+        });
+    </script>
 
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
 
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
+    
+    <script type="text/javascript">
+    $(document).ready(function() {
+    
+    
+        var count = 0;
+    
+    
+        $('.add').on("click", function(e) {
+    
+            count++;
+            var html = '';
+            html += '<tr class="line_items">';   
+            html +='<td  class="rtype_' +count + '"><select name="item_id[]" class="form-control m-b item_name" id="item_name' +count +'" required  data-sub_category_id="' +count +'"><option value="">Select Item</option></select> </td>';
+            html +='<input type="hidden" name="quantity[]" class="form-control item_quantity" data-category_id="' +count + '"placeholder ="quantity" id ="quantity" value= "1" required />';
+            html +='<input type="hidden" id="item_id"  class="form-control item_id' +count+'" value="" />';                                                
+            html +='<td><button type="button" name="remove" class="btn btn-danger btn-xs remove"><i class="icon-trash"></i></button></td>';
+    
+            $('tbody').append(html);
+            
+           var id = $('.source').val();
+            $.ajax({
+                url: '{{url("inventory/getInventory")}}',
+                type: "GET",
+                data: {
+                    id: id
+                },
+                dataType: "json",
+                success: function(data) {
+                console.log(data);
+               $('.rtype_'+count).find('.item_name').empty();
+                $('.rtype_'+count).find('.item_name').append('<option value="">Select Item</option>');
+                $.each(data,function(key, value)
+                {
+                 
+                     $('.rtype_'+count).find('.item_name').append('<option value=' + value.id+ '>' + value.name + '</option>');
+                   
+                });
                 }
-            }
-        ]
+    
+            });
+            
 
+           /*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+                            
+                            
+                            
+                            
+                            
+        });
+    
+        $(document).on('click', '.remove', function() {
+            $(this).closest('tr').remove();
+           
+        });
+    
+    
+        $(document).on('click', '.rem', function() {
+            var btn_value = $(this).attr("value");
+            $(this).closest('tr').remove();
+            $('tbody').append(
+                '<input type="hidden" name="removed_id[]"  class="form-control name_list" value="' +
+                btn_value + '"/>');
+           
+        });
+    
     });
-
-});
-
-
-$('.demo4').click(function() {
-    swal({
-        title: "Are you sure?",
-        text: "You will not be able to recover this imaginary file!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: false
-    }, function() {
-        swal("Deleted!", "Your imaginary file has been deleted.", "success");
-    });
-});
-</script>
+    </script>
 
 <script>
+    $(document).ready(function() {
+    
+    
+        $(document).on('change', '.item_name', function() {
+            var id = $(this).val();
+            var sub_category_id = $(this).data('sub_category_id');
+
+            console.log(id);
+            $('.item_id' + sub_category_id).val(id);
+               
+    
+    
+        });
+    
+    
+    });
+    </script>
+    
+    <script>
     $(document).ready(function() {
     
     
         $(document).on('change', '.source', function() {
             var id = $(this).val();
             $.ajax({
-                url: '{{url("findReturnService")}}',
+                url: '{{url("inventory/getInventory")}}',
                 type: "GET",
                 data: {
                     id: id
                 },
                 dataType: "json",
                 success: function(data) {
-                    console.log(data);
-                    $("#source_item").empty();
-                $("#source_item").append('<option value="">Select Source Item Name</option>');
+                console.log(data);
+                $('.item_name').empty();
+               $('.item_name').append('<option value="">Select Item</option>');
                 $.each(data,function(key, value)
                 {
                  
-                    $("#source_item").append('<option value=' + value.id+ '>' + value.serial_no + '</option>');
-                   
-                });
-                }
-    
-            });
-    
-        });
-    
-    
-    });
-    </script>
-    
-  <script>
-    $(document).ready(function() {
-    
-    
-        $(document).on('change', '.destination', function() {
-            var id = $(this).val();
-            $.ajax({
-                url: '{{url("findReturnService")}}',
-                type: "GET",
-                data: {
-                    id: id
-                },
-                dataType: "json",
-                success: function(data) {
-                    console.log(data);
-                    $("#destination_item").empty();
-                $("#destination_item").append('<option value="">Select Destination Item Name</option>');
-                $.each(data,function(key, value)
-                {
-                 
-                    $("#destination_item").append('<option value=' + value.id+ '>' + value.serial_no + ' </option>');
+                    $('.item_name').append('<option value=' + value.id+ '>' + value.name + '</option>');
                    
                 });
                 }
@@ -426,5 +466,64 @@ $('.demo4').click(function() {
     });
     </script>
 
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+
+
+
+
+<script type="text/javascript">
+    function model(id,type) {
+
+$.ajax({
+    type: 'GET',
+     url: '{{url("inventory/movementModal")}}',
+    data: {
+        'id': id,
+        'type':type,
+    },
+    cache: false,
+    async: true,
+    success: function(data) {
+        //alert(data);
+        $('#appFormModal > .modal-dialog').html(data);
+    },
+    error: function(error) {
+        $('#appFormModal').modal('toggle');
+
+    }
+});
+
+}
+
+    </script>
+    
+    
+        <script>
+$(document).ready(function() {
+
+    $(document).on('change', '.costs', function() {
+        var id = $(this).val();
+  console.log(id);
+
+
+ if (id > 0){
+     $('.bank1').show(); 
+     $('.bank2').show();    
+
+}
+
+
+else{
+   $('.bank1').hide(); 
+     $('.bank2').hide();   
+
+}
+
+  });
+
+
+
+});
+
+</script>
+    
 @endsection

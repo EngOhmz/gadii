@@ -98,7 +98,7 @@
                                         Method</label>
 
                                     <div class="col-lg-10">
-                                        <select class="form-control m-b" name="payment_method">
+                                        <select class="form-control m-b" name="payment_method" id="payment_method">
                                             <option value="">Select
                                             </option>
                                             @if(!empty($payment_method))
@@ -114,6 +114,9 @@
 
                                     </div>
                                 </div>
+                                
+                                
+                                
 
                                 <div class="form-group row"><label class="col-lg-2 col-form-label">Notes</label>
 
@@ -129,7 +132,7 @@
                                 <div class="form-group row"><label  class="col-lg-2 col-form-label">Bank/Cash Account</label>
 
                                     <div class="col-lg-10">
-                                       <select class="form-control" name="account_id" required>
+                                       <select class="form-control m-b" name="account_id"  id="account_id" required>
                                     <option value="">Select Payment Account</option> 
                                           @foreach ($bank_accounts as $bank)                                                             
                                             <option value="{{$bank->id}}" @if(isset($data))@if($data->account_id == $bank->id) selected @endif @endif >{{$bank->account_name}}</option>

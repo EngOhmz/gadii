@@ -28,14 +28,14 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
@@ -60,18 +60,23 @@
                                             <tr class="gradeA even" role="row">
                                                 <th>{{ $loop->iteration }}</th>
                                                 <td>{{$row->name }}</td>
-                                                <td>{{$row->price}}</td>
+                                                <td>{{number_format($row->price)}}</td>
                                                 <td>{{$row->unit}}</td>
                                                 <td>
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        href="{{ route("pacel_list.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <a class="btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4"
-                                                        href="{{ route("pacel_list.destroy", $row->id)}}">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
+                                              <div class="form-inline">
+                                                       
+                                                    <a class="list-icons-item text-primary"
+                                                        title="Edit" onclick="return confirm('Are you sure?')"
+                                                        href="{{ route('pacel_list.edit', $row->id)}}"><i
+                                                            class="icon-pencil7"></i></a>&nbsp
+                                                          
 
+                                                    {!! Form::open(['route' => ['pacel_list.destroy',$row->id],
+                                                    'method' => 'delete']) !!}
+                                                    {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::close() }}
+
+                                                    </div>
 
                                                 </td>
                                             </tr>
@@ -163,57 +168,20 @@
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-
-
-$('.demo4').click(function() {
-    swal({
-        title: "Are you sure?",
-        text: "You will not be able to recover this imaginary file!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: false
-    }, function() {
-        swal("Deleted!", "Your imaginary file has been deleted.", "success");
-    });
-});
-</script>
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 @endsection

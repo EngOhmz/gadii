@@ -12,6 +12,7 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\Accounts;
+use PDF;
 
 class InventoryPaymentController extends Controller
 {
@@ -47,11 +48,14 @@ class InventoryPaymentController extends Controller
          
         $receipt = $request->all();
         $sales =PurchaseInventory::find($request->purchase_id);
+        
+         $count=InventoryPayment::count();
+        $pro=$count+1;
 
         if(($receipt['amount'] <= $sales->purchase_amount + $sales->purchase_tax)){
             if( $receipt['amount'] >= 0){
-                $receipt['trans_id'] = "TRANS_INV-".$request->purchase_id.'-'. substr(str_shuffle(1234567890), 0, 1).'-'.date('d/m/y');
-                $receipt['added_by'] = auth()->user()->id;
+                $receipt['trans_id'] = "TINVP-".$pro;
+                $receipt['added_by'] = auth()->user()->added_by;
                 
                 //update due amount from invoice table
                 $data['due_amount'] =  $sales->due_amount-$receipt['amount'];
@@ -66,7 +70,7 @@ class InventoryPaymentController extends Controller
 
                 $supp=Supplier::find($sales->supplier_id);
 
-                $codes= AccountCodes::where('account_name','Payables')->first();
+                $codes= AccountCodes::where('account_name','Payables')->where('added_by',auth()->user()->added_by)->first();
                 $journal = new JournalEntry();
                 $journal->account_id = $codes->id;
                   $date = explode('-',$request->date);
@@ -77,6 +81,8 @@ class InventoryPaymentController extends Controller
                 $journal->name = 'Inventory Payment';
                 $journal->debit =$receipt['amount'] *  $sales->exchange_rate;
                   $journal->payment_id= $payment->id;
+                    $journal->added_by=auth()->user()->added_by;
+              $journal->supplier_id  = $sales->supplier_id ;
                  $journal->currency_code =   $sales->exchange_code;
                 $journal->exchange_rate=  $sales->exchange_rate;
                    $journal->notes= "Clear Creditor  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
@@ -93,6 +99,8 @@ class InventoryPaymentController extends Controller
               $journal->name = 'Inventory Payment';
               $journal->credit = $receipt['amount'] *  $sales->exchange_rate;
               $journal->payment_id= $payment->id;
+                   $journal->added_by=auth()->user()->added_by;
+                  $journal->supplier_id  = $sales->supplier_id ;
                $journal->currency_code =   $sales->exchange_code;
               $journal->exchange_rate=  $sales->exchange_rate;
                  $journal->notes= "Payment for Clear Credit  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
@@ -113,7 +121,7 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= 0-$payment->amount;
        $new[' exchange_code']=$sales->exchange_code;
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 $balance=0-$payment->amount;
      Accounts::create($new);
 }
@@ -135,7 +143,7 @@ $balance=0-$payment->amount;
                                'paid_by' => $sales->supplier_id,
                                    'status' => 'paid' ,
                                 'notes' => 'This expense is from inventory payment. The Reference is ' .$sales->reference_no ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
 
                 return redirect(route('purchase_inventory.index'))->with(['success'=>'Payment Added successfully']);
@@ -327,5 +335,23 @@ $balance=0-$receipt['amount'];
     public function destroy($id)
     {
         //
+    }
+    
+     public function payment_pdfview(Request $request)
+    {
+        
+        //if landscape heigth * width but if portrait widht *height      // dd($dataResult);
+        $customPaper = array(0,0,198.425,494.80);
+        
+        $data=InventoryPayment::find($request->id);
+        $purchases = PurchaseInventory::find($data->purchase_id);
+
+        view()->share(['purchases'=>$purchases,'data'=> $data]);
+
+        if($request->has('download')){
+        $pdf = PDF::loadView('inventory.payments_pdf')->setPaper($customPaper, 'portrait');
+         return $pdf->download('INVENTORY PURCHASE PAYMENT REF NO # ' .  $data->trans_id . ".pdf");
+        }
+        return view('payment_pdfview');
     }
 }

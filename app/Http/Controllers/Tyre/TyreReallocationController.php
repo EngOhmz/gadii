@@ -12,6 +12,8 @@ use App\Models\Tyre\Tyre;
 use App\Models\Tyre\TyreActivity;
 use App\Models\Tyre\TyreBrand;
 use App\Models\Tyre\TyreReallocation;
+use App\Models\Tyre\TyreReallocationItems;
+use App\Models\Tyre\MasterHistory;
 use Illuminate\Http\Request;
 
 class TyreReallocationController extends Controller
@@ -24,11 +26,11 @@ class TyreReallocationController extends Controller
     public function index()
     {
         //
-       $staff=FieldStaff::all();
+       $staff=FieldStaff::where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
          //$staff=User::where('id','!=','1')->get();
-        $truck_s=TruckTyre::where('status','!=','0')->get();
-        $truck=TruckTyre::all();
-        $reallocation= TyreReallocation::all();
+        $truck_s=TruckTyre::where('status','!=','0')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
+        $truck=TruckTyre::where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
+        $reallocation= TyreReallocation::where('added_by',auth()->user()->added_by)->get();
        return view('tyre.good_reallocation',compact('reallocation','staff','truck','truck_s'));
     }
 
@@ -51,43 +53,85 @@ class TyreReallocationController extends Controller
     public function store(Request $request)
     {
         //
-     if($request->source_truck != $request->destination_truck){
-        $data=$request->post();
-        $name=Tyre::where('id',$request->tyre_id)->first();
 
-         $data['position']=$name->position;
-        $data['added_by']=auth()->user()->id;
+        $count=TyreReallocation::where('added_by', auth()->user()->added_by)->count();
+        $pro=$count+1;
+        $dt=date('m/d', strtotime($request->date));
+       
+       $truck=Truck::find($request->source_truck);
+       
+        $data['name']='TR/'.$truck->reg_no.'/'.$dt.'/00'.$pro;
+        $data['source_truck']=$request->source_truck;
+        $data['destination_truck']=$request->destination_truck;
+        $data['source_reading']=$request->source_reading;
+        $data['destination_reading']=$request->destination_reading;
+        $data['date']=$request->date;
+        $data['staff']=$request->staff;
+        $data['added_by']=auth()->user()->added_by;
         $data['status']='0';
 
-         if(!empty($request->destination_tyre)){
-          $dest=Tyre::find($request->destination_tyre);
-          if($name->position != $dest->postion ){
-               return redirect(route('tyre_reallocation.index'))->with(['error'=>'You have chosen tires of different Position. Select again']);
-}
-}
         $tyre = TyreReallocation::create($data);
+        
+        $sourceArr =$request->source_tyre ;
+        $destArr =$request->destination_tyre ;
+        $qtyArr =$request->quantity ;
+
+
+        if(!empty($sourceArr)){
+            for($i = 0; $i < count($sourceArr); $i++){
+                if(!empty($sourceArr[$i])){
+
+                     $a=Tyre::find($sourceArr[$i]);
+                     $b=Tyre::find($destArr[$i]);
+                     
+                     if(!empty($b)){
+                         $br=$b->brand_id;
+                     }
+                     else{
+                        $br='';
+                     }
+                     
+                     
+                    $items = array(
+                        'source_tyre' => $sourceArr[$i],
+                        'destination_tyre' => $destArr[$i],
+                        'source_brand' => $a->brand_id,
+                        'destination_brand' => $br,
+                        'status' => 0,
+                        'position'=>$a->position,   
+                        'quantity' =>    $qtyArr[$i],
+                         'order_no' => $i,
+                         'added_by' => auth()->user()->added_by,
+                        'reallocation_id' =>$tyre->id);
+
+                    
+                  TyreReallocationItems::create($items);
+
+    
+                }
+            }
+
+           
+        }
 
 
 
         if(!empty($tyre)){
             $activity = TyreActivity::create(
                 [ 
-                    'added_by'=>auth()->user()->id,
+                    'added_by'=>auth()->user()->added_by,
                     'module_id'=>$tyre->id,
                     'module'=>'Tyre Reallocation',
-                    'activity'=>"Reallocation of Tyre " .$name->reference. " is Created",
+                    'activity'=>"Reallocation of Tyre with reference " .$tyre->name. " is Created",
                     'date'=>$request->date,
                 ]
                 );                      
     }
 
             return redirect(route('tyre_reallocation.index'))->with(['success'=>'Tyre Reallocation Created Successfully']);
-}
 
-else{
-    return redirect(route('tyre_reallocation.index'))->with(['error'=>'Source and Destination cannot be the same']);
 
-}
+
     }
 
     /**
@@ -110,14 +154,16 @@ else{
     public function edit($id)
     {
         //
-       $staff=FieldStaff::all();
+
+        $staff=FieldStaff::where('added_by',auth()->user()->added_by)->get();
          //$staff=User::where('id','!=','1')->get();
-        $truck_s=TruckTyre::where('status','!=','0')->get();
-        $truck=TruckTyre::all();
+        $truck_s=TruckTyre::where('status','!=','0')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
+        $truck=TruckTyre::where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
         $data= TyreReallocation::find($id);
-         $list= Tyre::where('truck_id',$data->source_truck)->where('status','1')->get();
-        $dest_list= Tyre::where('truck_id',$data->destination_truck)->where('status','1')->get();
-       return view('tyre.good_reallocation',compact('data','staff','truck','truck_s','id','list'));
+         $items=TyreReallocationItems::where('reallocation_id',$id)->get();
+         $list= Tyre::where('truck_id',$data->source_truck)->where('status','3')->where('added_by',auth()->user()->added_by)->get();
+        $dest_list= Tyre::where('truck_id',$data->destination_truck)->where('status','3')->where('added_by',auth()->user()->added_by)->get();
+       return view('tyre.good_reallocation',compact('data','staff','truck','truck_s','id','list','items','dest_list'));
     }
 
     /**
@@ -131,46 +177,94 @@ else{
     {
         //
 
-        if($request->source_truck != $request->destination_truck){
             $tyre= TyreReallocation::find($id);
-
-            $data=$request->post();
-            $name=Tyre::where('id',$request->tyre_id)->first();
-
-         $data['position']=$name->position;
-        $data['added_by']=auth()->user()->id;
+            
+        $data['source_truck']=$request->source_truck;
+        $data['destination_truck']=$request->destination_truck;
+        $data['source_reading']=$request->source_reading;
+        $data['destination_reading']=$request->destination_reading;
+        $data['date']=$request->date;
+        $data['staff']=$request->staff;
+        $data['added_by']=auth()->user()->added_by;
         $data['status']='0';
 
-              if(!empty($request->destination_tyre)){
-          $dest=Tyre::find($request->destination_tyre);
-          if($name->position != $dest->postion ){
-               return redirect(route('tyre_reallocation.index'))->with(['error'=>'You have chosen tires of different Position. Select again']);
-}
-}
+       $tyre->update($data);
+        
+        $sourceArr =$request->source_tyre ;
+        $destArr =$request->destination_tyre ;
+        $qtyArr =$request->quantity ;
+        $remArr = $request->removed_id ;
+        $expArr = $request->saved_id ;
 
-            $tyre->update($data);
+        if (!empty($remArr)) {
+            for($i = 0; $i < count($remArr); $i++){
+               if(!empty($remArr[$i])){        
+              TyreReallocationItems::where('id',$remArr[$i])->delete();   
+                            
+                   }
+               }
+           }
+
+
+        if(!empty($sourceArr)){
+            for($i = 0; $i < count($sourceArr); $i++){
+                if(!empty($sourceArr[$i])){
+
+                     $a=Tyre::find($sourceArr[$i]);
+                     $b=Tyre::find($destArr[$i]);
+                     
+                      if(!empty($b)){
+                         $br=$b->brand_id;
+                     }
+                     else{
+                        $br='';
+                     }
+                     
+                    $items = array(
+                        'source_tyre' => $sourceArr[$i],
+                        'destination_tyre' => $destArr[$i],
+                        'source_brand' => $a->brand_id,
+                        'destination_brand' => $br,
+                        'status' => 0,
+                        'position'=>$a->position,   
+                        'quantity' =>    $qtyArr[$i],
+                         'order_no' => $i,
+                         'added_by' => auth()->user()->added_by,
+                        'reallocation_id' =>$id);
+
+                    if(!empty($expArr[$i])){
+                       TyreReallocationItems::where('id',$expArr[$i])->update($items); 
+                    }
+                    
+                    else{
+                  TyreReallocationItems::create($items);
+                    }
+
+    
+                }
+            }
+
+           
+        }
+
+            
     
     
     
             if(!empty($tyre)){
                 $activity = TyreActivity::create(
                     [ 
-                        'added_by'=>auth()->user()->id,
+                        'added_by'=>auth()->user()->added_by,
                         'module_id'=>$tyre->id,
                         'module'=>'Tyre Reallocation',
-                        'activity'=>"Reallocation of Tyre " .$name->reference. " is Updated",
+                        'activity'=>"Reallocation of Tyre " .$tyre->name. " is Updated",
                         'date'=>$request->date,
                     ]
                     );                      
         }
     
                 return redirect(route('tyre_reallocation.index'))->with(['success'=>'Tyre Reallocation Updated Successfully']);
-    }
-    
-    else{
-        return redirect(route('tyre_reallocation.index'))->with(['error'=>'Source and Destination cannot be the same']);
-    
-    }
+
     }
 
     /**
@@ -187,7 +281,7 @@ else{
         if(!empty($tyre)){
             $activity = TyreActivity::create(
                 [ 
-                    'added_by'=>auth()->user()->id,
+                    'added_by'=>auth()->user()->added_by,
                     'module_id'=>$id,
                     'module'=>'Tyre Reallocation',
                     'activity'=>"Tyre Deleted",
@@ -196,9 +290,11 @@ else{
                 );                      
 }
 
+        TyreReallocationItems::where('reallocation_id',$id)->delete();
         $tyre->delete();
         return redirect(route('tyre_reallocation.index'))->with(['success'=>'Deleted Successfully']);
     }
+    
 
     public function approve($id){
         //
@@ -206,21 +302,35 @@ else{
         $data['status'] = 1;
         $tyre->update($data);
         
-       Tyre::where('id',$tyre->tyre_id)->update(['truck_id' => $tyre->destination_truck]);
-      TyreAssignment::where('tyre_id',$tyre->tyre_id)->update(['truck_id' => $tyre->destination_truck]);  ;
+        $items=  TyreReallocationItems::where('reallocation_id',$id)->get();
+
+            foreach($items as $i){
+                
+        Tyre::where('id',$i->source_tyre)->update(['truck_id' => $tyre->destination_truck]);
+      TyreAssignment::where('tyre_id',$i->source_tyre)->update(['truck_id' => $tyre->destination_truck]);  ;
 
        Truck::where('id',$tyre->source_truck)->update(['tyre' => NULL,'staff'=> NULL,'reading'=>$tyre->source_reading,'position' => NULL]);
 
       $source_truck = TruckTyre::where('truck_id',$tyre->source_truck)->first();
-         if($tyre->position =='Diff'){ 
-            $source['due_diff']= $source_truck->due_diff +1;
-}
-   elseif($tyre->position =='Rear'){ 
-          $source['due_rear']= $source_truck->due_rear  +1;
-}
-  else if($tyre->position =='Trailer'){ 
-            $source['due_trailer']= $source_truck->due_trailer+1;
-}
+         if($i->position =='Position 1'){ 
+            $source['due_1']= $source_truck->due_1 +1;
+            }
+        elseif($i->position =='Position 2'){ 
+            $source['due_2']= $source_truck->due_2 +1;
+        }
+        elseif($i->position =='Position 3'){ 
+            $source['due_3']= $source_truck->due_3 +1;
+        }
+        elseif($i->position =='Position 4'){ 
+            $source['due_4']= $source_truck->due_4 +1;
+        }
+        elseif($i->position =='Position 5'){ 
+            $source['due_5']= $source_truck->due_5 +1;
+        }
+        elseif($i->position =='Position 6'){ 
+            $source['due_6']= $source_truck->due_6 +1;
+        }
+ 
                  
                    $source['due_tyre']=$source_truck->due_tyre +1;
                  $source['reading']=$tyre->source_reading;
@@ -239,21 +349,47 @@ else{
 
 
       
-       if(!empty($tyre->destination_tyre)){
+       if(!empty($i->destination_tyre)){
      
          $list['position']=NULL;
         $list['truck_id']=NULL;
-        $list['status']='2';
-        Tyre::where('id',$tyre->destination_tyre)->update($list);
+        $list['status']='0';
+        Tyre::where('id',$i->destination_tyre)->update($list);
 
     
-        $name=Tyre::where('id',$tyre->destination_tyre)->first();
+        $name=Tyre::where('id',$i->destination_tyre)->first();
 
         $inv=TyreBrand::where('id',$name->brand_id)->first();
         $q=$inv->quantity + 1;
         TyreBrand::where('id',$name->brand_id)->update(['quantity' => $q]);
+        
+         $assign=TyreAssignment::where('tyre_id',$i->destination_tyre)->first()  ;
+          $m=MasterHistory::where('serial_id',$i->destination_tyre)->where('other_id',$assign->id)->where('type','Good Assignment')->first();
+                     
+                     if(!empty($m)){
+                        $price=$m->price; 
+                     }
+  
+                   else{
+                       $price=$inv->price;  
+                   }
+  
+   $mlists = [
+                        'in' => 1,
+                        'price' =>$price ,
+                        'item_id' => $name->brand_id,
+                        'serial_id' =>$i->destination_tyre,
+                         'staff_id' => $tyre->staff,
+                        'added_by' => auth()->user()->added_by,
+                        'location' =>   $name->location,
+                        'date' =>$tyre->date,
+                        'type' =>   'Good Reallocation',
+                        'other_id' =>$id,
+                    ];
 
-            TyreAssignment::where('tyre_id',$tyre->destination_tyre)->delete();
+                    MasterHistory::create($mlists);
+
+        TyreAssignment::where('tyre_id',$i->destination_tyre)->delete();
 
         Truck::where('id',$tyre->destination_truck)->update(['reading'=>$tyre->destination_reading]);
           TruckTyre::where('truck_id',$tyre->destination_truck)->update(['reading'=>$tyre->destination_reading]);  
@@ -261,20 +397,30 @@ else{
        }
 
 
-       elseif(empty($tyre->destination_tyre)){     
+       elseif(empty($i->destination_tyre)){     
 
         Truck::where('id',$tyre->destination_truck)->update(['reading'=>$tyre->destination_reading]);
 
  $destination_truck = TruckTyre::where('truck_id',$tyre->destination_truck)->first();
-         if($tyre->position =='Diff'){ 
-            $destination['due_diff']= $destination_truck->due_diff -1;
-}
-   elseif($tyre->position =='Rear'){ 
-          $destination['due_rear']= $destination_truck->due_rear  -1;
-}
-  else if($tyre->position =='Trailer'){ 
-            $destination['due_trailer']= $destination_truck->due_trailer-1;
-}
+        if($i->position =='Position 1'){ 
+            $destination['due_1']= $destination_truck->due_1 -1;
+            }
+        elseif($i->position =='Position 2'){ 
+            $destination['due_2']= $destination_truck->due_2 -1;
+        }
+        elseif($i->position =='Position 3'){ 
+            $destination['due_3']= $destination_truck->due_3 -1;
+        }
+        elseif($i->position =='Position 4'){ 
+            $destination['due_4']= $destination_truck->due_4 -1;
+        }
+        elseif($i->position =='Position 5'){ 
+            $destination['due_5']= $destination_truck->due_5 -1;
+        }
+        elseif($i->position =='Position 6'){ 
+            $destination['due_6']= $destination_truck->due_6 -1;
+        }
+ 
                  
                    $destination['due_tyre']=$destination_truck->due_tyre -1;
 
@@ -291,26 +437,118 @@ else{
                     $destination_truck->update($destination);
 
        }
+                
+                
+            }
+        
+      
         
 
-        
-       $a=Tyre::where('id',$tyre->tyre_id)->first();
 
         if(!empty($tyre)){
            $activity = TyreActivity::create(
                [ 
-                   'added_by'=>auth()->user()->id,
+                   'added_by'=>auth()->user()->added_by,
                    'module_id'=>$tyre->id,
                    'module'=>'Tyre Reallocation',
-                   'activity'=>"Reallocation of Tyre " .$a->reference. " is Approved",
+                   'activity'=>"Reallocation of Tyre " .$tyre->reference. " is Approved",
                    'date'=>date('Y-m-d'),
 
                ]
                );                      
 }
  
-        return redirect(route('tyre_reallocation.index'))->with(['success'=>'Return of Tyre Approved Successfully']);
+        return redirect(route('tyre_reallocation.index'))->with(['success'=>'Reallocation of Tyre Approved Successfully']);
     }
+
+
+
+
+
+ public function findPosition(Request $request)
+    {
+        
+        for($i = 0; $i < count($request['source_tyre']); $i++){
+        //dd($request['destination_tyre'][$i]);
+        
+        $s=Tyre::find($request['source_tyre'][$i]);
+        $d=Tyre::find($request['destination_tyre'][$i]);
+        
+        if(!empty($request['destination_tyre'][$i])){
+          $b=$d->position;
+          
+        }
+        else{
+          $b=$s->position;  
+        }
+        
+        
+         $range[]=[
+            'c'=>$s->position,
+            'd'=>$b,
+        ];
+        
+        }
+     
+//dd($range); 
+
+
+
+foreach ($range as $key => $subarr) {
+    
+    if (count(array_unique($subarr)) === 1) {
+       $result[] = 'true';
+    } else {
+        $result[] = 'false';
+    }
+}
+
+//print_r($result);
+
+if(count($result) > 1){
+
+
+  //$test=(count(array_unique($result, SORT_REGULAR)) === 1);
+  
+
+if(count(array_unique($result)) === 1) {
+    $test= current($result);
+} 
+  else{
+      
+  } 
+  
+//dd($test); 
+
+ if($test != "true")  {
+ $price='error';   
+ }    
+
+else{
+  $price='';    
+}
+
+}
+
+else{
+    //dd($result[0]);
+  if($result[0] != 'true')  {
+ $price='error';   
+ }    
+
+elseif($result[0] == 'true')  {
+  $price='';    
+}  
+    
+}
+
+  
+
+                return response()->json($price);                      
+
+    }
+
+
 
 
 }

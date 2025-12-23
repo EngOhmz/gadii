@@ -22,6 +22,10 @@
                  - {{$data->end}}
             @endif
 </li>
+
+ @if(!empty($data->receipt))
+        <li>Receipt: {{ $data->receipt}} </li>
+            @endif
             </ul>
             <div class="form-group">
                 <label class="col-lg-6 col-form-label">Description</label>
@@ -41,6 +45,16 @@
                 </div>
             </div>
 
+             @if(empty($data->receipt))
+       <div class="form-group">
+                <label class="col-lg-6 col-form-label">Receipt</label>
+
+                <div class="col-lg-12">
+           <input type="text" name="receipt" id=""  value=""  class="form-control " required>
+                 
+                </div>
+            </div>
+            @endif
 
         </div>
         <div class="modal-footer bg-whitesmoke br">

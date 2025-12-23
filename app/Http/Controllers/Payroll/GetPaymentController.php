@@ -62,8 +62,8 @@ else{
                     $month = $year . "-" . $i;
                 }
 
-                $nssf_salary_info[$i] =  JournalEntry::where('payment_month', $month)->where('transaction_type','salary')->where('name','NSSF Payment')->whereNotNull('debit')->get();
-             $user_nssf_salary_info[$i] =JournalEntry::where('payment_month', $month)->where('user_id',$user)->where('transaction_type','salary')->where('name','NSSF Payment')->whereNotNull('debit')->get();
+                $nssf_salary_info[$i] =  JournalEntry::where('payment_month', $month)->where('transaction_type','salary')->where('name','NSSF Payment')->whereNotNull('debit')->where('added_by',auth()->user()->added_by)->get();
+             $user_nssf_salary_info[$i] =JournalEntry::where('payment_month', $month)->where('user_id',$user)->where('transaction_type','salary')->where('name','NSSF Payment')->whereNotNull('debit')->where('added_by',auth()->user()->added_by)->get();
             }
 
  return view('payroll.provident_fund_info',compact('current_month','year','nssf_salary_info','user_nssf_salary_info'));
@@ -88,8 +88,8 @@ else{
                     $month = $year . "-" . $i;
                 }
 
-                $nssf_salary_info[$i] =  JournalEntry::where('payment_month', $month)->where('transaction_type','salary')->where('name','PAYE Payment')->whereNotNull('debit')->get();
-             $user_nssf_salary_info[$i] =JournalEntry::where('payment_month', $month)->where('user_id',$user)->where('transaction_type','salary')->where('name','PAYE Payment')->whereNotNull('debit')->get();
+                $nssf_salary_info[$i] =  JournalEntry::where('payment_month', $month)->where('transaction_type','salary')->where('name','PAYE Payment')->whereNotNull('debit')->where('added_by',auth()->user()->added_by)->get();
+             $user_nssf_salary_info[$i] =JournalEntry::where('payment_month', $month)->where('user_id',$user)->where('transaction_type','salary')->where('name','PAYE Payment')->whereNotNull('debit')->where('added_by',auth()->user()->added_by)->get();
             }
 
  return view('payroll.tax_deduction_info',compact('current_month','year','nssf_salary_info','user_nssf_salary_info'));
@@ -114,8 +114,8 @@ else{
                     $month = $year . "-" . $i;
                 }
 
-                $nssf_salary_info[$i] =  JournalEntry::where('payment_month', $month)->where('transaction_type','salary')->where('name','NHIF Payment')->whereNotNull('credit')->get();
-             $user_nssf_salary_info[$i] =JournalEntry::where('payment_month', $month)->where('user_id',$user)->where('transaction_type','salary')->where('name','NHIF Payment')->whereNotNull('debit')->get();
+                $nssf_salary_info[$i] =  JournalEntry::where('payment_month', $month)->where('transaction_type','salary')->where('name','NHIF Payment')->whereNotNull('credit')->where('added_by',auth()->user()->added_by)->get();
+             $user_nssf_salary_info[$i] =JournalEntry::where('payment_month', $month)->where('user_id',$user)->where('transaction_type','salary')->where('name','NHIF Payment')->whereNotNull('debit')->where('added_by',auth()->user()->added_by)->get();
             }
 
  return view('payroll.nhif_contr',compact('current_month','year','nssf_salary_info','user_nssf_salary_info'));
@@ -140,19 +140,44 @@ else{
                     $month = $year . "-" . $i;
                 }
 
-                $nssf_salary_info[$i] =  JournalEntry::where('payment_month', $month)->where('transaction_type','salary')->where('name','WCF Contribution Payment')->whereNotNull('debit')->get();
-             $user_nssf_salary_info[$i] =JournalEntry::where('payment_month', $month)->where('user_id',$user)->where('transaction_type','salary')->where('name','WCF Contribution Payment')->whereNotNull('debit')->get();
+                $nssf_salary_info[$i] =  JournalEntry::where('payment_month', $month)->where('transaction_type','salary')->where('name','WCF Contribution Payment')->whereNotNull('debit')->where('added_by',auth()->user()->added_by)->get();
+             $user_nssf_salary_info[$i] =JournalEntry::where('payment_month', $month)->where('user_id',$user)->where('transaction_type','salary')->where('name','WCF Contribution Payment')->whereNotNull('debit')->where('added_by',auth()->user()->added_by)->get();
             }
 
  return view('payroll.wcf_info',compact('current_month','year','nssf_salary_info','user_nssf_salary_info'));
     }
 
+  public function sdl(Request $request)
+    {
+        //
+
+    $user=auth()->user()->id;
+        $current_month = date('m');
+         if(!empty($request->year)){
+         $year=$request->year;
+}
+else{
+            $year= date('Y'); // get current year
+}
+            for ($i = 1; $i <= 12; $i++) { // query for months
+                if ($i >= 1 && $i <= 9) { // if i<=9 concate with Mysql.becuase on Mysql query fast in two digit like 01.
+                    $month = $year . "-" . '0' . $i;
+                } else {
+                    $month = $year . "-" . $i;
+                }
+
+                $nssf_salary_info[$i] =  JournalEntry::where('payment_month', $month)->where('transaction_type','salary')->where('name','SDL Payment')->whereNotNull('debit')->where('added_by',auth()->user()->added_by)->get();
+             $user_nssf_salary_info[$i] =JournalEntry::where('payment_month', $month)->where('user_id',$user)->where('transaction_type','salary')->where('name','SDL Payment')->whereNotNull('debit')->where('added_by',auth()->user()->added_by)->get();
+            }
+
+ return view('payroll.sdl_info',compact('current_month','year','nssf_salary_info','user_nssf_salary_info'));
+    }
 
  public function payroll_summary(Request $request)
     {
         //
 
-    $all_employee=User::where('id','!=',1)->get();
+    $all_employee=User::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
 
  $search_type = $request->search_type;
  $check_existing_payment='';
@@ -171,15 +196,15 @@ if (!empty($flag)) {
             }
             else if ($search_type == 'month') {
             $by_month = $request->by_month;
-             $check_existing_payment = SalaryPayment::all()->where('payment_month', $by_month);
+             $check_existing_payment = SalaryPayment::all()->where('added_by',auth()->user()->added_by)->where('payment_month', $by_month);
             }
             else if ($search_type == 'period') {
               $start_month = $request->start_month;
               $end_month = $request->end_month;
-             $check_existing_payment = SalaryPayment::all()->where('payment_month','>=', $start_month)->where('payment_month','<=', $end_month);
+             $check_existing_payment = SalaryPayment::all()->where('added_by',auth()->user()->added_by)->where('payment_month','>=', $start_month)->where('payment_month','<=', $end_month);
             }
            elseif ($search_type == 'activities') {
-             $check_existing_payment =PayrollActivity::all();
+             $check_existing_payment =PayrollActivity::all()->where('added_by',auth()->user()->added_by);
             }
 }
 else{
@@ -191,7 +216,19 @@ $by_month='';
 $user_id='';
         }
 
- 
+ if($request->type == 'print_pdf'){
+ $month = $request->month;
+                 $check_existing_payment = SalaryPayment::all()->where('added_by',auth()->user()->added_by)->where('payment_month', $request->month);
+
+             $pdf = PDF::loadView('payroll.payroll_master_pdf',
+           compact('check_existing_payment','month'))->setPaper('a4', 'landscape');
+
+        return $pdf->download('PAYROLL MASTER REPORT ' . ' - ' . $request->month . ".pdf");
+        
+         
+        }else{
+ return view('payroll.payroll_summary',compact('all_employee','check_existing_payment','start_month','end_month','search_type','by_month','user_id','flag'));
+}
 
  return view('payroll.payroll_summary',compact('all_employee','check_existing_payment','start_month','end_month','search_type','by_month','user_id','flag'));
     }
@@ -216,14 +253,14 @@ $user_id='';
   $loan_info='';
  $end_date='';
 
-$all_department_info=Departments::all();
+$all_department_info=Departments::all()->where('disabled','0')->where('added_by',auth()->user()->added_by);
 if (!empty($flag) || !empty($departments_id)) {
     $payment_month = $request->payment_month;    
      $date = new DateTime($payment_month . '-01');
         $start_date = $date->modify('first day of this month')->format('Y-m-d');
         $end_date = $date->modify('last day of this month')->format('Y-m-d');
   
-                          $employee_info  = EmployeePayroll::where('department_id',$departments_id)->get();
+                          $employee_info  = EmployeePayroll::where('department_id',$departments_id)->where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
 
 
 
@@ -249,7 +286,7 @@ $deduction_info=SalaryPaymentDeduction::where('salary_payment_id', $id)->get();
           }
         else{
          $data['salary_payment_id']=$id;
-         $data['added_by']=auth()->user()->id;
+         $data['added_by']=auth()->user()->added_by;
          $slip= Payslip::create($data);
 
           $pdata['payslip_number'] = date('Ym') . $slip->id;
@@ -261,7 +298,8 @@ $deduction_info=SalaryPaymentDeduction::where('salary_payment_id', $id)->get();
          if(!empty($slip)){
                     $activity =PayrollActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
                             'module_id'=> $slip->id,
                             'module'=>'Payslip',
                             'activity'=>"Payslip ". $p. " has been generated for  " .$employee_info->name. "  for the month ".  $month ,
@@ -292,12 +330,78 @@ $deduction_info=SalaryPaymentDeduction::where('salary_payment_id', $pay->salary_
          'allowance_info'=> $allowance_info,'deduction_info'=> $deduction_info]);
 
        if($request->has('download')){
-       $pdf = PDF::loadView('payroll.payslip_info_pdf')->setPaper('a4', 'landscape');
+       $pdf = PDF::loadView('payroll.payslip_info_pdf')->setPaper('a4', 'potrait');
       return $pdf->download('PAYSLIP NO # ' .  $pay->payslip_number . ".pdf");
        }
        return view('payslip_pdfview');
    }
 
+
+
+ public function salary_control(Request $request)
+    {
+        //
+
+   
+
+ $search_type = $request->search_type;
+ $check_existing_payment='';
+$by_month='';
+$flag = $request->flag;
+
+ 
+
+if (!empty($flag)) {
+             $by_month = $request->by_month;
+             $check_existing_payment = SalaryPayment::all()->where('added_by',auth()->user()->added_by)->where('payment_month', $by_month);
+          
+}
+else{
+ $check_existing_payment='';
+$search_type='';
+$by_month='';
+
+        }
+
+ if($request->type == 'print_pdf'){
+ $month = $request->month;
+                 $check_existing_payment = SalaryPayment::all()->where('added_by',auth()->user()->added_by)->where('payment_month', $request->month);
+
+if($request->report_type =='bank'){
+             $pdf = PDF::loadView('payroll.bank_report_pdf',
+           compact('check_existing_payment','month'));
+        return $pdf->download('BANK REPORT ' . ' - ' . $request->month . ".pdf");
+}   
+
+else if($request->report_type =='nssf'){
+             $pdf = PDF::loadView('payroll.nssf_report_pdf',
+           compact('check_existing_payment','month'));
+        return $pdf->download('NSSF REPORT ' . ' - ' . $request->month . ".pdf");
+}        
+   
+if($request->report_type =='tra'){
+             $pdf = PDF::loadView('payroll.tra_report_pdf',
+           compact('check_existing_payment','month'));
+        return $pdf->download('TRA REPORT ' . ' - ' . $request->month . ".pdf");
+} 
+
+else if($request->report_type =='vicoba'){
+             $pdf = PDF::loadView('payroll.vicoba_report_pdf',
+           compact('check_existing_payment','month'));
+        return $pdf->download('VICOBA REPORT ' . ' - ' . $request->month . ".pdf");
+} 
+else if($request->report_type =='cotwu'){
+             $pdf = PDF::loadView('payroll.cotwu_report_pdf',
+           compact('check_existing_payment','month'));
+        return $pdf->download('COTWU REPORT ' . ' - ' . $request->month . ".pdf");
+}   
+      
+        }else{
+ return view('payroll.salary_control',compact('check_existing_payment','search_type','by_month','flag'));
+}
+
+ return view('payroll.salary_control',compact('check_existing_payment','search_type','by_month','flag'));
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -395,123 +499,7 @@ $deduction_info=SalaryPaymentDeduction::where('salary_payment_id', $pay->salary_
         //
     }
 
-    public function get_emp_salary_list($id = NULL, $designation_id = NULL)
-    {
-        // $this->db->select('tbl_employee_payroll.*', FALSE);
-        // $this->db->select('tbl_account_details.*', FALSE);
-        // $this->db->select('tbl_salary_template.*', FALSE);
-        // $this->db->select('tbl_hourly_rate.*', FALSE);
-        // $this->db->select('tbl_designations.*', FALSE);
-        // $this->db->select('tbl_departments.deptname', FALSE);
-        // $this->db->from('tbl_employee_payroll');
-        // $this->db->join('tbl_account_details', 'tbl_employee_payroll.user_id = tbl_account_details.user_id', 'left');
-        // $this->db->join('tbl_salary_template', 'tbl_employee_payroll.salary_template_id = tbl_salary_template.salary_template_id', 'left');
-        // $this->db->join('tbl_hourly_rate', 'tbl_employee_payroll.hourly_rate_id = tbl_hourly_rate.hourly_rate_id', 'left');
-        // $this->db->join('tbl_designations', 'tbl_designations.designations_id  = tbl_account_details.designations_id', 'left');
-        // $this->db->join('tbl_departments', 'tbl_departments.departments_id  = tbl_designations.departments_id', 'left');
-        
-        $query_result = DB::table('tbl_employee_payroll')
-            ->join('tbl_salary_template', 'tbl_employee_payroll.salary_template_id', '=', 'tbl_salary_template.salary_template_id','left')
-            ->join('basic_details', 'tbl_employee_payroll.user_id', '=', 'basic_details.user_id')
-            ->select('tbl_employee_payroll.*', 'tbl_salary_template.*', 'basic_details.*')
-            ->get();
-          
-        
-        if (!empty($id)) {
-            //$this->db->where('tbl_employee_payroll.user_id', $id);
-            //$query_result = EmployeePayroll::with('salaryTemplates')->where('user_id', $id)->get();
-            //$result = $query_result->last();
-            // $this->db->where('tbl_employee_payroll.user_id', $id);
-            // $query_result = $this->db->get();
-            // $result = $query_result->row();
-            $query_result = DB::table('tbl_employee_payroll')
-            ->join('tbl_salary_template', 'tbl_employee_payroll.salary_template_id', '=', 'tbl_salary_template.salary_template_id','left')
-            ->join('basic_details', 'tbl_employee_payroll.user_id', '=', 'basic_details.user_id')
-            ->where('tbl_employee_payroll.user_id', $id)
-            ->select('tbl_employee_payroll.*', 'tbl_salary_template.*', 'basic_details.*')
-            ->get();
-            $result = $query_result->last();
-        }elseif(!empty($designation_id)){
-            //$query_result = EmployeePayroll::with('salaryTemplates')->get();
-            //->where('designations_id', $designation_id);
-            //$result = $query_result->last();
-            $query_result = DB::table('tbl_employee_payroll')
-            ->join('tbl_salary_template', 'tbl_employee_payroll.salary_template_id', '=', 'tbl_salary_template.salary_template_id','left')
-            ->join('basic_details', 'tbl_employee_payroll.user_id', '=', 'basic_details.user_id')
-            ->select('tbl_employee_payroll.*', 'tbl_salary_template.*', 'basic_details.*')
-            ->row();
-            $result = $query_result;
-        } else {
-            
-            //$result = EmployeePayroll::with('salaryTemplates')->get();
-            $result = $query_result;
-        }
-        return $result;
-    }
-
-    public function get_advance_salary_info_by_id($user_id, $payment_month)
-    {
-
-        $advance_salary_info = $this->get_advance_salary_info_by_date($payment_month, '', $user_id); // get all report by start date and in date
-        $advance_amount = 0;
-        foreach ($advance_salary_info as $v_advance_salary) {
-            $advance_amount += $v_advance_salary->advance_amount;
-        }
-        $result['advance_amount'] = $advance_amount;
-        return $result;
-
-    }
-
-    public function get_advance_salary_info_by_date($payment_month = NULL, $id = NULL, $user_id = NULL)
-    {    
-        $query_result = DB::table('tbl_advance_salary')
-        ->join('basic_details', 'tbl_advance_salary.user_id', '=', 'basic_details.user_id')
-        ->select('tbl_advance_salary.*', 'basic_details.*')
-        ->get();
-
-        
-       
-        // if ($this->session->userdata('user_type') != 1) {
-        //     $this->db->where('tbl_advance_salary.user_id', $this->session->userdata('user_id'));
-        //     $this->db->where('tbl_advance_salary.deduct_month', $payment_month);
-        //     $query_result = $this->db->get();
-        //     $result = $query_result->result();
-        // } else
-        
-        if (!empty($id)) {
-            $query_result = DB::table('tbl_advance_salary')
-            ->join('basic_details', 'tbl_advance_salary.user_id', '=', 'basic_details.user_id')
-            ->where('tbl_advance_salary.advance_salary_id', $id)
-            ->select('tbl_advance_salary.*', 'basic_details.*')
-            ->last();
-            
-            //$result = $query_result->last();
-            $result = $query_result;
-            echo "<pre>";
-            print_r($result);
-            exit();
-        } elseif (!empty($user_id)) {
-            $query_result = DB::table('tbl_advance_salary')
-            ->join('basic_details', 'tbl_advance_salary.user_id', '=', 'basic_details.user_id')
-            ->where('tbl_advance_salary.status', '1')
-            ->where('basic_details.user_id', $user_id)
-            ->select('tbl_advance_salary.*', 'basic_details.*')
-            ->get();
-            
-            
-            $result = $query_result;
-        } else {
-            $query_result = DB::table('tbl_advance_salary')
-            ->join('basic_details', 'tbl_advance_salary.user_id', '=', 'basic_details.user_id')
-            ->where('tbl_advance_salary.deduct_month', $payment_month)
-            
-            ->select('tbl_advance_salary.*', 'basic_details.*')
-            ->get();
-            $this->db->where('tbl_advance_salary.deduct_month', $payment_month);
-            
-            $result = $query_result;
-        }
-        return $result;
-    }
-
+    
+    
+    
 }

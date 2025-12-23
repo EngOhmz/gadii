@@ -6,7 +6,7 @@ use \App\Models\JournalEntry;
 
 trait Calculate_netProfitTrait3 {
     
-public function get_netProfit3($start_date=null,$second_date=null,$end_date=null){
+public function get_netProfit3($start_date=null,$second_date=null,$end_date=null,$branch_id=null){
 $c=0;     
 $sales_balance  = 0;
 $sales_balance1  = 0;
@@ -41,25 +41,26 @@ $net_profit1=0;
          
          //$start_date = date('d - m - Y',$unknown_date);
         
-           $income = ClassAccount::where('class_type','Income')->get();
-           $cost = ClassAccount::where('class_type','Expense')->get();
-           $expense= ClassAccount::where('class_type','Expense')->get();
+          
+        $income = ClassAccount::where('class_type','Income')->where('added_by',auth()->user()->added_by)->get();
+           $cost = ClassAccount::where('class_type','Expense')->where('added_by',auth()->user()->added_by)->get();
+           $expense= ClassAccount::where('class_type','Expense')->where('added_by',auth()->user()->added_by)->get();
            
            
-foreach($income as $account_class){
-foreach($account_class->groupAccount  as $group) {  
+foreach($income->where('added_by',auth()->user()->added_by) as $account_class){
+foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)  as $group) {  
 if($group->group_id != 5110){
-foreach($group->accountCodes as $account_code){
+foreach($group->accountCodes->where('added_by',auth()->user()->added_by) as $account_code){
      
      
-                        $cr =JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                        $dr = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                        $cr =JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
+                            [$start_date, $second_date])->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                               [$start_date, $second_date])->sum('debit');
                             
-                        $cr1 = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                        $cr1 = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                             [$second_date, $end_date])->sum('credit');
-                        $dr1 = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                        $dr1 = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                             [$second_date, $end_date])->sum('debit');
                             
                             
@@ -74,19 +75,19 @@ foreach($group->accountCodes as $account_code){
 
     }}}}           
 
-foreach($income as $account_class){
-foreach($account_class->groupAccount  as $group) {  
+foreach($income->where('added_by',auth()->user()->added_by) as $account_class){
+foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)  as $group) {  
 if($group->group_id == 5110){
-foreach($group->accountCodes as $account_code){
+foreach($group->accountCodes->where('added_by',auth()->user()->added_by) as $account_code){
    
-                    $cr =JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                    $dr = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                    $cr =JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
+                            [$start_date, $second_date])->where('added_by',auth()->user()->added_by)->sum('credit');
+                    $dr = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                               [$start_date, $second_date])->sum('debit');
                             
-                    $cr1 = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                    $cr1 = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                             [$second_date, $end_date])->sum('credit');
-                    $dr1 = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                    $dr1 = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                             [$second_date, $end_date])->sum('debit');
                             
                    
@@ -101,20 +102,20 @@ foreach($group->accountCodes as $account_code){
 
 
 
-foreach($cost as $account_class){
-foreach($account_class->groupAccount  as $group) {
+foreach($cost->where('added_by',auth()->user()->added_by) as $account_class){
+foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)  as $group) {
 if($group->group_id == 6180){
-foreach($group->accountCodes as $account_code){
+foreach($group->accountCodes->where('added_by',auth()->user()->added_by) as $account_code){
 
 
-                    $cr =JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                    $dr = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                    $cr =JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
+                            [$start_date, $second_date])->where('added_by',auth()->user()->added_by)->sum('credit');
+                    $dr = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                               [$start_date, $second_date])->sum('debit');
                             
-                    $cr1 = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                    $cr1 = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                             [$second_date, $end_date])->sum('credit');
-                    $dr1 = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                    $dr1 = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                             [$second_date, $end_date])->sum('debit');
                             
                             
@@ -132,19 +133,19 @@ foreach($group->accountCodes as $account_code){
 }}}}
 
 
-foreach($expense as $account_class){
-foreach($account_class->groupAccount  as $group)  {      
+foreach($expense->where('added_by',auth()->user()->added_by) as $account_class){
+foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)  as $group)  {      
 if($group->group_id != 6180){
-foreach($group->accountCodes as $account_code){
+foreach($group->accountCodes->where('added_by',auth()->user()->added_by) as $account_code){
 
-                    $cr =JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                    $dr = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                    $cr =JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
+                            [$start_date, $second_date])->where('added_by',auth()->user()->added_by)->sum('credit');
+                    $dr = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                               [$start_date, $second_date])->sum('debit');
                             
-                    $cr1 = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                    $cr1 = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                             [$second_date, $end_date])->sum('credit');
-                    $dr1 = JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
+                    $dr1 = JournalEntry::where('account_id', $account_code->id)->where('branch_id', $branch_id)->whereBetween('date',
                             [$second_date, $end_date])->sum('debit');
                             
                             

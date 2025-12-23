@@ -24,21 +24,17 @@
             <div class="col-12 col-md-12 col-lg-12">
 
                <div class="col-lg-10">
-                    @if($purchases->status != 1)
+                    @if($purchases->status == 0)
                  <a class="btn btn-xs btn-primary"  onclick="return confirm('Are you sure?')"   href="{{ route('requisition.edit', $purchases->id)}}"  title="" > Edit </a>          
-            
-                @endif
-
-                 
-
-      @if($purchases->status != 1)                        
-              <a class="btn btn-xs btn-info" data-placement="top"  href="{{ route('requisition.receive',$purchases->id)}}"  title="Good Receive"> Good Receive </a>
-            <a class="btn btn-xs btn-danger" data-placement="top" onclick="return confirm('Are you sure?')"  href="{{ route('requisition.cancel', $purchases->id)}}""  ]>Cancel </a>   
+                                  
+              <a class="btn btn-xs btn-info" data-placement="top"  href="{{ route('requisition.receive',$purchases->id)}}"  title="Approve"> Approve </a>
+            <a class="btn btn-xs btn-danger" data-placement="top" onclick="return confirm('Are you sure?')"  href="{{ route('requisition.cancel', $purchases->id)}}">Cancel </a>   
 
            @endif  
              
+              @if($purchases->status == 1)
              <a class="btn btn-xs btn-success"  href="{{ route('requisition_pdfview',['download'=>'pdf','id'=>$purchases->id]) }}"  title="" > Download PDF </a>         
-                                         
+               @endif                          
     </div>
 
 <br>
@@ -68,10 +64,10 @@
 <br>
  
                 <div class="card">
-                    <div class="padding-20">
+                    <div class="card-body">
                        
                         <?php
-$settings= App\Models\System::first();
+$settings= App\Models\System::where('added_by',auth()->user()->added_by)->first();
 
 
 ?>
@@ -79,8 +75,10 @@ $settings= App\Models\System::first();
                             <div class="tab-pane fade show active" id="about" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="row">
+                                
+                               
                                    <div class="col-lg-5 col-xs-5 ">
-                <img class="pl-lg" style="width: 233px;height: 120px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
+                <img class="pl-lg" style="width: 240px;height: 120px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
             </div>
                                   
  <div class="col-lg-3 col-xs-3">
@@ -89,10 +87,13 @@ $settings= App\Models\System::first();
 
                                       <div class="col-lg-4 col-xs-4">
                                         
-                                       <h5 class=mb0">REF NO : {{$purchases->reference_no}}</h5>
+                                       <h5 class="mb0">REF NO : {{$purchases->reference_no}}</h5>
+                                       
+                                         @if($purchases->status == 1)
                                       Purchase Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}                  
-              <br>Due Date : {{Carbon\Carbon::parse($purchases->due_date)->format('d/m/Y')}}                                          
-           <br>Sales Agent: {{$purchases->user->name }} 
+                                     <br>Due Date : {{Carbon\Carbon::parse($purchases->due_date)->format('d/m/Y')}}                                          
+                                    <br>Purchase Agent: {{$purchases->user->name }} 
+           @endif
                                       
           <br>Status: 
                                    @if($purchases->status == 0)
@@ -138,7 +139,7 @@ $settings= App\Models\System::first();
  </div>
 
                                     </div>
-                                </div>
+                            </div>
 
                                 
                                 <?php
@@ -157,9 +158,9 @@ $settings= App\Models\System::first();
                         <th style="color:white;">#</th>
                         <th style="color:white;">Items</th>
                         <th style="color:white;">Qty</th>
-                        <th  class="col-sm-1" style="color:white;">Price</th>
-                        <th class="col-sm-2" style="color:white;">Tax</th>
-                        <th class="col-sm-1" style="color:white;">Total</th>
+                        <th style="color:white;">Price</th>
+                        <th style="color:white;">Tax</th>
+                        <th style="color:white;">Total</th>
                     </tr>
                 </thead>
                                     <tbody>
@@ -174,15 +175,25 @@ $settings= App\Models\System::first();
                                             <td class="">{{$i++}}</td>
                                             <?php
                                          $item_name = App\Models\Inventory::find($row->item_name);
+                                         
+                                          $t=App\Models\Truck::where('id',$row->truck_id)->first();
+    
+                                                            
+                                             if(!empty($t)){
+                                                $b =  $t->truck_name.'-'.$t->reg_no ; 
+                                          }
+                                          else{
+                                           $b =  '' ;     
+                                          }        
+                                                            
+                                                
+                                                    
+                                                    
                                         ?>
-                                            <td class=""><strong class="block">{{$item_name->name}}</strong></td>
+                                            <td class=""><strong class="block">{{$item_name->name}}</strong><br>{{$b}}</td>
                                             <td class="">{{ $row->quantity }} </td>
                                         <td class="">{{number_format($row->price ,2)}}  </td>                                         
-                                         <td class="">
-                                  @if(!@empty($row->total_tax > 0))
-                              <small class="pr-sm">VAT ({{ $row->tax_rate * 100 }} %)</small> {{number_format($row->total_tax ,2)}} 
-@endif
-</td>
+                                         <td class=""> {{number_format($row->total_tax ,2)}} </td>
                                             <td class="">{{number_format($row->total_cost ,2)}} </td>
                                             
                                         </tr>
@@ -191,88 +202,95 @@ $settings= App\Models\System::first();
 
                                        
                                     </tbody>
+<tfoot>
+<tr>
+<td colspan="4"></td>
+<td>Sub Total</td>
+<td>{{number_format($purchases->purchase_amount,2)}}  {{$purchases->exchange_code}}</td>
+</tr>
+
+<tr>
+<td colspan="4"></td>
+<td>Total Tax </td>
+<td>{{number_format($purchases->purchase_tax,2)}}  {{$purchases->exchange_code}}</td>
+</tr>
+<tr>
+<td colspan="4"></td>
+<td>Shipping Cost</td>
+<td>{{number_format( $purchases->shipping_cost ,2)}}  {{$purchases->exchange_code}}</td>
+</tr>
+<tr>
+<td colspan="4"></td>
+<td>Discount</td>
+<td>{{number_format($purchases->discount ,2)}}  {{$purchases->exchange_code}}</td>
+</tr>
+<tr>
+<td colspan="4"></td>
+<td>Total Amount</td>
+<td>{{number_format( (($purchases->purchase_amount + $purchases->purchase_tax +  $purchases->shipping_cost)  - $purchases->discount) ,2)}}  {{$purchases->exchange_code}}</td>
+</tr>
+
+ @if(!empty($purchases->due_amount < ($purchases->purchase_amount + $purchases->purchase_tax +  $purchases->shipping_cost)  - $purchases->discount))
+     <tr>
+<td colspan="4"></td>
+                    <td>Paid Amount</p>
+                    <td>{{number_format(( ($purchases->purchase_amount + $purchases->purchase_tax +  $purchases->shipping_cost)  - $purchases->discount) - $purchases->due_amount,2)}}  {{$purchases->exchange_code}}</p>
+                </tr>
+
+      <tr>
+<td colspan="4"></td>
+                    <td class="text-danger">Total Due</td>
+                    <td>{{number_format($purchases->due_amount,2)}}  {{$purchases->exchange_code}}</td>
+                </tr>
+@endif
+
+<br>
+  @php $def=App\Models\System::where('added_by',auth()->user()->added_by)->first(); @endphp
+ @if($purchases->exchange_code !=  $def->currency)
+ <tr>
+<td colspan="4"></td>
+ <td><b>Exchange Rate 1 {{$purchases->exchange_code}} </b></td>
+ <td><b> {{$purchases->exchange_rate}} {{$def->currency}}</b></td>
+</tr>
+<p></p>
+<br>
+              <tr>
+<td colspan="4"></td>
+<td>Sub Total</td>
+<td>{{number_format($sub_total * $purchases->exchange_rate,2)}}  {{$def->currency}}</td>
+</tr>
+
+<tr>
+<td colspan="4"></td>
+<td>Total Tax</td>
+<td>{{number_format($tax * $purchases->exchange_rate,2)}}   {{$def->currency}}<</td>
+</tr>
+
+<tr>
+<td colspan="4"></td>
+<td>Total Amount</td>
+<td>{{number_format($purchases->exchange_rate * ($gland_total-$purchases->discount) ,2)}}   {{$def->currency}}</td>
+</tr>
+
+ @if(!@empty($purchases->due_amount <  $purchases->purchase_amount + $purchases->purchase_tax))
+     <tr>
+<td colspan="4"></td>
+                    <td>Paid Amount</p>
+                    <td>{{number_format($purchases->exchange_rate * (( $purchases->purchase_amount + $purchases->purchase_tax) - $purchases->due_amount),2)}}  {{$def->currency}}</p>
+                </tr>
+
+      <tr>
+<td colspan="4"></td>
+                    <td class="text-danger">Total Due</td>
+                    <td>{{number_format($purchases->due_amount * $purchases->exchange_rate,2)}}  {{$def->currency}}</td>
+                </tr>
+@endif
+@endif
+</tfoot>
 </table>
                             </div>
 
-                                     <div class="row" >
-                                              <div class="col-lg-8"> </div>
-                                        <div class="col-lg-4 pv">
-
-                <div class="clearfix">
-                    <p class="pull-left">Sub Total</p>
-                    <p class="pull-right mr">{{number_format($sub_total,2)}}  {{$purchases->exchange_code}}</p>
-                </div>
-
-          @if(!@empty($tax > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Total Tax</p>
-                    <p class="pull-right mr">{{number_format($tax,2)}}  {{$purchases->exchange_code}}</p>
-                </div>
-  @endif
-
- <div class="clearfix">
-                    <p class="pull-left">Total Amount</p>
-                    <p class="pull-right mr">{{number_format($gland_total ,2)}} {{$purchases->exchange_code}}</p>
-                </div>
-
-
-
-  @if(!@empty($purchases->due_amount < $purchases->purchase_amount + $purchases->purchase_tax))
-        <div class="clearfix">
-                    <p class="pull-left">Paid Amount</p>
-                    <p class="pull-right mr">{{number_format(($purchases->purchase_amount + $purchases->purchase_tax) - $purchases->due_amount,2)}}  {{$purchases->exchange_code}}</p>
-                </div>
-
-      <div class="clearfix">
-                    <p class="pull-left h3 text-danger">Total Due</p>
-                    <p class="pull-right mr">{{number_format($purchases->due_amount,2)}}  {{$purchases->exchange_code}}</p>
-                </div>
-@endif
-
-<br>
- @if($purchases->exchange_code != 'TZS')
- <b>Exchange Rate 1 {{$purchases->exchange_code}} = {{$purchases->exchange_rate}} TZS</b>
-<p></p>
-<br>
-                <div class="clearfix">
-                    <p class="pull-left">Sub Total</p>
-                    <p class="pull-right mr">{{number_format($sub_total * $purchases->exchange_rate,2)}}  TZS</p>
-                </div>
-
-          @if(!@empty($tax > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Total Tax</p>
-                    <p class="pull-right mr">{{number_format($tax * $purchases->exchange_rate,2)}}   TZS</p>
-                </div>
-  @endif
-
-
- <div class="clearfix">
-                    <p class="pull-left">Total Amount</p>
-                    <p class="pull-right mr">{{number_format($purchases->exchange_rate * $gland_total ,2)}}   TZS</p>
-                </div>
-
-
-
-  @if(!@empty($purchases->due_amount < $purchases->purchase_amount + $purchases->purchase_tax))
-        <div class="clearfix">
-                    <p class="pull-left">Paid Amount</p>
-                    <p class="pull-right mr">{{number_format($purchases->exchange_rate * (($purchases->purchase_amount + $purchases->purchase_tax) - $purchases->due_amount),2)}}  TZS</p>
-                </div>
-
-      <div class="clearfix">
-                    <p class="pull-left h3 text-danger">Total Due</p>
-                    <p class="pull-right mr">{{number_format($purchases->due_amount * $purchases->exchange_rate,2)}}  TZS</p>
-                </div>
-@endif
-
-@endif
-
-
-
-</div>
-
-                                
+                                     
                              
                             </div>
 
@@ -284,9 +302,6 @@ $settings= App\Models\System::first();
 
          
 
-
-        </div>
-    </div>
 </section>
 
 

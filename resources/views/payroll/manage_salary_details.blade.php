@@ -5,7 +5,7 @@
 <section class="section">
     <div class="section-body">
         <div class="row">
-            <div class="col-12 col-sm-6 col-lg-12">
+            <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Manage Salary</h4>
@@ -30,9 +30,9 @@
  <div class="col-sm-12 ">
                                        
                <div class="form-group row">
-                    <label class=""> Department   <span class="required"> *</span></label>  
-               <div class="col-lg-9">                               
-                   <select name="departments_id" class="form-control select_box col-md-4" required>
+                    <label class="col-lg-2 col-form-label"> Select Department   <span class="required" style="color:red;"> *</span></label>  
+               <div class="col-lg-5">                               
+                   <select name="departments_id" class="form-control m-b" id="departments_id" required>
                                         <option value="">Select Departments</option>
                                         <?php if (!empty($all_department_info)): foreach ($all_department_info as $v_department_info) :
                                                         if (!empty($v_department_info->name)) {
@@ -49,10 +49,10 @@
                                     </select>
                 </div>
   
-                                                </div>
+                                               
 
-   <div class="col-md-4">
-                      <br><button type="submit" class="btn btn-success" value="1" name="flag">Go</button>
+   <div class="col-lg-4">
+                      <button type="submit" class="btn btn-success" value="1" name="flag">Go</button>
                            @if(!empty($edit))
                                                   <a href="{{url('payroll/manage_salary')}}"class="btn btn-danger">Reset</a>
                                                     @else
@@ -60,7 +60,8 @@
                                                 @endif
                      
 
-                </div>                  
+                </div>  </div>
+                
                 </div>
            </div>
             {!! Form::close() !!}
@@ -77,32 +78,31 @@ $a=0;
 ?>
         <div class="panel panel-white">
             <div class="panel-body ">
-                      <form id="form_validation" role="form" enctype="multipart/form-data"
-                            action="{{url('payroll/save_salary_details')}}" method="post"
-                            class="form-horizontal form-groups-bordered">
+                      <form name="frm-example" id="frm-example" role="form" enctype="multipart/form-data" action="{{url('payroll/save_salary_details')}}" method="post" class="form-horizontal form-groups-bordered">
                             @csrf
                             
-                             <table class="table table-striped" id="table-1">
+                             <table class="table datatable-basic table-striped" id="table-1">
                                 <thead>
                                     <tr>
-                                        <th>Employee Name</th>
-                                            <th>Designation</th>
-                                        <th>Monthly</th>
+                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" style="width: 36.484px;">#</th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" style="width:186.484px;">Employee Name</th>
+                                        <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" style="width: 96.484px;"><input type="checkbox" name="select_all"  id="example-select-all"> Select All</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @foreach ($employee_info as $v_employee)  
                                <?php
                                 $a++;
-                                $salary_info=App\Models\Payroll\EmployeePayroll::where('user_id',$v_employee->id)->get();
+                                $salary_info=App\Models\Payroll\EmployeePayroll::where('user_id',$v_employee->id)->where('disabled','0')->get();
                                     ?>
                             <tr>
-                                        <td><input type="hidden" name="user_id[]"  value="<?php echo $v_employee->id ?>"><?php echo $v_employee->name; ?></td>
-                                         <td><?php echo $v_employee->designation->name ?></td>        
-                                             <td style="width: 25%">
+                               <td>{{$loop->iteration }}</td>
+                                <td><?php echo $v_employee->name; ?></td>
+                                                
+                                             <td>
 
                                              <div class="form-inline">
-                                          <div class = "input-group"> 
+                                         
                                                <input name="monthly_status[]"    id="<?php echo $v_employee->id ?>"  type="checkbox"  value="<?php echo $v_employee->id ?>"   class="child_absent"
                                                         
                                                     @foreach ($salary_info as $v_gsalary_info) 
@@ -110,12 +110,11 @@ $a=0;
                                                               {{ $v_gsalary_info->salary_template_id ? 'checked ' : '' }}
                                                             @endif
                                                         @endforeach
-                                                          >                              
-                                             </div>&nbsp
- 
-                                                <div class = "input-group"> 
-                                                 <select name="salary_template_id[]" class="form-control template" id="template_id_{{$a}}"  data-sub_category_id="{{$a}}">
-                                                           <option value="">Select Monthly Grade</option>
+                                                          >&nbsp;&nbsp;&nbsp;                            
+                                           
+                                                <div class="input-group mb-3"> 
+                                                 <select name="salary_template_id[]" class="form-control append-button-single-field template" id="template_id_{{$a}}"  data-sub_category_id="{{$a}}">
+                                                           <option value="">Select Monthly Template</option>
                                                       <?php if (!empty($salary_grade)) : foreach ($salary_grade as $v_salary_info) : ?>
                                                         <option value="<?php echo $v_salary_info->salary_template_id ?>" <?php
 
@@ -131,15 +130,15 @@ $a=0;
                                                             <?php echo $v_salary_info->salary_grade ?></option>;
                                                         <?php endforeach; ?>
                                                         <?php endif; ?>
-                                                    </select> 
-                                        <div class="input-group-append">
-                                                  <button class="btn btn-primary" type="button" data-toggle="modal" onclick="model({{ $a }},'addtemplate')" value="{{ $a}}" data-target="#appFormModal"><i class="fa fa-plus-circle"></i></button>
-                                                  </div>
-                                          </div>&nbsp
+                                                    </select>&nbsp;
+                                       
+                                                  <button class="btn btn-primary" type="button" data-toggle="modal" onclick="model({{ $a }},'addtemplate')" value="{{ $a}}" data-target="#appFormModal"><i class="icon-plus-circle2"></i></button>
+                                                
+                                          </div>
                       
                     </div>
                                            
-                                        </td>
+                          </td>            
 
                                  <!-- Hidden value when update  Start-->
                             <input type="hidden" name="departments_id" value="<?php echo $departments_id ?>" />
@@ -149,35 +148,24 @@ $a=0;
                      
                             ?>
                             <input type="hidden" name="payroll_id[]"
-                                value="<?php echo $v_gsalary_info->payroll_id ?>" />
+                                value="<?php echo $v_gsalary_info->id ?>" />
                             <?php
                                                                   }
                                          }
                    
                                 
                                  ?>
+                         
                               </tr>
-                                </tbody>
-                             <?php if (empty($employee_info[0])) { ?>
-                                    <tr>
-                                        <td colspan="3" align="center">
-                                            Nothing To Display
-                                        </td>
-                                    </tr>
-                                    <?php } ?>
-                          
+                                
+                            
                              
                          @endforeach
-                           </table>
-                             <br>
-                            <?php if (!empty($employee_info[0])) { ?>
-                            <div class="col-sm-8"></div>
-                            <div class="col-sm-4 row mt-lg pull-right">
-                                <button id="salery_btn" type="submit" class="btn btn-primary btn-block">Update</button>
-                            </div>
-                            <?php } ?>
+                           </tbody>
+                             
+                         </table>
+                          <button class="btn btn-sm btn-primary float-right m-t-n-lg" type="submit" id="salery_btn">Update</button>
 
-                         
                         </form>
             </div>
             <!-- /.panel-body -->
@@ -199,55 +187,50 @@ $a=0;
 </section>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 
 @endsection
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
+        
+        });
+    </script>
+    
+    <script>
+ var table = $('#table-1').DataTable();
+ 
+$('#example-select-all').on('click', function(){
+      var rows = table.rows({ 'search': 'applied' }).nodes();
+      $('input[type="checkbox"]', rows).prop('checked', this.checked);
+   });
 
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
+$("input[type=checkbox]").click(function() {
+  if (!$(this).prop("checked")) {
+    $("#example-select-all").prop("checked", false);
+  }
 });
+
+
+
 </script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $(':checkbox').on('change', function () {
@@ -257,6 +240,71 @@ $(document).ready(function() {
             }
         });
     });
+</script>
+
+
+<script>
+$(document).ready(function (){
+   var table = $('.datatable-basic').DataTable();
+   
+
+
+   // Handle form submission event 
+   $('#frm-example').on('submit', function(e){
+      var form = this;
+
+         var rowCount = $('#table-1 >tbody >tr').length;
+console.log(rowCount);
+
+
+if(rowCount == '1'){
+var c= $('#table-1 >tbody >tr').find('input[type=checkbox]');
+
+  if(c.is(':checked')){ 
+var tick=c.val();
+console.log(tick);
+
+$(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'monthly[]')
+                  .val(tick)  );
+
+}
+
+}
+
+
+else if(rowCount > '1'){
+      // Encode a set of form elements from all pages as an array of names and values
+      var params = table.$('input[type=checkbox]').serializeArray();
+
+ 
+      // Iterate over all form elements
+      $.each(params, function(){     
+         // If element doesn't exist in DOM
+         if(!$.contains(document, form[this.name])){
+            // Create a hidden element 
+            $(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'monthly[]')
+                  .val(this.value)
+            );
+         } 
+      });     
+
+} 
+
+
+   });  
+
+
+
+    
+});
+
+
 </script>
 
 <script type="text/javascript">
@@ -274,7 +322,7 @@ $(document).ready(function() {
             async: true,
             success: function(data) {
                 //alert(data);
-                $('.modal-dialog').html(data);
+                $('#appFormModal > .modal-dialog').html(data);
             },
             error: function(error) {
                 $('#appFormModal').modal('toggle');
@@ -314,114 +362,6 @@ $(document).ready(function() {
 
     </script>
 
-<script type="text/javascript">
-$(document).ready(function() {
-    var maxAppend = 0;
-    $("#add_more").click(function() {
-        var add_new = $(
-            '<div class="row">\n\
-    <div class="col-sm-12"><input type="text" name="allowance_label[]" style="margin:5px 0px;height: 28px;width: 56%;" class="form-control"  placeholder="Enter Allowance label" required ></div>\n\
-<div class="col-sm-9"><input  type="text" data-parsley-type="number" name="allowance_value[]" placeholder="Enter Allowance Value" required  value="<?php
-                if (!empty($emp_salary->allowance_value)) {
-                    echo $emp_salary->allowance_value;
-                }
-                ?>"  class="salary form-control"></div>\n\
-<div class="col-sm-3"><strong><a href="javascript:void(0);" class="remCF"><i class="fa fa-times"></i>&nbsp;Remove</a></strong></div></div>'
-        );
-        maxAppend++;
-        $("#add_new").append(add_new);
-    });
-
-    $("#add_new").on('click', '.remCF', function() {
-        $(this).parent().parent().parent().remove();
-    });
-});
-</script>
-<script type="text/javascript">
- $(document).ready(function () {
-        var maxAppend = 0;
-        $("#add_more_deduc").click(function () {
-            var add_new = $('<div class="row">\n\
-    <div class="col-sm-12"><input type="text" name="deduction_label[]" style="margin:5px 0px;height: 28px;width: 56%;" class="form-control" placeholder="Enter Deductions Label" required></div>\n\
-<div class="col-sm-9"><input  type="text" data-parsley-type="number" name="deduction_value[]" placeholder="Enter Deductions Value" required  value=""  class="deduction form-control"></div>\n\
-<div class="col-sm-3"><strong><a href="javascript:void(0);" class="remCF_deduc"><i class="fa fa-times"></i>&nbsp;Remove</a></strong></div></div>');
-            maxAppend++;
-            $("#add_new_deduc").append(add_new);
-
-        });
-
-        $("#add_new_deduc").on('click', '.remCF_deduc', function () {
-            $(this).parent().parent().parent().remove();
-        });
-    });
-</script>
-<script type="text/javascript">
- $(document).on("change", function () {
-        var sum = 0;
-        var basic_salary= 0;
-        var deduc = 0;
-
-        $(".salary").each(function () {
-            sum += +$(this).val();
-         console.log(sum);
-        });
-         $(".basic_salary").each(function () {
-            basic_salary += +$(this).val();
-        });
-        
-        var provident_fund = ((basic_salary * 10 / 100 )).toFixed(2);
-        $(".NSSF").val(provident_fund);
-        
-              
-        
-
-      var sub_total=sum- provident_fund ;
-
-
-        var total_tax = tax_deduction_rule(sub_total);
-
-        $(".PAYE").val(total_tax);
-
-    
-
-        $(".deduction").each(function () {
-            deduc += +$(this).val();
-        });
-        
-        var ctc = $("#ctc").val();
-        $("#total").val(sum.toFixed(2));
-
-        $("#deduc").val(deduc.toFixed(2));
-        var net_salary = 0;
-        net_salary = (sum - deduc).toFixed(2);
-        $("#net_salary").val(net_salary);
-    });
-
-    function tax_deduction_rule(tax) {
-        if (tax < 270000) {
-            return "0";
-        }
-        else if (tax >= 270000 && tax < 520000) {
-            return (0.08 * (tax - 270000)).toFixed(2);
-        }
-        else if (tax >= 520000 && tax < 760000) {
-            var tr = (tax - 520000);
-            var ttotal = ( tr * 20 / 100 );
-            return ((20000 + ttotal)).toFixed(2);
-        }
-        else if (tax >= 760000 && tax < 1000000) {
-            var tr = (tax - 760000);
-            var ttotal = ( tr * 25 / 100 );
-            return ((68000 + ttotal)).toFixed(2);
-        } else if (tax >= 1000000) {
-            var tr = (tax - 1000000);
-            var ttotal = ( tr * 30 / 100 );
-            return ((128000 + ttotal)).toFixed(2);
-        }
-    }
-
-
-</script>
 
 <script>
 $(document).ready(function() {

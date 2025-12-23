@@ -11,18 +11,7 @@ class TyreReallocation extends Model
 
     protected $table = "tyre_reallocations";
 
- protected $fillable = [
-         'date',      
-       'tyre_id',
-     'destination_tyre',
-        'staff',   
-        'source_truck',  
-       'destination_truck',  
-         'source_reading',  
-       'destination_reading',            
-        'status',
-       'position', 
-        'added_by'];
+  protected  $guarded = ['id'];
     
     public function user()
     {

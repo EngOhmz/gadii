@@ -54,8 +54,8 @@ class PacelPaymentController extends Controller
         if(($receipt['amount'] <= $sales->amount)){
             if( $receipt['amount'] >= 0){
                 $random = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(4/strlen($x)) )),1,4);
-                $receipt['trans_id'] = "TRANS_PCL_".$request->pacel_id.'_'.$random;
-                $receipt['added_by'] = auth()->user()->id;
+                $receipt['trans_id'] = "TPCL".$request->pacel_id.$random;
+                $receipt['added_by'] = auth()->user()->added_by;
                 
                 //update due amount from invoice table
                 $data['due_amount'] =  $sales->due_amount-$receipt['amount'];
@@ -83,12 +83,12 @@ class PacelPaymentController extends Controller
         $journal->payment_id= $payment->id;
          $journal->currency_code =   $sales->currency_code;
         $journal->exchange_rate=  $sales->exchange_rate;
- $journal->added_by=auth()->user()->id;
+ $journal->added_by=auth()->user()->added_by;
            $journal->notes= "Payment for Clear Credit  with reference no " .$sales->pacel_number  ;
         $journal->save();
 
 
-        $codes= AccountCodes::where('account_group','Receivables')->first();
+        $codes= AccountCodes::where('account_name','Receivable and Prepayments')->where('added_by',auth()->user()->added_by)->first();
         $journal = new JournalEntry();
         $journal->account_id = $codes->id;
           $date = explode('-',$request->date);
@@ -101,7 +101,7 @@ class PacelPaymentController extends Controller
           $journal->payment_id= $payment->id;
          $journal->currency_code =   $sales->currency_code;
         $journal->exchange_rate=  $sales->exchange_rate;
-                 $journal->added_by=auth()->user()->id;
+                 $journal->added_by=auth()->user()->added_by;
            $journal->notes= "Clear Debitor  with reference no " .$sales->pacel_number  ;
         $journal->save();
 
@@ -121,7 +121,7 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= $payment->amount;
        $new[' exchange_code']= $sales->currency_code;
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 $balance=$payment->amount;
      Accounts::create($new);
 }
@@ -144,7 +144,7 @@ $balance=$payment->amount;
                                 'payment_methods_id' =>$payment->payment_method,
                                    'status' => 'paid' ,
                                 'notes' => 'This deposit is from cargo payment.The Reference is ' .$sales->pacel_number ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
                             
 
@@ -278,7 +278,7 @@ $balance=$receipt['amount'];
         $journal->update();
 
 
-        $codes= AccountCodes::where('account_group','Receivables')->first();
+        $codes= AccountCodes::where('account_name','Receivable and Prepayments')->where('added_by',auth()->user()->added_by)->first();
          $journal =JournalEntry::where('transaction_type','cargo_payment')->where('payment_id', $payment->id)->whereNotNull('credit')->first();
         $journal->account_id = $codes->id;
           $date = explode('-',$request->date);

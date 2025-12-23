@@ -15,7 +15,7 @@ class DepartmentController extends Controller
     }
     public function index()
     {  
-        $permissions = Departments::all();
+        $permissions = Departments::all()->where('disabled','0')->where('added_by', auth()->user()->added_by);
         return view('manage.department.index', compact('permissions'));
     }
 
@@ -28,6 +28,7 @@ class DepartmentController extends Controller
     {
         $role = Departments::create([
             'name' => $request->name,
+            'added_by' => auth()->user()->added_by
         ]);
         return redirect(route('departments.index'));
     }
@@ -47,6 +48,7 @@ class DepartmentController extends Controller
     {
         $role = Departments::find($request->id);
         $role->name = $request->name;
+        $role->added_by = auth()->user()->added_by;
         $role->update();
         return redirect(route('departments.index'));
     }
@@ -54,7 +56,30 @@ class DepartmentController extends Controller
     public function destroy($id)
     {
         $role = Departments::find($id);
-        $role->delete();
+        $role->update(['disabled' => '1']);
         return redirect(route('departments.index'));
     }
+    
+    public function save_department(Request $request){
+       
+      //dd($request->all());
+
+       $data = $request->all();   
+       $data['added_by'] = auth()->user()->added_by;
+        $client = Departments::create($data);
+        
+      
+
+  if(!empty($client)){
+    
+            return response()->json($client);
+         }
+
+       
+   }
+   
+   
+   
+    
+    
 }

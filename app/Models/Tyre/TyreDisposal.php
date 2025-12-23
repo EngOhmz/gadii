@@ -11,33 +11,14 @@ class TyreDisposal extends Model
 
     protected $table = "tyre_disposals";
 
-    protected $fillable = [
-         'date',      
-       'tyre_id',
-        'staff',            
-        'quantity',
-        'location',
-        'status',  
-        'added_by'];
+    protected  $guarded = ['id'];
     
-    public function user()
+      public function tyre_staff()
     {
          return $this->belongsTo('App\Models\FieldStaff','staff');
         //return $this->belongsTo('App\Models\User','staff');
     }
 
-    public function tyre_staff(){
-
-        return $this->belongsTo('App\Models\User','staff');
-      }
-    
-     
-      public function tyre_no(){
-        return $this->belongsTo('App\Models\Tyre\Tyre','tyre_id');
-    }
-
-    public function  tyre_location(){
-    
-        return $this->belongsTo('App\Models\Location','location');
-      }
+ 
+   
 }

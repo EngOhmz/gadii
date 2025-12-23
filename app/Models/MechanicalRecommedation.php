@@ -11,13 +11,10 @@ class MechanicalRecommedation extends Model
 
     protected $table = "mechanical_recommedation";
 
-    protected $fillable = [      
-         'module',
-         'module_id',
-         'recommedation',
-         'order_no',
-         'date',   
-        'added_by'];
+   protected $guarded = [
+         'id',      
+       'token'];
+    
     
        
 }

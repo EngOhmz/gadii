@@ -28,9 +28,8 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <button onclick="exportTableToCSV('members.csv')"><span>
-                                        <i class="icon-folder-download mr-3 icon-2x"></i>Export HTML Table To CSV File
-                                    </span></button>
+                                    
+                                   
                                 
                                   <table class="table datatable-basic table-striped">
                                        <thead>
@@ -52,7 +51,7 @@
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
                                                     style="width: 101.219px;">Class Type</th>
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                <th class="always-visible" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
                                                     style="width: 120.1094px;">Actions</th>
@@ -61,6 +60,9 @@
                                          <tbody>
                                             @if(!@empty($class))
                                             @foreach ($class as $row)
+                                             <?php
+                                    $bfr=App\Models\GroupAccount::where('class',$row->id)->where('disabled','0')->where('added_by',auth()->user()->added_by)->count();
+                                    ?>
                                             <tr class="gradeA even" role="row">
                                                 <th>{{ $loop->iteration }}</th>
                                                 <td>{{$row->class_id}}</td>
@@ -70,19 +72,27 @@
                                               
 
                                                 <td>
+                                                 @if($row->edited == '1')
                                                  <div class="form-inline">
+                                                
                                                     <a class="list-icons-item text-primary"
                                                         href="{{ route("class_account.edit", $row->id)}}">
                                                       <i class="icon-pencil7"></i>
                                                     </a>&nbsp
 
+                                           @if($bfr == '0')
                                               {!! Form::open(['route' => ['class_account.destroy',$row->id], 'method' => 'delete']) !!}
                                 {{ Form::button(' <i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')",]) }}
                                                   {{ Form::close() }}
+                                                    @endif
                                                     
+                                                    @else
+                                                    
+                                                     <i class="icon-lock4" title="You cannot edit/delete this account" data-bs-popup="tooltip" data-bs-placement="bottom"></i>
 
+                                                  @endif
                                                 </div>
-                                                 
+                                                
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -175,25 +185,41 @@
 </section>
 
 
-
+ 
 @endsection
 
 @section('scripts')
+
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/jquery.dataTables.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/buttons.dataTables.min.css') }}">
+
+<script src="{{asset('assets/datatables/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('assets/datatables/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.print.min.js')}}"></script>
 <script>
-       $('.datatable-basic').DataTable({
-            autoWidth: false,
-            "columnDefs": [
-                {"orderable": false, "targets": [3]}
-            ],
-           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
-            "language": {
-               search: '<span>Filter:</span> _INPUT_',
-                searchPlaceholder: 'Type to filter...',
-                lengthMenu: '<span>Show:</span> _MENU_',
-             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
-            },
-        
-        });
+
+      $('.datatable-basic').DataTable(
+        {
+        dom: 'Bfrtip',
+
+        buttons: [
+          {extend: 'copyHtml5',title: 'CLASS ACCOUNT ',  exportOptions:{columns: ':visible :not(.always-visible)'},footer: true},
+           {extend: 'excelHtml5',title: 'CLASS ACCOUNT' , exportOptions:{columns: ':visible :not(.always-visible)'}, footer: true},
+           {extend: 'csvHtml5',title: 'CLASS ACCOUNT' ,  exportOptions:{columns: ':visible :not(.always-visible)'},footer: true},
+            {extend: 'pdfHtml5',title: 'CLASS ACCOUNT',  exportOptions:{columns: ':visible :not(.always-visible)'},footer: true,customize: function(doc) {
+doc.content[1].table.widths = [ '10%', '10%', '50%','30%'];
+}
+},
+            {extend: 'print',title: 'CLASS ACCOUNT' , exportOptions:{columns: ':visible :not(.always-visible)'}, footer: true}
+
+                ],
+        }
+      );
+     
     </script>
 
 

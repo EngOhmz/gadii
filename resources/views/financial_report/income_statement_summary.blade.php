@@ -5,18 +5,12 @@
 <section class="section">
     <div class="section-body">
         <div class="row">
-            <div class="col-12 col-sm-6 col-lg-12">
+            <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Income Statement  Summary</h4>
                     </div>
                     <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link @if(empty($id)) active show @endif" id="home-tab2" data-toggle="tab"
-                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Income Statement  Summary Report
-                                    List</a>
-                            </li>
                        
 
                         </ul>
@@ -27,22 +21,22 @@
 <br>
         <div class="panel-heading">
             <h6 class="panel-title">
-                Income Statement  Summary
+
                @if(!empty($start_date))
-                    for the period: <b>{{$start_date}} to {{$second_date}}</b>
+                    For the period: <b>{{Carbon\Carbon::parse($start_date)->format('d/m/Y')}} to {{Carbon\Carbon::parse($second_date)->format('d/m/Y')}}</b>
                 @endif
          
             </h6>
         </div>
 
 <br>
-        <div class="panel-body hidden-print">
+       <div class="panel-body hidden-print">
             {!! Form::open(array('url' => Request::url(), 'method' => 'post','class'=>'form-horizontal', 'name' => 'form')) !!}
             <div class="row">
 
                <div class="col-md-4">
-                    <label class="">Start Date</label>
-                   <input  name="start_date" type="date" class="form-control date-picker" required value="<?php
+                    <label class="">Start Date <span class="required"> * </span></label>
+                   <input id="start_date"  name="start_date" type="date" class="form-control date-picker" required value="<?php
                 if (!empty($start_date)) {
                     echo $start_date;
                 } else {
@@ -52,8 +46,8 @@
 
                 </div>
                 <div class="col-md-4">
-                    <label class="">End Date</label>
-                     <input  name="second_date" type="date" class="form-control date-picker" required value="<?php
+                    <label class="">End Date <span class="required"> * </span></label>
+                     <input id="second_date" name="second_date" type="date" class="form-control date-picker" required value="<?php
                 if (!empty($second_date)) {
                     echo $second_date;
                 } else {
@@ -61,14 +55,60 @@
                 }
                 ?>">
                 </div>
+                
+                
+                  <?php $a=  trim(json_encode($x), '[]');  ?>
+                
+               
+
+                <div class="col-md-4">
+                    <label class="">Branch</label> 
+                   
+                    <select name="branch_id" class="form-control m-b branch" id="branch_id">
+                        <option value="">Select Branch</option>
+                       @if(!empty($branch))
+                       
+                        @foreach($branch as $br)
+                        <option value="{{$br->id}}" @if(isset($branch_id)){{  $branch_id == $br->id  ? 'selected' : ''}} @endif>{{$br->name}}</option>
+                        @endforeach
+                         <option value="<?php echo trim(json_encode($x), '[]');; ?>" @if(isset($branch_id)){{ $branch_id == $a  ? 'selected' : ''}} @endif>All Branches</option>
+                        @endif
+                    </select>
+                    
+                </div>
+               
            
 
-   <div class="col-md-4">
+  <div class="col-md-12">
                       <br><button type="submit" class="btn btn-success">Search</button>
                         <a href="{{Request::url()}}"class="btn btn-danger">Reset</a>
 
-                </div>                  
+@if(!empty($start_date))
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle "
+                                    data-toggle="dropdown">Download Report
+                                <span class="caret"></span></button>
+                            <div class="dropdown-menu">
+                              
+                                    <li class="nav-item">
+                                    <a class="nav-link" href="{{url('financial_report/income_statement_summary/pdf?start_date='.$start_date.'&end_date='.$second_date.'&branch_id='.$branch_id)}}"
+                                       target="_blank"><i
+                                                class="icon-file-pdf"></i>  Download PDF
+                                    </a></li>
+                                
+                                    <li class="nav-item">
+                                    <a class="nav-link" href="{{url('financial_report/income_statement_summary/excel?start_date='.$start_date.'&end_date='.$second_date.'&branch_id='.$branch_id)}}"
+                                       target="_blank"><i
+                                                class="icon-file-excel"></i> Download Excel
+                                    </a></li>
+                                
+                            </div>
+                        </div>
+                      @endif
+
+                </div>                      
                 </div>
+           
            
             {!! Form::close() !!}
 
@@ -78,19 +118,36 @@
 
    <br>
  @if(!empty($start_date))
+ 
+  @if(isset($branch_id))
+     @php
+     if($branch_id == $a){
+         $br_id=$x;
+     }
+     
+     else{
+         
+      $br_id=$z;    
+     }
+     
+     @endphp
+     @endif
+     
         <div class="panel panel-white col-lg-12">
             <div class="panel-body table-responsive no-padding">
+            
+           
 
                   <table id="data-table" class="table table-striped ">
                     <thead>
                     <tr>
-                        <th colspan="5">STATEMENT OF COMPRENHESIVE FOR THE PERIOD</th>
+                        <th colspan="5"></th>
                          
                     </tr>
                     </thead>
                       <tbody>
                     <tr>
-                        <td colspan="4" style="text-align: left"><b><a href="#viewincome" data-toggle="modal"">Income</a></b></td>
+                        <td colspan="4" style="text-align: left"><b><a onclick="model('1','income')" href="#viewincome" data-toggle="modal" data-target="#appFormModal">Income</a></b></td>
                    
                                  <?php
                      $c=0;     
@@ -118,18 +175,21 @@
                 $net_profit1=0;
 ?>            
      
-     @foreach($income as $account_class)
-  @foreach($account_class->groupAccount  as $group)   
-@foreach($group->accountCodes as $account_code)
+     @foreach($income->where('added_by',auth()->user()->added_by) as $account_class)
+  @foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)->where('disabled','0')  as $group)   
+@foreach($group->accountCodes->where('added_by',auth()->user()->added_by)->where('disabled','0') as $account_code)
 
+ @php
+     $account_id=$account_code->id;
+      $amount=App\Traits\Calculate_Account::get_amount($start_date,$second_date,$branch_id,$account_id);
+     
+     @endphp
+     
  <?php
                    
-                        $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                        $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                              [$start_date, $second_date])->sum('debit');
+               
                             
-                       $income_balance=$dr- $cr;
+                       $income_balance= $amount['debit']-  $amount['credit'];
                           $total_incomes+=$income_balance ;
                           
 
@@ -146,50 +206,7 @@
                          
                     </tr> 
                     
-  <!--          
-     
- <tr>
-                        <td colspan="4" style="text-align: left"><b><a href="#viewcost" data-toggle="modal"">Financial Cost</a></b></td>
-                    
-  @foreach($cost as $account_class)
-  @foreach($account_class->groupAccount  as $group) 
-  @if($group->group_id == 6180)
-@foreach($group->accountCodes as $account_code)
-
- <?php
-                   
-                        $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                        $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date,$second_date])->sum('debit');
-
-
-                            
-                       $cost_balance=$dr- $cr;
-                        
-                          $total_cost+=$cost_balance ;
-                        ?>                        
-                            
-                            
-
-                        </tr>
-                                                                
- @endforeach  
- @endif
-  @endforeach
-  
-  @endforeach
-
-   
-          
-                          <td colspan="" ><b>{{ number_format(abs($total_cost),2) }}</b></td>
-                      
-                    </tr> 
-      <tr>
-                        <td >
-                            <b>Gross Profit</b></td>
-
-  -->                   
+           
                        <?php
 
 if($total_other_incomes < 0){
@@ -212,34 +229,43 @@ $gross=$total_incomes+$total_o-$total_cost;
 
 
 ?>
-<!--
-                  <td></td> <td></td><td></td>   
-                <td colspan="7"><b>{{ number_format($gross,2) }}</b></td>
-                    </tr> 
-                 
-  -->
+
                     
                        <tr>
-                        <td colspan="4" style="text-align: left"><b><a href="#viewexpenses" data-toggle="modal"">Expenses</a></b></td>
+                        <td colspan="4" style="text-align: left"><b><a onclick="model('1','expenses')" href="#viewexpenses" data-toggle="modal" data-target="#appFormModal">Expenses</a></b></td>
                    
 
 
 
-                  @foreach($expense as $account_class)
-  @foreach($account_class->groupAccount  as $group)        
+                  @foreach($expense->where('added_by',auth()->user()->added_by) as $account_class)
+  @foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)->where('disabled','0')  as $group)        
     @if($group->group_id != 6180)
-@foreach($group->accountCodes as $account_code)
+@foreach($group->accountCodes->where('added_by',auth()->user()->added_by)->where('disabled','0') as $account_code)
+
+ @php
+     $account_id=$account_code->id;
+      $amount=App\Traits\Calculate_Account::get_amount($start_date,$second_date,$branch_id,$account_id);
+     
+     @endphp
 
  <?php
                    
-                        $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                        $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('debit');
+                        if(!empty($branch_id) && $branch_id != $a){
+                        $cr = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->whereBetween('date',[$start_date, $second_date])->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->whereBetween('date',
+                            [$start_date, $second_date])->where('added_by',auth()->user()->added_by)->sum('debit');
+                            
+                         }else{
+                            
+                             $cr = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereBetween('date',[$start_date, $second_date])->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereBetween('date',
+                            [$start_date, $second_date])->where('added_by',auth()->user()->added_by)->sum('debit');
+                            
+                            }
                             
                         
 
-                       $expense_balance=$dr- $cr;
+                       $expense_balance= $amount['debit']-  $amount['credit'];
                           $total_expense+=$expense_balance ;
                           
                         ?>                           
@@ -320,269 +346,16 @@ $tax=$profit*0.3;
 
     </div>
 </section>
+
+<!-- Modal -->
  @if(!empty($start_date))
-@foreach($income as $account_class)
- <?php    
- $unit_total  = 0;
-   $total_cr= 0;
-$total_dr= 0;
-?>      
-
-                       
-  <!-- Modal -->
-  <div class="modal inmodal "id="viewincome"  tabindex="-1" role="dialog" aria-hidden="true">
-                          <div class="modal-dialog modal-lg"><div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title"  style="text-align:center;"> Income<h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-            </button>
-        </div>
-
-
-        <div class="modal-body">
-  <div class="table-responsive">
-  <table class="table table-bordered table-striped">
-
-<thead>
-                    <tr>
-               <th>Account Code</th>
-                          <th>Account Name</th>
-                            <th>Debit</th>
-                        <th>Credit</th>
-         
-                    </tr>
-                    </thead>
-                              <tbody>
- @foreach($account_class->groupAccount  as $group)                             
-@foreach($group->accountCodes as $account_code) 
-                    <?php                   
-                          $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                        $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('debit');
-
-                          $unit_total  +=($cr-$dr);
-                              $total_cr+=$cr;
-                           $total_dr+=$dr;
-                        ?>  
-                                 <tr>
-                                <tr>
-                        <td >{{ $account_code->account_codes }}</td>
-                          <td >{{ $account_code->account_name }}</td>
-                          <td>{{ number_format($dr ,2) }}</td>
-                   <td >{{ number_format($cr ,2) }}</td>
-                    </tr> 
-
-           
-  @endforeach
- @endforeach   
-                              </tbody>
-<tfoot>
-<tr>     
-                      
-                        <td></td>
-                            <td><b>Total</b></td>
-                             <td><b>{{ number_format($total_dr,2) }}</b></td>
-                            <td><b>{{ number_format($total_cr,2) }}</b></td>
- 
-                    </tr> 
-
-<tr>
-                        <td >
-                               <b>Income Total Balance</b></td>
-                           <td colspan="3"><b>{{ number_format( $unit_total ,2) }}</b></td>
-
-                    </tr> 
-</tfoot>
-                            </table>
-                           </div>
-
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-    </div>
-</div></div>
+                
+  <div class="modal fade"  data-backdrop="" id="appFormModal"  tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+   
+</div>
   </div>
- @endforeach
- 
-
-<!-- //sehemu ya equity ==================================================================== -->
-  @foreach($cost as $account_class)
- 
- <?php    
- $unit_total  = 0;
-   $total_cr= 0;
-$total_dr= 0;
-?>     
-                       
-  <!-- Modal -->
-  <div class="modal inmodal " id="viewcost"  tabindex="-1" role="dialog" aria-hidden="true">
-                          <div class="modal-dialog modal-lg"><div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title"  style="text-align:center;"> Finanacial Cost<h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-            </button>
-        </div>
-
-
-        <div class="modal-body">
-  <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-
-<thead>
-                    <tr>
-               <th>Account Code</th>
-                          <th>Account Name</th>
-                            <th>Debit</th>
-                        <th>Credit</th>
-         
-                    </tr>
-                    </thead>
-                              <tbody>
- @foreach($account_class->groupAccount  as $group)   
- @if($group->group_id == 6180)                          
-@foreach($group->accountCodes as $account_code) 
-                    <?php                   
-                          $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                        $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('debit');
-
-                          $unit_total  +=($dr-$cr);
-                              $total_cr+=$cr;
-                           $total_dr+=$dr;
-                        ?>  
-                                 <tr>
-                                <tr>
-                        <td >{{ $account_code->account_codes }}</td>
-                          <td >{{ $account_code->account_name }}</td>
-                          <td>{{ number_format($dr ,2) }}</td>
-                   <td >{{ number_format($cr ,2) }}</td>
-                    </tr> 
-
-           
-  @endforeach
-@endif
- @endforeach   
-                              </tbody>
-<tfoot>
-<tr>     
-                        
-                        <td></td>
-                            <td><b>Total</b></td>
-                             <td><b>{{ number_format($total_dr,2) }}</b></td>
-                            <td><b>{{ number_format($total_cr,2) }}</b></td>
- 
-                    </tr> 
-
-<tr>
-                        <td >
-                               <b>Financial Cost Total Balance</b></td>
-                           <td colspan="3"><b>{{ number_format( $unit_total ,2) }}</b></td>
-
-                    </tr> 
-</tfoot>
-                            </table>
-                           </div>
-
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-    </div>
-</div></div>
-  </div>
-            
-  @endforeach
-
-<!-- sehemu ya liabilitty==================================================== -->
-                   
- @foreach($expense as $account_class)
-   <!-- Modal -->
-  <div class="modal inmodal " id="viewexpenses"  tabindex="-1" role="dialog" aria-hidden="true">
-                          <div class="modal-dialog modal-lg"><div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title"  style="text-align:center;"> Expenses<h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-            </button>
-        </div>
-
-
-        <div class="modal-body">
-  <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-
-<thead>
-                    <tr>
-               <th>Account Code</th>
-                          <th>Account Name</th>
-                            <th>Debit</th>
-                        <th>Credit</th>
-         
-                    </tr>
-                    </thead>
-                              <tbody>
- @foreach($account_class->groupAccount  as $group)                             
-@foreach($group->accountCodes as $account_code) 
-                    <?php                   
-                          $cr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('credit');
-                        $dr = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->whereBetween('date',
-                            [$start_date, $second_date])->sum('debit');
-
-                          $unit_total  +=($dr-$cr);
-                              $total_cr+=$cr;
-                           $total_dr+=$dr;
-                        ?>  
-                                 <tr>
-                                <tr>
-                        <td >{{ $account_code->account_codes }}</td>
-                          <td >{{ $account_code->account_name }}</td>
-                          <td>{{ number_format($dr ,2) }}</td>
-                   <td >{{ number_format($cr ,2) }}</td>
-                    </tr> 
-
-           
-  @endforeach
- @endforeach   
-                              </tbody>
-<tfoot>
-<tr>     
-                       
-                        <td></td>
-                            <td><b>Total</b></td>
-                             <td><b>{{ number_format($total_dr,2) }}</b></td>
-                            <td><b>{{ number_format($total_cr,2) }}</b></td>
- 
-                    </tr> 
-
-<tr>
-                        <td >
-                               <b>Expenses Total Balance</b></td>
-                           <td colspan="3"><b>{{ number_format( $unit_total ,2) }}</b></td>
-
-                    </tr> 
-</tfoot>
-                            </table>
-                           </div>
-
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-    </div>
-</div></div>
-  </div>
-            
-  @endforeach
-
+  
 @endif
 
 
@@ -590,43 +363,92 @@ $total_dr= 0;
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
+        
+        });
+    </script>
+    
+    <script>
+       $('.datatable-income').DataTable({
+            autoWidth: false,
+           autoWidth: false,
+            "columnDefs": [
+                {"targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
+        
+        });
+    </script>
+    
+    <script>
+       $('.datatable-exp').DataTable({
+           autoWidth: false,
+            "columnDefs": [
+                {"targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
+        
+        });
+    </script>
+    
+         <script>
+     
+        function model(id, type) {
+            
+            var start_date = $('#start_date').val();
+            var second_date = $('#second_date').val();
+            var end_date = $('#end_date').val();
+            var branch_id = $('.branch').val();
 
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
+            $.ajax({
+                type: 'GET',
+                url: '{{ url('financial_report/reportModal') }}',
+                data: {
+                    'id': id,
+                    'type': type,
+                    'start_date': start_date,
+                    'second_date': second_date,
+                     'end_date': end_date,
+                    'branch_id': branch_id,
+                },
+                cache: false,
+                async: true,
+                success: function(data) {
+                    //alert(data);
+                    $('#appFormModal > .modal-dialog').html(data);
+                     
+                },
+                error: function(error) {
+                    $('#appFormModal').modal('toggle');
 
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
                 }
-            }
-        ]
+            });
 
-    });
-
-});
-</script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
-
+        }
+        
+     
+    </script>
 @endsection

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-size: 10px;
+            text-align: center;
+            margin: 0;
+            padding: 2px 0;
+            color: #000;
+            background: rgba(255, 255, 255, 0.9);
+            border-top: 1px solid #3498db;
+            border-radius: 6px;
+        }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .page-number { margin-top: 5px; }
+    </style>
+</head>
+<body>
+    {{ $settings->name }}, {{ $settings->address }}<br>
+    Phone: {{ $settings->phone }}
+    @if (!empty($settings->email))
+        <br>Email: <a href="mailto:{{ $settings->email }}">{{ $settings->email }}</a>
+    @endif
+    <div class="page-number">Page [page] of [topage]</div>
+</body>
+</html>

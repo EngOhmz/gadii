@@ -11,8 +11,8 @@ class AdvanceSalary extends Model
 
  protected $table = "tbl_advance_salary";
 
-protected $fillable = ['user_id','advance_amount','deduct_month','reason','request_date','status','approve_by','added_by']; 
-
+ protected $guarded = ['id','_token'];
+ 
  public function designation(){
     
         return $this->belongsTo('App\Models\Designation','designation_id');

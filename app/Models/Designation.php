@@ -11,9 +11,7 @@ class Designation extends Model
 
     protected $table = 'designations';
 
-    protected $fillable = [
-        'name','status','department_id'
-    ];
+    protected  $guarded = ['id'];
 
 public function department(){
     

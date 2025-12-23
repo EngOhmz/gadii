@@ -17,6 +17,7 @@ class Pacel extends Model
     'date',
    'due_date',
     'owner_id',
+      'cf_id',
     'confirmation_number',
     'weight',
     'route_id',
@@ -51,5 +52,9 @@ class Pacel extends Model
  public function user(){
     
         return $this->belongsTo('App\Models\User','added_by');
+      }
+      public function pacel_item(){
+    
+        return $this->hasMany('App\Models\Pacel\PacelItem','id');
       }
 }

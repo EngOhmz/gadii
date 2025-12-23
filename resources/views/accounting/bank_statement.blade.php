@@ -11,15 +11,7 @@
                         <h4>Bank Statement</h4>
                     </div>
                     <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link @if(empty($id)) active show @endif" id="home-tab2" data-toggle="tab"
-                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Bank Statement
-                                    List</a>
-                            </li>
                        
-
-                        </ul>
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
@@ -31,9 +23,9 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
 
         <div class="panel-heading">
             <h6 class="panel-title">
-                Bank Statement
+               
                 @if(!empty($start_date))
-                    for the period: <b>{{$start_date}} to {{$end_date}} for {{$bank->account_name}}</b>
+                    For the period: <b>{{Carbon\Carbon::parse($start_date)->format('d/m/Y')}}  to {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}} for {{$bank->account_name}}</b>
                 @endif
             </h6>
         </div>
@@ -68,7 +60,7 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
                
                 <div class="col-md-4">
                     <label class="">Bank</label>
-                    {!! Form::select('account_id',$chart_of_accounts,$account_id, array('class' => 'select2', 'id'=>'account_id', 'placeholder'=>'Select','required'=>'required')) !!}
+                    {!! Form::select('account_id',$chart_of_accounts,$account_id, array('class' => 'form-control m-b ', 'id'=>'account_id', 'placeholder'=>'Select','required'=>'required')) !!}
                 </div>
 
    <div class="col-md-4">
@@ -89,14 +81,18 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
         <div class="panel panel-white">
             <div class="panel-body ">
                 <div class="table-responsive">
-                      <table class="table table-striped table-condensed table-hover" id="tableExport" style="width:100%;">
+                
+                   
+                
+                      <table class="table datatable-button-html5-basic">
+                      <caption style="caption-side: top;color:black;text-align:center;"><b>NOTE - OPEN BALANCE : {{ number_format($open_debit-$open_credit,2) }}</b></caption><br><br>
                         <thead>
                         <tr>
                             <th>#</th>
                             <th> Type</th>
                             <th>Date</th>
-                            <th>Balance</th>
-                            <th>Running Balance</th>
+                            <th>Amount</th>
+                            <th> Balance</th>
                             <th>Notes</th>
                         </tr>
                         </thead>
@@ -107,18 +103,7 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
                             $open_balance= 0;
 
                            @endphp
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                
-                                
-                                <td><b>Open Balance</b></td>
-                                <td>{{ number_format(0,2) }}</td>
-                                 
-                                <td>{{ number_format($open_debit-$open_credit,2) }}</td>
-                                
-                                <td></td>
-                                 <tr>
+                            
 
                         @foreach($data as $key)
 
@@ -126,7 +111,7 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
                         
                              $balance=$key->debit -$key->credit;
                                $t_balance+= $balance;
-                               $open_balance+= $open_debit-$open_credit;
+                               $open_balance= $open_debit-$open_credit;
                         @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
@@ -135,7 +120,7 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
                                 @else
                                 <td>Deposit</td>
                                 @endif
-                                <td>{{ $key->date }}</td>
+                                <td>{{Carbon\Carbon::parse($key->date)->format('d/m/Y')}}</td>
                                 <td>{{ number_format(abs($balance),2) }}</td>
                                  
                                 <td>{{ number_format($t_balance +$open_balance ,2) }}</td>
@@ -169,51 +154,37 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
 @endsection
 
 @section('scripts')
+
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/jquery.dataTables.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/buttons.dataTables.min.css') }}">
+
+<script src="{{asset('assets/datatables/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('assets/datatables/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.print.min.js')}}"></script>
+
+
 <script>
-$(document).ready(function() {
-    new TomSelect("#account_id",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
+
+      $('.datatable-button-html5-basic').DataTable(
+        {
+          "ordering": false,
+        dom: 'lBfrtip',
+
+        buttons: [
+          {extend: 'copyHtml5',title: 'BANK STATEMENT ', footer: true},
+           {extend: 'excelHtml5',title: 'BANK STATEMENT' , footer: true},
+           {extend: 'csvHtml5',title: 'BANK STATEMENT' , footer: true},
+            {extend: 'pdfHtml5',title: 'BANK STATEMENT FROM {{Carbon\Carbon::parse($start_date)->format('d/m/Y')}}  TO {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}} @if(!empty($start_date)) FOR {{$bank->account_name}} @endif', footer: true},
+            {extend: 'print',title: 'BANK STATEMENT' , footer: true}
+
+                ],
         }
-    });
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
-            },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+      );
+     
+    </script>
 
 @endsection

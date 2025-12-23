@@ -11,9 +11,10 @@ class ServiceType extends Model
 
     protected $table = "service_type";
 
-    protected $fillable = [
-     'name',             
-    'added_by'];
+   protected $guarded = [
+         'id',      
+       'token'];
+    
     
     public function user()
     {

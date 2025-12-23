@@ -85,8 +85,9 @@ footer {
             color: #777777;
             width: 100%;
             height: 30px;
-            position: absolute;
+            position: fixed;
             bottom: 0;
+              margin-top:30px;
             border-top: 1px solid #aaaaaa;
             padding: 8px 0;
             text-align: center;
@@ -106,24 +107,42 @@ footer {
 
 </style>
 <body>
+ <!-- Define header and footer blocks before your content -->
+
+
+  <!-- Wrap the content of your PDF inside a main tag -->
  <?php
-$settings= App\Models\System::first();
+$settings= App\Models\System::where('added_by',auth()->user()->added_by)->first();
+$items=App\Models\SystemDetails::where('system_id',$settings->id)->get();
 
 ?>
 <div class="head-title">
-    <h1 class="text-center m-0 p-0">Invoice</h1>
+    <h1 class="text-center m-0 p-0">Cargo Invoice</h1>
 </div>
-<div class="add-detail mt-10">
-    <div class="w-50 float-left mt-10">
-        <p class="m-0 pt-5 text-bold w-100">Invoice : <span class="gray-color">{{$purchases->pacel_number}}</span></p>
-        <p class="m-0 pt-5 text-bold w-100">Invoice Date : <span class="gray-color">{{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}</span></p>
+<div class="add-detail ">
+   <table class="table w-100 ">
+<tfoot>
+       
+        <tr>
+            <td class="w-50">
+                <div class="box-text">
+                        <img class="pl-lg" style="width: 133px;height:120px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
+                </div>
+            </td>
+  
+                  <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td>
+                 
+            <td class="w-50">
+                <div class="box-text">
+                   <p> <strong>Invoice : {{$purchases->confirmation_number}}</strong></p>
+      <p> <strong>Invoice Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}</strong></p>
+                </div>
+            </td>
+        </tr>
+</tfoot>
+    </table>
 
-    </div>
-<!--
-    <div class="w-50 float-left logo mt-10">
-        <img src="{{url('public/assets/img/logo')}}/{{$settings->picture}}" >   
-    </div>
--->
+
     <div style="clear: both;"></div>
 </div>
 <div class="table-section bill-tbl w-100 mt-10">
@@ -186,7 +205,8 @@ $settings= App\Models\System::first();
         <tr>
             <th class="col-sm-1 w-50">#</th>
             <th class=" col-sm-2 w-50" >Route Name</th>
-           <th class="col-sm-1 w-50">Charge Type</th>
+          <!-- <th class="col-sm-1 w-50">Charge Type</th>-->
+              <th class="col-sm-1 w-50">Truck</th>
             <th class="w-50">Price</th>
             <th class="w-50">Qty</th>
             <th class="w-50">Tax</th>
@@ -207,13 +227,21 @@ $settings= App\Models\System::first();
                  <?php
                                           //$item_name = App\Models\Pacel\PacelList::find($row->item_name);
                           $item_name = App\Models\Route::find($row->item_name);
+                          $cargo = App\Models\CargoLoading::where('item_id',$row->items_id)->first();
+                          $word_curr= App\Models\Currency::where('code',$purchases->currency_code)->first();
                                         ?>
-                <td>From {{$item_name->from}}  to  {{$item_name->to}} ({{$row->distance}} km)
+                <td> {{$item_name->from}}  -  {{$item_name->to}}
+              @if(!empty($row->items_id))
+ ({{date("d/m/Y", strtotime($cargo->collection_date))}})
+                     @else
+    ({{date("d/m/Y", strtotime($row->created_at))}})     
+                          @endif
                    @if(!empty($row->end))
-                    <br>Arrival Location/Address - {{$row->end}}
+                   <!-- <br>Arrival Location/Address - {{$row->end}} -->
                       @endif
                 </td>
-              <td>{{ $row->charge_type }} </td> 
+            <!--<td>{{ $row->charge_type }} </td>-->
+                 <td >{{ $row->truck->reg_no }} </td>
              <td >{{number_format($row->price ,2)}}</td>               
                 <td >{{ $row->quantity }}</td>
    
@@ -227,7 +255,7 @@ $settings= App\Models\System::first();
 
   <tfoot>
 <tr>
-            <td colspan="5">  </td>
+            <td colspan="5"></td>
                 <td> </td>
                <td></td> 
             </td>
@@ -240,7 +268,9 @@ $settings= App\Models\System::first();
             </td>
         </tr>
   <tr>
-            <td colspan="5">  </td>
+           
+           {{-- <td colspan="5"> {{convertNumberToWordsForIndia($gland_total)}}   {{$word_curr->name}}   </td> --}}
+           <td colspan="5">  </td>
                 <td><b>  VAT  (18%)</b></td>
                <td>{{number_format($tax,2)}}  {{$purchases->currency_code}}</td> 
             </td>
@@ -252,44 +282,121 @@ $settings= App\Models\System::first();
                <td>{{number_format($gland_total,2)}}  {{$purchases->currency_code}}</td> 
             </td>
         </tr>
+
+
+
+        <tr>
+            <td colspan="5"> <h3><b>Authorized Signature .......................</b></h3>  </td>
+                
+               <td colspan="6" ></td> 
+            </td>
+        </tr>
   </tfoot>
     </table>
 
-  <table class="table w-100 mt-10">
+<br><br><br>
+ 
+  <table class="table w-100 mt-20" >
+<tfoot>
+@if(!empty($items))
+@foreach ($items->chunk(2) as $chunk)
 <tr>
-         <td style="width: 50%;">
-            <div class="left" style="">
-        <div><u>  <h3><b>BANK DETAILS</b></h3></u> </div>
-         <div><b>Account Name</b>:  DALASHO ENTERPRISES LIMITED</div>
-        <div><b>Account Number</b>:  0150386968400 </div>
-        <div><b>Bank Name</b>: CRDB BANK</div>
-        <div><b>Branch</b>: OYSTERBAY BRANCH</div>
-        <div><b>Swift Code</b>: Corutztz</div>
-          </div>     
-        </tr>
-<!--
-    <tr>
-        <td style="width: 50%;">
-            <div class="right" style="">
-        <div><u> <h3><b> Account Details For Us-Dollar</b></h3></u> </div>
-        <div><b>Account Name</b>:  Isumba Trans Ltd</div>
-        <div><b>Account Number</b>:  10201632013 </div>
-        <div><b>Bank Name</b>: Bank of Africa</div>
-        <div><b>Branch</b>: Business Centre</div>
-        <div><b>Swift Code</b>: EUAFTZ TZ</div>
-        <div></div>
-        </div></td>
-    </tr>
--->
+  @foreach ($chunk as $i)
+<?php
+$word_curr= App\Models\Currency::where('code',$i->exchange_code)->first();
+?>
 
+
+         <td style="width: 50%;">
+
+         <div><u> <h3><b> Account Details For {{$word_curr->name}}</b></h3></u> </div>
+         <div><b>Account Name</b>:   {{$i->account_name}}</div>
+        <div><b>Account Number</b>:   {{$i->account_number}} </div>
+        <div><b>Bank Name</b>:  {{$i->bank_name}}</div>
+        <div><b>Branch</b>:  {{$i->branch_name}}</div>
+        <div><b>Swift Code</b>:  {{$i->swift_code}}</div>
+         
+ @endforeach
+</tr>  
+ @endforeach
+@endif
+
+       
+    
+
+</tfoot>
       
 </table>
 
 
+
 </div>
 
-<footer>
-This is a computer generated invoice
-</footer>
+
 </body>
 </html>
+
+<?php
+
+   function convertNumberToWordsForIndia($number){
+    //A function to convert numbers into Indian readable words with Cores, Lakhs and Thousands.
+    $words = array(
+    '0'=> '' ,'1'=> 'one' ,'2'=> 'two' ,'3' => 'three','4' => 'four','5' => 'five',
+    '6' => 'six','7' => 'seven','8' => 'eight','9' => 'nine','10' => 'ten',
+    '11' => 'eleven','12' => 'twelve','13' => 'thirteen','14' => 'fouteen','15' => 'fifteen',
+    '16' => 'sixteen','17' => 'seventeen','18' => 'eighteen','19' => 'nineteen','20' => 'twenty',
+    '30' => 'thirty','40' => 'fourty','50' => 'fifty','60' => 'sixty','70' => 'seventy',
+    '80' => 'eighty','90' => 'ninty');
+    
+    //First find the length of the number
+    $number_length = strlen($number);
+    //Initialize an empty array
+    $number_array = array(0,0,0,0,0,0,0,0,0);        
+    $received_number_array = array();
+    
+    //Store all received numbers into an array
+    for($i=0;$i<$number_length;$i++){    
+  		$received_number_array[$i] = substr($number,$i,1);    
+  	}
+
+    //Populate the empty array with the numbers received - most critical operation
+    for($i=9-$number_length,$j=0;$i<9;$i++,$j++){ 
+        $number_array[$i] = $received_number_array[$j]; 
+    }
+
+    $number_to_words_string = "";
+    //Finding out whether it is teen ? and then multiply by 10, example 17 is seventeen, so if 1 is preceeded with 7 multiply 1 by 10 and add 7 to it.
+    for($i=0,$j=1;$i<9;$i++,$j++){
+        //"01,23,45,6,78"
+        //"00,10,06,7,42"
+        //"00,01,90,0,00"
+        if($i==0 || $i==2 || $i==4 || $i==7){
+            if($number_array[$j]==0 || $number_array[$i] == "1"){
+                $number_array[$j] = intval($number_array[$i])*10+$number_array[$j];
+                $number_array[$i] = 0;
+            }
+               
+        }
+    }
+
+    $value = "";
+    for($i=0;$i<9;$i++){
+        if($i==0 || $i==2 || $i==4 || $i==7){    
+            $value = $number_array[$i]*10; 
+        }
+        else{ 
+            $value = $number_array[$i];    
+        }            
+        if($value!=0)         {    $number_to_words_string.= $words["$value"]." "; }
+        if($i==1 && $value!=0){    $number_to_words_string.= "Crores "; }
+        if($i==3 && $value!=0){    $number_to_words_string.= "Lakhs ";    }
+        if($i==5 && $value!=0){    $number_to_words_string.= "Thousand "; }
+        if($i==6 && $value!=0){    $number_to_words_string.= "Hundred  "; }            
+
+    }
+    if($number_length>9){ $number_to_words_string = "Sorry This does not support more than 99 Crores"; }
+    return ucwords(strtolower("".$number_to_words_string));
+}
+
+
+?>

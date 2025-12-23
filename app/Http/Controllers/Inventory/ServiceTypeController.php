@@ -16,7 +16,7 @@ class ServiceTypeController extends Controller
     public function index()
     {
         //
-        $location= ServiceType::all();
+        $location= ServiceType::where('added_by',auth()->user()->added_by)->where('disabled',0)->get();
       
        return view('inventory.type',compact('location'));
     }
@@ -42,7 +42,7 @@ class ServiceTypeController extends Controller
         //
 
         $data=$request->post();
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $location = ServiceType::create($data);
  
         return redirect(route('service_type.index'))->with(['success'=>'Created Successfully']);
@@ -85,10 +85,10 @@ class ServiceTypeController extends Controller
         $location=  ServiceType::find($id);
 
         $data=$request->post();
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $location->update($data);
  
-        return redirect(route('service_type.index'))->with(['success'=>'Location Updated Successfully']);
+        return redirect(route('service_type.index'))->with(['success'=>'Updated Successfully']);
     }
 
     /**
@@ -101,8 +101,8 @@ class ServiceTypeController extends Controller
     {
         //
         $location= ServiceType::find($id);
-        $location->delete();
+        $location->update(['disabled'=> '1']);
  
-        return redirect(route('service_type.index'))->with(['success'=>'Location Deleted Successfully']);
+        return redirect(route('service_type.index'))->with(['success'=>'Deleted Successfully']);
     }
 }

@@ -11,19 +11,21 @@ class GoodReallocation extends Model
 
     protected $table = "good_reallocations";
 
-    protected $fillable = [
-         'date',      
-       'source_item',
-       'destination_item',
-        'staff',   
-        'source_truck',  
-       'destination_truck',            
-        'quantity', 
-       'status',
-        'added_by'];
+    protected $guarded = ['id'];
     
-    public function user()
-    {
-        return $this->belongsTo('App\Models\user');
+  public function approve(){
+
+    return $this->BelongsTo('App\Models\FieldStaff','staff');
+   //return $this->BelongsTo('App\Models\User','staff');
+}
+
+  public function source(){
+
+        return $this->BelongsTo('App\Models\Truck','source_truck');
+    }
+
+   public function destination(){
+
+        return $this->BelongsTo('App\Models\Truck','destination_truck');
     }
 }

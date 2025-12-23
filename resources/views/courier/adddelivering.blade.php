@@ -1,4 +1,3 @@
-<div class="modal-dialog" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">Courier Delivery</h5>
@@ -15,9 +14,13 @@
                 @php
                    $data=App\Models\Courier\CourierLoading::find($id); 
                 @endphp
-                <li>Vehicle/Bike : {{ $data->truck_id}} </li>
-               <li>Driver Name: {{ $data->driver_id}} </li>
-              <li>Route Name: From {{ $data->route->from}} to  {{ $data->route->to}} </li>
+
+                @if($data->method == 'Air Freight')
+                      <li>AWB : {{ $data->awb}} </li>
+                   @else
+                <li>Vehicle : {{ $data->truck_id}} </li>
+                 @endif
+              <li>Route Name: From {{ $data->start->name}} to  {{ $data->end->name}} </li>
             </ul>
             <div class="form-group">
                 <label class="col-lg-6 col-form-label">Description</label>
@@ -32,8 +35,17 @@
                 <label class="col-lg-6 col-form-label">Delivery Date</label>
 
                 <div class="col-lg-12">
-                    <input type="date" name="collection_date" value="" required class="form-control">
+                    <input type="date" name="collection_date" value="<?php echo date('Y-m-d');  ?>" required class="form-control">
                     <input type="hidden" name="type" value="delivering" required class="form-control">
+                </div>
+            </div>
+
+             <div class="form-group">
+                <label class="col-lg-6 col-form-label">Received by</label>
+
+                <div class="col-lg-12">
+                    <input type="text" name="receiver_name" value="" required class="form-control">
+                    
                 </div>
             </div>
            
@@ -41,7 +53,7 @@
                 <label class="col-lg-6 col-form-label">Delivery Cost</label>
 
                 <div class="col-lg-12">
-                 <input type="number" name="costs"   value="" class="form-control" required>
+                 <input type="number" name="costs"   value="0" class="form-control" required>
                                           
 
 </div>
@@ -62,10 +74,19 @@
             </div>
 
         </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+       <div class="modal-footer ">
+             <button class="btn btn-primary"  type="submit" id="save" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
         {!! Form::close() !!}
     </div>
-</div>
+
+
+@yield('scripts')
+<script>
+/*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+</script>

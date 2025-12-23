@@ -11,47 +11,22 @@
                         <h4>Bank Reconciliation Report</h4>
                     </div>
                     <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link @if(empty($id)) active show @endif" id="home-tab2" data-toggle="tab"
-                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Bank Reconciliation Report
-                                    List</a>
-                            </li>
-                          
-
-                        </ul>
+                       
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                  <table class="table datatable-basic table-striped"  id="table-1">
                                        <thead>
                                             <tr>
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
-
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Type</th>
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Account Name</th>
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Date</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Balance</th>
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Notes</th>
+                                            <th>#</th>
+                                            <th> Type</th>
+                                             <th>Account Name</th>
+                                            <th>Date</th>
+                                            <th>Balance</th>
+                                            <th>Notes</th>
+                                           
+                                            
                                             </tr>
                                         </thead>
                                          <tbody>
@@ -75,7 +50,7 @@
                                                 <td>{{$row->chart->name}}</td>
                                                      @endif
 
-                                                 <td>{{ $row->date }}</td>
+                                                 <td>{{Carbon\Carbon::parse($row->date)->format('d/m/Y')}}</td>
                                                 <td>{{ number_format(abs($row->debit -$row->credit),2) }}</td>
                                                <td>{{$row->notes }}</td>
                                             </tr>
@@ -108,44 +83,33 @@
 @endsection
 
 @section('scripts')
+
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/jquery.dataTables.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/buttons.dataTables.min.css') }}">
+
+<script src="{{asset('assets/datatables/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('assets/datatables/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.print.min.js')}}"></script>
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 @endsection

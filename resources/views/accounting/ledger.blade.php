@@ -23,6 +23,8 @@
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
+                                
+                                
 
 <br>
         <div class="panel-heading">
@@ -77,14 +79,17 @@
    <br>
   <!-- /.box -->
     @if(!empty($start_date))
+    
+    
+    
 
 
 
                <table id="table-1" class="table table-striped ">
                     <thead>
                     <tr>
-                        <th>GL Code</th>
-                        <th>Account</th>
+                        <th>Account Codes</th>
+                        <th>Account Name</th>
                         <th>Debit</th>
                         <th>Credit</th>
                         <th>Balance</th>
@@ -96,15 +101,15 @@
                     $credit_total = 0;
                     $debit_total = 0;
                     ?>
-                    @foreach(\App\Models\ChartOfAccount::orderBy('gl_code','asc')->get() as $key)
+                    @foreach(\App\Models\AccountCodes::orderBy('account_codes','asc')->where('added_by',auth()->user()->added_by)->get() as $key)
                          <?php
                         $cr = 0;
                         $dr = 0;
                    
                         $cr = \App\Models\JournalEntry::where('account_id', $key->id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('credit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('credit');
                         $dr = \App\Models\JournalEntry::where('account_id', $key->id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('debit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('debit');
                         //$credit_total = $credit_total + $cr + $net_profit['net_profit_cr'] + $net_tax['tax_profit_cr'] ;
                         //$debit_total = $debit_total + $dr + $net_profit['net_profit_dr'] + $net_tax['tax_profit_dr'];
 
@@ -114,9 +119,9 @@
 
                         <tr>
                             <td>
- <a href="#view{{$key->id}}" data-toggle="modal"">{{ $key->gl_code }}</a>
+ <a href="#view{{$key->id}}" data-toggle="modal"">{{ $key->account_codes }}</a>
 </td>
-                            <td>{{$key->name}}</td>
+                            <td>{{$key->account_name}}</td>
 
                                  @if($key->account_codes == 31101)
                             <td>{{ number_format($net_profit['net_profit_dr'],2) }}</td>
@@ -174,13 +179,17 @@
     @else
        <div class="panel panel-white col-lg-12">
             <div class="panel-body table-responsive no-padding">
+            
+            <button onclick="exportTableToCSV('ledger.csv')"><span>
+                                            <i class="icon-folder-download mr-3 icon-2x"></i>Export Table To CSV File
+                                        </span></button>
 
 
                 <table id="table-1" class="table table-striped ">
                     <thead>
                     <tr>
-                        <th>GL Code</th>
-                        <th>Account</th>
+                        <th>Account Codes</th>
+                        <th>Account Name</th>
                         <th>Debit</th>
                         <th>Credit</th>
                         <th>Balance</th>
@@ -192,13 +201,13 @@
                     $credit_total = 0;
                     $debit_total = 0;
                     ?>
-                    @foreach(\App\Models\ChartOfAccount::orderBy('gl_code','asc')->get() as $key)
+                    @foreach(\App\Models\AccountCodes::orderBy('account_codes','asc')->where('added_by',auth()->user()->added_by)->get() as $key)
                          <?php
                         $cr = 0;
                         $dr = 0;
                    
-                        $cr = \App\Models\JournalEntry::where('account_id', $key->id)->sum('credit');
-                        $dr = \App\Models\JournalEntry::where('account_id', $key->id)->sum('debit');
+                        $cr = \App\Models\JournalEntry::where('account_id', $key->id)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr = \App\Models\JournalEntry::where('account_id', $key->id)->where('added_by',auth()->user()->added_by)->sum('debit');
                         //$credit_total = $credit_total + $cr + $net_p['net_profit_cr'] + $net_t['tax_profit_cr'] ;
                         //$debit_total = $debit_total + $dr + $net_p['net_profit_dr'] + $net_t['tax_profit_dr'];
 
@@ -208,8 +217,8 @@
 
                         <tr>
                             <td>
- <a href="#view{{$key->id}}" data-toggle="modal"">{{ $key->gl_code }}</a></td>
-                            <td>{{$key->name}}</td>
+ <a href="#view{{$key->id}}" data-toggle="modal"">{{ $key->account_codes }}</a></td>
+                            <td>{{$key->account_name}}</td>
 
                                  @if($key->account_codes == 31101)
                             <td>{{ number_format($net_p['net_profit_dr'],2) }}</td>
@@ -282,10 +291,10 @@
     </div>
 </section>
  @if(!empty($start_date))
- @foreach(\App\Models\ChartOfAccount::orderBy('gl_code','asc')->get() as $key)
+ @foreach(\App\Models\AccountCodes::where('added_by',auth()->user()->added_by)->orderBy('account_codes','asc')->get() as $key)
                        
   <!-- Modal -->
-  <div class="modal inmodal " id="view{{$key->id}}"  tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade " id="view{{$key->id}}"  tabindex="-1" role="dialog" aria-hidden="true">
                           <div class="modal-dialog modal-lg"><div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
@@ -297,7 +306,7 @@
 
         <div class="modal-body">
              <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
+                           <table class="table datatable-basic table-striped">
 
                     <?php        
                        if($key->account_codes ==  31101){
@@ -383,9 +392,9 @@ foreach($group_modal->accountCodes as $account_code_modal){
      
      
                          $cr_start = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('credit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('credit');
                         $dr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('debit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('debit');
 
                          $total_debit_income_balance_start +=$dr_start  ;
                          $total_credit_income_balance_start  +=$cr_start ;
@@ -418,9 +427,9 @@ foreach($group_modal->accountCodes as $account_code_modal){
 
 
                    $cr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('credit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('credit');
                         $dr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('debit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('debit');
                      
                             
                         $total_debit_cost_balance_start    +=$dr_start  ;
@@ -493,9 +502,9 @@ foreach($account_class_modal->groupAccount  as $group_modal)  {
 foreach($group_modal->accountCodes as $account_code_modal){
 
                    $cr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('credit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('credit');
                         $dr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('debit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('debit');
                                
                             
                            $total_debit_expense_balance_start    +=$dr_start  ;
@@ -684,9 +693,9 @@ foreach($group_modal->accountCodes as $account_code_modal){
      
      
                          $cr_deff = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('credit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('credit');
                         $dr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('debit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('debit');
 
                          $total_debit_income_balance_deff  +=$dr_deff  ;
                          $total_credit_income_balance_deff  +=$cr_deff ;
@@ -726,9 +735,9 @@ foreach($group_modal->accountCodes as $account_code_modal){
 
 
                    $cr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('credit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('credit');
                         $dr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('debit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('debit');
                             
                         $total_debit_cost_balance_deff    +=$dr_deff  ;
                          $total_credit_cost_balance_deff   +=$cr_deff ;
@@ -799,9 +808,9 @@ foreach($account_class_modal->groupAccount  as $group_modal)  {
 foreach($group_modal->accountCodes as $account_code_modal){
 
                    $cr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('credit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('credit');
                         $dr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('debit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('debit');
                                
                             
                            $total_debit_expense_balance_deff    +=$dr_deff  ;
@@ -933,10 +942,10 @@ else{
                               <tbody>   
  <?php
                         $account = \App\Models\JournalEntry::where('account_id', $key->id)->whereBetween('date',
-                            [$start_date, $end_date])->orderBy('date','asc')->get();
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->orderBy('date','asc')->get();
                             
                        $account1 = \App\Models\JournalEntry::where('account_id', $key->id)->whereBetween('date',
-                            [$start_date, $end_date])->orderBy('date','asc')->get();
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->orderBy('date','asc')->get();
                         ?>  
                  @foreach($account  as $a)
                                  <tr>
@@ -953,9 +962,9 @@ else{
  <?php
                    
                         $cr_modal = \App\Models\JournalEntry::where('account_id', $key->id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('credit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('credit');
                         $dr_modal = \App\Models\JournalEntry::where('account_id', $key->id)->whereBetween('date',
-                            [$start_date, $end_date])->sum('debit');
+                            [$start_date, $end_date])->where('added_by',auth()->user()->added_by)->sum('debit');
                        
                         ?>  
                     <tr>     
@@ -1002,8 +1011,8 @@ else{
 
 
         </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <div class="modal-footer ">
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
     </div>
 </div></div>
@@ -1011,10 +1020,10 @@ else{
   @endforeach
 
 @else
-                    @foreach(\App\Models\ChartOfAccount::orderBy('gl_code','asc')->get() as $key)
+                    @foreach(\App\Models\AccountCodes::where('added_by',auth()->user()->added_by)->orderBy('account_codes','asc')->get() as $key)
                        
   <!-- Modal -->
-  <div class="modal inmodal " id="view{{$key->id}}"  tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal fade " id="view{{$key->id}}"  tabindex="-1" role="dialog" aria-hidden="true">
                           <div class="modal-dialog modal-lg"><div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
@@ -1026,7 +1035,7 @@ else{
 
         <div class="modal-body">
              <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
+                           <table class="table datatable-basic table-striped">
 
                     <?php        
                        if($key->account_codes == 31101){
@@ -1112,8 +1121,8 @@ if($group_modal->group_id != 5110){
 foreach($group_modal->accountCodes as $account_code_modal){
      
      
-                         $cr_start = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('credit');
-                        $dr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('debit');
+                         $cr_start = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('debit');
 
                          $total_debit_income_balance_start +=$dr_start  ;
                          $total_credit_income_balance_start  +=$cr_start ;
@@ -1146,8 +1155,8 @@ if($group_modal->group_id == 6180){
 foreach($group_modal->accountCodes as $account_code_modal){
 
 
-                   $cr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('credit');
-                        $dr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('debit');
+                   $cr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('debit');
                      
                             
                         $total_debit_cost_balance_start    +=$dr_start  ;
@@ -1222,8 +1231,8 @@ foreach($account_class_modal->groupAccount  as $group_modal)  {
 if($group_modal->group_id != 6180){
 foreach($group_modal->accountCodes as $account_code_modal){
 
-                   $cr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('credit');
-                        $dr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('debit');
+                   $cr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr_start  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('debit');
                                
                             
                            $total_debit_expense_balance_start    +=$dr_start  ;
@@ -1411,8 +1420,8 @@ if($group_modal->group_id != 5110){
 foreach($group_modal->accountCodes as $account_code_modal){
      
      
-                         $cr_deff = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('credit');
-                        $dr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('debit');
+                         $cr_deff = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('debit');
 
                          $total_debit_income_balance_deff  +=$dr_deff  ;
                          $total_credit_income_balance_deff  +=$cr_deff ;
@@ -1452,8 +1461,8 @@ if($group_modal->group_id == 6180){
 foreach($group_modal->accountCodes as $account_code_modal){
 
 
-                   $cr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('credit');
-                        $dr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('debit');
+                   $cr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('debit');
                             
                         $total_debit_cost_balance_deff    +=$dr_deff  ;
                          $total_credit_cost_balance_deff   +=$cr_deff ;
@@ -1525,8 +1534,8 @@ foreach($account_class_modal->groupAccount  as $group_modal)  {
 if($group_modal->group_id != 6180){
 foreach($group_modal->accountCodes as $account_code_modal){
 
-                   $cr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('credit');
-                        $dr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->sum('debit');
+                   $cr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr_deff  = \App\Models\JournalEntry::where('account_id', $account_code_modal->account_id)->where('added_by',auth()->user()->added_by)->sum('debit');
                                
                             
                            $total_debit_expense_balance_deff    +=$dr_deff  ;
@@ -1657,9 +1666,9 @@ else{
                     </thead>
                               <tbody>   
  <?php
-                        $account = \App\Models\JournalEntry::where('account_id', $key->id)->orderBy('date','asc')->get();
+                        $account = \App\Models\JournalEntry::where('account_id', $key->id)->where('added_by',auth()->user()->added_by)->orderBy('date','asc')->get();
                             
-                       $account1 = \App\Models\JournalEntry::where('account_id', $key->id)->orderBy('date','asc')->get();
+                       $account1 = \App\Models\JournalEntry::where('account_id', $key->id)->where('added_by',auth()->user()->added_by)->orderBy('date','asc')->get();
                         ?>  
                  @foreach($account  as $a)
                                  <tr>
@@ -1675,8 +1684,8 @@ else{
     
  <?php
                    
-                        $cr_modal = \App\Models\JournalEntry::where('account_id', $key->id)->sum('credit');
-                        $dr_modal = \App\Models\JournalEntry::where('account_id', $key->id)->sum('debit');
+                        $cr_modal = \App\Models\JournalEntry::where('account_id', $key->id)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr_modal = \App\Models\JournalEntry::where('account_id', $key->id)->where('added_by',auth()->user()->added_by)->sum('debit');
                        
                         ?>  
                     <tr>     
@@ -1723,8 +1732,8 @@ else{
 
 
         </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <div class="modal-footer ">
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
     </div>
 </div></div>
@@ -1737,43 +1746,21 @@ else{
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 @endsection

@@ -30,25 +30,30 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    {{ Form::open(['route' => 'save.wb']) }}                    
-                                         @method('POST')
-                                    <table class="table table-striped" id="table-1">
+                                       
+       {!! Form::open(array('route' => 'save.wb','method'=>'POST', 'id' => 'frm-example' , 'name' => 'frm-example')) !!}             
+                                      
+                                  <table class="table datatable-basic table-striped" id="table-1">
                                         <thead>
                                             <tr>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">#</th>
+                                                    style="width: 36.484px;">#</th>
                                                    
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">REF NO</th>
+                                                    style="width: 126.484px;">REF NO</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Qty</th>
+                                                    style="width: 86.484px;">Qty</th>
+                             <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Engine version: activate to sort column ascending"
+                                                    style="width: 141.219px;">Truck</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -61,14 +66,14 @@
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
                                                     style="width: 141.219px;">Amount</th>
-
-
-    
-
+                                              <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="CSS grade: activate to sort column ascending"
+                                                    style="width: 128.1094px;">Actions</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Actions</th>
+                                                    style="width: 98.1094px;">Confirm</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -77,16 +82,15 @@
                                             <tr class="gradeA even" role="row">
 
                                                 <td> {{$loop->iteration}}</td>
-                                                <td>{{$row->pacel_number}}</td>              
+                                                <td>{{$row->confirmation_number}}</td>              
                                                <td>{{$row->quantity}} </td>
+                                              <td>{{ $row->truck->reg_no}}</td>
                                                 <td>From {{$row->route->from}} to {{$row->route->to}}</td>
                                                 <td>{{$row->client->name}}</td>           
                                                 <td>{{number_format($row->amount,2)}} {{$row->pacel->currency_code}}</td>  
                                                     <!--<td>{{$row->receiver_name}}</td>-->
-
-                                                <td>
-                  <input name="item_id[]" type="checkbox"  class="checks" value="{{$row->item_id}}">
-                                                </td>
+                                            <td> <a class="list-icons-item text-primary" title="Edit" onclick="return confirm('Are you sure?')"  href="{{ route('order.edit_cargo', $row->id)}}">Edit Cargo</a></td>
+                                                <td><input name="item_id[]" type="checkbox"  class="checks" value="{{$row->item_id}}"></a></td>
 
                                             </tr>
                                             @endforeach
@@ -94,18 +98,13 @@
                                             @endif
 
                                         </tbody>
-                                             <tfoot>
-                            <tr class="custom-color-with-td">
-                                <td style="text-align: right;" colspan="4"></td>
-                                <td></td>
-                                    <td></td>
-                                     <td> <button class="btn btn-sm btn-primary float-right m-t-n-xs"
-                                                            type="submit" id="save" disabled>Save</button></td>
-    
-                            </tr>
-                        </tfoot>
+                                            
 
                                     </table>
+
+<button class="btn btn-sm btn-primary float-right m-t-n-xs"
+                                                            type="submit" id="save" >Save</button>
+                    {!! Form::close() !!}
                                 </div>
                             </div>
                           
@@ -121,88 +120,94 @@
             </div>
         </div>
 
-    </div>
+   
 </section>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
     </div>
 </div>
-</div>
-</div>
 
-<div id="dialog" title="Confirmation Required">
-  Are you sure about this?
-</div>
 
-<!-- continue Modal -->
-<div class="modal inmodal show" id="newFormModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog-new">
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="formModal">Order Collection</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-      
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="submit" class="btn btn-primary"  data-dismiss="modal">Yes</button>
-            <a href="{{ route("order.collection")}}" class="btn btn-danger">No</a>
-        </div>
-       
-    </div>
-</div>
-    </div>
-</div>
-</div>
-</div>
+
 
 
 @endsection
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
+        
+        });
+    </script>
+<script>
+$(document).ready(function (){
+   var table = $('.datatable-basic').DataTable();
+   
+   // Handle form submission event 
+   $('#frm-example').on('submit', function(e){
+      var form = this;
 
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
+      var rowCount = $('#table-1 >tbody >tr').length;
+console.log(rowCount);
 
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
 
-    });
+if(rowCount == '1'){
+var c= $('#table-1 >tbody >tr').find('input[type=checkbox]');
 
+  if(c.is(':checked')){ 
+var tick=c.val();
+console.log(tick);
+
+$(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'checked_item_id[]')
+                  .val(tick)  );
+
+}
+
+}
+
+
+else if(rowCount > '1'){
+      // Encode a set of form elements from all pages as an array of names and values
+      var params = table.$('input').serializeArray();
+
+      // Iterate over all form elements
+      $.each(params, function(){     
+         // If element doesn't exist in DOM
+         if(!$.contains(document, form[this.name])){
+            // Create a hidden element 
+            $(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'checked_item_id[]')
+                  .val(this.value)
+            );
+         } 
+      });      
+
+}
+   
+   });  
+    
 });
+
+
 </script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 <script type="text/javascript">
     function model(id, type) {

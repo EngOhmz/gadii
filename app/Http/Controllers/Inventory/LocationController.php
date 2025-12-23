@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Inventory;
 
 use App\Http\Controllers\Controller;
 use App\Models\Location;
+use App\Models\User;
+use App\Models\LocationManager;
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
@@ -16,9 +18,10 @@ class LocationController extends Controller
     public function index()
     {
         //
-        $location= Location::all();
+        $location= Location::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+         $user= User::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
       
-       return view('inventory.location',compact('location'));
+       return view('inventory.location',compact('location','user'));
     }
 
     /**
@@ -42,8 +45,33 @@ class LocationController extends Controller
         //
 
         $data=$request->post();
-        $data['added_by']=auth()->user()->id;
+        $data['type']='3';
+        $data['added_by']=auth()->user()->added_by;
         $location = Location::create($data);
+
+ $nameArr =$request->manager ;
+
+
+             if(!empty($nameArr)){
+            for($i = 0; $i < count($nameArr); $i++){
+                if(!empty($nameArr[$i])){
+                    $items = array(
+                        'manager' => $nameArr[$i],
+                        'name' =>   $request->name,
+                       'main' =>   $request->main,
+                       'location_id'=>$location->id,
+                         'order_no' => $i,
+                        'added_by' => auth()->user()->added_by);
+                       
+                      $manager = LocationManager::create($items);
+    
+    
+                }
+            }
+        }    
+
+
+    
  
         return redirect(route('location.index'))->with(['success'=>'Location Created Successfully']);
     }
@@ -69,7 +97,9 @@ class LocationController extends Controller
     {
         //
         $data =  Location::find($id);
-        return view('inventory.location',compact('data','id'));
+       $items =  LocationManager::where('location_id',$id)->get();
+        $user= User::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+        return view('inventory.location',compact('data','id','user','items'));
     }
 
     /**
@@ -85,8 +115,48 @@ class LocationController extends Controller
         $location=  Location::find($id);
 
         $data=$request->post();
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $location->update($data);
+
+
+      $nameArr =$request->manager ;
+     $remArr = $request->removed_id ;
+     $expArr = $request->saved_items_id ;
+
+
+  if (!empty($remArr)) {
+                for($i = 0; $i < count($remArr); $i++){
+                   if(!empty($remArr[$i])){        
+                   LocationManager::where('id',$remArr[$i])->delete();        
+                       }
+                   }
+               }
+
+             if(!empty($nameArr)){
+            for($i = 0; $i < count($nameArr); $i++){
+                if(!empty($nameArr[$i])){
+                    $items = array(
+                        'manager' => $nameArr[$i],
+                        'name' =>   $request->name,
+                       'main' =>   $request->main,
+                       'location_id'=>$id,
+                         'order_no' => $i,
+                        'added_by' => auth()->user()->added_by);
+
+                        if(!empty($expArr[$i])){
+                                 LocationManager::where('id',$expArr[$i])->update($items);  
+          
+          }
+          else{
+             LocationManager::create($items);   
+          }
+                      
+    
+    
+                }
+            }
+        }   
+
  
         return redirect(route('location.index'))->with(['success'=>'Location Updated Successfully']);
     }
@@ -101,7 +171,12 @@ class LocationController extends Controller
     {
         //
         $location=  Location::find($id);
-        $location->delete();
+        $data['disabled']=1;
+        $location->update($data);
+
+        $manager=  LocationManager::where('location_id',$id)->first();
+         $items['disabled']=1;
+        $manager->update($items);
  
         return redirect(route('location.index'))->with(['success'=>'Location Deleted Successfully']);
     }

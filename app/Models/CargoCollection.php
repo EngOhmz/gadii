@@ -10,27 +10,7 @@ class CargoCollection extends Model
     use HasFactory;
     protected $table = "cargo_collection";
 
-    protected $fillable = [      
-        'weight',
-     'due_weight',
-        'status',
-       'amount',
-  'route_id',
-'start_location',
-'end_location',
- 'from_region_id',
-'to_region_id',
- 'end',
-'receiver_name',
-'owner_id',
- 'item_id', 
- 'quantity', 
-    'pacel_id', 
-   'pacel_name', 
-  'pacel_number', 
-'truck_id',
-     'driver_id',
-        'added_by'];
+   protected  $guarded = ['id'];
 
        public function  client(){
     

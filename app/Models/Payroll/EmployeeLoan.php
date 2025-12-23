@@ -11,19 +11,7 @@ class  EmployeeLoan extends Model
 
  protected $table = "tbl_employee_loan";
 
-protected $fillable = ['user_id',
-'loan_amount',
-'paid_amount',
-'sponsor',
-'deduct_month',
-'reason',
-'request_date',
-'status',
-'returns',
-'approve_by',
-'added_by'
-
-]; 
+ protected $guarded = ['id','_token'];
 
 
   public function user(){

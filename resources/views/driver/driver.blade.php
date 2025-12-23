@@ -5,7 +5,7 @@
 <section class="section">
     <div class="section-body">
         <div class="row">
-            <div class="col-12 col-sm-6 col-lg-12">
+            <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Driver</h4>
@@ -28,7 +28,7 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
@@ -39,11 +39,8 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Full Name</th>
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Address</th>
+                                                    style="width: 156.484px;">Full Name</th>
+                                               
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
@@ -52,14 +49,8 @@
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
                                                     style="width: 98.1094px;">Licence No</th>
-                                              <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Employment</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Status</th>
+                                             
+                                                   
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
@@ -67,7 +58,7 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Action</th>
+                                                    style="width: 170.1094px;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -76,17 +67,10 @@
                                             <tr class="gradeA even" role="row">
                                                 <th>{{ $loop->iteration }}</th>
                                                 <td>{{$row->driver_name }}</td>
-                                                <td>{{$row->address}}</td>
                                                 <td>{{$row->mobile_no}}</td>
                                                 <td>{{$row->licence}}</td>
-                                                <td>
-                                             @if($row->type == 'owned')
-                                               Hired by Company
-                                              @else
-                                               Hired by Third Party Company
-                                         @endif
-                                                </td>
-                                                <td>{{$row->driver_status}}</td>
+                                               
+                                                
                                               <td>
                                              @if($row->available == '0')
                                                Unavailale
@@ -95,18 +79,22 @@
                                          @endif
                                                 </td>
                                                 <td>
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
+                                                 <div class="form-inline">
+                                                    <a class="list-icons-item text-success"
                                                     href="{{ route('driver.licence', $row->id)}}">
-                                                    <i class="fa fa-eye"></i>
-                                                </a>
-                                                    <a class="btn btn-xs btn-outline-primary text-uppercase px-2 rounded"
+                                                    <i class="icon-eye"></i>
+                                                </a>&nbsp 
+
+                                                    <a class="list-icons-item text-primary"
                                                         href="{{ route("driver.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                                        <i class="icon-pencil7"></i>
+                                                    </a>&nbsp
+
                                                     {!! Form::open(['route' => ['driver.destroy',$row->id],
                                                     'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
                                                     {{ Form::close() }}
+&nbsp
 
                                                    
 
@@ -144,63 +132,80 @@
                                                 @endif
 
                                                 <div class="form-group row"><label class="col-lg-2 col-form-label">Full Name</label>
-                                                   <div class="col-lg-10">
+                                                   <div class="col-lg-4">
                                                            <input type="text" name="driver_name"
                                                             value="{{ isset($data) ? $data->driver_name : ''}}"
                                                             class="form-control" required>
                                                     </div>
-                                                </div>
-                                               
-                                                <div class="form-group row"><label
-                                                        class="col-lg-2 col-form-label">Address</label>
+                                                        
+                                                    <label class="col-lg-2 col-form-label">Phone Number</label>
 
-                                                    <div class="col-lg-10">
-                                                        <input type="text" name="address"
-                                                            value="{{ isset($data) ? $data->address : ''}}"
-                                                            class="form-control" required>
-                                                    </div>
-                                                </div>
-
-                                          <div class="form-group row"><label
-                                                        class="col-lg-2 col-form-label">Phone Number</label>
-
-                                                    <div class="col-lg-10">
+                                                    <div class="col-lg-4">
                                                         <input type="text" name="mobile_no"
                                                             value="{{ isset($data) ? $data->mobile_no : ''}}"
                                                             class="form-control" required>
                                                     </div>
                                                 </div>
-                                           <div class="form-group row"><label
-                                                        class="col-lg-2 col-form-label">Licence No</label>
+                                                
+                                                
+                                                <div class="form-group row">
+                                                <label class="col-lg-2 col-form-label">Licence No</label>
 
-                                                    <div class="col-lg-10">
+                                                    <div class="col-lg-4">
                                                         <input type="text" name="licence"
                                                             value="{{ isset($data) ? $data->licence : ''}}"
                                                             class="form-control" required>
                                                     </div>
+                                                
+                                                <label class="col-lg-2 col-form-label">Address</label>
+
+                                                    <div class="col-lg-4">
+                                                        <input type="text" name="address"
+                                                            value="{{ isset($data) ? $data->address : ''}}"
+                                                            class="form-control" >
+                                                    </div>
                                                 </div>
+
+                                          <div class="form-group row">
+                                                <label class="col-lg-2 col-form-label">TIN</label>
+
+                                                    <div class="col-lg-4">
+                                                        <input type="text" name="TIN"
+                                                            value="{{ isset($data) ? $data->TIN : ''}}"
+                                                            class="form-control" required>
+                                                    </div>
+                                                
+                                                <label class="col-lg-2 col-form-label">NSSF</label>
+
+                                                    <div class="col-lg-4">
+                                                        <input type="text" name="NSSF"
+                                                            value="{{ isset($data) ? $data->NSSF : ''}}"
+                                                            class="form-control" >
+                                                    </div>
+                                                </div>
+                                           
                                                    <div class="form-group row"><label
                                                         class="col-lg-2 col-form-label">Referee</label>
 
-                                                    <div class="col-lg-10">
+                                                    <div class="col-lg-4">
                                                         <input type="text" name="referee"
                                                             value="{{ isset($data) ? $data->referee : ''}}"
-                                                            class="form-control" required>
+                                                            class="form-control">
                                                     </div>
-                                                </div>
-                                                <div class="form-group row"><label class="col-lg-2 col-form-label">Experience</label>
-                                                    <div class="col-lg-10">
+            
+                                                <label class="col-lg-2 col-form-label">Experience</label>
+                                                    <div class="col-lg-4">
                                                             <input type="text" name="experience"
                                                              value="{{ isset($data) ? $data->experience : ''}}"
-                                                             class="form-control" required>
+                                                             class="form-control">
                                                      </div>
                                                  </div>
                                                 
-                                         <div class="form-group row"><label
-                                                class="col-lg-2 col-form-label"> Employment</label>
+                                         <div class="form-group row">
+                                         <label class="col-lg-2 col-form-label"> Employment</label>
 
-                                            <div class="col-lg-10">
-                                               <select class="form-control select2" style="width: 100%"  name="type" required>
+                                            <div class="col-lg-4">
+                                               <select class="form-control m-b" style="width: 100%"  name="type" required>
                                                    <option value="">Select</option>
                                                <option @if(isset($data))
                                                    {{$data->type == 'owned'  ? 'selected' : ''}}
@@ -211,12 +216,11 @@
                                                  </select>
                                                 
                                             </div>
-                                        </div>
-                                                 <div class="form-group row"><label
-                                                         class="col-lg-2 col-form-label">Status</label>
+                                            
+                                       <label class="col-lg-2 col-form-label">Status</label>
  
-                                                     <div class="col-lg-10">
-                                                        <select class="form-control select2" style="width: 100%" name="driver_status" required>
+                                                     <div class="col-lg-4">
+                                                        <select class="form-control m-b" style="width: 100%" name="driver_status">
                                                             <option value="">Select Status</option>
                                                         <option @if(isset($data))
                                                             {{$data->driver_status == 'Permanent Driver'  ? 'selected' : ''}}
@@ -228,16 +232,18 @@
                                                          
                                                      </div>
                                                  </div>
+                                                 
+                                                 
                                                     <div class="form-group row"><label
                                                          class="col-lg-2 col-form-label">Profile Picture</label>
  
                                                      <div class="col-lg-10">
                                                         @if (!@empty($data->profile))
                                                         
-                                         <input  type="file" name="profile" required value="{{$data->profile }}" class="form-control" onchange="loadBigFile(event)">
-                                         <br><img src="{{url('storage/assets/img/driver')}}/{{$data->profile}}" alt="{{$data->driver_name}}" width="100">
+                                         <input  type="file" name="profile" value="{{$data->profile }}" class="form-control" onchange="loadBigFile(event)">
+                                         <br><img src="{{url('assets/img/driver')}}/{{$data->profile}}" alt="{{$data->driver_name}}" width="100">
                                          @else
-                                       <input type="file" name="profile" required  class="form-control" onchange="loadBigFile(event)">
+                                       <input type="file" name="profile"  class="form-control" onchange="loadBigFile(event)">
                                                         @endif
                                                                                            
                                                                                                  <br>
@@ -280,6 +286,23 @@
 @endsection
 
 @section('scripts')
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
+
 <script>
     var loadBigFile=function(event){
       var output=document.getElementById('big_output');

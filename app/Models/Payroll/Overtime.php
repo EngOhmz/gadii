@@ -11,7 +11,7 @@ class Overtime extends Model
 
     protected $table = "tbl_overtime";
 
-protected $fillable = ['user_id','overtime_date','overtime_amount','notes','status','approve_by','added_by']; 
+ protected $guarded = ['id','_token'];
 
 
   public function user(){

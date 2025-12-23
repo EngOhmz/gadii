@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\View;
 use Laracasts\Flash\Flash;
 use App\Models\Cotton\InvoiceCotton;
 use App\Models\Pacel\PacelInvoice;
+use App\Models\Client;
+
 class DepositController extends Controller
 {
   
@@ -32,13 +34,14 @@ class DepositController extends Controller
     public function index()
     {
       
-      $deposit = Deposit::all();
+      $deposit = Deposit::where('added_by',auth()->user()->added_by)->orderBy('date', 'DESC')->get();;
       $payment_method = Payment_methodes::all();
- $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
-     $chart_of_accounts =AccountCodes::where('account_group','!=','Cash and Cash Equivalent')->get() ;
+     $bank_accounts=AccountCodes::where('account_status','Bank')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
+     $chart_of_accounts =AccountCodes::where('account_type','Income')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
      $currency = Currency::all();
-          $group_account = GroupAccount::all();
-        return view('deposit.data', compact('currency','deposit','group_account','payment_method','chart_of_accounts','bank_accounts'));
+          $group_account = GroupAccount::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+     $client=Client::where('user_id',auth()->user()->added_by)->get();
+        return view('deposit.data', compact('currency','deposit','group_account','payment_method','chart_of_accounts','bank_accounts','client'));
     }
 
     /**
@@ -62,7 +65,7 @@ class DepositController extends Controller
     public function store(Request $request)
     {
 
-            $deposit = new Deposit();
+             $deposit = new Deposit();
             $deposit->name = $request->name;
             $deposit->ref = $request->ref;
 
@@ -75,15 +78,13 @@ class DepositController extends Controller
              $deposit->exchange_code =   $request->exchange_code;
              $deposit->exchange_rate=  $request->exchange_rate;
              $random = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(4/strlen($x)) )),1,4);
-             $deposit->trans_id = "TRANS_DEP_".$random;
+             $deposit->trans_id = "DEP_".$random;
              $deposit->type=' Deposit';
-             $deposit->added_by = auth()->user()->id;
+                   $deposit->client_id  = $request->client_id ;
+             $deposit->added_by = auth()->user()->added_by;
              $deposit->payment_method =  $request->payment_method;
              $deposit->save();
-
-       
-
-            return redirect('deposit');
+        return redirect(route('deposit.index'))->with(['success'=>'Deposit Added successfully']);
         }
    
 
@@ -97,13 +98,13 @@ class DepositController extends Controller
     {
        $data= Deposit::find($id);
 
-
- $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
-     $chart_of_accounts =AccountCodes::where('account_group','!=','Cash and Cash Equivalent')->get() ;
+      $payment_method = Payment_methodes::all();
+ $bank_accounts=AccountCodes::where('account_status','Bank')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
+     $chart_of_accounts =AccountCodes::where('account_type','Income')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
      $currency = Currency::all();
-     $payment_method = Payment_methodes::all();
-            $group_account = GroupAccount::all();
-        return View::make('deposit.data', compact('data','currency','group_account','id','payment_method','chart_of_accounts','bank_accounts'))->render();
+          $group_account = GroupAccount::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+     $client=Client::where('user_id',auth()->user()->added_by)->get();
+        return View::make('deposit.data', compact('data','currency','group_account','id','payment_method','chart_of_accounts','bank_accounts','client'))->render();
     }
 
     /**
@@ -116,11 +117,12 @@ class DepositController extends Controller
     public function update(Request $request, $id)
     {
        
-          $deposit= Deposit::find($id);
-            $deposit->name = $request->name;
-            
-                        $deposit->ref = $request->ref ;
+         $deposit= Deposit::find($id);
 
+
+
+            $deposit->name = $request->name;           
+                        $deposit->ref = $request->ref ;
        $deposit->amount = $request->amount ;
          $deposit->date  = $request->date  ;
          $deposit->account_id  = $request->account_id  ;
@@ -130,12 +132,12 @@ class DepositController extends Controller
              $deposit->exchange_code =   $request->exchange_code;
              $deposit->exchange_rate=  $request->exchange_rate;
              $deposit->type=' Deposit';
-             $deposit->added_by = auth()->user()->id;
+                $deposit->client_id  = $request->client_id ;
+             $deposit->added_by = auth()->user()->added_by;
              $deposit->payment_method =  $request->payment_method;
             $deposit->save();
 
-        //Flash::success(trans('general.successfully_saved'));
-        return redirect('deposit');
+        return redirect(route('deposit.index'))->with(['success'=>'Deposit Updated successfully']);
      
  
     }
@@ -146,12 +148,16 @@ class DepositController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+   public function destroy($id)
     {
        
+    $deposit=Deposit::find($id);
+
+      
         Deposit::destroy($id);
+
         //Flash::success(trans('general.successfully_deleted'));
-        return redirect('deposit');
+         return redirect(route('deposit.index'))->with(['success'=>'Deposit Deleted successfully']);
     }
 
     public function approve($id)
@@ -170,8 +176,10 @@ class DepositController extends Controller
         $journal->transaction_type = 'deposit';
         $journal->name = 'Deposit Payment';
         $journal->payment_id =    $deposit->id;
+         $journal->client_id =    $deposit->client_id;
         $journal->notes= 'Deposit Payment with transaction id ' .$deposit->name;
         $journal->debit=    $deposit->amount ;
+         $journal->added_by=auth()->user()->added_by;
         $journal->save();
 
         $journal = new JournalEntry();
@@ -183,12 +191,15 @@ class DepositController extends Controller
         $journal->transaction_type = 'deposit';
         $journal->name = 'Deposit Payment';
         $journal->payment_id =    $deposit->id;
+        $journal->client_id =    $deposit->client_id;
         $journal->notes= 'Deposit Payment with transaction id ' .$deposit->name;
         $journal->credit=   $deposit->amount ;
+         $journal->added_by=auth()->user()->added_by;
         $journal->save();
     
        
-
+ $bank_accounts=AccountCodes::where('id',$deposit->bank_id)->first() ;
+if($bank_accounts->account_status == 'Bank'){
 $account= Accounts::where('account_id',$deposit->bank_id)->first();
 
 if(!empty($account)){
@@ -204,7 +215,7 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= $deposit->amount;
        $new[' exchange_code']='TZS';
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 $balance=$deposit->amount;
      Accounts::create($new);
 }
@@ -224,10 +235,10 @@ $balance=$deposit->amount;
                                  'total_balance' =>$balance,
                                    'status' => 'paid' ,
                                 'notes' => 'Deposit Payment with transaction id ' .$deposit->name ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
                             
-
+}
 
       
 
@@ -238,10 +249,35 @@ public function findInvoice(Request $request)
    {
                 $id=$request->id;
                 $type = $request->type;
-             
+          if($type == 'view'){   
+           $expense = Expenses::where('multiple_id',$id)->get() ;
+            $con = Expenses::where('multiple_id',$id)->count() ;
+            $st = Expenses::where('multiple_id',$id)->where('status','1')->count() ;
+               return view('expenses.list',compact('expense','id','con','st'));
+            }else{      
        $purchases=PacelInvoice::where('status', '!=', '2')->get();
                return view('deposit.invoice',compact('purchases'));
 }
+}
+       
+ public function findClient(Request $request)
+    {
+ 
+  $codes  =AccountCodes::find($request->id);
+ if ($codes->account_group == 'Receivables') {
+$price="OK" ;
+}
+
+
+else{
+$price='' ;
+ }
+
+
+                return response()->json($price);                      
+ 
+    } 
+   
        
   
    

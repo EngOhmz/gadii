@@ -22,4 +22,15 @@ public function supplier(){
 
     return $this->BelongsTo('App\Models\Supplier','supplier_id');
 }
+
+public function assign(){
+
+    return $this->BelongsTo('App\Models\User','user_agent');
+}
+
+public function project(){
+
+    return $this->BelongsTo('App\Models\Project\Project','project_id');
+}
+
 }

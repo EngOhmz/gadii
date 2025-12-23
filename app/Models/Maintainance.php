@@ -11,18 +11,10 @@ class Maintainance extends Model
 
     protected $table = "maintainances";
 
-    protected $fillable = [      
-         'truck',
-         'truck_name',
-        'reg_no',
-         'driver',
-         'mechanical',
-         'date',
-         'type',
-         'reason',  
-       'report',   
-        'status',   
-        'added_by'];
+   protected $guarded = [
+         'id',      
+       'token'];
+    
         public function user()
         {
             return $this->belongsTo('App\Models\user');

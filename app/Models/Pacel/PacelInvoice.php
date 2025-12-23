@@ -28,4 +28,9 @@ class PacelInvoice extends Model
     
         return $this->belongsTo('App\Models\User','added_by');
       }
+
+ public function approve(){
+    
+        return $this->belongsTo('App\Models\User','issued_by');
+      }
 }

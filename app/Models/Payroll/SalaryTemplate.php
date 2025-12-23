@@ -13,7 +13,8 @@ class SalaryTemplate extends Model
 
     protected $primaryKey = 'salary_template_id';
 
-    protected $fillable = ['salary_template_id','salary_grade','basic_salary','overtime_salary','user_id'];
+ protected $fillable = ['salary_template_id','salary_grade','basic_salary','overtime_salary','user_id','checked','heslb_check','disabled'];
+  
 
     public function employeePayroll(){
 

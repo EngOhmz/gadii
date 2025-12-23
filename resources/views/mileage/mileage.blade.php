@@ -28,18 +28,22 @@
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
                                
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">#</th>
+                                                    style="width: 36.484px;">#</th>
+                                              <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 128.484px;">Date</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Truck</th>
+                                                    style="width: 116.484px;">Truck</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
@@ -68,9 +72,11 @@
                                                 <td>
                                                     {{ $loop->iteration }}
                                                 </td>
+                                           <td>{{Carbon\Carbon::parse($row->date)->format('d/m/Y')}} </td>
                                                 <td>{{$row->truck->reg_no}}</td>
+                                             
                                                 <td>From {{$row->route->from}} to {{$row->route->to}}</td>
-                                           <td>{{number_format($row->due_mileage,2)}} TZS</td>
+                                           <td>{{number_format($row->total_mileage,2)}} TZS</td>
                                                
                                                    <td> 
                                         @if($row->payment_status == 0)
@@ -86,40 +92,43 @@
 
                                                 <td>
                                                     
+                                   
+                                                     @if($row->due_mileage != 0 || $row->payment_status !=2 )
+                                                   
+                                                <div class="dropdown">
+                                  <a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+                                                <div class="dropdown-menu">          
 
-                                                     @if($row->due_mileage != 0 || $row->status_approve != 1 )
-                                                    <div class="btn-group">
-                                                        <button class="btn btn-xs btn-success dropdown-toggle"
-                                                            data-toggle="dropdown">Change<span
-                                                                class="caret"></span></button>
-                                                        <ul class="dropdown-menu animated zoomIn">
-                                                          
-
-                                                                  @if($row->status_approve != 1 && $row->payment_status !=2)
+                                                                  @if($row->payment_status !=2)
                                                                   
-                                                            <li class="nav-item"><a class="nav-link" title="Adjustment Fuel"
+                                                            <a class="nav-link" title="Adjustment Fuel"
                                                                 data-toggle="modal" href=""  value="{{ $row->id}}" data-type="adjustment" data-target="#appFormModal"
-                                                                onclick="model({{ $row->id }},'adjustment')">Adjustment Mileage
-                                                                    </a></li>                          
+                                                                onclick="model({{ $row->id }},'adjustment')">Adjust Mileage
+                                                                    </a>                          
                                                                     @endif
 
-                                                                    @if($row->fuel_adjustment != '' && $row->status_approve != 1 )
-                                                                    <li class="nav-item"><a class="nav-link" id="profile-tab2"
+                                                                    @if($row->fuel_adjustment != ''  )
+                                                                   <a class="nav-link" id="profile-tab2"
                                                                         href="{{ route('mileage.approve',$row->id)}}"
                                                                         role="tab"
-                                                                        aria-selected="false" onclick="return confirm('Are you sure?')">Approve Adjustment Mileage
-                                                                            </a></li>
+                                                                        aria-selected="false" onclick="return confirm('Are you sure?')">Approve Adjustment
+                                                                            </a>
                                                                             @endif
 
                                                        @if( $row->payment_status !=2)
                                                                   
-                                                            <li class="nav-item"><a class="nav-link" title="Make Payments"
+                                                            <a class="nav-link" title="Make Payments"
                                                                 href="{{ route('mileage_payment.show', $row->id)}}" 
                                                               >Make Payments
-                                                                    </a></li>                          
+                                                                    </a>                        
                                                                     @endif
-                                                        </ul>
-                                                    </div>
+
+                                                            <a class="nav-link" title="Adjustment Fuel"
+                                                                data-toggle="modal" href=""  value="{{ $row->id}}" data-type="date" data-target="#appFormModal"
+                                                                onclick="model({{ $row->id }},'date')">Adjust Date
+                                                                    </a>      
+                                                        
+                                                    </div></div>
                                                     @endif
 
                                                 </td>
@@ -206,7 +215,7 @@
                                                 <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Fuel Rate</label>
                                                     <div class="col-lg-4">
-                                                        <input type="number" step="0.001" name="fuel_rate"
+                                                        <input type="number" step="0.01" name="fuel_rate"
                                                             placeholder=""
                                                             value="{{ isset($data) ? $data->fuel_rate : ''}}"
                                                             class="form-control">
@@ -253,8 +262,8 @@
 @if(!empty($refill))
 @foreach($refill as $row)
 <!-- Modal -->
-<div class="modal inmodal " id="view{{$row->fuel_id}}"  tabindex="-1" role="dialog" aria-hidden="true">
-                     <div class="modal-dialog" role="document">
+<div class="modal fade " id="view{{$row->fuel_id}}"  tabindex="-1" role="dialog" aria-hidden="true">
+                     <div class="modal-dialog">
 <div class="modal-content">
    <div class="modal-header">
        <h5 class="modal-title"  style="text-align:center;"> 
@@ -346,18 +355,18 @@
                    </tfoot>
                        </table>
                       </div>
-
    </div>
   
+
 </div>
-</div></div>
+</div>
 </div>
 
 @endforeach
 @endif
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
     </div>
 </div>
@@ -366,9 +375,8 @@
 
 
 <!-- route Modal -->
-<div class="modal inmodal show" id="routeModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="routeModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="formModal">Add Route</h5>
@@ -404,7 +412,7 @@
                     </div>
 
                 </div>
-                <div class="modal-footer bg-whitesmoke br">
+                <div class="modal-footer ">
                     <button type="submit" class="btn btn-primary route" onclick="saveRoute(this)">Save</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
@@ -414,51 +422,28 @@
         </div>
     </div>
 </div>
-</div>
-</div>
+
 
 @endsection
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
+        
+        });
+    </script>
 
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 <script type="text/javascript">
 
@@ -504,7 +489,7 @@ $(document).ready(function() {
 
 $.ajax({
     type: 'GET',
-    url: '{{url("mileageModal")}}',
+    url: '{{url("pacel/mileageModal")}}',
     data: {
         'id': id,
         'type':type,
@@ -513,7 +498,7 @@ $.ajax({
     async: true,
     success: function(data) {
         //alert(data);
-        $('.modal-dialog').html(data);
+        $('#appFormModal > .modal-dialog').html(data);
     },
     error: function(error) {
         $('#appFormModal').modal('toggle');

@@ -11,17 +11,7 @@ class InventoryList extends Model
 
     protected $table = "inventory_list";
 
-   protected $fillable = [
-    'serial_no',
-   'reference',
-    'brand_id',
-    'purchase_id',
-    'purchase_date',
-    'location',
-    'truck_id',
-    'status',  
-    'assign_reference',
-    'added_by'];
+   protected $guarded = ['id'];
     
     public function brand(){
 

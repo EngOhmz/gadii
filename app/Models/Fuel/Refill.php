@@ -11,23 +11,14 @@ class Refill extends Model
 
     protected $table = "refills";
 
-    protected $fillable = [      
-        'truck',
-        'route',
-        'fuel_id',
-        'litres',  
-        'price', 
-       'payment_type', 
-        'account_id',     
-        'total_cost',
-        'added_by'];
+   protected  $guarded = ['id'];
 
-        public function route(){
+        public function tariff(){
 
             return $this->belongsTo('App\Models\Route','route');
           }
 
-          public function truck(){
+          public function vehicle(){
 
             return $this->belongsTo('App\Models\Truck','truck');
           }

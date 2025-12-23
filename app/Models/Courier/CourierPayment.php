@@ -25,4 +25,10 @@ class CourierPayment extends Model
     {
         return $this->belongsTo('App\Models\user');
     }
+
+public function bank(){
+    
+        return $this->belongsTo('App\Models\AccountCodes','account_id');
+      }
+
 }

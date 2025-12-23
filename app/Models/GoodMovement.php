@@ -11,18 +11,21 @@ class GoodMovement extends Model
 
     protected $table = "good_movements";
 
-    protected $fillable = [
-         'date',      
-       'item_id',
-        'staff',   
-        'source_location',  
-       'destination_location',            
-        'quantity', 
-      'status',
-        'added_by'];
+     protected $guarded = ['id'];
     
-    public function user()
-    {
-        return $this->belongsTo('App\Models\user');
+  public function approve(){
+
+    //return $this->BelongsTo('App\Models\FieldStaff','staff');
+   return $this->BelongsTo('App\Models\User','staff');
+}
+
+  public function source(){
+
+        return $this->BelongsTo('App\Models\Location','source_store');
+    }
+
+   public function destination(){
+
+        return $this->BelongsTo('App\Models\Location','destination_store');
     }
 }

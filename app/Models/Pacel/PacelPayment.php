@@ -25,4 +25,8 @@ class PacelPayment extends Model
     {
         return $this->belongsTo('App\Models\user');
     }
+ public function payment(){
+    
+        return $this->BelongsTo('App\Models\AccountCodes','account_id');
+    }
 }

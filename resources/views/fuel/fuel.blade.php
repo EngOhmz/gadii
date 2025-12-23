@@ -19,11 +19,7 @@
                                     List</a>
                             </li>
                            
-                            <li class="nav-item">
-                                <a class="nav-link @if(!empty($id)) active show @endif" id="profile-tab2"
-                                    data-toggle="tab" href="#profile2" role="tab" aria-controls="profile"
-                                    aria-selected="false">New Fuel</a>
-                            </li>
+                           
                            
 
                         </ul>
@@ -32,18 +28,22 @@
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
                                
-                                    <table class="table table-striped" id="table-1">
+                                   <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">#</th>
+                                                    style="width: 28.484px;">#</th>
+                                       <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 108.484px;">Date</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Truck</th>
+                                                    style="width: 126.484px;">Truck</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
@@ -58,7 +58,7 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Actions</th>
+                                                    style="width: 108.1094px;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -69,6 +69,7 @@
                                                 <td>
                                                     {{ $loop->iteration }}
                                                 </td>
+                                            <td>{{Carbon\Carbon::parse($row->date)->format('d/m/Y')}} </td>
                                                 <td>{{$row->truck->reg_no}}</td>
                                                 <td>From {{$row->route->from}} to {{$row->route->to}}</td>
 
@@ -85,51 +86,42 @@
                                                
 
                                                 <td>
-                                                    @if($row->due_fuel != 0 && $row->status_approve != 1 )
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        title="Edit" onclick="return confirm('Are you sure?')"
-                                                        href="{{ route('fuel.edit', $row->id)}}"><i
-                                                            class="fa fa-edit"></i></a>
-                                                            @endif
-
-                                                    {!! Form::open(['route' => ['fuel.destroy',$row->id],
-                                                    'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                    {{ Form::close() }}
-
-                                                     @if($row->due_fuel != 0 || $row->status_approve != 1 )
-                                                    <div class="btn-group">
-                                                        <button class="btn btn-xs btn-success dropdown-toggle"
-                                                            data-toggle="dropdown">Change<span
-                                                                class="caret"></span></button>
-                                                        <ul class="dropdown-menu animated zoomIn">
+                                                <div class="form-inline">
+                                                  
+                                                    
+                                                    
+                                                    <div class="dropdown">
+                                  <a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+                                                       <div class="dropdown-menu">
+                                                          
                                                             @if($row->due_fuel != 0 )
-                                                            <li class="nav-item"><a class="nav-link"
+                                                         <a class="nav-link"
                                                                     title="Refill Fuel"
                                                                     data-toggle="modal"  href="#" data-target="#appFormModal"
                                             data-id="{{ $row->id }}" data-type="refill"
                                             onclick="model({{ $row->id }},'refill')">Refill Fuel
-                                                                  </a></li>
+                                                                  </a>
                                                                   @endif
 
-                                                                  @if($row->status_approve != 1 )
                                                                   
-                                                            <li class="nav-item"><a class="nav-link" title="Adjustment Fuel"
+                                                                  
+                                                            <a class="nav-link" title="Adjustment Fuel"
                                                                 data-toggle="modal" href=""  value="{{ $row->id}}" data-type="adjustment" data-target="#appFormModal"
                                                                 onclick="model({{ $row->id }},'adjustment')">Adjustment Fuel
-                                                                    </a></li>                          
-                                                                    @endif
+                                                                    </a>                        
+                                                                  
 
-                                                                    @if($row->fuel_adjustment != '' && $row->status_approve != 1 )
-                                                                    <li class="nav-item"><a class="nav-link" id="profile-tab2"
+                                                                    @if($row->fuel_adjustment != '' )
+                                                                    <a class="nav-link" id="profile-tab2"
                                                                         href="{{ route('fuel.approve',$row->id)}}"
                                                                         role="tab"
                                                                         aria-selected="false" onclick="return confirm('Are you sure?')">Approve Adjustment Fuel
-                                                                            </a></li>
+                                                                            </a>
                                                                             @endif
-                                                        </ul>
+                                                        </div>
+                                </div>
                                                     </div>
-                                                    @endif
+                                                
 
                                                 </td>
                                             </tr>
@@ -165,13 +157,30 @@
                                                 @endif
 
 
+                             <div class="form-group row">
+                                                     <label class="col-lg-2 col-form-label"> Date</label>
+                                                    <div class="col-lg-4">
+                                                        <input type="date" name="date"
+                                                            placeholder="0 if does not exist"
+                                                            value="{{ isset($data) ? $data->date : date('Y-m-d')}}" 
+                                                            class="form-control" required>
+                                                    </div>
+                                                  
+                                                      <label class="col-lg-2 col-form-label"> Order No</label>
+                                                    <div class="col-lg-4">
+                                                        <input type="text" name="order_no"
+                                                            placeholder=""
+                                                            value="{{ isset($data) ? $data->order_no :''}}" 
+                                                            class="form-control"  required>
+                                                    </div>
+                                                  
+                                                </div>
 
 
                                                 <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Truck</label>
                                                     <div class="col-lg-4">
-                                                        <select class="form-control" name="truck_id" required
-                                                        id="supplier_id">
+                                                        <select class="form-control m-b truck_id" name="truck_id"  id="truck" required>
                                                         <option value="">Select</option>
                                                         @if(!empty($truck))
                                                         @foreach($truck as $row)
@@ -185,10 +194,19 @@
 
                                                     </select>
                                                     </div>
+                                                    <label class="col-lg-2 col-form-label">Driver</label>
+                                                    <div class="col-lg-4">
+                               <input type="text"  id="driver"  value="" required class="form-control driver" readonly>
+                                 <input type="hidden"  name ="driver_id" id="driver_id"   value="{{ isset($data) ? $data->driver_id : ''}}" required class="form-control driver_id">
+                                  <p class"errors" id="errors" style="color:red;"></p>                           
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Route</label>
                                                     <div class="col-lg-4">
-                                                        <div class="input-group">
-                                                            <select class="form-control" name="route_id" required
+                                                       
+                                                            <select class="form-control m-b" name="route_id" required
                                                                 id="route">
                                                                 <option value="">Select</option>
                                                                 @if(!empty($route))
@@ -202,25 +220,41 @@
                                                                 @endif
 
                                                             </select>
-                                                            <div class="input-group-append">
-                                                                <button class="btn btn-primary" type="button"
-                                                                    data-toggle="modal" href="routeModal"  
-                                                                    data-target="#routeModal"><i
-                                                                        class="fa fa-plus-circle"></i></button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="form-group row">
-                                                    <label class="col-lg-2 col-form-label">Fuel Used</label>
-                                                    <div class="col-lg-4">
-                                                        <input type="number" step="0.001" name="fuel_used"
-                                                            placeholder=""
-                                                            value="{{ isset($data) ? $data->fuel_used : ''}}"
-                                                            class="form-control">
+                                                           
                                                     </div>
                                                    
+                                                     <label class="col-lg-2 col-form-label">Fuel Used</label>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" step="0.01" name="fuel_used"
+                                                            placeholder=""
+                                                            value="{{ isset($data) ? $data->fuel_used : ''}}"
+                                                            class="form-control"  required>
+                                                    </div>
+                                                  
+                                                </div>
+
+
+
+
+
+
+                                                <div class="form-group row">
+                                                     <label class="col-lg-2 col-form-label"> Price</label>
+                                                    <div class="col-lg-4">
+                                                         <input type="number" name="price"
+                                                            placeholder=""
+                                                            value="{{ isset($data) ? $data->price : ''}}" 
+                                                            class="form-control"  required>
+                                                    </div>
+                                                  
+                                                      <label class="col-lg-2 col-form-label"> Amount</label>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" name="amount"
+                                                            placeholder=""
+                                                            value="{{ isset($data) ? $data->amount :''}}" 
+                                                            class="form-control"  required>
+                                                    </div>
+                                                  
                                                 </div>
 
 
@@ -238,7 +272,7 @@
                                                             type="submit">Update</button>
                                                         @else
                                                         <button class="btn btn-sm btn-primary float-right m-t-n-xs"
-                                                            type="submit">Save</button>
+                                                            type="submit" id="save">Save</button>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -262,8 +296,8 @@
 @if(!empty($refill))
 @foreach($refill as $row)
 <!-- Modal -->
-<div class="modal inmodal " id="view{{$row->fuel_id}}"  tabindex="-1" role="dialog" aria-hidden="true">
-                     <div class="modal-dialog" role="document">
+<div class="modal fade " id="view{{$row->fuel_id}}"  tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">     
 <div class="modal-content">
    <div class="modal-header">
        <h5 class="modal-title"  style="text-align:center;"> 
@@ -272,7 +306,7 @@
             $truck=App\Models\Truck::where('id', $row->truck)->get();   
           @endphp
              @foreach($truck as $t)
-             For {{$t->truck_name}} 
+             For {{$t->reg_no}} 
             @endforeach
 
             @php    
@@ -291,7 +325,7 @@
 
    <div class="modal-body">
 <div class="table-responsive">
-                       <table class="table table-bordered table-striped">
+                        <table class="table datatable-basic table-striped">
 <thead>
                <tr>
                 <th>#</th>
@@ -355,29 +389,29 @@
                    </tfoot>
                        </table>
                       </div>
-
+ <div class="modal-footer ">
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+        </div>
    </div>
   
 </div>
-</div></div>
+</div>
 </div>
 
 @endforeach
 @endif
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
     </div>
 </div>
-</div>
-</div>
+
 
 
 <!-- route Modal -->
-<div class="modal inmodal show" id="routeModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-dialog" role="document">
+<div class="modal fade" id="routeModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="formModal">Add Route</h5>
@@ -393,7 +427,7 @@
                  <div class="form-row">
                                   <div class="form-group col-md-6">
                                     <label for="inputState">Departure Region</label>
-                                    <select  id="from_region_id" name="from_region_id" id="from_region_id"  class="form-control from_region">
+                                    <select  id="from_region_id" name="from_region_id" id="from_region_id"  class="form-control m-b from_region" required>
                                       <option ="">Select Departure Region</option>
                                       @if(!empty($region))
                                                         @foreach($region as $row)
@@ -408,12 +442,11 @@
                                   </div>
 
                   
-              <div class="form-group col-md-6">
-                                    <label for="inputState">Departure District</label>
-                                      <select id="from_district_id" name="from_district_id"  class="form-control from_district">
-                                      <option selected="">Select Departure District</option>
-                                    
-                                    </select>
+             <div class="form-group col-md-6">
+                                    <label for="inputState">Departure Specific Place</label>
+                                     <input type="text" name="depature_specific_place" id="from_district_id"
+                                                                value=""
+                                                                class="form-control">
                            </div>
                              </div>
 
@@ -422,7 +455,7 @@
                                                                          <div class="form-row">
                                   <div class="form-group col-md-6">
                                     <label for="inputState">Arrival Region</label>
-                                    <select  id="to_region_id" name="to_region_id"  class="form-control to_region">
+                                    <select  id="to_region_id" name="to_region_id"  class="form-control m-b to_region" required>
                                       <option ="">Select Arrival Region</option>
                                       @if(!empty($region))
                                                         @foreach($region as $row)
@@ -437,15 +470,15 @@
                                   </div>
 
                    
-              <div class="form-group col-md-6">
-                                    <label for="inputState">Arrival District</label>
-                                    <select id="to_district_id" name="to_district_id" class="form-control to_district">
-                                      <option selected="">Select Arrival District</option>
-                                    
-                                    </select>
+            <div class="form-group col-md-6">
+                                    <label for="inputState">Arrive Specific Place</label>
+                                        <input type="text" name="arrive_specific_place" id="to_district_id"
+                                                                value=""
+                                                                class="form-control">
                                   </div>
 
                              </div>
+
 
 
                                                     <div class="form-group row"><label
@@ -458,14 +491,13 @@
                                                         </div>
                                                     </div>
                 </div>
-                <div class="modal-footer bg-whitesmoke br">
-                    <button type="submit" class="btn btn-primary route" onclick="saveRoute(this)">Save</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-
-                 </form>
-            </div>
+            
+ <div class="modal-footer ">
+             <button class="btn btn-primary"  type="submit" id="save" class="btn btn-primary route" onclick="saveRoute(this)"><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
+                 </form>
+          
     </div>
 </div>
 </div>
@@ -477,45 +509,22 @@
 
  
 <script>
-$(document).ready(function() {
-
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,         
+            "columnDefs": [
+                {"targets": [3]},
+            
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+        
+        });
+    </script>
 
 
 
@@ -532,10 +541,53 @@ console.log(id);
             $('.account').hide(); 
         } 
 
+/*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+
 });
 
 
     });
+</script>
+
+
+<script>
+$(document).ready(function() {
+$(document).on('change', '.truck_id', function() {
+        var id = $(this).val();
+        $.ajax({
+            url: '{{url("tracking/findDriver")}}',
+            type: "GET",
+            data: {
+                id: id,
+            },
+            dataType: "json",
+            success: function(response) {
+                console.log(response);
+
+                  $("#errors").empty();
+              $("#save").attr("disabled", false);
+                $("#driver").val('');
+                 $("#driver_id").val('');
+
+                          if (response == 'Please Assign Driver to the Truck.') {
+                          $("#errors").append(response);
+                         $("#save").attr("disabled", true);
+                        } else {
+                       $("#driver").val(response.driver_name);
+                        $("#driver_id").val(response.id);
+                        }
+
+}
+
+        });
+  });
+
+
+});
 </script>
 
 <script type="text/javascript">
@@ -595,13 +647,16 @@ $.ajax({
     async: true,
     success: function(data) {
         //alert(data);
-        $('.modal-dialog').html(data);
+        $('#appFormModal > .modal-dialog').html(data);
     },
     error: function(error) {
         $('#appFormModal').modal('toggle');
 
     }
+
+
 });
+
 
 }
 
@@ -617,6 +672,8 @@ function calculateCost() {
     });
     
     }
+
+
 </script>
 
 

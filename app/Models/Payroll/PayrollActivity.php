@@ -11,17 +11,12 @@ class PayrollActivity extends Model
 
     protected $table = "tbl_payroll_activities";
 
-    protected $fillable = [
-    'module_id',
-    'module',
-    'date',
-    'activity', 
-    'added_by'];
+     protected $guarded = ['id','_token'];
     
    
     public function user(){
     
-        return $this->belongsTo('App\Models\User','added_by');
+        return $this->belongsTo('App\Models\User','user_id');
       }
 
      

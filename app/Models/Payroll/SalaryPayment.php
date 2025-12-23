@@ -11,7 +11,7 @@ class SalaryPayment extends Model
 
     protected $table = "tbl_salary_payments";
 
-    protected $fillable = ['salary_payment_id','user_id','payment_month','fine_deduction','payment_type','comments','paid_date','deduct_from','account_id','added_by']; 
+    protected $guarded = ['id','_token'];
 
  public function method(){
 

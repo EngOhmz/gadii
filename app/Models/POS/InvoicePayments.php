@@ -14,5 +14,17 @@ class InvoicePayments extends Model
 
     //protected $quarded = ['id','_token'];
     protected $guarded = ['id'];
+
+ public function payment(){
+    
+        return $this->BelongsTo('App\Models\AccountCodes','account_id');
+    }
+    
+     
+    public function invoice(){
+    
+        return $this->BelongsTo('App\Models\POS\Invoice','invoice_id');
+    }
+
 }
 

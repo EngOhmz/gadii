@@ -12,7 +12,7 @@ class Accounts extends Model
 
         public function chart()
     {
-        return $this->hasOne(ChartOfAccount::class, 'id', 'account_id');
+ return $this->belongsTo('App\Models\AccountCodes','account_id');
     }
 
 

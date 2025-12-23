@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class AccountCodes extends Model
 {
     protected $table = "gl_account_codes";
+    
+    protected $guarded = ['id','_token'];
 
     public $timestamps = false;
     
@@ -14,6 +16,12 @@ class AccountCodes extends Model
     {
         return $this->hasOne(ClassAccount::class, 'class_name', 'class');
     }
+    
+     public function groupAccount()
+    {
+        return $this->BelongsTo('App\Models\GroupAccount', 'account_group');
+    }
+    
     
      public function journalEntry()
     {

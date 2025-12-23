@@ -14,11 +14,29 @@
                 </div>
                 <input type="hidden" name="id" id="r-id_">
             </div>
+            
+            {{--
+                  <div class="modal-body p-3">
+                <div class="form-group">
+                    <label class="control-label">Role Status</label>
+                    <select name="status" class="control-label">
+                    <option value="1">Public Role</option>
+                    <option value="0">Private Role</option>
+                    </select>
+                   
+                </div>
+            </div>
+              <div class="modal-body p-3">
+                <div class="form-group">
+                    <label class="control-label">Price Per Public Role</label>
+                    <input type="number" class="form-control" name="price" id="p-slug_">
+                </div>
+            </div>
+            --}}
             <div class="modal-footer p-0">
                 <div class="p-2">
-                    <button type="button" class="btn btn-sm btn-outline-warning px-3 mr-1" data-dismiss="modal">Close
-                    </button>
-                    {!! Form::submit('Save', ['class' => 'btn btn-sm btn-outline-success px-3']) !!}
+                   <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                   <button class="btn btn-primary"  type="submit" id="save" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
                 </div>
             </div>
             {!! Form::close() !!}

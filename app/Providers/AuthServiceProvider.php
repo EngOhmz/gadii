@@ -32,33 +32,33 @@ class AuthServiceProvider extends ServiceProvider
             return $role->id == 13;
         });
 
-        Gate::define('isAgronomy', function($user){            
-            foreach($user->roles as $role)
-            {                
-            }
-            return $role->id == 14;
-        });
+        // Gate::define('isAgronomy', function($user){            
+        //     foreach($user->roles as $role)
+        //     {                
+        //     }
+        //     return $role->id == 14;
+        // });
 
-        Gate::define('isCooperate', function($user){            
-            foreach($user->roles as $role)
-            {                
-            }
-            return $role->id == 15;
-        });
+        // Gate::define('isCooperate', function($user){            
+        //     foreach($user->roles as $role)
+        //     {                
+        //     }
+        //     return $role->id == 15;
+        // });
 
-        Gate::define('isFarmer', function($user){            
-            foreach($user->roles as $role)
-            {                
-            }
-            return $role->id == 16;
-        });
+        // Gate::define('isFarmer', function($user){            
+        //     foreach($user->roles as $role)
+        //     {                
+        //     }
+        //     return $role->id == 16;
+        // });
 
-        Gate::define('isWarehouse', function($user){            
-            foreach($user->roles as $role)
-            {                
-            }
-            return $role->id == 17;
-        });
+        // Gate::define('isWarehouse', function($user){            
+        //     foreach($user->roles as $role)
+        //     {                
+        //     }
+        //     return $role->id == 17;
+        // });
 
         //
     }

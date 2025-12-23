@@ -2,6 +2,10 @@
 
 
 @section('content')
+
+
+    
+    
 <section class="section">
     <div class="section-body">
         <div class="row">
@@ -11,15 +15,7 @@
                         <h4>Truck Report</h4>
                     </div>
                     <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link @if(empty($id)) active show @endif" id="home-tab2" data-toggle="tab"
-                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Truck Report
-                                    List</a>
-                            </li>
-                       
-
-                        </ul>
+                        
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
@@ -31,9 +27,8 @@ $center=App\Models\Truck::where('id',$account_id)->first();
 
         <div class="panel-heading">
             <h6 class="panel-title">
-             Truck Report
                 @if(!empty($start_date))
-                    for the period: <b>{{$start_date}} to {{$end_date}} for {{$center->truck_name}} - {{$center->reg_no}}</b>
+                    For the period: <b>{{Carbon\Carbon::parse($start_date)->format('d/m/Y')}} to {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}} for {{$center->truck_name}} - {{$center->reg_no}}</b>
                 @endif
             </h6>
         </div>
@@ -66,12 +61,13 @@ $center=App\Models\Truck::where('id',$account_id)->first();
                 </div>
                 <div class="col-md-4">
                     <label class="">Truck Name</label>
-                    {!! Form::select('account_id',$chart_of_accounts,$account_id, array('class' => 'select2','id'=>'account_id','placeholder'=>'Select','style'=>'width:100%','required'=>'required')) !!}
+                    {!! Form::select('account_id',$chart_of_accounts,$account_id, array('class' => 'form-control  m-b','id'=>'account_id','placeholder'=>'Select','style'=>'width:100%','required'=>'required')) !!}
                 </div>
 
-   <div class="col-md-4">
+   <div class="col-md-12">
                       <br><button type="submit" class="btn btn-success">Search</button>
                         <a href="{{Request::url()}}"class="btn btn-danger">Reset</a>
+                 
 
                 </div>                  
                 </div>
@@ -87,8 +83,18 @@ $center=App\Models\Truck::where('id',$account_id)->first();
         <div class="panel panel-white">
             <div class="panel-body ">
                 <div class="table-responsive">
+                
+                
+                  <?php
+                   
+                        $cr = \App\Models\JournalEntry::where('added_by', auth()->user()->added_by)->where('truck_id', $account_id)->whereBetween('date',
+                            [$start_date, $end_date])->sum('credit');
+                        $dr = \App\Models\JournalEntry::where('added_by', auth()->user()->added_by)->where('truck_id', $account_id)->whereBetween('date',
+                            [$start_date, $end_date])->sum('debit');
+                      
+                        ?>
 
-                    <table class="table table-striped table-condensed table-hover" id="tableExport" style="width:100%;">
+                    <table class="table datatable-button-html5-basic">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -96,7 +102,6 @@ $center=App\Models\Truck::where('id',$account_id)->first();
                         <th> Account Name</th>
                             <th>Debit </th>
                             <th>Credit</th>
-                    <th>Balance</th>
                             <th>Notes</th>
                         </tr>
                         </thead>
@@ -104,22 +109,19 @@ $center=App\Models\Truck::where('id',$account_id)->first();
 
                         @foreach($data as $key)
                           <?php
-                        $cr = 0;
-                        $dr = 0;
-                   
-                        $cr = \App\Models\JournalEntry::where('truck_id', $account_id)->whereBetween('date',
+                       
+                        $cr = \App\Models\JournalEntry::where('added_by', auth()->user()->added_by)->where('truck_id', $account_id)->whereBetween('date',
                             [$start_date, $end_date])->sum('credit');
-                        $dr = \App\Models\JournalEntry::where('truck_id', $account_id)->whereBetween('date',
+                        $dr = \App\Models\JournalEntry::where('added_by', auth()->user()->added_by)->where('truck_id', $account_id)->whereBetween('date',
                             [$start_date, $end_date])->sum('debit');
                       
                         ?>
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                   <td>{{Carbon\Carbon::parse($key->date)->format('d/m/Y')}} </td>
-                                    <td>{{ $key->chart->name }}</td>
+                                    <td>{{ $key->chart->account_name }}</td>
                                     <td>{{ number_format($key->debit,2) }}</td>
                                 <td>{{ number_format($key->credit,2) }}</td>  
-                    <td>{{ number_format($key->debit - $key->credit,2) }}</td>                                
                              <td>{{ $key->notes }}</td>
                                 
                             </tr>
@@ -133,7 +135,7 @@ $center=App\Models\Truck::where('id',$account_id)->first();
                                 <td><b>{{ number_format($dr,2) }}</b></td>
                                    
                                      <td><b>{{ number_format($cr,2) }}</b></td>
-                                    <td><b>{{ number_format($dr-$cr,2) }}</b></td>
+                          <td></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -164,50 +166,49 @@ $center=App\Models\Truck::where('id',$account_id)->first();
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    new TomSelect("#account_id",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
+    
+    <link rel="stylesheet" href="{{ asset('assets/datatables/css/jquery.dataTables.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/buttons.dataTables.min.css') }}">
+
+<script src="{{asset('assets/datatables/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('assets/datatables/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.print.min.js')}}"></script>
+<script>
+
+      $('.datatable-button-html5-basic').DataTable(
+        {
+        dom: 'lBfrtip',
+
+        buttons: [
+          {extend: 'copyHtml5',title: 'TRUCK REPORT @if(!empty($start_date)) FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d/m/Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}} FOR {{$center->truck_name}} - {{$center->reg_no}} @endif ', footer: true},
+           {extend: 'excelHtml5',title: 'TRUCK REPORT @if(!empty($start_date)) FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d/m/Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}}  FOR {{$center->truck_name}} - {{$center->reg_no}} @endif' , footer: true},
+           {extend: 'csvHtml5',title: 'TRUCK REPORT @if(!empty($start_date)) FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d/m/Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}}  FOR {{$center->truck_name}} - {{$center->reg_no}} @endif' , footer: true},
+            {extend: 'pdfHtml5',title: 'TRUCK REPORT @if(!empty($start_date)) FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d/m/Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}}  FOR {{$center->truck_name}} - {{$center->reg_no}} @endif', footer: true},
+            {extend: 'print',title: 'TRUCK REPORT @if(!empty($start_date)) FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d/m/Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}}  FOR {{$center->truck_name}} - {{$center->reg_no}} @endif' , footer: true}
+
+                ],
         }
-    });
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
-            },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+      );
+     
+    </script>
 
 @endsection

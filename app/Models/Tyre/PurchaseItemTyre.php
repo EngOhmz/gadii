@@ -10,18 +10,7 @@ class PurchaseItemTyre extends Model
     use HasFactory;
     protected $table = "purchase_item_tyres";
 
-    protected $fillable = [
-    'purchase_id',
-    'item_name',
-    'tax_rate',
-    'total_tax',
-    'quantity',
-    'total_cost',
-    'price',
-    'unit',        
-    'items_id',           
-    'order_no',      
-    'added_by'];
+    protected  $guarded = ['id'];
     
     public function user()
     {

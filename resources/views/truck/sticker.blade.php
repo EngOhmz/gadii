@@ -24,6 +24,31 @@
                                             href="{{ route('truck.sticker', $truck->id)}}"  aria-controls="profile"
                                             aria-selected="false">LATRA Sticker</a>
                                     </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" id="#tab2" 
+                                            href="{{ route('truck.permit', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">Road Permit</a>
+                                    </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" id="#tab2" 
+                                            href="{{ route('truck.comesa', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">COMESA</a>
+                                    </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" id="#tab2" 
+                                            href="{{ route('truck.carbon', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">CARBON</a>
+                                             <li class="nav-item">
+                                        <a class="nav-link" id="#tab5" 
+                                            href="{{ route('truck.wma', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">WMA</a> 
+                                </li> 
+                                 <li class="nav-item">
+                                        <a class="nav-link" id="#tab6" 
+                                            href="{{ route('truck.device', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">Tracking Device</a> 
+                                </li>
+                                  @can('view-cargo-menu')
                                      <li class="nav-item">
                                         <a class="nav-link" id="#tab3" 
                                             href="{{ route('truck.fuel', $truck->id)}}"  aria-controls="profile"
@@ -35,7 +60,7 @@
                                             href="{{ route('truck.route', $truck->id)}}"  aria-controls="profile"
                                             aria-selected="false">Routes</a>
                                     </li>
-                                     
+                                     @endcan
 
 
                                 </ul>
@@ -61,20 +86,21 @@
                                                         data-toggle="tab" href="#profile2" role="tab" aria-controls="profile"
                                                         aria-selected="false"> New Sticker</a>
                                                 </li>
-                                
+
+                                              
                                             </ul>
                                             <div class="tab-content tab-bordered" id="myTab3Content">
                                                 <div class="tab-pane fade @if($type =='sticker') active show @endif" id="home2" role="tabpanel"
                                                     aria-labelledby="home-tab2">
                                                     <div class="table-responsive">
-                                                        <table class="table table-striped" id="table-1">
+                                                      <table class="table datatable-basic table-striped">
                                                             <thead>
                                                                 <tr role="row">
                                 
                                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                                     rowspan="1" colspan="1"
                                                                     aria-label="Browser: activate to sort column ascending"
-                                                                    style="width: 208.531px;">#</th>
+                                                                    style="width: 28.531px;">#</th>
                                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
                                                                         colspan="1" aria-label="Engine version: activate to sort column ascending"
                                                                         style="width: 141.219px;">Issue Date</th>
@@ -102,28 +128,29 @@
                                                                 @foreach ($sticker as $row)
                                                                 <tr class="gradeA even" role="row">
                                                                     <th>{{ $loop->iteration }}</th>
-                                                                    <td>{{Carbon\Carbon::parse($row->issue_date)->format('M d, Y')}}</td>
-                                                                    <td>{{Carbon\Carbon::parse($row->expire_date)->format('M d, Y')}}</td>
+                                                                    <td>{{Carbon\Carbon::parse($row->issue_date)->format('d/m/Y')}}</td>
+                                                                    <td>{{Carbon\Carbon::parse($row->expire_date)->format('d/m/Y')}}</td>
                                                                     <td>{{$row->office}}</td>
-                                                                    <td>{{$row->officer}}</td>
+                                                                    <td>@if(!empty($row->officer)) {{$row->supplier->name}} @endif</td>
                                                                     
                                                                     <td>{{number_format($row->value,2)}}</td>
                                                                    
                                 
                                 
                                                                     <td>
-                                                                        
-                                                                        <a class="btn btn-xs btn-outline-primary text-uppercase px-2 rounded"
+                                                                        <div class="form-inline">
+                                                                        <a class="list-icons-item text-primary"
                                                                         href="{{ route("sticker.edit", $row->id)}}">
-                                                                        <i class="fa fa-edit"></i>
-                                                                    </a>
+                                                                      <i class="icon-pencil7"></i>
+                                                    </a>&nbsp
                                                                     
                                 
                                                                     {!! Form::open(['route' => ['sticker.destroy',$row->id],
                                                                     'method' => 'delete']) !!}
-                                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                                    {{ Form::close() }}
-                
+                                                                   {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::close() }}
+&nbsp
+         </div>       
                                 
                                                                     </td>
                                                                 </tr>
@@ -192,9 +219,23 @@
                                                                         <div class="form-group col-md-6">
                                                            
                                                                              <label for="inputEmail4">Issue Officer</label>
-                                                                             <input type="text" name="officer"
-                                                                         value="{{ isset($data) ? $data->officer : ''}}"
-                                                            class="form-control" required>
+                                                                               <div class="input-group mb-3">
+                                                    <select class="form-control append-button-single-field supplier_id" id="supplier_id" name="officer" required>
+                                                    <option value="">Select Officer</option>                                                    
+                                                            @foreach ($client as $m)                                                             
+                                                            <option value="{{$m->id}}" @if(isset($data))@if($data->officer == $m->id) selected @endif @endif >{{$m->name}}</option>
+                                                               @endforeach
+                                                             </select>
+                                                             &nbsp
+
+                                                                <button class="btn btn-outline-secondary" type="button"
+                                                                    data-toggle="modal" value=""
+                                                                    onclick="model('1','supplier')"
+                                                                    data-target="#appFormModal" href="appFormModal"><i
+                                                                        class="icon-plus-circle2"></i></button>
+
+                                                            </div>
+                                                                            
                                                                         </div>
                                                                         </div>
                                 
@@ -228,6 +269,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+                              
                                 
                                             </div>
                                         </div>
@@ -248,10 +291,33 @@
 
 </section>
 
+<!-- supplier Modal -->
+    <div class="modal fade" data-backdrop="" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
+<script src="{{ asset('assets2/js/bootstrap-datepicker.min.js') }}"></script>
 <script>
     function myFunction() {
        // alert('hellow')
@@ -270,4 +336,55 @@
 })
 
  </script>
+ 
+ 
+  <script type="text/javascript">
+        function model(id, type) {
+
+            $.ajax({
+                type: 'GET',
+                url: '{{ url('pos/purchases/invModal') }}',
+                data: {
+                    'id': id,
+                    'type': type,
+                },
+                cache: false,
+                async: true,
+                success: function(data) {
+                    //alert(data);
+                    $('#appFormModal > .modal-dialog').html(data);
+
+                },
+                error: function(error) {
+                    $('#appFormModal').modal('toggle');
+
+                }
+            });
+
+        }
+
+
+
+        function saveSupplier(e) {
+
+            $.ajax({
+                type: 'GET',
+                url: '{{ url('pos/purchases/save_supplier') }}',
+                data: $('.addClientForm').serialize(),
+                dataType: "json",
+                success: function(response) {
+                    console.log(response);
+
+                    var id = response.id;
+                    var name = response.name;
+
+                    var option = "<option value='" + id + "'  selected>" + name + " </option>";
+
+                    $('#supplier_id').append(option);
+                    $('#appFormModal').hide();
+                }
+            });
+        }
+    </script>
+
 @endsection

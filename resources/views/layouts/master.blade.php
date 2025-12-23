@@ -3,7 +3,7 @@
 
  @include('layouts.header')
 
-<body>
+<body oncontextmenu="return true">
 <!-- Main navbar -->
 	@include('layouts.main_navbar')
 <!-- /main navbar -->
@@ -22,17 +22,31 @@
 
 			<!-- Inner content -->
 			<div class="content-inner">
+                            @include('layouts.alerts.message')
 
 				<!-- Page header -->
+				
 				<div class="page-header page-header-light">
 					<div class="page-header-content header-elements-lg-inline">
-						<div class="page-title d-flex">
-							<h4><i class="icon-arrow-left52 mr-2"></i> <span class="font-weight-semibold">Home</span> - Dashboard</h4>
-							<a href="#" class="header-elements-toggle text-body d-lg-none"><i class="icon-more"></i></a>
-						</div>
+					
+							 <?php
+        $settings = App\Models\System::where('added_by', auth()->user()->added_by)->first();
+        
+        ?>
+						
+							<div class="d-sm-flex align-items-center mb-3 mb-lg-0 ms-lg-3">
+										<div class="me-auto me-lg-1">
+										<br><div class="fs-sm text-muted mb-1">Hello , {{auth()->user()->name}}</div>
+											<div class="fw-semibold">{{$settings->name}}</div><br>
+										</div>
 
+									</div>
+						
+                            
+                          
 						<div class="header-elements d-none">
 							<div class="d-flex justify-content-center">
+<!--
 								<a href="#" class="btn btn-link btn-float font-size-sm font-weight-semibold text-body">
 									<i class="icon-bars-alt text-pink"></i>
 									<span>Statistics</span>
@@ -45,9 +59,16 @@
 									<i class="icon-calendar5 text-pink"></i>
 									<span>Schedule</span>
 								</a>
+-->	                               
+                                
 							</div>
 						</div>
+					 
 					</div>
+
+
+
+<!--
 
 					<div class="breadcrumb-line breadcrumb-line-light header-elements-lg-inline">
 						<div class="d-flex">
@@ -61,16 +82,20 @@
 
 						<div class="header-elements d-none">
 							<div class="breadcrumb justify-content-center">
+
 								<a href="#" class="breadcrumb-elements-item">
 									<i class="icon-comment-discussion mr-2"></i>
 									Support
 								</a>
 
 								<div class="breadcrumb-elements-item dropdown p-0">
+
 									<a href="#" class="breadcrumb-elements-item dropdown-toggle" data-toggle="dropdown">
 										<i class="icon-gear mr-2"></i>
 										Settings
 									</a>
+
+
 
 									<div class="dropdown-menu dropdown-menu-right">
 										<a href="#" class="dropdown-item"><i class="icon-user-lock"></i> Account security</a>
@@ -79,10 +104,16 @@
 										<div class="dropdown-divider"></div>
 										<a href="#" class="dropdown-item"><i class="icon-gear"></i> All settings</a>
 									</div>
+
 								</div>
 							</div>
 						</div>
 					</div>
+
+
+                    -->
+
+					
 				</div>
 				<!-- /page header -->
 
@@ -110,7 +141,10 @@
 
 	</div>
 	<!-- /page content -->
-@yield('scripts')
+    
+    @include('layouts.scripts')
+    
+    
 </body>
 
 </html>

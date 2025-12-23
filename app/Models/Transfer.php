@@ -12,11 +12,12 @@ class Transfer extends Model
 
         public function chart_from()
     {
-        return $this->hasOne(ChartOfAccount::class, 'id', 'from_account_id');
+        return $this->hasOne(AccountCodes::class, 'id', 'from_account_id');
     }
    public function chart_to()
     {
-        return $this->hasOne(ChartOfAccount::class, 'id', 'to_account_id');
+        return $this->hasOne(AccountCodes::class, 'id', 'to_account_id');
     }
+
 
 }

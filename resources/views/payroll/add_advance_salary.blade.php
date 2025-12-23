@@ -1,4 +1,3 @@
-<div class="modal-dialog" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">
@@ -30,7 +29,7 @@
                 <label class="col-lg-6 col-form-label">Employee <span class="required">*</span></label>
 
                 <div class="col-lg-12">
-                   <select name="user_id" style="width: 100%" id="user_id" class="form-control select_box">
+                   <select name="user_id" style="width: 100%" id="user_id" class="form-control m-b select_box">
                             <option value="">Select Employee</option>
                             <?php if (!empty($all_employee)): ?>
                                 <?php foreach ($all_employee as  $v_employee) : ?>
@@ -85,6 +84,20 @@
                 </div>
                <div class=""> <p class="form-control-static" id="month_errors" style="text-align:center;color:red;"></p>   </div>        
             </div>
+
+   <div class="form-group">
+                <label class="col-lg-6 col-form-label">Bank/Cash Account </label>
+
+                <div class="col-lg-12">
+                      <select class="form-control m-b" name="bank_id" required>
+                                    <option value="">Select Payment Account</option> 
+                                          @foreach ($bank_accounts as $bank)                                                             
+                                            <option value="{{$bank->id}}" @if(isset($advance_salary))@if($advance_salary->bank_id == $bank->id) selected @endif @endif >{{$bank->account_name}}</option>
+                                               @endforeach
+                                              </select>
+                    
+                </div>
+            </div>
           
                   <div class="form-group">
                 <label class="col-lg-6 col-form-label">Reason</label>
@@ -107,10 +120,19 @@
 
 
         </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="submit" class="btn btn-primary" id="save">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <div class="modal-footer">
+            <button class="btn btn-primary"  type="submit" id="save"><i class="icon-checkmark3 font-size-base mr-1"></i>Save</button>
+            <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
         </form>
-    </div>
+    
 </div>
+
+@yield('scripts')
+<script>
+/*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+</script>

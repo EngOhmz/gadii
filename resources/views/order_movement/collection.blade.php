@@ -30,27 +30,25 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                   <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr>
-
+                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 106.484px;">Date</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">#</th>
-                                                   
+                                                    style="width: 86.484px;">REF NO</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">REF NO</th>
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Qty</th>
+                                                    style="width: 86.484px;">Qty</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Route</th>
+                                                    style="width: 181.219px;">Route</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -63,7 +61,7 @@
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">{{__('ordering.status')}}</th>
+                                                    style="width: 81.219px;">{{__('ordering.status')}}</th>
 
 
     
@@ -79,8 +77,8 @@
                                             @foreach ($quotation as $row)
                                             <tr class="gradeA even" role="row">
 
-                                                <td> {{$loop->iteration}}</td>
-                                                <td>{{$row->pacel_number}}</td>              
+                                             <td> {{$row->pacel->date}}</td> 
+                                                <td>{{$row->confirmation_number}}</td>              
                                                <td>{{$row->quantity}} </td>
                                                 <td>From {{$row->route->from}} to {{$row->route->to}}</td>
                                                 <td>{{$row->client->name}}</td>           
@@ -102,7 +100,6 @@
                                             data-toggle="modal" data-target="#appFormModal"
                                             data-id="{{ $row->id }}" data-type="collection"
                                             onclick="model({{ $row->id }},'collection')">
-                                            <i class="icon-eye-open"> </i>
                                             Mobilization
                                         </button>
                                                    
@@ -138,21 +135,19 @@
 </section>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
     </div>
 </div>
-</div>
-</div>
+
 
 <div id="dialog" title="Confirmation Required">
   Are you sure about this?
 </div>
 
 <!-- continue Modal -->
-<div class="modal inmodal show" id="newFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="newFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog-new">
-<div class="modal-dialog" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">Order Collection</h5>
@@ -161,7 +156,7 @@
             </button>
         </div>
       
-        <div class="modal-footer bg-whitesmoke br">
+        <div class="modal-footer">
             <button type="submit" class="btn btn-primary"  data-dismiss="modal">Yes</button>
             <a href="{{ route("order.collection")}}" class="btn btn-danger">No</a>
         </div>
@@ -170,51 +165,28 @@
 </div>
     </div>
 </div>
-</div>
-</div>
+
 
 
 @endsection
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 <script type="text/javascript">
@@ -233,7 +205,7 @@ $(document).ready(function() {
             async: true,
             success: function(data) {
                 //alert(data);
-                $('.modal-dialog').html(data);
+                $('#appFormModal > .modal-dialog').html(data);
             },
             error: function(error) {
                 $('#appFormModal').modal('toggle');
@@ -242,6 +214,8 @@ $(document).ready(function() {
         });
 
     }
+
+
     </script>
 
 
@@ -256,7 +230,7 @@ $(document).ready(function() {
     $(document).on('change', '.truck_id', function() {
         var id = $(this).val();
         $.ajax({
-            url: '{{url("findExp")}}',
+            url: '{{url("tracking/findExp")}}',
             type: "GET",
             data: {
                 id: id
@@ -298,7 +272,7 @@ $(document).on('change', '.type', function() {
         var id = $(this).val();
      var collection=$('#collection').val();
         $.ajax({
-            url: '{{url("findTruck")}}',
+            url: '{{url("tracking/findTruck")}}',
             type: "GET",
             data: {
                 id: id,
@@ -332,7 +306,7 @@ $(document).ready(function() {
 $(document).on('change', '.truck_id', function() {
         var id = $(this).val();
         $.ajax({
-            url: '{{url("findDriver")}}',
+            url: '{{url("tracking/findDriver")}}',
             type: "GET",
             data: {
                 id: id,
@@ -362,5 +336,7 @@ $(document).on('change', '.truck_id', function() {
 
 });
 </script>
+
+
 
 @endsection

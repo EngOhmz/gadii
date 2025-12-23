@@ -11,12 +11,10 @@ class LeaveCategory extends Model
 
     protected $table = "tbl_leave_category";
 
-    protected $fillable = [
-    'leave_category',
-    'added_by'];
+    protected $guarded = ['id','_token'];
     
     public function user()
     {
-        return $this->belongsTo('App\Models\user');
+        return $this->belongsTo('App\Models\User');
     }
 }

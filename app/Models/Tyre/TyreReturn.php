@@ -11,14 +11,7 @@ class TyreReturn extends Model
 
     protected $table = "tyre_returns";
 
-    protected $fillable = [
-    'tyre_id',
-    'truck_id',
-    'staff',
-    'location',
-    'date',
-    'status',  
-    'added_by'];
+    protected  $guarded = ['id'];
     
     public function tyre_staff(){
          return $this->belongsTo('App\Models\FieldStaff','staff');

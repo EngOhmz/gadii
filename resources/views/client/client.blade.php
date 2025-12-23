@@ -5,7 +5,7 @@
 <section class="section">
     <div class="section-body">
         <div class="row">
-            <div class="col-12 col-sm-6 col-lg-12">
+            <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Client</h4>
@@ -22,41 +22,47 @@
                                     data-toggle="tab" href="#profile2" role="tab" aria-controls="profile"
                                     aria-selected="false">New Client</a>
                             </li>
+                            
+                              <li class="nav-item">
+                                <a class="nav-link  " id="importExel-tab"
+                                    data-toggle="tab" href="#importExel" role="tab" aria-controls="profile"
+                                    aria-selected="false">Import Client</a>
+                            </li>
 
                         </ul>
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                      <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Name</th>
+                                                    style="width: 201.219px;">Name</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Phone</th>
+                                                    style="width: 121.219px;">Phone</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                        rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Email</th> 
+                                                    style="width: 121.219px;">Email</th> 
                                             <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Address</th>
+                                                    style="width: 161.219px;">Address</th>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Actions</th>
+                                                    style="width: 108.1094px;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -64,7 +70,7 @@
                                             @foreach ($client as $row)
                                             <tr class="gradeA even" role="row">
                                                 <th>{{ $loop->iteration }}</th>
-                                                <td>{{$row->name}}</td>
+                                                <td><a href="{{ route('client.show', $row->id) }}">{{$row->name}}</a> @if(!empty($row->member_id)) - <span class="badge badge-info badge-shadow">Subscribed</span> @endif</td>
                                                 <td>{{$row->phone}}</td>
                                               <td> {{$row->email}}</td>
                                            <td> {{$row->address}}</td>                         
@@ -74,14 +80,14 @@
                                                  <div class="form-inline">
                                                  
                                                 <div class = "input-group"> 
-                                              <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        href="{{ route("client.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
+                                              <a class="list-icons-item text-primary"
+                                                        href="{{ route("client.edit", $row->id)}}"><i
+                                                            class="icon-pencil7"></i>
                                                     </a>
                                         </div>&nbsp
                                   <div class = "input-group"> 
          {!! Form::open(['route' => ['client.destroy',$row->id], 'method' => 'delete']) !!}
-                                                            {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                            {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'onclick' => "return confirm('Are you sure?')"]) }}
                                                             {{ Form::close() }}
                              </div>
                              </div>
@@ -144,7 +150,7 @@
                                                         <div class="col-lg-10">
                                                             <input type="email" name="email"
                                                                 value="{{ isset($data) ? $data->email : ''}}"
-                                                                class="form-control" required>
+                                                                class="form-control">
                                                         </div>
                                                     </div>
 
@@ -152,7 +158,7 @@
                                                             class="col-lg-2 col-form-label">Address</label>
 
                                                         <div class="col-lg-10">
-                                                            <textarea name="address"  class="form-control" required>  {{ isset($data) ? $data->address : ''}} </textarea>
+                                                            <textarea name="address"  class="form-control">  {{ isset($data) ? $data->address : ''}} </textarea>
                                                                                                                     
 
 </div>
@@ -168,7 +174,15 @@
                                                         </div>
                                                     </div>
 
+                                            <div class="form-group row"><label
+                                                            class="col-lg-2 col-form-label">VRN</label>
 
+                                                        <div class="col-lg-10">
+                                                            <input type="text" name="VRN"
+                                                                value="{{ isset($data) ? $data->VRN : ''}}"
+                                                                class="form-control">
+                                                        </div>
+                                                    </div>
                                                 <div class="form-group row">
                                                     <div class="col-lg-offset-2 col-lg-12">
                                                         @if(!@empty($id))
@@ -188,6 +202,46 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                             <div class="tab-pane fade" id="importExel" role="tabpanel"
+                            aria-labelledby="importExel-tab">
+
+                            <div class="card">
+                                <div class="card-header">
+                                     <form action="{{ route('client.sample') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <button class="btn btn-success">Download Sample</button>
+                                        </form>
+                                 
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 ">
+                                            <div class="container mt-5 text-center">
+                                                <h4 class="mb-4">
+                                                 Import Excel & CSV File   
+                                                </h4>
+                                                <form action="{{ route('client.import') }}" method="POST" enctype="multipart/form-data">
+                                            
+                                                    @csrf
+                                                    <div class="form-group mb-4">
+                                                        <div class="custom-file text-left">
+                                                            <input type="file" name="file" class="form-control" id="customFile" required>
+                                                        </div>
+                                                    </div>
+                                                    <button class="btn btn-primary">Import Client</button>
+                                          
+                                        </form>
+                                       
+                                    </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                         </div>
                     </div>
@@ -202,23 +256,111 @@
 @endsection
 
 @section('scripts')
-<script>
-
-
-
-$('.demo4').click(function() {
-    swal({
-        title: "Are you sure?",
-        text: "You will not be able to recover this imaginary file!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: false
-    }, function() {
-        swal("Deleted!", "Your imaginary file has been deleted.", "success");
-    });
-});
-</script>
+    <link rel="stylesheet" href="{{ asset('assets/datatables/css/buttons.dataTables.min.css') }}">
+    <script src="{{ asset('assets/datatables/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('assets/datatables/js/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/datatables/js/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/datatables/js/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/datatables/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('assets/datatables/js/buttons.print.min.js') }}"></script>
+    <script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [3]}
+            ],
+           dom: 'B<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            buttons: [
+                {
+                    extend: 'print',
+                    text: 'Print',
+                    title: 'Client',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4],
+                        format: {
+                            body: function(data, row, column, node) {
+                                // Extract text from link and badge in Name column
+                                if (column === 1) {
+                                    var $cell = $(node);
+                                    var $link = $cell.find('a');
+                                    var $badge = $cell.find('.badge');
+                                    var nameText = $link.length ? $link.text().trim() : $cell.text().trim();
+                                    if ($badge.length) {
+                                        nameText += ' - ' + $badge.text().trim();
+                                    }
+                                    return nameText;
+                                }
+                                return data;
+                            }
+                        }
+                    },
+                    customize: function(win) {
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+                        $(win.document.body).find('table')
+                            .addClass('compact')
+                            .css('font-size', 'inherit');
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: 'Excel',
+                    title: 'Client',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4],
+                        format: {
+                            body: function(data, row, column, node) {
+                                // Extract text from link and badge in Name column
+                                if (column === 1) {
+                                    var $cell = $(node);
+                                    var $link = $cell.find('a');
+                                    var $badge = $cell.find('.badge');
+                                    var nameText = $link.length ? $link.text().trim() : $cell.text().trim();
+                                    if ($badge.length) {
+                                        nameText += ' - ' + $badge.text().trim();
+                                    }
+                                    return nameText;
+                                }
+                                return data;
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: 'PDF',
+                    title: 'Client',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4],
+                        format: {
+                            body: function(data, row, column, node) {
+                                // Extract text from link and badge in Name column
+                                if (column === 1) {
+                                    var $cell = $(node);
+                                    var $link = $cell.find('a');
+                                    var $badge = $cell.find('.badge');
+                                    var nameText = $link.length ? $link.text().trim() : $cell.text().trim();
+                                    if ($badge.length) {
+                                        nameText += ' - ' + $badge.text().trim();
+                                    }
+                                    return nameText;
+                                }
+                                return data;
+                            }
+                        }
+                    },
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                }
+            ],
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 @endsection

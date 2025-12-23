@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document">
+
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">Add Client</h5>
@@ -67,7 +67,7 @@
 
 
         </div>
-        <div class="modal-footer bg-whitesmoke br">
+        <div class="modal-footer">
             <button type="submit" class="btn btn-primary" id="save" onclick="saveClient(this)" data-dismiss="modal">Save</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>

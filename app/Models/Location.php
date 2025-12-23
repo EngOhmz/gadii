@@ -11,12 +11,14 @@ class Location extends Model
 
     protected $table = "locations";
 
-    protected $fillable = [
-    'name',
-    'added_by'];
-    
+  protected $guarded = ['id','_token'];
     public function user()
     {
         return $this->belongsTo('App\Models\user');
     }
+
+  public function owner()
+    {
+        return $this->belongsTo('App\Models\LocationManager','id');
+    } 
 }

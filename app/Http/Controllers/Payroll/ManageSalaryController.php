@@ -25,7 +25,7 @@ class ManageSalaryController extends Controller
     public function index()
     {
         //
-      $all_department_info=Departments::all();
+      $all_department_info=Departments::all()->where('disabled','0')->where('added_by',auth()->user()->added_by);
         return view('payroll.manage_salary_details',compact('all_department_info'));
     }
 
@@ -42,8 +42,8 @@ class ManageSalaryController extends Controller
 
     public function getDetails(Request $request){
         // retrive all data from department table
-        $all_department_info=Departments::all();
-      $salary_grade=SalaryTemplate::all();
+        $all_department_info=Departments::all()->where('disabled','0')->where('added_by',auth()->user()->added_by);
+      $salary_grade=SalaryTemplate::all()->where('disabled','0')->where('user_id',auth()->user()->added_by);
       $departments_id=$request->departments_id;
        $flag = $request->flag;
   $salary_grade_info ='';
@@ -53,12 +53,12 @@ $employee_info='';
 
 $designation_info = Designation::where('department_id',$departments_id)->get();
           
-                    $employee_info =User::where('department_id',$departments_id)->get();
-                    $emp_info =User::where('department_id',$departments_id)->get();
+                      $employee_info =User::where('department_id',$departments_id)->where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+                    $emp_info =User::where('department_id',$departments_id)->where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
                     if (!empty($emp_info)) {
                     foreach ($emp_info as $value) {
                         // get all salary Template info
-                        $salary_grade_info = EmployeePayroll::where('user_id', $value->id)->get();
+                        $salary_grade_info = EmployeePayroll::where('user_id', $value->id)->where('disabled','0')->get();
                           
 }
    
@@ -71,29 +71,30 @@ $designation_info = Designation::where('department_id',$departments_id)->get();
     }
     public function save_salary_details(Request $request)
     {
-
-         $nameArr =$request->user_id ;
-        $qtyArr = $request->monthly_status  ;
+         //$nameArr =$request->user_id ;
+        $qtyArr = $request->monthly  ;
         $priceArr = $request->salary_template_id;
         $rateArr =  $request->payroll_id ;
      
        
-      
+      //dd($request->monthly);
 
            if(!empty($qtyArr)){
                for($i = 0; $i < count($qtyArr); $i++){
                    if(!empty($qtyArr[$i])){
-                    $dep=User::where('id',$nameArr[$i])->first();
+                        $dep=User::where('id',$qtyArr[$i])->first();
+                       
                        $items = array(
-                           'user_id' => $nameArr[$i],
+                           'user_id' => $qtyArr[$i],
                            'salary_template_id' =>$priceArr[$i],                        
-                              'added_by'=>auth()->user()->id,
-                             'department_id'=>$dep->department_id,
+                              'added_by'=>auth()->user()->added_by,
+                               'department_id'=>$dep->department_id,
+                             
                                        );
                         
                            if(!empty($rateArr[$i])){
-                           $salary=EmployeePayroll::where('payroll_id',$rateArr[$i])->update($items);  
-      
+                           EmployeePayroll::where('id',$rateArr[$i])->update($items);  
+                          $salary=EmployeePayroll::where('id',$rateArr[$i])->first();  
       }
                           else{
                            $salary=EmployeePayroll::create($items);  
@@ -105,28 +106,35 @@ $designation_info = Designation::where('department_id',$departments_id)->get();
        
                    }
                }
-           }  
-
-  $dep_name=Departments::where('id',$salary->department_id)->first();
+               
+                $dep_name=Departments::where('id',$salary->department_id)->first();
       if(!empty($salary)){
                     $activity =PayrollActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
                             'module_id'=>$salary->id,
                              'module'=>'Salary Details',
                             'activity'=>"Salary Details for  " . $dep_name->name. "  Department Updated",
                         ]
                         );                      
        }
+               
+        return redirect(route('employee_salary_list'))->with(['success'=>'Updated Successfully']);;
+           }  
 
-     
-        return redirect(route('employee_salary_list'));
+ else{
+ return redirect()->back()->with(['error'=>'You have not chosen an entry']);;
+ }
+ 
+ 
+       
     }
 
     public function employee_salary_list()
     {
             
-            $data = EmployeePayroll::all();
+            $data = EmployeePayroll::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
 
          
 
@@ -164,7 +172,7 @@ $designation_info = Designation::where('department_id',$departments_id)->get();
     public function edit($id)
     {
          // retrive all data from department table
-        $all_department_info=Departments::all();
+        $all_department_info=Departments::all()->where('disabled','0')->where('added_by',auth()->user()->added_by);
   
       $departments_id=$id;
        $flag = '1';
@@ -173,13 +181,13 @@ $designation_info = Designation::where('department_id',$departments_id)->get();
 
 $designation_info = Designation::where('department_id',$departments_id)->get();
           $edit='1';
-                    $employee_info =User::where('department_id',$departments_id)->get();
-                    $emp_info =User::where('department_id',$departments_id)->get();
+                    $employee_info =User::where('department_id',$departments_id)->where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+                    $emp_info =User::where('department_id',$departments_id)->where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
                     if (!empty($emp_info)) {
                     foreach ($emp_info as $value) {
                         // get all salary Template info
-                        $salary_grade_info = EmployeePayroll::where('user_id', $value->id)->get();
-                          $salary_grade=SalaryTemplate::all();
+                        $salary_grade_info = EmployeePayroll::where('user_id', $value->id)->where('disabled','0')->get();
+                          $salary_grade=SalaryTemplate::all()->where('disabled','0')->where('user_id',auth()->user()->added_by);
 }
        
             }
@@ -213,16 +221,31 @@ else{
     {
         //
         $emp =  EmployeePayroll::find($id);    
-        $emp->delete();
+        $emp->update(['disabled'=> '1']);
+        
+        if(!empty($emp)){
+            $user=User::find($emp->user->id);
+                    $activity =PayrollActivity::create(
+                        [ 
+                            'added_by'=>auth()->user()->added_by,
+                            'user_id'=>auth()->user()->id,
+                            'module_id'=>$emp->id,
+                             'module'=>'Salary Details',
+                            'activity'=>"Employee Payroll for  " . $user->name. "  is Deleted",
+                        ]
+                        );                      
+       }
         return redirect(route('employee_salary_list'))->with(['success'=>'Deleted Successfully']);
     }
 
  public function addTemplate(Request $request){
        
     
-            $template_data['salary_grade'] = $request['salary_grade'];
+        $template_data['salary_grade'] = $request['salary_grade'];
         $template_data['basic_salary'] = $request['basic_salary'];
-        $template_data['user_id'] = auth()->user()->id;
+        $template_data['checked'] =  $request['checked'];
+         $template_data['heslb_check'] =$request->heslb_check;
+        $template_data['user_id'] = auth()->user()->added_by;
 
 // ************* Save into tbl_salary_template *************
         
@@ -251,7 +274,7 @@ else{
                     $alsalary_allowance_data['salary_template_id'] = $salary_template_id;
                     $alsalary_allowance_data['allowance_label'] = $h_salary_allowance_label;
                     $alsalary_allowance_data['allowance_value'] = $asalary_allowance_data['allowance_value'][$hkey];
-                    $alsalary_allowance_data['user_id'] = auth()->user()->id;
+                    $alsalary_allowance_data['user_id'] = auth()->user()->added_by;
 // *********** save defualt value into tbl_salary_allowance    *******************
                 $salary_allowance = SalaryAllowance::create($alsalary_allowance_data);
                 }
@@ -311,7 +334,7 @@ else{
                     $adeduction_data['salary_template_id'] = $salary_template_id;
                     $adeduction_data['deduction_label'] = $d_deduction_label;
                     $adeduction_data['deduction_value'] = $ddeduction_data['deduction_value'][$dkey];
-                    $adeduction_data['user_id'] = auth()->user()->id;
+                    $adeduction_data['user_id'] = auth()->user()->added_by;
 
 // *********** save defualt value into tbl_salary_allowance    *******************
 
@@ -354,7 +377,17 @@ else{
 
 
 
-        if (!empty($salary_template_id1)) {           
+        if (!empty($salary_template_id1)) {       
+      $activity =PayrollActivity::create(
+                        [ 
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
+                            'module_id'=>$salary_template_id,
+                             'module'=>'Salary Template',
+                            'activity'=>"Salary Template for  " .  $salary_template_id1->salary_grade. "  Created",
+                        ]
+                        );   
+    
             return response()->json($salary_template_id1);
          }
 

@@ -6,20 +6,61 @@
     <div class="section-body">
         <div class="row">
             <div class="col-12 col-sm-6 col-lg-12">
+             
+                            
+                                 
+
+                                <div class="bootstrap-growl alert alert-success gl" style="display:none; position:absolute;margin:0px;z-index:9999; top:20px;width:250px;right:20px" >
+                                
+                                   <a class="close" data-dismiss="alert" href="#">&times;</a>
+                                                Created Successfully.
+                                   </div>
+                                   
+                                  
+
                 <div class="card">
-                    <div class="card-header">
+                   <div class="card-header header-elements-sm-inline">
                         <h4>Chart of Accounts</h4>
+                         <div class="header-elements">                           
+                        
+                       
+                <a href="{{route('addShortCut.index')}}" class="navbar-nav-link navbar-nav-link-toggler dropdown-toggle" data-toggle="dropdown">
+                   <i class="icon-plus-circle2"></i>
+                    <span class="d-none d-lg-inline-block ml-2"></span>
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-right dropdown-content wmin-lg-150">
+                    
+                   <div class="dropdown-content-body p-2">
+                        <ul class="media-list">
+                         @can('view-class_account')
+                        <li class="nav-item">
+                        <a class="nav-link" data-toggle="modal" value="" onclick="model('2','class')"data-target="#appFormModal" href="appFormModal">Add Class Account </a>
+                        </li>
+                        @endcan
+                        @can('view-group_account')
+                        <li class="nav-item">
+                        <a class="nav-link" data-toggle="modal" value="" onclick="model('2','group')"data-target="#appFormModal" href="appFormModal">Add Group Account </a>
+                        </li>
+                        @endcan
+                        @can('view-account_codes')
+                        <li class="nav-item">
+                        <a class="nav-link" data-toggle="modal" value="" onclick="model('2','codes')"data-target="#appFormModal" href="appFormModal">Add  Account Codes </a>
+                        </li>
+                        @endcan
+                    
+                        </ul>
+                    </div>
+
+                    
+                </div>
+           
+                    
+
+   </div>
                     </div>
                     <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link @if(empty($id)) active show @endif" id="home-tab2" data-toggle="tab"
-                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Chart of Accounts
-                                    List</a>
-                            </li>
                        
-
-                        </ul>
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
@@ -43,7 +84,7 @@
                                                  <td colspan="5" style="text-align:"><b>{{ $loop->iteration }} . {{ $account_type->type  }} </b></td>
                                                       
                     </tr>
-     @foreach($account_type->classAccount as $account_class)
+     @foreach($account_type->classAccount->where('added_by',auth()->user()->added_by)->where('disabled','0') as $account_class)
 <?php    $e++ ;  ?>
                           <tr>
                           <td></td>
@@ -57,7 +98,7 @@
 $d=0;
 ?>
                
-  @foreach($account_class->groupAccount  as $group)
+  @foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)->where('disabled','0')  as $group)
                              <?php $d++ ; 
                       //  $values = explode(",",  $account_group->holidays);
 
@@ -78,7 +119,7 @@ $d=0;
               
                    </tr>
        
-@foreach($group->accountCodes as $account_code)
+@foreach($group->accountCodes->where('added_by',auth()->user()->added_by)->where('disabled','0') as $account_code)
 <tr>
  <td></td>
  <td></td>
@@ -110,6 +151,12 @@ $d=0;
 
     </div>
 </section>
+
+<div class="modal fade" data-backdrop="" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+
+        </div>
+    </div>
 
 
 
@@ -155,5 +202,105 @@ $(document).ready(function() {
 });
 </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+
+ <script type="text/javascript">
+        function model(id, type) {
+
+            $.ajax({
+                type: 'GET',
+                url: '{{ url('gl_setup/glModal') }}',
+                data: {
+                    'id': id,
+                    'type': type,
+                },
+                cache: false,
+                async: true,
+                success: function(data) {
+                    //alert(data);
+                    $('#appFormModal > .modal-dialog').html(data);
+                },
+                error: function(error) {
+                    $('#appFormModal').modal('toggle');
+
+                }
+            });
+
+        }
+
+
+
+    </script>
+    
+    
+     <script>
+        $(document).ready(function() {
+
+            $(document).on('click', '.add_class', function(e) {
+                e.preventDefault();
+                console.log(1);
+                $.ajax({
+                type: 'GET',
+                url: '{{ url('gl_setup/save_class') }}',
+                data: $('.addClassForm').serialize(),
+                dataType: "json",
+                success: function(response) {
+                    window.location ='{{ url('gl_setup/chart_of_account')}}';
+                      $('.gl').show();
+
+
+                }
+            });
+                
+                
+            });
+            
+            
+        
+         $(document).on('click', '.add_group', function(e) {
+            e.preventDefault();
+            console.log(1);
+            $.ajax({
+            type: 'GET',
+            url: '{{ url('gl_setup/save_group') }}',
+            data: $('.addGroupForm').serialize(),
+            dataType: "json",
+            success: function(response) {
+                console.log(response);
+
+                window.location ='{{ url('gl_setup/chart_of_account')}}';
+                    $('.gl').show();
+
+
+            }
+        });
+            
+            
+        });
+        
+        
+        $(document).on('click', '.add_codes', function(e) {
+            e.preventDefault();
+            console.log(1);
+            $.ajax({
+            type: 'GET',
+            url: '{{ url('gl_setup/save_codes') }}',
+            data: $('.addCodesForm').serialize(),
+            dataType: "json",
+            success: function(response) {
+                console.log(response);
+
+                window.location ='{{ url('gl_setup/chart_of_account')}}';
+                   $('.gl').show();
+
+
+            }
+        });
+            
+            
+        });
+
+
+        });
+    </script>
 
 @endsection

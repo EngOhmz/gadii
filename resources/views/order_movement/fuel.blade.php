@@ -34,7 +34,7 @@
         <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Truck</label>
                                                     <div class="col-lg-4">
-                                                        <select class="form-control" name="truck_id" required
+                                                        <select class="form-control m-b truck_id" name="truck_id" required
                                                         id="supplier_id">
                                                         <option value="">Select</option>
                                                         @if(!empty($truck))
@@ -51,21 +51,10 @@
                                                     </div>
                                                     <label class="col-lg-2 col-form-label">Driver</label>
                                                     <div class="col-lg-4">
-                                                       
-                                                            <select class="form-control" name="driver_id" required
-                                                                id="driver">
-                                                                <option value="">Select</option>
-                                                                @if(!empty($driver))
-                                                                @foreach($driver as $row)
-
-                                                                <option @if(isset($data))
-                                                                    {{  $data->route_id == $row->id  ? 'selected' : ''}}
-                                                                    @endif value="{{ $row->id}}"> {{$row->driver_name}} </option>
-
-                                                                @endforeach
-                                                                @endif
-
-                                                            </select>
+                                                        <input type="text"  id="driver"  value="" required class="form-control driver" readonly>
+                                                     <input type="hidden"  name ="driver_id" id="driver_id"   value="" required class="form-control driver_id">
+                                                         
+                                                           <p class"errors" id="errors" style="color:red;"></p>  
                                                           
                                                     </div>
                                                 </div>
@@ -74,8 +63,8 @@
                                                  
                                                     <label class="col-lg-2 col-form-label">Route</label>
                                                     <div class="col-lg-4">
-                                                        <div class="input-group">
-                                                            <select class="form-control" name="route_id" required
+                                                     
+                                                            <select class="form-control m-b " name="route_id" required
                                                                 id="route">
                                                                 <option value="">Select</option>
                                                                 @if(!empty($route))
@@ -89,26 +78,29 @@
                                                                 @endif
 
                                                             </select>
-                                                            <div class="input-group-append">
-                                                                <button class="btn btn-primary" type="button"
-                                                                    data-toggle="modal" href="routeModal"  
-                                                                    data-target="#routeModal"><i
-                                                                        class="fa fa-plus-circle"></i></button>
-                                                            </div>
-                                                        </div>
+                                                          
+                                                       
+                                                    </div>
+                                       <label class="col-lg-2 col-form-label"> Date</label>
+                                                    <div class="col-lg-4">
+                                                        <input type="date" name="date"
+                                                            placeholder="0 if does not exist"
+                                                            value="{{ date('Y-m-d')}}" 
+                                                            class="form-control">
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group row">
-                                                    <label class="col-lg-2 col-form-label">Fuel Rate per Distance</label>
+                                                    <label class="col-lg-2 col-form-label">Fuel</label>
                                                     <div class="col-lg-4">
-                                                      <input type="number" step="0.001"  name="fuel" value="" required class="form-control">
+                                                      <input type="number" step="0.01"  name="fuel" value="" required class="form-control">
                                                     </div>
-                                                    <label class="col-lg-2 col-form-label">Mileage Rate per Distance</label>
+                                                    <label class="col-lg-2 col-form-label">Mileage</label>
                                                     <div class="col-lg-4">
-                                                        <input type="number" step="0.001" name="mileage" value="" required class="form-control">
+                                                        <input type="number" step="0.01" name="mileage" value="" required class="form-control">
                                                     </div>
                                                 </div>
+
 
                   <input type="hidden" name="type" value="driver" required class="form-control">
 
@@ -140,9 +132,8 @@
 </section>
 
 <!-- route Modal -->
-<div class="modal inmodal show" id="routeModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-dialog" role="document">
+<div class="modal fade" id="routeModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="formModal">Add Route</h5>
@@ -159,9 +150,9 @@
                   
                  <div class="form-row">
                                   <div class="form-group col-md-6">
-                                    <label for="inputState">Departure Region</label>
-                                    <select  id="from_region_id" name="from_region_id" id="from_region_id"  class="form-control from_region">
-                                      <option ="">Select Departure Region</option>
+                                    <label for="inputState">Departure Location</label>
+                                    <select  id="from_region_id" name="from_region_id" id="from_region_id"  class="form-control m-b from_region" required>
+                                      <option ="">Select Departure Location</option>
                                       @if(!empty($region))
                                                         @foreach($region as $row)
 
@@ -176,11 +167,10 @@
 
                   
               <div class="form-group col-md-6">
-                                    <label for="inputState">Departure District</label>
-                                      <select id="from_district_id" name="from_district_id"  class="form-control from_district">
-                                      <option selected="">Select Departure District</option>
-                                    
-                                    </select>
+                                    <label for="inputState">Departure Specific Place</label>
+                                     <input type="text" name="depature_specific_place" id="from_district_id"
+                                                                value=""
+                                                                class="form-control">
                            </div>
                              </div>
 
@@ -188,9 +178,9 @@
 
                                                                          <div class="form-row">
                                   <div class="form-group col-md-6">
-                                    <label for="inputState">Arrival Region</label>
-                                    <select  id="to_region_id" name="to_region_id"  class="form-control to_region">
-                                      <option ="">Select Arrival Region</option>
+                                    <label for="inputState">Arrival Location</label>
+                                    <select  id="to_region_id" name="to_region_id"  class="form-control m-b to_region" required>
+                                      <option ="">Select Arrival Location</option>
                                       @if(!empty($region))
                                                         @foreach($region as $row)
 
@@ -205,11 +195,10 @@
 
                    
               <div class="form-group col-md-6">
-                                    <label for="inputState">Arrival District</label>
-                                    <select id="to_district_id" name="to_district_id" class="form-control to_district">
-                                      <option selected="">Select Arrival District</option>
-                                    
-                                    </select>
+                                    <label for="inputState">Arrive Specific Place</label>
+                                        <input type="text" name="arrive_specific_place" id="to_district_id"
+                                                                value=""
+                                                                class="form-control">
                                   </div>
 
                              </div>
@@ -227,18 +216,18 @@
 
 
                 </div>
-                <div class="modal-footer bg-whitesmoke br">
-                    <button type="submit" class="btn btn-primary route" onclick="saveRoute(this)">Save</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
 
+
+<div class="modal-footer">
+									<button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+									<button type="submit" class="btn btn-primary route" onclick="saveRoute(this)"><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+								</div>
                  </form>
             </div>
         </div>
     </div>
 </div>
-</div>
-</div>
+
 
 
 
@@ -246,43 +235,21 @@
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 
@@ -343,7 +310,7 @@ $.ajax({
     async: true,
     success: function(data) {
         //alert(data);
-        $('.modal-dialog').html(data);
+        $('#appFormModal > .modal-dialog').html(data);
     },
     error: function(error) {
         $('#appFormModal').modal('toggle');
@@ -432,6 +399,40 @@ $(document).ready(function() {
 });
 </script>
   
+<script>
+$(document).ready(function() {
+$(document).on('change', '.truck_id', function() {
+        var id = $(this).val();
+        $.ajax({
+            url: '{{url("tracking/findDriver")}}',
+            type: "GET",
+            data: {
+                id: id,
+            },
+            dataType: "json",
+            success: function(response) {
+                console.log(response);
 
+                  $("#errors").empty();
+              $("#save").attr("disabled", false);
+                $("#driver").val('');
+                 $("#driver_id").val('');
+
+                          if (response == 'Please Assign Driver to the Truck.') {
+                          $("#errors").append(response);
+                         $("#save").attr("disabled", true);
+                        } else {
+                       $("#driver").val(response.driver_name);
+                        $("#driver_id").val(response.id);
+                        }
+
+}
+
+        });
+  });
+
+
+});
+</script>
 
 @endsection

@@ -5,7 +5,7 @@
 .month-menu {
     background: #ffffff;
     box-shadow: 0 3px 12px 0 rgb(0 0 0 / 15%);
-    margin-top: 10px !important;
+  
 
     margin-bottom: 0;
     padding-left: 0;
@@ -14,7 +14,7 @@
 .month-menu li {
     border-bottom: 1px solid #cfdbe2;
 list-style: none;
-  font-size: 13px;
+  font-size: 17px;
 }
 
 .month-menu > li > a {
@@ -22,17 +22,15 @@ list-style: none;
     border-radius: 0;
     border-top: 0;
     color: #444;
-  padding: 6px 10px !important;
+  padding: 6px 20px !important;
 }
 
-.month-menu> li.active {
+.month-menu> li > a.active {
     background-color: #1797be !important;
-
+ color: #fff;
 }
 
-.month-menu >li.active>a {
-    color: #fff;
-}
+
 </style>
     <!-- ************ Expense Report List start ************-->
 
@@ -58,7 +56,7 @@ list-style: none;
                <div class="col-sm-3">
                 <button type="submit" id="submit" title="Search"
                         class="btn btn-purple">
-                    <i class="fa fa-search"></i></button>
+                    <i class="icon-search4"></i></button>
 </div>
 </div>
 </div>
@@ -79,19 +77,15 @@ list-style: none;
                     foreach ($overtime_salary_info as $key => $v_overtime_salary):
                         $month_name = date('F', strtotime($year . '-' . $key)); // get full name of month by date query
                         ?>
-                        <li class="<?php
-                        if ($current_month == $key) {
-                            echo 'active';
-                        }
-                        ?>">
-                            <a aria-expanded="<?php
+                       <li class="nav-item">
+                            <a class="nav-link @if($current_month == $key) active show @endif" aria-selected="<?php
                             if ($current_month == $key) {
                                 echo 'true';
                             } else {
                                 echo 'false';
                             }
-                            ?>" data-toggle="tab" href="#<?php echo $month_name ?>">
-                                <i class="fa fa-calendar fa-fw"></i> <?php echo $month_name; ?> </a>
+                            ?>" data-toggle="tab" role="tab" href="#<?php echo $month_name ?>" >
+                                <i class="icon-calendar2"></i> {{$month_name}} </a>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -109,23 +103,27 @@ list-style: none;
                     foreach ($overtime_salary_info as $key => $v_overtime_salary):
                         $month_name = date('F', strtotime($year . '-' . $key)); // get full name of month by date query
                         ?>
-                        <div id="<?php echo $month_name ?>" class="tab-pane <?php
+                        <div id="<?php echo $month_name ?>" role="tabpanel" class="tab-pane fade <?php
                         if ($current_month == $key) {
-                            echo 'active';
+                            echo 'active show';
                         }
                         ?>">
       
 <?php
 $id=0;
 ?>                      
-                               <div class="card-header">
-<strong><i class="fa fa-calendar"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
-      <div class="col-sm-10 mt">   
-      
+                              <div class="card-header header-elements-sm-inline">
+
+<strong><i class="icon-calendar2"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
+   <div class="header-elements">
                <a href="" class="text-danger pull-right" data-toggle="modal"
                data-placement="top" data-target="#appFormModal"  data-id="{{ $id }}" data-type="overtime"   onclick="model({{ $id }},'overtime')">
-            <span class="fa fa-plus "> New Overtime
-            </span></a>
+           <i class="icon-plus3 ">  </i> New Overtime</a>&nbsp &nbsp
+          
+ <a href="" class="text-primary pull-right" data-toggle="modal"
+               data-placement="top" data-target="#appFormModal"  data-id="{{ $id }}" data-type="overtime"   onclick="model({{ $id }},'import_overtime')">
+           <i class="icon-plus3 ">  </i> Import Overtime</a>
+        
           
         </div>
    
@@ -134,7 +132,7 @@ $id=0;
   <div class="card-body">  
                                 <!-- Table -->
                                 <div class="table-responsive">
-                <table class="table table-striped "id="table-1">
+               <table class="table datatable-basic table-striped" id="table-1">
                                     <thead>
                                     <tr>
                                         <th>Name</th>
@@ -171,16 +169,18 @@ $id=0;
                                             
                                                 <td>
                                                   @if ($overtime_salary->status == '0') 
-                                                    <a href=""
-                                                       class="btn btn-info btn-xs" title="View" data-id="{{ $overtime_salary->id  }}" data-type="overtime"   onclick="model({{ $overtime_salary->id  }},'overtime')"
-                                                       data-toggle="modal" data-target="#appFormModal"> <i  class="fa fa-edit"></i></a> 
+                                            <div class="form-inline">
+                                        <a class="list-icons-item text-primary"
+                                                        title="Edit" data-id="{{ $overtime_salary->id  }}" data-id="{{ $overtime_salary->id  }}" data-type="overtime"   onclick="model({{ $overtime_salary->id  }},'overtime')"
+                                                       data-toggle="modal" data-target="#appFormModal"><i
+                                                            class="icon-pencil7"></i></a>&nbsp
                                                       @can('approve-payment')
-                                                    <a href="{{ route('overtime.approve',$overtime_salary->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="fa fa-thumbs-up"></i> Approve</a >   
-                                                    <a href="{{ route('overtime.reject',$overtime_salary->id)}}" class="btn btn-danger mr" nclick="return confirm('Are you sure you want to Reject?')"><i class="fa fa-times"></i> Reject</a >   
+                                                 <a href="{{ route('overtime.approve',$overtime_salary->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="icon-thumbs-up3"></i> Approve</a >   
+                                                    <a href="{{ route('advance.reject',$advance_salary->id)}}" class="btn btn-danger mr" onclick="return confirm('Are you sure you want to Reject?')"><i class="icon-cross3"></i> Reject</a >   
                                                       @endcan                                                                                                 
                                                  @endif
-
-                                   
+                                                 </div>
+                                                 
                                                 </td>
                                            
                                         </tr>
@@ -188,19 +188,19 @@ $id=0;
                                         $key++;
                                     endforeach;
                                         ?>
-                                     <tr class="total_amount">
+                                  <?php endif; ?>
+                                     </tbody>
+                                   <tfoot>
+                                      <tr class="total_amount">
                                             <td colspan="" style="text-align: right;">
                                                 <strong>Total Amount : </strong></td>
-                                            <td colspan="4" style="padding-left: 8px;">
+                                            <td colspan="2" style="padding-left: 8px;">
                                                 <strong><?php echo number_format($total_amount, 2); ?></strong>
                                             </td>
+                                       <td colspan="2" ></td>
                                         </tr>
-                                    <?php else : ?>
-                                        <td colspan="6" align="center">
-                                            <strong>Nothing to Display</strong>
-                                        </td>
-                                    <?php endif; ?>
-                                    </tbody>
+                                   
+                                    </tfoot>
                                 </table>
 </div>
     </div>
@@ -218,27 +218,28 @@ $id=0;
                     foreach ($user_overtime_salary_info as $key => $v_user_overtime_salary):
                         $month_name = date('F', strtotime($year . '-' . $key)); // get full name of month by date query
                         ?>
-                        <div id="<?php echo $month_name ?>" class="tab-pane <?php
+                        <div id="<?php echo $month_name ?>" role="tabpanel" class="tab-pane fade <?php
                         if ($current_month == $key) {
-                            echo 'active';
+                            echo 'active show';
                         }
                         ?>">
       
 <?php
 $id=0;
 ?>                      
-                               <div class="card-header">
-<strong><i class="fa fa-calendar"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
-      <div class="col-sm-10 mt">   
-      
+                              <div class="card-header header-elements-sm-inline">
+
+<strong><i class="icon-calendar2"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
+     <div class="header-elements"> 
                <a href="" class="text-danger pull-right" data-toggle="modal"
                data-placement="top" data-target="#appFormModal"  data-id="{{ $id }}" data-type="overtime"   onclick="model({{ $id }},'overtime')">
-            <span class="fa fa-plus "> Request Overtime
-            </span></a>
+             <i class="icon-plus3 ">  </i> Request Overtime
+            </a>
+       
           
+        </div> 
         </div>
-   
-</div>
+
 
   <div class="card-body">  
                                 <!-- Table -->
@@ -280,16 +281,17 @@ $id=0;
                                             
                                                 <td>
                                                   @if ($user_overtime_salary->status == '0') 
-                                                    <a href=""
-                                                       class="btn btn-info btn-xs" title="View" data-id="{{ $user_overtime_salary->id  }}" data-type="overtime"   onclick="model({{ $user_overtime_salary->id  }},'overtime')"
-                                                       data-toggle="modal" data-target="#appFormModal"> <i  class="fa fa-edit"></i></a> 
+                                                <div class="form-inline">
+                                        <a class="list-icons-item text-primary"
+                                                        title="Edit" data-id="{{ $overtime_salary->id  }}" data-id="{{ $overtime_salary->id  }}" data-type="overtime"   onclick="model({{ $overtime_salary->id  }},'overtime')"
+                                                       data-toggle="modal" data-target="#appFormModal"><i
+                                                            class="icon-pencil7"></i></a>&nbsp
                                                       @can('approve-payment')
-                                                    <a href="{{ route('overtime.approve',$user_overtime_salary->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="fa fa-thumbs-up"></i> Approve</a >   
-                                                    <a href="{{ route('overtime.reject',$user_overtime_salary->id)}}" class="btn btn-danger mr" nclick="return confirm('Are you sure you want to Reject?')"><i class="fa fa-times"></i> Reject</a >   
+                                                 <a href="{{ route('overtime.approve',$overtime_salary->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="icon-thumbs-up3"></i> Approve</a >   
+                                                    <a href="{{ route('advance.reject',$advance_salary->id)}}" class="btn btn-danger mr" onclick="return confirm('Are you sure you want to Reject?')"><i class="icon-cross3"></i> Reject</a >   
                                                       @endcan                                                                                                 
                                                  @endif
-
-                                   
+                                                 </div>
                                                 </td>
                                            
                                         </tr>
@@ -297,19 +299,19 @@ $id=0;
                                         $key++;
                                     endforeach;
                                         ?>
+                           <?php endif; ?>
+                                     </tbody>
+                                   <tfoot>
                                      <tr class="total_amount">
-                                            <td colspan="" style="text-align: right;">
+                                             <td colspan="" style="text-align: right;">
                                                 <strong>Total Amount : </strong></td>
-                                            <td colspan="4" style="padding-left: 8px;">
+                                            <td colspan="2" style="padding-left: 8px;">
                                                 <strong><?php echo number_format($user_total_amount, 2); ?></strong>
                                             </td>
+                                       <td colspan="2" ></td>
                                         </tr>
-                                    <?php else : ?>
-                                        <td colspan="6"  align="center">
-                                            <strong>Nothing to Display</strong>
-                                        </td>
-                                    <?php endif; ?>
-                                    </tbody>
+                                   
+                                    </tfoot>
                                 </table>
 </div>
     </div>
@@ -331,18 +333,33 @@ $id=0;
 </div></div>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 @endsection
 
 
 
 @section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+<script src="{{ asset('assets2/js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 <script type="text/javascript">
  $(document).ready(function(){
   $("#datepicker").datepicker({
@@ -353,6 +370,36 @@ $id=0;
   });   
 })
 
+ </script>
+<script type="text/javascript">
+ $(document).ready(function(){
+  $("#datepicker").datepicker({
+     format: "yyyy",
+     viewMode: "years", 
+     minViewMode: "years",
+     autoclose:true
+  });   
+})
+
+ </script>
+ 
+  <script type="text/javascript">
+ $(document).ready(function () {
+    $('.month-menu li a').click(function(e) {
+        console.log(1);
+        
+
+        $('.month-menu li a.active').removeClass('active');
+        var $parent = $(this).parent();
+        $parent.addClass('active');
+        
+        
+        
+        e.preventDefault();
+    });
+});
+
+ 
  </script>
 
 <script type="text/javascript">
@@ -417,11 +464,11 @@ $(document).ready(function() {
 
 
 
-$(document).on('change', '.monthyear', function() {
+$(document).on('change', '.year', function() {
         var id = $(this).val();
     var user=$('#user_id').val();
         $.ajax({
-            url: '{{url("payroll/findMonth")}}',
+            url: '{{url("payroll/findOvertimeMonth")}}',
             type: "GET",
             data: {
                 id: id,

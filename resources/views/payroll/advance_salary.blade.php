@@ -5,7 +5,7 @@
 .month-menu {
     background: #ffffff;
     box-shadow: 0 3px 12px 0 rgb(0 0 0 / 15%);
-    margin-top: 10px !important;
+  
 
     margin-bottom: 0;
     padding-left: 0;
@@ -14,7 +14,7 @@
 .month-menu li {
     border-bottom: 1px solid #cfdbe2;
 list-style: none;
-  font-size: 13px;
+  font-size: 17px;
 }
 
 .month-menu > li > a {
@@ -22,17 +22,15 @@ list-style: none;
     border-radius: 0;
     border-top: 0;
     color: #444;
-  padding: 6px 10px !important;
+  padding: 6px 20px !important;
 }
 
-.month-menu> li.active {
+.month-menu> li > a.active {
     background-color: #1797be !important;
-
+ color: #fff;
 }
 
-.month-menu >li.active>a {
-    color: #fff;
-}
+
 </style>
     <!-- ************ Expense Report List start ************-->
 
@@ -58,7 +56,7 @@ list-style: none;
                <div class="col-sm-3">
                 <button type="submit" id="submit" title="Search"
                         class="btn btn-purple">
-                    <i class="fa fa-search"></i></button>
+                    <i class="icon-search4"></i></button>
 </div>
 </div>
 </div>
@@ -79,19 +77,15 @@ list-style: none;
                     foreach ($advance_salary_info as $key => $v_advance_salary):
                         $month_name = date('F', strtotime($year . '-' . $key)); // get full name of month by date query
                         ?>
-                        <li class="<?php
-                        if ($current_month == $key) {
-                            echo 'active';
-                        }
-                        ?>">
-                            <a aria-expanded="<?php
+                        <li class="nav-item">
+                            <a class="nav-link @if($current_month == $key) active show @endif" aria-selected="<?php
                             if ($current_month == $key) {
                                 echo 'true';
                             } else {
                                 echo 'false';
                             }
-                            ?>" data-toggle="tab" href="#<?php echo $month_name ?>">
-                                <i class="fa fa-calendar fa-fw"></i> <?php echo $month_name; ?> </a>
+                            ?>" data-toggle="tab" role="tab" href="#<?php echo $month_name ?>" >
+                                <i class="icon-calendar2"></i> {{$month_name}} </a>
                         </li>
                     <?php endforeach; ?>
                 </ul>
@@ -109,32 +103,32 @@ list-style: none;
                     foreach ($advance_salary_info as $key => $v_advance_salary):
                         $month_name = date('F', strtotime($year . '-' . $key)); // get full name of month by date query
                         ?>
-                        <div id="<?php echo $month_name ?>" class="tab-pane <?php
+                        <div id="<?php echo $month_name ?>" role="tabpanel" class="tab-pane fade <?php
                         if ($current_month == $key) {
-                            echo 'active';
+                            echo 'active show';
                         }
                         ?>">
       
 <?php
 $id=0;
 ?>                      
-                               <div class="card-header">
-<strong><i class="fa fa-calendar"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
-      <div class="col-sm-10 mt">   
+                                  <div class="card-header header-elements-sm-inline">
+<strong><i class="icon-calendar2"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
+ 
       
+<div class="header-elements">
                <a href="" class="text-danger pull-right" data-toggle="modal"
                data-placement="top" data-target="#appFormModal"  data-id="{{ $id }}" data-type="advance"   onclick="model({{ $id }},'advance')">
-            <span class="fa fa-plus "> New Advance Salary
-            </span></a>
+             <i class="icon-plus3 ">  </i> New Advance Salary</a>
           
-        </div>
-   
+        
+ </div>  
 </div>
 
   <div class="card-body">  
                                 <!-- Table -->
                                 <div class="table-responsive">
-                <table class="table table-striped "id="table-1">
+                <table class="table datatable-basic table-striped" id="table-1">
                                     <thead>
                                     <tr>
                                         <th>Name</th>
@@ -172,16 +166,20 @@ $id=0;
                                                </td>
                                             
                                                 <td>
+                                                  @if ($advance_salary->status == '0' || $advance_salary->status == '1') 
+                                                 <div class="form-inline">
+                                                  <a class="list-icons-item text-primary"
+                                                        title="Edit" data-id="{{ $advance_salary->id  }}" data-type="advance"   onclick="model({{ $advance_salary->id  }},'advance')"
+                                                       data-toggle="modal" data-target="#appFormModal"><i
+                                                            class="icon-pencil7"></i></a>&nbsp
+                                                     @endif
                                                   @if ($advance_salary->status == '0') 
-                                                    <a href=""
-                                                       class="btn btn-info btn-xs" title="View" data-id="{{ $advance_salary->id  }}" data-type="advance"   onclick="model({{ $advance_salary->id  }},'advance')"
-                                                       data-toggle="modal" data-target="#appFormModal"> <i  class="fa fa-edit"></i></a> 
                                                       @can('approve-payment')
-                                                    <a href="{{ route('advance.approve',$advance_salary->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="fa fa-thumbs-up"></i> Approve</a >   
-                                                    <a href="{{ route('advance.reject',$advance_salary->id)}}" class="btn btn-danger mr" nclick="return confirm('Are you sure you want to Reject?')"><i class="fa fa-times"></i> Reject</a >   
+                                                    <a href="{{ route('advance.approve',$advance_salary->id)}}" class="list-icons-item text-success" onclick="return confirm('Are you sure you want to Approve?')"><i class="icon-thumbs-up3"></i> Approve</a >   
+                                                    <a href="{{ route('advance.reject',$advance_salary->id)}}" class="list-icons-item text-danger" onclick="return confirm('Are you sure you want to Reject?')"><i class="icon-cross3"></i> Reject</a >   
                                                       @endcan                                                                                                 
-                                                 @endif
-
+                                                   @endif
+                                                 </div>
                                    
                                                 </td>
                                            
@@ -190,19 +188,19 @@ $id=0;
                                         $key++;
                                     endforeach;
                                         ?>
+                                       <?php endif; ?>
+                                     </tbody>
+                                   <tfoot>
                                      <tr class="total_amount">
                                             <td colspan="" style="text-align: right;">
                                                 <strong>Total Amount : </strong></td>
                                             <td colspan="2" style="padding-left: 8px;">
                                                 <strong><?php echo number_format($total_amount, 2); ?></strong>
                                             </td>
+                                       <td colspan="3" ></td>
                                         </tr>
-                                    <?php else : ?>
-                                        <td colspan="6">
-                                            <strong>Nothing to Display</strong>
-                                        </td>
-                                    <?php endif; ?>
-                                    </tbody>
+                                   
+                                    </tfoot>
                                 </table>
 </div>
     </div>
@@ -220,32 +218,33 @@ $id=0;
                     foreach ($user_advance_salary_info as $key => $v_user_advance_salary):
                         $month_name = date('F', strtotime($year . '-' . $key)); // get full name of month by date query
                         ?>
-                        <div id="<?php echo $month_name ?>" class="tab-pane <?php
+                      <div id="<?php echo $month_name ?>" role="tabpanel" class="tab-pane fade <?php
                         if ($current_month == $key) {
-                            echo 'active';
+                            echo 'active show';
                         }
                         ?>">
       
 <?php
 $id=0;
 ?>                      
-                               <div class="card-header">
-<strong><i class="fa fa-calendar"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
-      <div class="col-sm-10 mt">   
-      
+     
+
+  <div class="card-header header-elements-sm-inline">
+
+<strong><i class="icon-calendar2"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
+   <div class="header-elements">
                <a href="" class="text-danger pull-right" data-toggle="modal"
                data-placement="top" data-target="#appFormModal"  data-id="{{ $id }}" data-type="advance"   onclick="model({{ $id }},'advance')">
-            <span class="fa fa-plus "> Request Advance Salary
-            </span></a>
+             <i class="icon-plus3 ">  </i> Request Advance Salary</a>
           
-        </div>
-   
+        
+ </div>  
 </div>
 
   <div class="card-body">  
                                 <!-- Table -->
                                 <div class="table-responsive">
-                <table class="table table-striped "id="table-1">
+                <table class="table datatable-basic table-striped" id="table-1">
                                     <thead>
                                     <tr>
                                         <th>Name</th>
@@ -283,37 +282,39 @@ $id=0;
                                                </td>
                                             
                                                 <td>
+                                        <div class="form-inline">
                                                   @if ($user_advance_salary->status == '0') 
-                                                    <a href=""
-                                                       class="btn btn-info btn-xs" title="View" data-id="{{ $user_advance_salary->id  }}" data-type="advance"   onclick="model({{ $user_advance_salary->id  }},'advance')"
-                                                       data-toggle="modal" data-target="#appFormModal"> <i  class="fa fa-edit"></i></a> 
+                                                        <a class="list-icons-item text-primary"
+                                                        title="Edit" data-id="{{ $advance_salary->id  }}" data-type="advance"   onclick="model({{ $user_advance_salary->id  }},'advance')"
+                                                       data-toggle="modal" data-target="#appFormModal"><i
+                                                            class="icon-pencil7"></i></a>&nbsp
                                                       @can('approve-payment')
-                                                    <a href="{{ route('advance.approve',$user_advance_salary->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="fa fa-thumbs-up"></i> Approve</a >   
-                                                    <a href="{{ route('advance.reject',$user_advance_salary->id)}}" class="btn btn-danger mr" nclick="return confirm('Are you sure you want to Reject?')"><i class="fa fa-times"></i> Reject</a >   
+                                       <a href="{{ route('advance.approve',$advance_salary->id)}}" class="list-icons-item text-success" onclick="return confirm('Are you sure you want to Approve?')"><i class="icon-thumbs-up3"></i> Approve</a >   
+                                                    <a href="{{ route('advance.reject',$advance_salary->id)}}" class="list-icons-item text-danger" onclick="return confirm('Are you sure you want to Reject?')"><i class="icon-cross3"></i> Reject</a >
                                                       @endcan                                                                                                 
                                                  @endif
 
-                                   
+                                   </div>
                                                 </td>
                                            
                                         </tr>
                                         <?php
                                         $key++;
-                                    endforeach;
+                                        endforeach;
                                         ?>
+                                       <?php endif; ?>
+                                     </tbody>
+                                   <tfoot>
                                      <tr class="total_amount">
                                             <td colspan="" style="text-align: right;">
                                                 <strong>Total Amount : </strong></td>
                                             <td colspan="2" style="padding-left: 8px;">
                                                 <strong><?php echo number_format($user_total_amount, 2); ?></strong>
                                             </td>
+                                       <td colspan="3" ></td>
                                         </tr>
-                                    <?php else : ?>
-                                        <td colspan="6">
-                                            <strong>Nothing to Display</strong>
-                                        </td>
-                                    <?php endif; ?>
-                                    </tbody>
+                                   
+                                    </tfoot>
                                 </table>
 </div>
     </div>
@@ -335,18 +336,33 @@ $id=0;
 </div></div>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 @endsection
 
 
 
 @section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+<script src="{{ asset('assets2/js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 <script type="text/javascript">
  $(document).ready(function(){
   $("#datepicker").datepicker({
@@ -357,6 +373,25 @@ $id=0;
   });   
 })
 
+ </script>
+ 
+ <script type="text/javascript">
+ $(document).ready(function () {
+    $('.month-menu li a').click(function(e) {
+        console.log(1);
+        
+
+        $('.month-menu li a.active').removeClass('active');
+        var $parent = $(this).parent();
+        $parent.addClass('active');
+        
+        
+        
+        e.preventDefault();
+    });
+});
+
+ 
  </script>
 
 <script type="text/javascript">
@@ -453,4 +488,11 @@ $(document).on('change', '.monthyear', function() {
 });
 </script>
 
+<script>
+/*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+</script>
 @endsection

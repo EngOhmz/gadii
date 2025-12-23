@@ -18,7 +18,7 @@
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="col-form-label" for="order_id">From</label>
-                                        <select class="form-control" name="from" id="from">
+                                        <select class="form-control m-b" name="from" id="from">
                                             <option value="">Select Region</option>
                                             @if(!empty($region))
                                             @foreach($region as $row)
@@ -32,7 +32,7 @@
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="col-form-label" for="status">To</label>
-                                        <select class="form-control" name="to" id="to">
+                                        <select class="form-control m-b" name="to" id="to">
                                             <option value="">Select Region</option>
                                             @if(!empty($region))
                                             @foreach($region as $row)
@@ -47,7 +47,7 @@
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         <label class="col-form-label" for="customer">Status</label>
-                                        <select class="form-control" name="status" id="status">
+                                        <select class="form-control m-b" name="status" id="status">
                                            <option value="">Select Status</option>
                                             <option value="3">Collected</option>
                                             <option value="4">On Transit</option>
@@ -79,7 +79,7 @@
                                     </div>
                                 </div>
                                  <div class="col-md-6">
-                      <br><button type="submit" class="btn btn-primary search">Search</button>
+                      <br><button type="submit" class="btn btn-primary search" id="btnFiterSubmitSearch">Search</button>
                         <a href="{{Request::url()}}"class="btn btn-danger">Reset</a>
 
                 </div> 
@@ -87,61 +87,24 @@
                         </form>
 <br><br>
                      <div class="table-responsive">
-                        <table class="table table-striped" id="table-1">
+                        <table class="table table-striped" id="appFormDatatable">
                             <thead>
                                 <tr role="row">
 
-                                    <th class="" rowspan="1" colspan="1" style="width: 208.531px;">#</th>
-                                    <th class="" rowspan="1" colspan="1" style="width: 186.484px;">Date</th>
-                           <th class="" rowspan="1" colspan="1" style="width: 186.484px;">REF NO <br>Shipment Name</th>
-                                    <th class="" rowspan="1" colspan="1" style="width: 186.484px;">Client <br>Receiver</th>
-                               
-                                    <th class="" rowspan="1" colspan="1" style="width: 141.219px;">Route
-                                       
-                                    </th>
-                              <th class="" rowspan="1" colspan="1" style="width: 186.484px;">Truck</th>
-                              <th class="" rowspan="1" colspan="1" style="width: 141.219px;">Driver</th>
-                                    <th class="" rowspan="1" colspan="1" style="width: 141.219px;">Qty</th>
-                                    
-
-                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
-                                        colspan="1" style="width: 141.219px;">Status</th>
+                                       <th class="" rowspan="1" colspan="1" style="width: 28.531px;">#</th>
+                                    <th class="" rowspan="1" colspan="1" style="width: 106.484px;">Date</th>
+                                 <th class="" rowspan="1" colspan="1" style="width: 126.484px;">Ref No</th>
+                                    <th class="" rowspan="1" colspan="1" style="width: 156.484px;">Client </th>                             
+                                    <th class="" rowspan="1" colspan="1" style="width: 200.219px;">Route </th>
+                              <th class="" rowspan="1" colspan="1" style="width: 106.484px;">Truck</th>
+                              <th class="" rowspan="1" colspan="1" style="width: 101.219px;">Driver</th>
+                                    <th class="" rowspan="1" colspan="1" style="width: 91.219px;">Qty</th>
+                                       <th class=""  rowspan="1"  colspan="1" style="width: 91.219px;">Status</th>
 
                                 </tr>
                             </thead>
                             <tbody>
-                                 @if(!@empty($report))
-                                            @foreach ($report as $row)
-                                            <tr class="gradeA even" role="row">
-
-                                                <td> {{$loop->iteration}}</td>
-                                                <td>{{Carbon\Carbon::parse($row->created_at)->format('d/m/Y')}}</td>
-                                                <td>{{$row->pacel_number}} <br>{{$row->pacel_name}}</td>
-                                                    <td>-{{$row->client->name}} <br>-{{$row->receiver_name}}</td>                                              
-                                                <td>From {{$row->region_s->name}} to {{$row->region_e->name}}</td>
-                                            <td>{{$row->truck->reg_no}}</td> 
-                                             <td>{{$row->driver->driver_name}}</td>   
-                                            <td>{{$row->quantity}} </td>
-                                                          
-                                                
-<td>
-                                                    @if($row->status == 3)
-                                                    <div class="badge badge-dark badge-shadow">Collected</div>
-                                                       @elseif($row->status == 4)
-                                                    <div class="badge badge-info badge-shadow">On Transit</div>
-                                                       @elseif($row->status == 5)
-                                                    <div class="badge badge-primary badge-shadow">Off Loaded</div>
-                                                      @elseif($row->status == 6)
-                                                    <div class="badge badge-success  badge-shadow">Delivered</div>
-                                                    @endif
-                                                </td>
-
-                                              
-
-                                            </tr>
-                                            @endforeach
-                                      
-                                            @endif
+                               
                             </tbody>
                         </table>
 </div>
@@ -158,86 +121,80 @@
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
+$(function() {
+    let urlcontract = "{{ route('order.report') }}";
+    $('#appFormDatatable').DataTable({
+        processing: true,
+        serverSide: true,
+        lengthChange: false,
         searching: false,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
-            },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-    
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
+        type: 'GET',
+        ajax: {
+            url: urlcontract,
+            data: function(d) {
+                d.start_date = $('#date1').val();
+                d.end_date = $('#date2').val();
+                d.from = $('#from').val();
+                d.to = $('#to').val();
+                d.status = $('#status').val();
 
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
+
             }
+        },
+        columns: [{
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: 'date',
+                name: 'date'
+            },
+            {
+                data: 'pacel_number',
+                name: 'pacel_number'
+            },
+          
+            {
+                data: 'receiver',
+                name: 'receiver'
+            },
+            {
+                data: 'from_to',
+                name: 'from_to'
+            },
+            {
+                data: 'truck',
+                name: 'truck'
+            },
+            {
+                data: 'driver',
+                name: 'driver'
+            },
+            {
+                data: 'weight',
+                name: 'weight'
+            },
+
+          
+            {
+                data: 'status',
+                name: 'status',
+                orderable: false,
+                searchable: true
+            },
+
         ]
+    })
+});
 
-    });
-
+$('#btnFiterSubmitSearch').click(function() {
+    $('#appFormDatatable').DataTable().draw(true);
 });
 </script>
-<script>
-$(document).ready(function() {
-
-  
-
-    $(document).on('click', '.search', function() {
-        var start_date = $('#date1').val();
-               var end_date = $('#date2').val();
-                var from = $('#from').val();
-                var to = $('#to').val();
-                var status = $('#status').val();
-
-        $.ajax({
-            url: '{{url("findReport")}}',
-            type: "GET",
-            data: {
-               start_date: start_date,
-                end_date: end_date,
-               from: from,
-                to: to,
-               status:  status,
-            },
-            dataType: "json",
-            success: function(data) {
-              console.log(data);
-               $('table').html("");
-        $.each(data, function (key, value) { 
-      
-        $('table').append(data.html);
-						})
-
-         
-               
-            }
-
-        });
-
-    });
 
 
-});
-</script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 @endsection

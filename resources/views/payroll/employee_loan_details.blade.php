@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document">
+
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">   Loan Details</h5>
@@ -13,14 +13,14 @@
         <div class="modal-body">
 
       <div class="table-responsive">
-                                    <table class="table table-striped" >
+                                     <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -85,10 +85,9 @@
 
 
         </div>
-        <div class="modal-footer bg-whitesmoke br">
+        <div class="modal-footer">
         
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
         </form>
     </div>
-</div>

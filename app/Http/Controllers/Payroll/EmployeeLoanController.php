@@ -14,7 +14,7 @@ use App\Models\Payroll\SalaryPaymentDetails;
 use App\Models\Payroll\SalaryPaymentAllowance;
 use App\Models\Payroll\SalaryPaymentDeduction;
 use App\Models\UserDetails\BasicDetails;
-use App\Models\Payroll\Accounts;
+//use App\Models\Payroll\Accounts;
 use App\Models\Payroll\Overtime;
 use App\Models\Payroll\AdvanceSalary;
 use App\Models\Payroll\EmployeeLoan;
@@ -23,6 +23,10 @@ use App\Models\Payroll\PayrollActivity;
 use App\Models\User;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
+use App\Models\AccountCodes;
+use App\Models\JournalEntry;
+use App\Models\Transaction;
+use App\Models\Accounts;
 use DateTime;
 
 class EmployeeLoanController extends Controller
@@ -38,9 +42,9 @@ class EmployeeLoanController extends Controller
          $user=auth()->user()->id;
             $employee_loan=EmployeeLoan::all();
              $user_employee_loan=EmployeeLoan::where('user_id',$user)->get();
-             $all_employee=User::where('id','!=',1)->get();
-
- return view('payroll.employee_loan',compact('all_employee','employee_loan','user_employee_loan'));
+             $all_employee=User::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();   
+              $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->where('added_by',auth()->user()->added_by)->orwhere('account_name','VICOBA')->where('added_by',auth()->user()->added_by)->get();
+ return view('payroll.employee_loan',compact('all_employee','employee_loan','user_employee_loan','bank_accounts'));
        
     }
 
@@ -71,16 +75,17 @@ class EmployeeLoanController extends Controller
       $data['paid_amount']=$request->paid_amount;
         $data['deduct_month']=$request->deduct_month;
         $data['reason']=$request->reason;
+        $data['bank_id']=$request->bank_id;
        if(!empty($request->approve)){
         $data['status']='1';
-    $data['approve_by']=auth()->user()->id;
+    $data['approve_by']=auth()->user()->added_by;
 $st="Approved";
 }
        else{
         $data['status']='0';
 $st="Created";
 }
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
 
 
 $loan_amount=$request->loan_amount;
@@ -155,12 +160,94 @@ $m= $intpart;
      
 
  $emp_info = User::find($request->user_id);
+ $dl=EmployeeLoan::find($loan->id);
+
+if(!empty($request->approve)){
+
+  $empl_loan=AccountCodes::where('account_name','Employee Loan')->where('added_by', auth()->user()->added_by)->first();   
+          $journal = new JournalEntry();
+        $journal->account_id = $empl_loan->id;
+          $journal->user_id=$request->user_id ;
+         $date = explode('-', $dl->request_date);
+        $journal->date =   $dl->request_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+       $journal->transaction_type = 'employee_loan';
+        $journal->name = 'Employee Loan ';
+        $journal->debit= $loan->loan_amount;
+        $journal->payment_id= $loan->id;
+         $journal->currency_code =  'TZS';
+        $journal->exchange_rate= '1';
+        $journal->notes= "Employee Loan to " .$emp_info->name ;
+        $journal->save();
+          
+         $journal = new JournalEntry();
+        $journal->account_id =   $request->bank_id;;
+          $journal->user_id=$request->user_id ;
+         $date = explode('-', $dl->request_date);
+        $journal->date =   $dl->request_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+        $journal->transaction_type = 'employee_loan';
+        $journal->name = 'Employee Loan ';
+        $journal->credit= $loan->loan_amount;
+        $journal->payment_id= $loan->id;        
+         $journal->currency_code =  'TZS';
+        $journal->exchange_rate= '1';
+        $journal->notes= "Employee Loan  to " .$emp_info->name ;
+        $journal->save();
+        
+
+$bank_accounts=AccountCodes::where('id',$request->bank_id)->where('added_by',auth()->user()->added_by)->first() ;
+if($bank_accounts->account_group == 'Cash and Cash Equivalent'){
+$account= Accounts::where('account_id',$request->bank_id)->first();
+ if(!empty($account)){
+        $balance=$account->balance - $request->loan_amount ;
+        $item_to['balance']=$balance;
+        $account->update($item_to);
+        }
+        
+        else{
+          $cr= AccountCodes::where('id',$request->bank_id)->first();
+        
+             $new['account_id']= $request->bank_id;
+               $new['account_name']= $cr->account_name;
+              $new['balance']= 0-$request->loan_amount;
+               $new[' exchange_code']='TZS';
+                $new['added_by']=auth()->user()->added_by;
+        $balance=0-$request->loan_amount;
+             Accounts::create($new);
+        }
+                
+           // save into tbl_transaction
+        
+                                     $transaction= Transaction::create([
+                                        'module' => 'Employee Loan',
+                                         'module_id' => $loan->id,
+                                       'account_id' => $request->bank_id,
+                                        'code_id' => $empl_loan->id,
+                                        'name' => 'Employee Loan to ' .$emp_info->name,
+                                        'type' => 'Expense',                               
+                                        'amount' =>$request->loan_amount ,
+                                        'credit' => $request->loan_amount,
+                                         'total_balance' =>$balance,
+                                          'date' => date('Y-m-d', strtotime($loan->request_date)),
+                                           'status' => 'paid' ,
+                                        'notes' => 'Employee Loan to ' .$emp_info->name,
+                                        'user_id' => $request->user_id ,
+                                        'added_by' =>auth()->user()->added_by,
+                                    ]);
+}
+
+}
+
 
 
 if(!empty($loan)){
                     $activity =PayrollActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
                             'module_id'=> $loan->id,
                             'module'=>'Employee Loan',
                             'activity'=>"Employee Loan to " .$emp_info->name. " is ".$st,
@@ -194,9 +281,10 @@ if(!empty($loan)){
     {
         //
       $data=EmployeeLoan::find($id);
-             $all_employee=User::where('id','!=',1)->get();
-
- return view('payroll.employee_loan',compact('all_employee','data','id'));
+             $all_employee=User::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+             
+         $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->where('added_by',auth()->user()->added_by)->orwhere('account_name','VICOBA')->where('added_by',auth()->user()->added_by)->get();
+ return view('payroll.employee_loan',compact('all_employee','data','id','bank_accounts'));
     }
 
     /**
@@ -216,10 +304,70 @@ if(!empty($loan)){
       $data['paid_amount']=$request->paid_amount;
         $data['deduct_month']=$request->deduct_month;
         $data['reason']=$request->reason;
+
        if(!empty($request->approve)){
         $data['status']='1';
-    $data['approve_by']=auth()->user()->id;
+    $data['approve_by']=auth()->user()->added_by;
 $st="Approved";
+
+$bank_accounts=AccountCodes::where('id',$request->bank_id)->where('added_by',auth()->user()->added_by)->first() ;
+if($bank_accounts->account_group == 'Cash and Cash Equivalent'){
+
+                if($loan->bank_id == $request->bank_id){
+
+               $old_account= Accounts::where('account_id',$request->bank_id)->first();
+if(!empty($old_account)){
+
+      if( $loan->loan_amount <= $request->loan_amount){
+                    $diff=$request->adavance_amount-$loan->loan_amount;
+                    $balance=  $old_account->balance - $diff;
+                }
+
+                if($loan->loan_amount > $request->loan_amount){
+                    $diff=$loan->loan_amount - $request->loan_amount;
+                $balance =   $old_account->balance + $diff;
+                }
+
+$item['balance']=$balance;
+$old_account->update($item);
+}
+}
+
+else{
+
+$x_account= Accounts::where('account_id',$loan->bank_id)->first();
+
+if(!empty($x_account)){
+$x_balance=$x_account->balance + $loan->loan_amount;
+$x_item['balance']=$x_balance;
+$x_account->update($x_item);
+}
+
+
+$account= Accounts::where('account_id',$request->bank_id)->first();
+
+if(!empty($account)){
+$balance=$account->balance - $request->loan_amount;
+$item_to['balance']=$balance;
+$account->update($item_to);
+}
+
+else{
+  $cr= AccountCodes::where('id',$request->bank_id)->first();
+
+     $new['account_id']=$request->bank_id;;
+       $new['account_name']= $cr->account_name;
+      $new['balance']=0-$request->loan_amount;
+       $new[' exchange_code']='TZS';
+        $new['added_by']=auth()->user()->added_by;
+$balance=0-$request->loan_amount;
+     Accounts::create($new);
+}
+
+}
+
+}
+
 }
        else{
         $data['status']='0';
@@ -303,10 +451,76 @@ $m= $intpart;
  $emp_info = User::find($request->user_id);
 
 
+
+
+if(!empty($request->approve)){
+
+  $empl_loan=AccountCodes::where('account_name','Employee Loan')->where('added_by', auth()->user()->added_by)->first();   
+         $journal = JournalEntry::where('payment_id',$id )->where('transaction_type', 'employee_loan')->whereNotNull('debit')->first();;
+        $journal->account_id = $empl_loan->id;
+          $journal->user_id=$request->user_id ;
+         $date = explode('-', $loan->request_date);
+        $journal->date =   $loan->request_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+       $journal->transaction_type = 'employee_loan';
+        $journal->name = 'Employee Loan ';
+        $journal->debit= $loan->loan_amount;
+        $journal->payment_id= $loan->id;
+         $journal->currency_code =  'TZS';
+        $journal->exchange_rate= '1';
+        $journal->notes= "Employee Loan to " .$emp_info->name ;
+        $journal->update();
+          
+        $journal = JournalEntry::where('payment_id',$id )->where('transaction_type', 'employee_loan')->whereNotNull('credit')->first();;
+        $journal->account_id =   $request->bank_id;;
+          $journal->user_id=$request->user_id ;
+         $date = explode('-', $loan->request_date);
+        $journal->date =   $loan->request_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+        $journal->transaction_type = 'employee_loan';
+        $journal->name = 'Employee Loan ';
+        $journal->credit= $loan->loan_amount;
+        $journal->payment_id= $loan->id;        
+         $journal->currency_code =  'TZS';
+        $journal->exchange_rate= '1';
+        $journal->notes= "Employee Loan  to " .$emp_info->name ;
+        $journal->update();
+
+
+
+                
+           // save into tbl_transaction
+        
+if($bank_accounts->type == 'Bank'){                         
+                                         $transaction= Transaction::where('module','Employee Loan')->where('module_id',$id)->update([
+                                        'module' => 'Employee Loan',
+                                         'module_id' => $id,
+                                       'account_id' => $request->bank_id,
+                                        'code_id' => $empl_loan->id,
+                                        'name' => 'Employee Loan to ' .$emp_info->name,
+                                        'type' => 'Expense',                               
+                                        'amount' =>$request->loan_amount ,
+                                        'credit' => $request->loan_amount,
+                                         'total_balance' =>$balance,
+                                          'date' => date('Y-m-d', strtotime($loan->request_date)),
+                                           'status' => 'paid' ,
+                                        'notes' => 'Employee Loan to ' .$emp_info->name,
+                                        'user_id' => $request->user_id ,
+                                        'added_by' =>auth()->user()->added_by,
+                                    ]);
+
+}
+
+}
+
+
 if(!empty($loan)){
                     $activity =PayrollActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
                             'module_id'=> $loan->id,
                             'module'=>'Employee Loan',
                             'activity'=>"Employee Loan to " .$emp_info->name. " is " .$st,
@@ -359,10 +573,48 @@ $price="You can not apply for Loan . Please set your Salary Grade . " ;
 
 
 
-                return response()->json($price);	                  
+                return response()->json($price);                      
  
     }
 
+public function findMonth(Request $request)
+    {
+ 
+$user_id=$request->user;
+
+  $employee_info  = EmployeePayroll::where('user_id', $user_id)->first();
+ if (!empty( $employee_info)) {
+
+$payment= SalaryPayment::where('user_id',$user_id)->where('payment_month', $request->id)->first();
+  $user_info=EmployeePayroll::leftJoin('users', 'users.id','tbl_employee_payroll.user_id')
+               ->where('tbl_employee_payroll.user_id', $user_id)
+               ->where('users.joining_date', '>=', $request->id)   
+            ->select('users.*','tbl_employee_payroll.*')
+        ->get();
+
+                    if (!empty($payment)) {
+              
+$price="You can not apply for this month. Salary Already paid. Please choose a different month " ;
+
+}
+
+  else if (!empty($user_info[0])) {
+              
+$price="You can not apply for the month before you joined.  Please choose a different month " ;
+}
+else{
+$price='' ;
+ }
+
+}
+
+else{
+$price="You can not apply for Loan . Please set your Salary Grade . " ;
+}
+
+                return response()->json($price);                      
+ 
+    }
 
 public function reject($id)
    {
@@ -377,7 +629,8 @@ public function reject($id)
 if(!empty($loan)){
                     $activity =PayrollActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
                             'module_id'=> $loan->id,
                             'module'=>'Employee Loan',
                             'activity'=>"Employee Loan to " .$emp_info->name. " is rejected",
@@ -393,16 +646,93 @@ public function approve($id)
        //
        $loan= EmployeeLoan::find($id);
        $data['status'] = 1;
-        $data['approve_by']=auth()->user()->id;
+        $data['approve_by']=auth()->user()->added_by;
        $loan->update($data);
 
  $emp_info = User::find($loan->user_id);
 
 
+$empl_loan=AccountCodes::where('account_name','Employee Loan')->where('added_by', auth()->user()->added_by)->first();   
+          $journal = new JournalEntry();
+        $journal->account_id = $empl_loan->id;
+          $journal->user_id=$loan->user_id ;
+         $date = explode('-', $loan->request_date);
+        $journal->date =   $loan->request_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+       $journal->transaction_type = 'employee_loan';
+        $journal->name = 'Employee Loan ';
+        $journal->debit= $loan->loan_amount;
+        $journal->payment_id= $loan->id;
+         $journal->currency_code =  'TZS';
+        $journal->exchange_rate= '1';
+        $journal->notes= "Employee Loan to " .$emp_info->name ;
+        $journal->save();
+          
+         $journal = new JournalEntry();
+        $journal->account_id =   $loan->bank_id;;
+          $journal->user_id=$loan->user_id ;
+         $date = explode('-', $loan->request_date);
+        $journal->date =   $loan->request_date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+        $journal->transaction_type = 'employee_loan';
+        $journal->name = 'Employee Loan ';
+        $journal->credit= $loan->loan_amount;
+        $journal->payment_id= $loan->id;        
+         $journal->currency_code =  'TZS';
+        $journal->exchange_rate= '1';
+        $journal->notes= "Employee Loan  to " .$emp_info->name ;
+        $journal->save();
+
+$bank_accounts=AccountCodes::where('id',$loan->bank_id)->where('added_by',auth()->user()->added_by)->first() ;
+if($bank_accounts->account_group == 'Cash and Cash Equivalent'){
+$account= Accounts::where('account_id',$loan->bank_id)->first();
+ if(!empty($account)){
+        $balance=$account->balance - $loan->loan_amount ;
+        $item_to['balance']=$balance;
+        $account->update($item_to);
+        }
+        
+        else{
+          $cr= AccountCodes::where('id',$loan->bank_id)->first();
+        
+             $new['account_id']= $loan->bank_id;
+               $new['account_name']= $cr->account_name;
+              $new['balance']= 0-$request->loan_amount;
+               $new[' exchange_code']='TZS';
+                $new['added_by']=auth()->user()->added_by;
+        $balance=0-$request->loan_amount;
+             Accounts::create($new);
+        }
+                
+           // save into tbl_transaction
+        
+                                     $transaction= Transaction::create([
+                                        'module' => 'Employee Loan',
+                                         'module_id' => $loan->id,
+                                       'account_id' => $loan->bank_id,
+                                        'code_id' => $empl_loan->id,
+                                        'name' => 'Employee Loan to ' .$emp_info->name,
+                                        'type' => 'Expense',                               
+                                        'amount' =>$loan->loan_amount ,
+                                        'credit' => $loan->loan_amount,
+                                         'total_balance' =>$balance,
+                                          'date' => date('Y-m-d', strtotime($loan->request_date)),
+                                           'status' => 'paid' ,
+                                        'notes' => 'Employee Loan to ' .$emp_info->name,
+                                        'user_id' => $loan->user_id ,
+                                        'added_by' =>auth()->user()->added_by,
+                                    ]);
+
+}
+
+
 if(!empty($loan)){
                     $activity =PayrollActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
                             'module_id'=> $loan->id,
                             'module'=>'Employee Loan',
                             'activity'=>"Employee Loan to " .$emp_info->name. " is approved",

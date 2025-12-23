@@ -3,10 +3,11 @@ namespace App\Traits;
 
 use App\Models\ClassAccount;
 use \App\Models\JournalEntry;
+use App\Models\Branch;
 
 trait Calculate_netProfitTrait {
     
-public function get_netProfit($start_date=null,$end_date=null){
+public function get_netProfit($start_date=null,$end_date=null,$branch_id=null){
 $c=0;     
 $sales_balance  = 0;
 $sales_balance1  = 0;
@@ -30,6 +31,38 @@ $tax=0;
 $tax1=0;
 $net_profit=0;
 $net_profit1=0;   
+
+
+
+ $branch = Branch::all()->where('disabled','0')->where('added_by', auth()->user()->added_by);
+         
+        if(!empty($branch[0])){
+         
+         foreach($branch as $br){
+          $x[]=$br->id;
+        
+   
+}
+}
+
+
+else{
+   $x[]='';   
+}
+
+ 
+ $z[]=$branch_id;
+ 
+ 
+  $a=  trim(json_encode($x), '[]'); 
+     if($branch_id == $a){
+         $br_id=$x;
+     }
+     
+     else{
+         
+      $br_id=$z;    
+     }
         
         
         
@@ -41,22 +74,32 @@ $net_profit1=0;
          
          //$start_date = date('d - m - Y',$unknown_date);
         
-           $income = ClassAccount::where('class_type','Income')->get();
-           $cost = ClassAccount::where('class_type','Expense')->get();
-           $expense= ClassAccount::where('class_type','Expense')->get();
+        $income = ClassAccount::where('class_type','Income')->where('added_by',auth()->user()->added_by)->get();
+           $cost = ClassAccount::where('class_type','Expense')->where('added_by',auth()->user()->added_by)->get();
+           $expense= ClassAccount::where('class_type','Expense')->where('added_by',auth()->user()->added_by)->get();
+
            
-           
-foreach($income as $account_class){
-foreach($account_class->groupAccount  as $group) {  
+foreach($income->where('added_by',auth()->user()->added_by) as $account_class){
+foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)  as $group) {  
 if($group->group_id != 5110){
-foreach($group->accountCodes as $account_code){
+foreach($group->accountCodes->where('added_by',auth()->user()->added_by) as $account_code){
      
      
+                       
+                           if(!empty($branch_id) && $branch_id != $a){
+                        $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('debit');
                             
-                        $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->sum('credit');
-                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->sum('debit');
+                         }else{
+                            
+                              $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('debit');
+                            
+                            }
                             
                             
                  
@@ -67,17 +110,28 @@ foreach($group->accountCodes as $account_code){
 
     }}}}           
 
-foreach($income as $account_class){
-foreach($account_class->groupAccount  as $group) {  
+foreach($income->where('added_by',auth()->user()->added_by) as $account_class){
+foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)  as $group) {  
 if($group->group_id == 5110){
-foreach($group->accountCodes as $account_code){
+foreach($group->accountCodes->where('added_by',auth()->user()->added_by) as $account_code){
 
                             
                             
-                        $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->sum('credit');
-                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->sum('debit');
+                      
+                           if(!empty($branch_id) && $branch_id != $a){
+                        $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('debit');
+                            
+                         }else{
+                            
+                              $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('debit');
+                            
+                            }
                             
                    
                         $income_balance1=$dr1- $cr1;
@@ -88,18 +142,29 @@ foreach($group->accountCodes as $account_code){
 
 
 
-foreach($cost as $account_class){
-foreach($account_class->groupAccount  as $group) {
+foreach($cost->where('added_by',auth()->user()->added_by) as $account_class){
+foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)  as $group) {
 if($group->group_id == 6180){
-foreach($group->accountCodes as $account_code){
+foreach($group->accountCodes->where('added_by',auth()->user()->added_by) as $account_code){
 
 
 
                             
-                        $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->sum('credit');
-                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->sum('debit');
+                      
+                           if(!empty($branch_id) && $branch_id != $a){
+                        $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('debit');
+                            
+                         }else{
+                            
+                              $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('debit');
+                            
+                            }
                             
                             
                    
@@ -114,17 +179,28 @@ foreach($group->accountCodes as $account_code){
 }}}}
 
 
-foreach($expense as $account_class){
-foreach($account_class->groupAccount  as $group)  {      
+foreach($expense->where('added_by',auth()->user()->added_by) as $account_class){
+foreach($account_class->groupAccount->where('added_by',auth()->user()->added_by)  as $group)  {      
 if($group->group_id != 6180){
-foreach($group->accountCodes as $account_code){
+foreach($group->accountCodes->where('added_by',auth()->user()->added_by) as $account_code){
 
 
                             
-                        $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->sum('credit');
-                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->account_id)->where('date', '<=',
-                            $start_date)->sum('debit');
+                       
+                           if(!empty($branch_id) && $branch_id != $a){
+                        $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->whereIn('branch_id', $br_id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('debit');
+                            
+                         }else{
+                            
+                              $cr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('credit');
+                        $dr1 = \App\Models\JournalEntry::where('account_id', $account_code->id)->where('date', '<=',
+                            $start_date)->where('added_by',auth()->user()->added_by)->sum('debit');
+                            
+                            }
                             
                             
                     

@@ -30,7 +30,7 @@ var CKEditor = function() {
 
         // Setup
         CKEDITOR.replace('editor-full', {
-            height: 400
+            height: 200
         });
 
 
@@ -86,7 +86,7 @@ var CKEditor = function() {
 
             // Create an editor instance again, with appropriate settings.
             editorKey = CKEDITOR.replace('editor-enter', {
-                height: 400,
+                height: 200,
                 enterMode: Number(document.getElementById('xEnter').value),
                 shiftEnterMode: Number(document.getElementById('xShiftEnter').value)
             });

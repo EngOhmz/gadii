@@ -18,7 +18,7 @@
                                 class="required"> *</span></label>
 
                         <div class="col-sm-5">
-                            <select required name="search_type" id="search_type" class="form-control search" required  onchange = "ShowHideDiv()">
+                            <select required name="search_type" id="search_type" class="form-control m-b search" required  onchange = "ShowHideDiv()">
                                 <option value="">Select Search Type</option>
                                 <option value="employee" <?php if (!empty($search_type)) {
                                     echo $search_type == 'employee' ? 'selected' : '';
@@ -61,7 +61,7 @@
                                     class="required"> *</span></label>
 
                             <div class="col-sm-5">
-                                <select class="by_employee form-control select_box" style="width: 100%" name="user_id">
+                                <select class="by_employee form-control m-b select_box" style="width: 100%" name="user_id">
                                     <option value="">Select Employee</option>
                                     <?php
                                     if (!empty($all_employee)): ?>
@@ -165,11 +165,20 @@ elseif ($search_type == 'employee') {
 ?>
   <div class="card">
                             <!-- Default panel contents -->
-                            <div class="card-header"><strong>Payroll Summary <?php echo $by ?></strong> </div>
+                            <div class="card-header header-elements-sm-inline"><strong>Payroll Summary <?php echo $by ?></strong> 
+                   <?php if ($search_type == 'month' ) { ?>
+<div class="header-elements">
+               <a  class="text-primary pull-right"  href="{{ route('payroll_summary',['month'=>isset($by_month)? $by_month : '','type'=>'print_pdf']) }}" >
+            Download Payroll Master</a>
+      </div>      
+<?php } ?>        
+ 
+
+</div>
                             <div class="card-body">  
    <!-- Table -->
                    <div class="table-responsive">
-                <table class="table table-striped "id="table-1">
+                <table class="table datatable-basic table-striped" id="table-1">
                         <thead>
                         <tr> 
                        <th>#</th>
@@ -224,7 +233,7 @@ elseif ($search_type == 'employee') {
 
                       <div class = "input-group"> 
                       
-                                <a href="#" class="btn btn-info btn-xs" title="View" data-toggle="modal" data-target="#appFormModal"  data-id="{{ $row->id }}" data-type="template"   onclick="model({{ $row->id }},'payment')">View Payment Details</a>
+                                <a href="#" class="btn btn-info btn-xs" title="View" data-toggle="modal" data-target="#appFormModal"  data-id="{{ $row->id }}" data-type="template"   onclick="model({{ $row->id }},'payment')">View</a>
                                                
                     </div>&nbsp
                     </div>
@@ -253,7 +262,7 @@ elseif ($search_type == 'employee') {
                             <div class="card-body">  
    <!-- Table -->
                    <div class="table-responsive">
-                <table class="table table-striped "id="table-1">
+                <table class="table datatable-basic table-striped" id="table-1">
                         <thead>
                         <tr>
                           <th>#</th>
@@ -286,17 +295,33 @@ elseif ($search_type == 'employee') {
 
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 @endsection
 
 
 
 @section('scripts')
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
+
 <script type="text/javascript">
     function model(id, type) {
 

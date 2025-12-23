@@ -8,7 +8,7 @@ class JournalEntry extends Model
 {
     protected $table = "journal_entries";
 
-    protected $fillable = ['gl_code','credit','debit','year','month','account_id','date','added_by'];
+    protected $guarded = ['id','_token'];
 
     public function user()
     {
@@ -17,7 +17,7 @@ class JournalEntry extends Model
 
     public function chart()
     {
-        return $this->hasOne(ChartOfAccount::class, 'id', 'account_id');
+        return $this->hasOne(AccountCodes::class, 'id', 'account_id');
     }
 
     public function valuations()

@@ -13,4 +13,14 @@ class PurchasePayments extends Model
 
     //protected $quarded = ['id','_token'];
     protected $guarded = ['id'];
+
+ public function payment(){
+    
+        return $this->BelongsTo('App\Models\AccountCodes','account_id');
+    }
+    
+    public function purchase(){
+    
+        return $this->BelongsTo('App\Models\POS\Purchase','purchase_id');
+    }
 }

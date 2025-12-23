@@ -26,7 +26,7 @@ else{
                                 *</span></label>
 
                         <div class="col-sm-5">
-                            <select required name="departments_id" class="form-control select_box">
+                            <select required name="departments_id" class="form-control m-b select_box">
                                 <option value="">Select Department </option>
                                 <?php if (!empty($all_department_info)): foreach ($all_department_info as $v_department_info) :
                                     if (!empty($v_department_info->name)) {
@@ -86,15 +86,35 @@ else{
  <div class="card-body">
             <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-striped "id="table-1">
+                <table class="table datatable-basic table-striped" id="table-1">
                     <thead>
                         <tr>
-                            <th><strong>Employee Name</strong></th>
-                            <th><strong>Salary Grade</strong></th>
-                            <th><strong>Basic Salary</strong></th>
-                            <th><strong>Net Salary</strong></th>
-                            <th><strong>Status</strong></th>
-                            <th>Action</th>
+                           <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 156.484px;">Employee Name</th>
+                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 156.484px;">Salary Grade</th>
+                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 136.484px;">Basic Salary</th>
+                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Engine version: activate to sort column ascending"
+                                                    style="width: 141.219px;">Net Salary</th>
+                                                  
+                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Engine version: activate to sort column ascending"
+                                                    style="width: 121.219px;">Status</th>
+                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="CSS grade: activate to sort column ascending"
+                                                    style="width: 228.1094px;">Actions</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -285,19 +305,19 @@ else{
                          @can('approve-payment')
                       <div class = "input-group"> 
         <?php if (!empty($salary_info) && $salary_info->user_id == $v_employee->user_id) { ?>
-                                <a class="btn btn-success btn-xs" target="_blank"
-                                    href="{{ route('payslip.generate',$salary_info->id)}}">Generate
+                                <a class="list-icon text-success" target="_blank"
+                                    href="{{ route('payslip.generate',$salary_info->id)}}">
                                     Payslip</a>
                                 <?php } else {
                                         if (!empty($set_salary)) {
                                             ?>
-                                <a class="btn btn-danger btn-xs" target="_blank"
+                                <a class="list-icon text-danger" target="_blank"
                                     href="admin/payroll/manage_salary_details/<?php echo $v_employee->departments_id; ?>">Set
                                     Salary</a>
                                 <?php } else {
                                             ?>
                           
-                                <a class="btn btn-danger btn-xs"
+                                <a class="list-icon text-danger"
                                     href="{{route('payment',['user_id'=>$v_employee->user_id,'departments_id'=>$departments_id,'payment_month'=>$payment_month])}}">Make
                                     Payment</a>
                                 <?php }
@@ -310,13 +330,13 @@ else{
 
                       <div class = "input-group"> 
         <?php if (!empty($salary_info) && $salary_info->user_id == $v_employee->user_id) { ?>
-                                <a class="btn btn-success btn-xs" target="_blank"
-                                    href="{{ route('payslip.generate',$salary_info->id)}}">Generate
+                                <a class="list-icon text-success" target="_blank"
+                                    href="{{ route('payslip.generate',$salary_info->id)}}">
                                     Payslip</a>
                                 <?php } else {
                                         if (!empty($set_salary)) {
                                             ?>
-                                <a class="btn btn-danger btn-xs" target="_blank"
+                                <a class="list-icon text-danger" target="_blank"
                                     href="admin/payroll/manage_salary_details/<?php echo $v_employee->departments_id; ?>">Set
                                     Salary</a>
                                 <?php } }
@@ -327,9 +347,9 @@ else{
                         @endcan    
                       <div class = "input-group"> 
                 @if (empty($salary_info)) 
-                                <a href="#" class="btn btn-info btn-xs" title="View" data-toggle="modal" data-target="#appFormModal"  data-id="{{ $v_employee->payroll_id }}" data-type="template"   onclick="model({{ $v_employee->payroll_id }},'salary')">View Payment Details</a>
+                                <a href="#" class="list-icon text-info" title="View" data-toggle="modal" data-target="#appFormModal"  data-id="{{ $v_employee->id }}" data-type="template"   onclick="model({{ $v_employee->id }},'salary')">View</a>
                       @else          
-<a href="#" class="btn btn-info btn-xs" title="View" data-toggle="modal" data-target="#appFormModal"  data-id="{{ $salary_info->id }}" data-type="template"   onclick="model({{ $salary_info->id }},'payment')">View Payment Details</a>  
+<a href="#" class="list-icon text-info" title="View" data-toggle="modal" data-target="#appFormModal"  data-id="{{ $salary_info->id }}" data-type="template"   onclick="model({{ $salary_info->id }},'payment')">View</a>  
 @endif                
                     </div>&nbsp
                     </div>
@@ -356,7 +376,7 @@ else{
       
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
@@ -367,6 +387,23 @@ else{
 
 
 @section('scripts')
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
+
 <script type="text/javascript">
     function model(id, type) {
 

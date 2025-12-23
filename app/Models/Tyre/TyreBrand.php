@@ -11,14 +11,7 @@ class TyreBrand extends Model
 
     protected $table = "tyre_brands";
 
-    protected $fillable = [
-         'manufacturer',      
-       'brand',
-        'size',            
-        'price', 
-        'quantity',            
-        'unit',
-        'added_by'];
+    protected $guarded = ['id','_token'];
     
     public function user()
     {

@@ -10,21 +10,7 @@ class Mileage extends Model
     use HasFactory;
     protected $table = "mileages";
 
-    protected $fillable = [      
-        'truck_id',
-     'driver_id',
-        'route_id',
-        'fuel_rate',
-       'total_mileage',
-        'due_mileage',
-        'fuel_adjustment',
-        'reason',
-'payment_status',
-        'status_approve',
-   'approved_by',
-    'movement_id', 
-        'added_by'];
-
+    protected $guarded = ['id','_token'];
         public function route(){
 
             return $this->belongsTo('App\Models\Route','route_id');

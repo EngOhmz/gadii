@@ -25,11 +25,11 @@ class GoodReturnController extends Controller
     {
         //
 
-        $inventory= Inventory::all();
-        $staff=FieldStaff::all();
-        $location=Location::all();
-        $truck=Truck::all();
-        $return= GoodReturn::all();
+        $inventory= Inventory::where('added_by',auth()->user()->added_by)->get();
+        $staff=FieldStaff::where('added_by',auth()->user()->added_by)->get();
+      $location=Location::where('added_by',auth()->user()->added_by)->get();
+        $truck=Truck::where('disabled','0')->where('truck_type','Horse')->where('added_by',auth()->user()->added_by)->get();
+        $return= GoodReturn::where('added_by',auth()->user()->added_by)->get();
        return view('inventory.good_return',compact('return','inventory','staff','location','truck'));
     }
 
@@ -59,7 +59,7 @@ class GoodReturnController extends Controller
         $data['truck']=$request->truck;
        $data['item_id']=$request->item_id;
 
-        $data['added_by']= auth()->user()->id;
+        $data['added_by']= auth()->user()->added_by;
 
         $return = GoodReturn::create($data);
         
@@ -89,12 +89,12 @@ class GoodReturnController extends Controller
     {
         //
         $data=GoodReturn::find($id);
-        $inventory= Inventory::all();
-        $items=GoodReturnItem::where('return_id',$id)->get();
-        $staff=FieldStaff::all();
-        $location=Location::all();
-        $truck=Truck::all();
-      $list=InventoryList::where('truck_id',$data->truck)->where('status','1')->get();
+         $items=GoodReturnItem::where('return_id',$id)->get();
+         $inventory= Inventory::where('added_by',auth()->user()->added_by)->get();
+        $staff=FieldStaff::where('added_by',auth()->user()->added_by)->get();
+      $location=Location::where('added_by',auth()->user()->added_by)->get();
+        $truck=Truck::where('disabled','0')->where('truck_type','Horse')->where('added_by',auth()->user()->added_by)->get(); 
+      $list=InventoryList::where('truck_id',$data->truck)->where('status','1')->where('added_by',auth()->user()->added_by)->get();
        return view('inventory.good_return',compact('items','inventory','data','id','staff','location','truck','list'));
     }
 

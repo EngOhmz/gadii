@@ -11,17 +11,15 @@ class Sticker extends Model
 
     protected $table = "stickers";
 
-    protected $fillable = [      
-        'issue_date',
-        'office',
-        'expire_date',
-        'value',      
-        'officer',
-        'truck_id',
-        'added_by'];
+     protected $guarded = ['id','_token'];
     
     public function user()
     {
         return $this->belongsTo('App\Models\user');
+    }
+    
+     public function supplier()
+    {
+        return $this->belongsTo('App\Models\Supplier','officer');
     }
 }

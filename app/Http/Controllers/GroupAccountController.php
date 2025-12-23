@@ -24,10 +24,9 @@ class GroupAccountController extends Controller
      */
     public function index()
     {
-      $user=auth()->user()->id;;
-        //$group = GroupAccount::where('added_by',$user)->orderBy('group_id','asc')->get();
-       $group = GroupAccount::orderBy('group_id','asc')->get();
-          $class_account=ClassAccount::all();
+      $user=auth()->user()->added_by;
+        $group = GroupAccount::where('added_by',$user)->where('disabled','0')->orderBy('group_id','asc')->get();
+        $class_account = ClassAccount::where('added_by',$user)->where('disabled','0')->get();
         return view('group_account.data', compact('group','class_account'));
     }
 
@@ -39,7 +38,7 @@ class GroupAccountController extends Controller
     public function create()
     {
       
-       $class_account = ClassAccount::all();
+       $class_account = ClassAccount::all()->where('added_by',auth()->user()->added_by);
         return view('group_account.create', compact('class_account'));
     }
 
@@ -56,20 +55,22 @@ class GroupAccountController extends Controller
             'name' => 'required',
             'class' => 'required'
         ]);
+        
+                $added_by = auth()->user()->added_by;
      
       
             $group_account = new GroupAccount();
              $group_account->name = $request->name;
         $group_account->class = $request->class;
-        $group_account->added_by = auth()->user()->id;;
+        $group_account->added_by = auth()->user()->added_by;;
 
-       $class=ClassAccount::where('class_name', $request->class)->first();                     
+       $class=ClassAccount::where('id', $request->class)->where('added_by',$added_by)->where('disabled','0')->first();                     
           $group_account->type= $class->class_type;
 
      
-         $before=GroupAccount::where('class',$request->class)->latest('id')->first();
+         $before=GroupAccount::where('class',$request->class)->where('added_by',$added_by)->where('disabled','0')->latest('id')->first();
           if(!empty($before)){
-         $count=GroupAccount::where('class',$request->class)->count();
+         $count=GroupAccount::where('class',$request->class)->where('added_by',$added_by)->where('disabled','0')->count();
                 if($count == '9'){
   return redirect(route('group_account.index'))->with(['error'=>'You have exceeded the limit for the group.']);
 
@@ -105,9 +106,9 @@ class GroupAccountController extends Controller
 
     public function edit($id)
     {
-       $user=auth()->user()->id;;
+       $user=auth()->user()->added_by;
         $data=  GroupAccount::find($id);       
-              $class_account=ClassAccount::all();
+            $class_account = ClassAccount::where('added_by',$user)->where('disabled','0')->get();
         return View::make('group_account.data', compact('data','class_account','id'))->render();
     }
 
@@ -125,17 +126,18 @@ class GroupAccountController extends Controller
        $group_account->name = $request->name;
 
         $group_account->class = $request->class;
-
-           $class=ClassAccount::where('class_name', $request->class)->first();                     
+  $added_by = auth()->user()->added_by;
+  
+ $class=ClassAccount::where('id', $request->class)->where('added_by',$added_by)->where('disabled','0')->first();                   
           $group_account->type= $class->class_type;
 
               $old = GroupAccount::find($id);
 
           if($old->class != $request->class){
      
-         $before=GroupAccount::where('class',$request->class)->latest('id')->first();
+         $before=GroupAccount::where('class',$request->class)->where('added_by',$added_by)->where('disabled','0')->latest('id')->first();
           if(!empty($before)){
-        $count=GroupAccount::where('class',$request->class)->count();
+        $count=GroupAccount::where('class',$request->class)->where('added_by',$added_by)->where('disabled','0')->count();
                 if($count == '9'){
   return redirect(route('group_account.index'))->with(['error'=>'You have exceeded the limit for the group.']);
 
@@ -159,8 +161,6 @@ else{
         $group_account->save();
         //Flash::success(trans('general.successfully_saved'));
        return redirect(route('group_account.index'))->with(['success'=>'Group Account Updated.']);
-
- 
     }
 
     /**
@@ -172,7 +172,8 @@ else{
     public function destroy($id)
     {
       
-        GroupAccount::destroy($id);
+        GroupAccount::find($id)->update(['disabled'=>'1']);
+
         //Flash::success(trans('general.successfully_deleted'));
         return redirect(route('group_account.index'))->with(['success'=>'Group Account Deleted.']);
     }

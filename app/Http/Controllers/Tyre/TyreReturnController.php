@@ -11,8 +11,10 @@ use App\Models\Tyre\Tyre;
 use App\Models\Tyre\TyreActivity;
 use App\Models\Tyre\TyreBrand;
 use App\Models\Tyre\TyreReturn;
+use App\Models\Tyre\TyreReturnItems;
 use App\Models\Tyre\TruckTyre;
 use App\Models\Tyre\TyreAssignment;
+use App\Models\Tyre\MasterHistory;
 use Illuminate\Http\Request;
 
 class TyreReturnController extends Controller
@@ -26,11 +28,11 @@ class TyreReturnController extends Controller
     {
         //
 
-        $staff=FieldStaff::all();
+        $staff=FieldStaff::where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
          //$staff=User::where('id','!=','1')->get();
-        $location=Location::all();
-        $truck=TruckTyre::where('status','!=','0')->get();
-        $return= TyreReturn::all();
+        $location=Location::where('added_by',auth()->user()->added_by)->get();
+        $truck=TruckTyre::where('status','!=','0')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
+        $return= TyreReturn::where('added_by',auth()->user()->added_by)->get();
        return view('tyre.good_return',compact('return','staff','location','truck'));
     }
 
@@ -53,29 +55,68 @@ class TyreReturnController extends Controller
     public function store(Request $request)
     {
         //
-       $name=Tyre::find($request->tyre_id);
-
-        $data=$request->post();
-        $data['added_by']=auth()->user()->id;
+       
+        $count=TyreReturn::where('added_by', auth()->user()->added_by)->count();
+        $pro=$count+1;
+        $dt=date('m/d', strtotime($request->date));
+       
+       $truck=Truck::find($request->truck_id);
+       
+        $data['name']='TRN/'.$truck->reg_no.'/'.$dt.'/00'.$pro;
+        $data['truck_id']=$request->truck_id;
+        $data['date']=$request->date;
+        $data['staff']=$request->staff;
+        $data['added_by']=auth()->user()->added_by;
         $data['status']='0';
-           $data['location']=$name->location;
-        $tyre = TyreReturn::create($data);
 
+        $tyre = TyreReturn::create($data);
+        
+
+        $nameArr =$request->item_id ;
+        $qtyArr =$request->quantity ;
+
+
+        if(!empty($nameArr)){
+            for($i = 0; $i < count($nameArr); $i++){
+                if(!empty($nameArr[$i])){
+
+                     $b=Tyre::find($nameArr[$i]);
+                    $items = array(
+                        'item_id' => $nameArr[$i],
+                         'brand_id' => $b->brand_id,
+                        'status' => 0,
+                        'truck_id'=>$request->truck_id,
+                        'location'=>$b->location,   
+                        'quantity' =>    $qtyArr[$i],
+                         'order_no' => $i,
+                         'added_by' => auth()->user()->added_by,
+                        'return_id' =>$tyre->id);
+
+                    
+                   TyreReturnItems::create($items);
+
+    
+                }
+            }
+
+           
+        }
+       
        
 
         if(!empty($tyre)){
             $activity = TyreActivity::create(
                 [ 
-                    'added_by'=>auth()->user()->id,
+                    'added_by'=>auth()->user()->added_by,
                     'module_id'=>$tyre->id,
                     'module'=>'Tyre Return',
-                    'activity'=>"Return of Tyre " .$name->reference. " is Created",
+                    'activity'=>"Return of Tyre with reference " .$tyre->name. " is Created",
                     'date'=>$request->date,
                 ]
                 );                      
     }
      
-            return redirect(route('tyre_return.index'))->with(['success'=>'Tyre Return Created Successfully']);
+            return redirect(route('tyre_return.index'))->with(['success'=>'Return Created Successfully']);
     }
 
     /**
@@ -99,13 +140,14 @@ class TyreReturnController extends Controller
     {
         //
         $data= TyreReturn::find($id);
-        $staff=FieldStaff::all();
+        $items=TyreReturnItems::where('return_id',$id)->get();
+        $staff=FieldStaff::where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
          //$staff=User::where('id','!=','1')->get();
-        $location=Location::all();
-        $truck=TruckTyre::where('status','!=','0')->get();
-       $list= Tyre::where('truck_id',$data->truck_id)->where('status','1')->get();
+        $location=Location::where('added_by',auth()->user()->added_by)->get();
+        $truck=TruckTyre::where('status','!=','0')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
+       $list= Tyre::where('truck_id',$data->truck_id)->where('status','3')->where('added_by',auth()->user()->added_by)->get();
       
-       return view('tyre.good_return',compact('data','staff','location','truck','id','list'));
+       return view('tyre.good_return',compact('data','staff','location','truck','id','list','items'));
     }
 
     /**
@@ -120,27 +162,79 @@ class TyreReturnController extends Controller
         //
         $tyre= TyreReturn::find($id);
 
-  $name=Tyre::find($request->tyre_id);
-
-        $data=$request->post();
-        $data['added_by']=auth()->user()->id;
+ 
+        $data['truck_id']=$request->truck_id;
+        $data['date']=$request->date;
+        $data['staff']=$request->staff;
+        $data['added_by']=auth()->user()->added_by;
         $data['status']='0';
-           $data['location']=$name->location;
-        $tyre->update($data);
 
+        $tyre->update($data);
+        
+
+        $nameArr =$request->item_id ;
+        $qtyArr =$request->quantity ;
+        $remArr = $request->removed_id ;
+        $expArr = $request->saved_id ;
+
+        if (!empty($remArr)) {
+            for($i = 0; $i < count($remArr); $i++){
+               if(!empty($remArr[$i])){        
+              TyreReturnItems::where('id',$remArr[$i])->delete();   
+                            
+                   }
+               }
+           }
+
+
+        if(!empty($nameArr)){
+            for($i = 0; $i < count($nameArr); $i++){
+                if(!empty($nameArr[$i])){
+
+                     $b=Tyre::find($nameArr[$i]);
+                    $items = array(
+                        'item_id' => $nameArr[$i],
+                         'brand_id' => $b->brand_id,
+                        'status' => 0,
+                        'truck_id'=>$request->truck_id,
+                        'location'=>$b->location,   
+                        'quantity' =>    $qtyArr[$i],
+                         'order_no' => $i,
+                         'added_by' => auth()->user()->added_by,
+                        'return_id' =>$id);
+
+                     if(!empty($expArr[$i])){
+                    TyreReturnItems::where('id',$expArr[$i])->update($items);                              
+                             }
+                          else{
+                    TyreReturnItems::create($items);  
+                       
+                          }   
+                    
+                 
+    
+                }
+            }
+
+           
+        }
+       
+       
 
         if(!empty($tyre)){
             $activity = TyreActivity::create(
                 [ 
-                    'added_by'=>auth()->user()->id,
+                    'added_by'=>auth()->user()->added_by,
                     'module_id'=>$tyre->id,
                     'module'=>'Tyre Return',
-                    'activity'=>"Return of Tyre " .$name->reference. " is Updated",
+                    'activity'=>"Return of Tyre with reference " .$tyre->name. " is Updated",
                     'date'=>$request->date,
                 ]
                 );                      
     }
      
+
+      
             return redirect(route('tyre_return.index'))->with(['success'=>'Tyre Return Updated Successfully']);
     }
 
@@ -155,11 +249,12 @@ class TyreReturnController extends Controller
         //
 
         $tyre = TyreReturn::find($id);
+        
 
         if(!empty($tyre)){
             $activity = TyreActivity::create(
                 [ 
-                    'added_by'=>auth()->user()->id,
+                    'added_by'=>auth()->user()->added_by,
                     'module_id'=>$id,
                     'module'=>'Tyre Return',
                     'activity'=>"Tyre Deleted",
@@ -168,29 +263,34 @@ class TyreReturnController extends Controller
                 );                      
 }
 
+        TyreReturnItems::where('return_id',$id)->delete();
         $tyre->delete();
         return redirect(route('tyre_return.index'))->with(['success'=>'Deleted Successfully']);
     }
 
     public function findPrice(Request $request)
     {
-               $price= Tyre::where('truck_id',$request->id)->where('status','1')->get();
-                return response()->json($price);	                  
+               $price= Tyre::where('truck_id',$request->id)->where('status','3')->get();
+                return response()->json($price);                      
 
     }
 
     public function approve($id){
         //
         $tyre = TyreReturn::find($id);
-        $data['status'] = 1;
-        $tyre->update($data);
+        $dt['status'] = 1;
+        $tyre->update($dt);
+        
+            $items= TyreReturnItems::where('return_id',$id)->get();
 
-        $name=Tyre::where('id',$tyre->tyre_id)->first();
+            foreach($items as $i){
+
+        $name=Tyre::where('id',$i->item_id)->first();
 
         $list['truck_id']=NULL;
          $list['position']=NULL;
-        $list['status']='2';
-        Tyre::where('id',$tyre->tyre_id)->update($list);
+        $list['status']='0';
+        Tyre::where('id',$i->item_id)->update($list);
         
         
         $inv=TyreBrand::where('id',$name->brand_id)->first();
@@ -199,18 +299,29 @@ class TyreReturnController extends Controller
 
         //Truck::where('id',$tyre->truck_id)->update(['tyre' => NULL,'staff'=> NULL,'position' => NULL,'reading'=> NULL]);
 
-            $assign=TyreAssignment::where('tyre_id',$tyre->tyre_id)->first()  ;
+            $assign=TyreAssignment::where('tyre_id',$i->item_id)->first()  ;
 
          $truck = TruckTyre::where('truck_id',$tyre->truck_id)->first();
-         if($assign->position =='Diff'){ 
-            $data['due_diff']= $truck->due_diff +1;
-}
-   elseif($assign->position =='Rear'){ 
-          $data['due_rear']= $truck->due_rear  +1;
-}
-  else if($assign->position =='Trailer'){ 
-            $data['due_trailer']= $truck->due_trailer+1;
-}
+         
+        if($assign->position =='Position 1'){ 
+            $data['due_1']= $truck->due_1 +1;
+            }
+        elseif($assign->position =='Position 2'){ 
+            $data['due_2']= $truck->due_2 +1;
+        }
+        elseif($assign->position =='Position 3'){ 
+            $data['due_3']= $truck->due_3 +1;
+        }
+        elseif($assign->position =='Position 4'){ 
+            $data['due_4']= $truck->due_4 +1;
+        }
+        elseif($assign->position =='Position 5'){ 
+            $data['due_5']= $truck->due_5 +1;
+        }
+        elseif($assign->position =='Position 6'){ 
+            $data['due_6']= $truck->due_6 +1;
+        }
+ 
                  
                    $data['due_tyre']=$truck->due_tyre +1;
 
@@ -224,16 +335,48 @@ else{
 }
                       
                      $truck->update($data);
+                     
+                     $m=MasterHistory::where('serial_id',$i->item_id)->where('other_id',$assign->id)->where('type','Good Assignment')->first();
+                     
+                     if(!empty($m)){
+                        $price=$m->price; 
+                     }
+  
+                   else{
+                       $price=$inv->price;  
+                   }
+  
+   $mlists = [
+                        'in' => 1,
+                        'price' =>$price ,
+                        'item_id' => $i->brand_id,
+                        'serial_id' =>$i->item_id,
+                         'staff_id' => $tyre->staff,
+                        'added_by' => auth()->user()->added_by,
+                        'location' =>   $i->location,
+                        'date' =>$tyre->date,
+                        'type' =>   'Return Good Assignment',
+                        'other_id' =>$tyre->id,
+                    ];
 
-TyreAssignment::where('tyre_id',$tyre->tyre_id)->delete()  ;
+                    MasterHistory::create($mlists);
+                     
+
+TyreAssignment::where('tyre_id',$i->item_id)->delete()  ;
+
+
+
+}
+
+
 
         if(!empty($tyre)){
            $activity = TyreActivity::create(
                [ 
-                   'added_by'=>auth()->user()->id,
+                   'added_by'=>auth()->user()->added_by,
                    'module_id'=>$tyre->id,
                    'module'=>'Tyre Return',
-                   'activity'=>"Return of Tyre " .$name->reference. " is Approved",
+                   'activity'=>"Return of Tyre with reference " .$tyre->reference. " is Approved",
                    'date'=>date('Y-m-d'),
 
                ]

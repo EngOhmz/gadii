@@ -8,13 +8,10 @@
                 <h6 class="modal-title">EDIT PERMISSION</h6>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label>Permission Tag </label>
-                    <input type="text" class="form-control" name="slug" id="p-slug_">
-                </div>
+               
                 <div class="form-group has-feedback">
                     <label>Module Name </label>
-                    <select class="form-control" name="module_id" id="p-module_">
+                    <select class="form-control m-b" name="module_id" id="p-module_" required>
                         <option value="" disabled selected>Choose option</option>
                         @foreach($modules as $module)
                             <option value="{{ $module->id }}">{{ $module->slug }}</option>
@@ -22,13 +19,20 @@
                     </select>
                     <span class="help-block"></span>
                 </div>
+                 <div class="form-group">
+                 <label class="">Name </label>
+                    <input type="text" class="form-control" name="name" id="p-name_" required>
+                    </div>
+                     <div class="form-group">
+                    <label>Permission Tag </label>
+                    <input type="text" class="form-control" name="slug" id="p-slug_" required>
+                </div>
                 <input type="hidden" name="id" id="id">
             </div>
             <div class="modal-footer p-0">
                 <div class="p-2">
-                    <button type="button" class="btn btn-xs btn-outline-warning mr-1 px-3" data-dismiss="modal">Close
-                    </button>
-                    {!! Form::submit('Save', ['class' => 'btn btn-xs btn-outline-success px-3']) !!}
+                  <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
+                   <button class="btn btn-primary"  type="submit" id="save" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
                 </div>
             </div>
             {!! Form::close() !!}

@@ -25,6 +25,12 @@ $settings= App\Models\System::first();
     <script src="{{asset('assets2/js/app.js') }}"></script>
     <!-- /theme JS files -->
 
+<style>
+.required{
+color:red;
+}
+
+</style>
 </head>
 
 <body>
@@ -75,25 +81,21 @@ $settings= App\Models\System::first();
 
             <!-- Inner content -->
             <div class="content-inner">
+                
 
                 <!-- Content area -->
                 <div class="content d-flex justify-content-center align-items-center">
-
+                 
                     <!-- Login form -->
-                    <form class="register-form" method="POST" action="{{ route('users_details.store') }}">
-                        @csrf
-                        <div class="card mb-0">
-                            <div class="card-body">
-                                <div class="text-center mb-3">
-         
-                                     <h4>{{__('company.title')}}</h4>
-                                    <span class="d-block text-muted">Enter your credentials below</span>
-                                </div>
-<div class="row">
+                      <form method="POST" action="{{ route('users_details.store') }}" enctype="multipart/form-data">
+                            @csrf
+                                 <p> <span class="required"> * - Required Fields </span> </p>
+                              <br>
+                            <div class="row">
                                 <div class="form-group col-6">
-                                    <label for="company_name">{{__('company.company_name')}}</label>
+                                    <label for="company_name">{{__('company.company_name')}} <span class="required"> * </span></label>
                                     <input id="company_name" type="text" class="form-control" name="company_name"
-                                        autofocus>
+                                        autofocus required>
                                     @error('company_name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -101,16 +103,26 @@ $settings= App\Models\System::first();
                                     @enderror
                                 </div>
                                 <div class="form-group col-6">
-                                    <label for="address">{{__('company.location')}}</label>
-                                    <input id="address" type="text" class="form-control" name="address">
+                                    <label for="address">{{__('company.location')}} <span class="required"> * </span></label>
+                                    <input id="address" type="text" class="form-control" name="address" required>
                                     @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
                                 </div>
+                                
                             </div>
                             <div class="row">
+                           <div class="form-group col-6">
+                                    <label for="email">{{__('Phone Number')}} <span class="required"> * </span></label>
+                                    <input id="text" type="text" class="form-control" name="phone" required>
+                                    @error('phone')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                    @enderror
+                                </div>
                                 <div class="form-group col-6">
                                     <label for="email">{{__('company.company_email')}}</label>
                                     <input id="email" type="email" class="form-control" name="email">
@@ -120,7 +132,10 @@ $settings= App\Models\System::first();
                                     </span>
                                     @enderror
                                 </div>
-                                <div class="form-group col-6">
+                               
+                            </div>
+                            <div class="row">
+                              <div class="form-group col-6">
                                     <label for="email">{{__('company.tin')}}</label>
                                     <input id="tin" type="text" class="form-control" name="tin">
                                     @error('tin')
@@ -129,8 +144,6 @@ $settings= App\Models\System::first();
                                     </span>
                                     @enderror
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="form-group col-6">
                                     <label for="password" class="d-block">{{__('company.website')}}</label>
                                     <input id="password" type="text" class="form-control pwstrength"
@@ -147,7 +160,7 @@ $settings= App\Models\System::first();
                                 </div>
                                 <div class="form-group col-6">
                                     <label for="password2" class="d-block">{{__('company.logo')}}</label>
-                                    <input id="logo" type="file" class="form-control" name="files">
+                                    <input id="logo" type="file" class="form-control" name="picture">
                                 </div>
                             </div>
 
@@ -173,9 +186,9 @@ $settings= App\Models\System::first();
                             @csrf
                             <div class="row">
                                 <div class="form-group col-6">
-                                    <label for="company_name">{{__('company.company_name')}}</label>
+                                    <label for="company_name">{{__('company.company_name')}}<span class="required"> * </span></label>
                                     <input id="company_name" type="text" class="form-control" name="company_name"
-                                        autofocus>
+                                        autofocus required>
                                     @error('company_name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -183,8 +196,8 @@ $settings= App\Models\System::first();
                                     @enderror
                                 </div>
                                 <div class="form-group col-6">
-                                    <label for="address">{{__('company.location')}}</label>
-                                    <input id="address" type="text" class="form-control" name="address">
+                                    <label for="address">{{__('company.location')}} <span class="required"> * </span></label>
+                                    <input id="address" type="text" class="form-control" name="address" required>
                                     @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -256,13 +269,13 @@ $settings= App\Models\System::first();
                         <h4>{{__('company.title')}}</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="{{ route('users_details.store') }}">
+                        <form method="POST" action="{{ route('users_details.store') }}" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="form-group col-6">
-                                    <label for="company_name">{{__('company.company_name')}}</label>
+                                    <label for="company_name">{{__('company.company_name')}}<span class="required"> * </span></label>
                                     <input id="company_name" type="text" class="form-control" name="company_name"
-                                        autofocus>
+                                        autofocus required>
                                     @error('company_name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -270,8 +283,8 @@ $settings= App\Models\System::first();
                                     @enderror
                                 </div>
                                 <div class="form-group col-6">
-                                    <label for="address">{{__('company.location')}}</label>
-                                    <input id="address" type="text" class="form-control" name="address">
+                                    <label for="address">{{__('company.location')}}<span class="required"> * </span></label>
+                                    <input id="address" type="text" class="form-control" name="address" required>
                                     @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -316,7 +329,7 @@ $settings= App\Models\System::first();
                                 </div>
                                 <div class="form-group col-6">
                                     <label for="password2" class="d-block">{{__('company.logo')}}</label>
-                                    <input id="logo" type="file" class="form-control" name="files">
+                                    <input id="logo" type="file" class="form-control" name="picture">
                                 </div>
                             </div>
 
@@ -344,7 +357,7 @@ $settings= App\Models\System::first();
                                 <div class="form-group col-6">
                                     <label for="company_name">{{__('company.company_name')}}</label>
                                     <input id="company_name" type="text" class="form-control" name="company_name"
-                                        autofocus>
+                                        autofocus required>
                                     @error('company_name')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -352,8 +365,8 @@ $settings= App\Models\System::first();
                                     @enderror
                                 </div>
                                 <div class="form-group col-6">
-                                    <label for="address">{{__('company.location')}}</label>
-                                    <input id="address" type="text" class="form-control" name="address">
+                                    <label for="address">{{__('company.location')}}<span class="required"> * </span></label>
+                                    <input id="address" type="text" class="form-control" name="address" required>
                                     @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

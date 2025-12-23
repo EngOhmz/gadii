@@ -11,7 +11,7 @@ class EmployeePayroll extends Model
 
     protected $table = "tbl_employee_payroll";
 
-    protected $fillable = ['payroll_id','salary_template_id','added_by','user_id','department_id'];
+    protected $guarded = ['id','_token'];
 
     public function salaryTemplates(){
 

@@ -9,10 +9,8 @@ class Role extends Model
 {
     //
     
+protected $guarded = ['id','_token'];
 
-    protected $fillable = [
-         'slug','added_by'
-    ];
     protected $touches = ['permissions'];
 
     public function users()

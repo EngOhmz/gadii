@@ -24,55 +24,44 @@
             <div class="col-12 col-md-12 col-lg-12">
 
                <div class="col-lg-10">
-                   @if($purchases->good_receive == 0 && $purchases->status != 7)
-                 <a class="btn btn-xs btn-primary"  onclick="return confirm('Are you sure?')"  href="{{ route('courier_quotation.edit', $purchases->id)}}"  title="" > Edit </a>          
-              <a class="btn btn-xs btn-info"  title="Convert to Invoice" onclick="return confirm('Are you sure? you want to convert Quotation To Invoice')"  href="{{ route('courier.approve', $purchases->id)}}" title="" >Convert to Invoice </a>
+
+                     
+    
+                 @if($purchases->good_receive == 0 )
+                                  @if(!empty($child[0]))
+                  @can('approve-trip')
+                  <a  class="btn btn-xs btn-info" title="Collect" onclick="return confirm('Are you sure?')"   href="{{ route('courier.start', $purchases->id)}}">Start Trip</a>
+                           @endcan                     
+                     @endif 
+
+                  @if(!empty($close))
+                 @can('close-trip')
+                  <a  class="btn btn-xs btn-danger" title="Close" onclick="return confirm('Are you sure?')"   href="{{ route('courier.close_trip', $purchases->id)}}">Close Trip</a>
+                           @endcan
+                        @endif
+
+                   <a  class="btn btn-xs btn-primary" title="Add" onclick="return confirm('Are you sure?')"   href="{{ route('courier.add_trip', $purchases->id)}}">Add Trip</a>
                 @endif
-
-              @if($purchases->good_receive == 1  )                        
-                <a class="btn btn-xs btn-danger " data-placement="top" href="{{ route('courier.pay',$purchases->id)}}" title="Add Payment"> Pay Invoice  </a>   
- 
-
-
           
-           @endif  
-             
+
+
+                @if(!empty($chk))
              <a class="btn btn-xs btn-success" href="{{ route('courier_pdfview',['download'=>'pdf','id'=>$purchases->id]) }}"  title="" > Download PDF </a>         
-                                         
+             @endif
+                            
     </div>
 
-<br>
 
-<?php if (strtotime($purchases->due_date) < time() && $purchases->status != '2' && $purchases->status != '7') {
-    $start = strtotime(date('Y-m-d H:i'));
-    $end = strtotime($purchases->due_date);
-
-    $days_between = ceil(abs($end - $start) / 86400);
-    ?>
-
-   <div class="alert alert-danger alert-dismissible show fade">
-            <div class="alert-body">
-              <button class="close" data-dismiss="alert">
-                <span>×</span>
-              </button>
-             <i class="fa fa-exclamation-triangle"></i>
-        This invoice is overdue by {{ $days_between}} days
-            </div>
-          </div>
-
-  
-    <?php
-}
-?>
 
 <br>
  
                 <div class="card">
                  
 						<div class="card-body">
-                       
+              
+         
                         <?php
-$settings= App\Models\System::first();
+$settings= App\Models\System::where('added_by',auth()->user()->added_by)->first();
 
 
 ?>
@@ -81,7 +70,7 @@ $settings= App\Models\System::first();
                                 aria-labelledby="home-tab2">
                                 <div class="row">
                                    <div class="col-lg-6 col-xs-6 ">
-                <img class="pl-lg" style="width: 233px;height: 220px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
+                <img class="pl-lg" style="width: 233px;height: 120px;" src="{{url('assets/img/logo')}}/{{$settings->picture}}">
             </div>
                                   
  <div class="col-lg-3 col-xs-3">
@@ -90,23 +79,24 @@ $settings= App\Models\System::first();
 
                                       <div class="col-lg-3 col-xs-3">
                                         
-                                       <h5 class=mb0">REF NO : {{$purchases->pacel_number}}</h5>
-                                      Invoice Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}                  
-              <br>Due Date : {{Carbon\Carbon::parse($purchases->due_date)->format('d/m/Y')}}                                          
-           <br>Sales Agent: {{$purchases->user->name }} 
+                                       <h5 class=mb0">REF NO : {{$purchases->confirmation_number}}</h5>
+                                      Invoice Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}                                                         
+                                        <br>Sales Agent: {{$purchases->user->name }} 
                                       
           <br>Status: 
-           @if($purchases->good_receive == 0 && $purchases->status == 0)
-                                            <span class="badge badge-danger ">Not Invoiced</span>
-                                            @elseif($purchases->status == 0 )
-                                             <span class="badge badge-primary ">Invoiced</span>
-                                            @elseif($purchases->status == 1)
-                                             <span class="badge badge-info ">Partially Paid</span>
-                                            @elseif($purchases->status == 2)
-                                             <span class="badge badge-success "> Paid Invoice</span>
-                                            @elseif($purchases->status == 7)
-                                            <span class="badge badge-danger ">Cancelled</span>
-                                            @endif
+
+                                                  
+                                                @if($purchases->status == 0 && $purchases->good_receive == 0)
+                                                    <div class="badge badge-warning badge-shadow">Waiting For Approval</div>
+                                                    @elseif($purchases->good_receive == 1)
+                                                    <div class="badge badge-success badge-shadow">Approved</div>
+                                                  
+                                                    @endif
+
+                                                
+
+
+
 
                                         <br>Currency: {{$purchases->currency_code }}                                                
                     
@@ -142,10 +132,12 @@ $settings= App\Models\System::first();
                                         </div>
  </div>
 
+
+ 
                                     </div>
                                 </div>
 
-                                
+@if(!empty($purchases->instructions))<br><strong>Instruction : </strong> {{$purchases->instructions}}   @endif                                
                                 <?php
                                
                                  $sub_total = 0;
@@ -156,21 +148,22 @@ $settings= App\Models\System::first();
                                  ?>
 
 <br><br>
-
+  @if(!empty($purchase_items[0]))
                                <div class="table-responsive mb-lg">
             <table class="table items invoice-items-preview" >
                 <thead class="bg-items">
                     <tr>
                         <th style="color:white;">#</th>
-                        <th style="color:white;">Items</th>
-                        <th class="col-sm-1" style="color:white;">Qty</th>
-                        <th  class="col-sm-1" style="color:white;">Price</th>
-                        <th class="col-sm-2" style="color:white;">Tax</th>
-                        <th class="col-sm-2" style="color:white;">Total</th>
+                    <th style="color:white;">Route</th>
+                        <th style="color:white;">WBN</th>
+                        <th  style="color:white;">Price</th>                      
+                        <th style="color:white;">Tax</th>                              
+                        <th  style="color:white;">Total</th>
+                   <th  style="color:white;">Action</th>
                     </tr>
                 </thead>
                                     <tbody>
-                                        @if(!empty($purchase_items))
+                                      
                                         @foreach($purchase_items as $row)
                                         <?php
                                          $sub_total +=$row->total_cost;
@@ -179,22 +172,56 @@ $settings= App\Models\System::first();
                                          ?>
                                         <tr>
                                             <td class="">{{$i++}}</td>
+                                                 <td class="">{{$purchases->from->name}} -  @if(!empty($row->to->name)) {{$row->to->name}} @endif</td>
                                             <?php
-                                          $item_name = App\Models\Courier\CourierList::find($row->item_name);
+                                          $item_name = App\Models\Tariff::find($row->item_name);
                                         ?>
-                                            <td class=""><strong class="block">{{$item_name->name}}</strong></td>
-                                            <td class="">{{ $row->quantity }} </td>
-                                        <td class="">{{number_format($row->price ,2)}}  </td>                                         
+                                            <td class=""><strong class="block">{{$row->wbn_no}}</strong>
+                                               <br>{{ $row->description }}
+                                                     </td>
+
+                                        <td class="">{{number_format($row->price ,2)}}  </td>     
+                                                                                   
                                          <td class="">
-                                  @if(!@empty($row->total_tax > 0))
-                              <small class="pr-sm">VAT ({{ $row->tax_rate * 100 }} %)</small> {{number_format($row->total_tax ,2)}} 
-@endif
+                             {{number_format($row->total_tax ,2)}} 
+
 </td>
                                             <td class="">{{number_format($row->total_cost ,2)}} </td>
-                                            
+
+
+                                            <td>
+                                                <div class="form-inline">
+                                                
+                                             @if($purchases->good_receive == 0)
+                   <a  class="list-icons-item text-primary" title="Add" onclick="return confirm('Are you sure?')"   href="{{ route('courier.receive', $row->id)}}"><i class="icon-plus2"></i></a> &nbsp;
+
+@php   
+$del=App\Models\Courier\CourierItem::where('pacel_id',$row->pacel_id)->where('parent_id',$row->id)->get(); 
+$close_trip=App\Models\Courier\CourierItem::where('pacel_id',$row->pacel_id)->where('parent_id',$row->id)->where('child','1')->where('start','1')->first(); 
+@endphp
+  @if(empty($del[0]))
+{!! Form::open(['route' => ['courier_quotation.delete_parent',$row->id], 'method' => 'delete']) !!}
+<button type="submit" style="border:none;background: none; padding-top:20px;" class="list-icons-item text-danger" title="Delete" onclick="return confirm('Are you sure?')"><i class="icon-trash"></i></button>
+{{ Form::close() }}
+&nbsp;
+@endif
+                            @endif
+  
+                                                  <div class="dropdown">
+                                                    <a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+                                                    <div class="dropdown-menu">   
+                   @if(empty($close_trip))
+                        <a  href="#" class="nav-link" title="View" data-toggle="modal"  onclick="model({{ $row->id }},'assign-wbn')" value="{{ $row->id}}" data-target="#appFormModal">Assign</a>    
+                           @endif                           
+                       <a  href="#" class="nav-link" title="View" data-toggle="modal"  onclick="model({{ $row->id }},'view-child')" value="{{ $row->id}}" data-target="#appFormModal">View Details</a>                                                    
+                                                                             
+             </div></div>
+                                                
+ </div>
+                                   </td>
                                         </tr>
                                         @endforeach
-                                        @endif
+                                    
 
                                        
                                     </tbody>
@@ -205,29 +232,32 @@ $settings= App\Models\System::first();
 <td colspan="4"></td>
 <td>Sub Total</td>
 <td>{{number_format($sub_total,2)}}  {{$purchases->currency_code}}</td>
+<td></td>
 </tr>
 
 <tr>
 <td colspan="4"></td>
-<td>Total Tax</td>
+<td>Total Tax   </td>
 <td>{{number_format($tax,2)}}  {{$purchases->currency_code}}</td>
+<td></td>
 </tr>
 
 <tr>
 <td colspan="4"></td>
 <td>Total Amount</td>
 <td>{{number_format($gland_total - $purchases->discount ,2)}}  {{$purchases->currency_code}}</td>
+<td></td>
 </tr>
 
  @if(!@empty($purchases->due_amount < $purchases->amount))
      <tr>
-<td colspan="4"></td>
+<td colspan="5"></td>
                     <td>Paid Amount</p>
                     <td>{{number_format($purchases->amount - $purchases->due_amount,2)}}  {{$purchases->currency_code}}</p>
                 </tr>
 
       <tr>
-<td colspan="4"></td>
+<td colspan="5"></td>
                     <td class="text-danger">Total Due</td>
                     <td>{{number_format($purchases->due_amount,2)}}  {{$purchases->currency_code}}</td>
                 </tr>
@@ -239,19 +269,19 @@ $settings= App\Models\System::first();
 <p></p>
 <br>
               <tr>
-<td colspan="4"></td>
+<td colspan="6"></td>
 <td>Sub Total</td>
 <td>{{number_format($sub_total * $purchases->exchange_rate,2)}}  TZS</td>
 </tr>
 
 <tr>
-<td colspan="4"></td>
+<td colspan="6"></td>
 <td>Total Tax</td>
-<td>{{number_format($tax * $purchases->exchange_rate,2)}}   TZS<</td>
+<td>{{number_format($tax * $purchases->exchange_rate,2)}}   TZS</td>
 </tr>
 
 <tr>
-<td colspan="4"></td>
+<td colspan="6"></td>
 <td>Total Amount</td>
 <td>{{number_format($purchases->exchange_rate * ($gland_total-$purchases->discount) ,2)}}   TZS</td>
 </tr>
@@ -272,7 +302,7 @@ $settings= App\Models\System::first();
 </table>
                             </div>
 
-
+    @endif
 
 
 </div>
@@ -285,7 +315,7 @@ $settings= App\Models\System::first();
 
                     </div>
                 </div>
-            </div>
+          
 
          
 
@@ -355,7 +385,11 @@ $method= App\Models\Payment_methodes::find($row->payment_method);
     </div>
 </section>
 
-
+ <!-- discount Modal -->
+  <div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+                          <div class="modal-dialog modal-lg">
+    </div>
+</div>
    
 @endsection
 
@@ -376,4 +410,28 @@ $method= App\Models\Payment_methodes::find($row->payment_method);
         
         });
     </script>
+<script type="text/javascript">
+    function model(id,type) {
+
+        $.ajax({
+            type: 'GET',
+            url: '{{url("courier/courierModal")}}',
+            data: {
+                'id': id,
+                'type':type,
+            },
+            cache: false,
+            async: true,
+            success: function(data) {
+                //alert(data);
+                $('.modal-dialog').html(data);
+            },
+            error: function(error) {
+                $('#appFormModal').modal('toggle');
+
+            }
+        });
+
+    }
+</script>
 @endsection

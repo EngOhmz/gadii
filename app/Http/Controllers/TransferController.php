@@ -31,8 +31,8 @@ class TransferController extends Controller
     public function index()
     {
       
-      $transfer=Transfer::all();
-  $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
+      $transfer=Transfer::where('added_by',auth()->user()->added_by)->orderBy('date', 'DESC')->get();;
+  $bank_accounts=AccountCodes::where('account_status','Bank')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
      $currency = Currency::all();
      $payment_method = Payment_methodes::all();
         return view('transfer.data', compact('payment_method','transfer','currency','bank_accounts'));
@@ -60,7 +60,7 @@ class TransferController extends Controller
     {
 
       if($request->to_account_id == $request->from_account_id){
- return redirect(route('transfer2.index'))->with(['error'=>'you have chosen the same from and to account.']);
+ return redirect(route('transfer.index'))->with(['error'=>'you have chosen the same from and to account.']);
 }
 
 else{
@@ -77,13 +77,13 @@ else{
 
       $data=$request->post();
           $random = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(4/strlen($x)) )),1,4);
-         $data['reference'] = "TRANS_".$random;
-        $data['added_by']=auth()->user()->id;
+         $data['reference'] = "TRANSF_".$random;
+        $data['added_by']=auth()->user()->added_by;
    $transfer=Transfer::create($data);
-     return redirect(route('transfer2.index'))->with(['success'=>'Transfer Created Successfully']);
 
 
-        
+     return redirect(route('transfer.index'))->with(['success'=>'Transfer Created Successfully']);
+      
      
  }      
 
@@ -100,7 +100,7 @@ else{
     public function edit($id)
     {
          $data=Transfer::find($id);
-  $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
+  $bank_accounts=AccountCodes::where('account_status','Bank')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
      $currency = Currency::all();
      $payment_method = Payment_methodes::all();
         return View::make('transfer.data', compact('data','currency','payment_method','id','bank_accounts'))->render();
@@ -118,64 +118,48 @@ else{
     public function update(Request $request, $id)
     {
        
-          $transfer= Transfer::find($id);
+         $transfer= Transfer::find($id);
 
     
              if($request->to_account_id == $request->from_account_id){
- return redirect(route('transfer2.index'))->with(['error'=>'you have chosen the same from and to account.']);
+ return redirect(route('transfer.index'))->with(['error'=>'you have chosen the same from and to account.']);
 }
 
 else{
-$account= Accounts::where('account_id',$request->from_account_id)->first();
-
-if(!empty($account)){
- $balance=$account->balance;
-}
-
-else{
-     $balance='0';
- }    
-
-
 
 
 
       $data=$request->post();
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
    $transfer->update($data);
-     return redirect(route('transfer2.index'))->with(['success'=>'Transfer Created Successfully']);
+
+    
+     return redirect(route('transfer.index'))->with(['success'=>'Transfer Updated Successfully']);
 
 
         
      
  }      
+   
+}
 
 
-
-     
- 
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-       
+  $transfer= Transfer::find($id);
+
        Transfer::destroy($id);
         //Flash::success(trans('general.successfully_deleted'));
-   return redirect(route('transfer2.index'))->with(['success'=>'Transfer Deleted Successfully']);
+   return redirect(route('transfer.index'))->with(['success'=>'Transfer Deleted Successfully']);
     }
 
-     public function approve($id)
+
+ public function approve($id)
     {
-        //
-        $transfer= Transfer::find($id);
+
+     $transfer= Transfer::find($id);
         $data['status'] = 1;
-        $data['approve_by']=auth()->user()->id;
+        $data['approve_by']=auth()->user()->added_by;
         $transfer->update($data);
 
 $from_account= Accounts::where('account_id',$transfer->from_account_id)->first();
@@ -195,7 +179,7 @@ else{
        $new['account_name']= $dr->account_name;
       $new['balance']= 0-$transfer->amount;
        $new[' exchange_code']=$transfer->exchange_code;
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
      Accounts::create($new);
 
 $from_balance=0-$transfer->amount;
@@ -218,7 +202,7 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= $transfer->amount;
        $new[' exchange_code']='TZS';
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
      Accounts::create($new);
 
 $to_balance=$transfer->amount;;
@@ -236,9 +220,10 @@ $to_balance=$transfer->amount;;
         $journal->transaction_type = 'transfer';
         $journal->name = 'Transfer Payment';
         $journal->payment_id =    $transfer->id;
-          $journal->added_by=auth()->user()->id;
+          $journal->added_by=auth()->user()->added_by;
         $journal->notes='Money Transfer From '.$from->account_name.' to ' .$to->account_name;
         $journal->debit=     $transfer->amount;
+         $journal->added_by=auth()->user()->added_by;
         $journal->save();
 
         $journal = new JournalEntry();
@@ -250,9 +235,10 @@ $to_balance=$transfer->amount;;
         $journal->transaction_type = 'transfer';
         $journal->name = 'Transfer Payment';
         $journal->payment_id =    $transfer->id;
-          $journal->added_by=auth()->user()->id;
+          $journal->added_by=auth()->user()->added_by;
           $journal->notes='Money Transfer From '.$from->account_name.' to ' .$to->account_name;
         $journal->credit=    $transfer->amount;
+         $journal->added_by=auth()->user()->added_by;
         $journal->save();
     
        
@@ -263,7 +249,7 @@ $to_balance=$transfer->amount;;
                                  'module_id' => $transfer->id,
                                'account_id' => $transfer->from_account_id,
                                 'name' => 'Transfer Payment with reference  ' .$transfer->name,
-                                 'transaction_prefix' => $transfer->name,
+                                'transaction_prefix' => $transfer->reference,
                                 'type' => 'Transfer',
                                 'amount' =>$transfer->amount ,
                                 'debit' => $transfer->amount,
@@ -271,7 +257,7 @@ $to_balance=$transfer->amount;;
                                 'date' => date('Y-m-d', strtotime($transfer->date)),
                                    'status' => 'paid' ,
                                 'notes' => 'This is a transfer payment from '.$from->account_name.' to ' .$to->account_name ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
 
 
@@ -280,7 +266,7 @@ $to_balance=$transfer->amount;;
                                  'module_id' => $transfer->id,
                                'account_id' => $transfer->to_account_id,
                                 'name' => 'Transfer Payment with reference  ' .$transfer->name,
-                                 'transaction_prefix' => $transfer->name,
+                                 'transaction_prefix' => $transfer->reference,
                                 'type' => 'Transfer',
                                 'amount' =>$transfer->amount ,
                                 'credit' => $transfer->amount,
@@ -288,13 +274,16 @@ $to_balance=$transfer->amount;;
                                 'date' => date('Y-m-d', strtotime($transfer->date)),
                                    'status' => 'paid' ,
                                 'notes' => 'This is a transfer payment from '.$from->account_name.' to ' .$to->account_name ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
       
 
-        return redirect(route('transfer2.index'))->with(['success'=>'Approved Successfully']);
-    }
+
+     return redirect(route('transfer.index'))->with(['success'=>'Transfer Created Successfully']);
+          
+ }      
 
 
-   
+
+
 }

@@ -8,15 +8,18 @@
         <div class="row">
             <div class="col-12 col-sm-6 col-lg-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4>Manage Designations</h4><br>
+                     <div class="card-header header-elements-sm-inline">
+								<h4 class="card-title"> Designations</h4>
+								<div class="header-elements">
+								   
 
    <button type="button" class="btn btn-outline-info btn-xs px-4 pull-right"
                             data-toggle="modal" data-target="#addPermissionModal">
                         <i class="fa fa-plus-circle"></i>
                         Add
                     </button>
-                    </div>
+
+                    </div></div>
                     <div class="card-body">
 
                        
@@ -24,7 +27,7 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped" id="table-1">
                                     <thead>
                     <tr>
                         <th>S/N</th>
@@ -86,8 +89,24 @@
              var dep = $(this).data('department');
             $('#id').val(id);
             $('#p-name_').val(name);
-             $('#p-dep_').val(dep);
+             $('#p-dep_').val(dep).change();;;
             $('#editPermissionModal').modal('show');
+        });
+    </script>
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
         });
     </script>
 @endsection

@@ -1,0 +1,3 @@
+#,Item Name,Item Type,Cost Price,Sales Price,Quantity,Unit
+1,AMOXICILLIN TABS 250mg Antibiotic440,,44,100,550,capsule
+2,AMPLICLOX CAPS,antibiotic,100,200,145,capsule

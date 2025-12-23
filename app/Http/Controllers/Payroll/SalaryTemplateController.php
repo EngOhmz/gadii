@@ -23,7 +23,12 @@ use App\Models\User;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use  DateTime;
-
+use App\Models\AccountCodes;
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\WithValidation;
+use App\Imports\ImportSalaryTemplate;
+use Response;
 
 class SalaryTemplateController extends Controller
 {
@@ -35,7 +40,7 @@ class SalaryTemplateController extends Controller
     public function index()
     {
       
-            $salary = SalaryTemplate::all();
+            $salary = SalaryTemplate::where('user_id',auth()->user()->added_by)->where('disabled','0')->get();
 
          
         return view('payroll/salary_template',compact('salary'));
@@ -64,7 +69,9 @@ class SalaryTemplateController extends Controller
        
         $template_data['salary_grade'] = $request->salary_grade;
         $template_data['basic_salary'] = $request->basic_salary;
-        $template_data['user_id'] = auth()->user()->id;
+        $template_data['user_id'] = auth()->user()->added_by;
+        $template_data['checked'] =$request->checked;
+         $template_data['heslb_check'] =$request->heslb_check;
 
 // ************* Save into tbl_salary_template *************
            if(!empty($id))
@@ -95,7 +102,7 @@ class SalaryTemplateController extends Controller
                     $alsalary_allowance_data['salary_template_id'] = $salary_template_id;
                     $alsalary_allowance_data['allowance_label'] = $h_salary_allowance_label;
                     $alsalary_allowance_data['allowance_value'] = $asalary_allowance_data['allowance_value'][$hkey];
-                    $alsalary_allowance_data['user_id'] = auth()->user()->id;
+                    $alsalary_allowance_data['user_id'] = auth()->user()->added_by;
 // *********** save defualt value into tbl_salary_allowance    *******************
                 $salary_allowance = SalaryAllowance::create($alsalary_allowance_data);
                 }
@@ -110,24 +117,7 @@ class SalaryTemplateController extends Controller
             $salary_allowance1 = SalaryAllowance::all()->where('salary_template_id',$salary_template_id)->last();
             
             
-            // if (!empty($salary_allowance1)) {
-            //     $salary_allowance = $salary_allowance1->salary_allowance_id;
-            //     $salary_allowance = array_column($salary_allowance, 'salary_allowance_id');
-            //     if (!empty($salary_allowance)) {
-            //         $delete_salary_allowance_id = array_diff($salary_allowance, $salary_allowance_id);
-            //         if (!empty($delete_salary_allowance_id)) {
-            //             foreach ($delete_salary_allowance_id as $deleted_id) {
-            //                 // $this->payroll_model->_table_name = "tbl_salary_allowance"; // table name
-            //                 // $this->payroll_model->_primary_key = "salary_allowance_id"; // $id
-            //                 // $this->payroll_model->delete($deleted_id);
-            //                 $salaryAllowance = SalaryAllowance::find($deleted_id);
-            //                 $salaryAllowance->delete();
-
-            //             }
-            //         }
-
-            //     }
-            // }
+           
             if (!empty($salary_allowance_label)) {
                 foreach ($salary_allowance_label as $key => $v_salary_allowance_label) {
                     if (!empty($salary_allowance_value[$key])) {
@@ -135,9 +125,7 @@ class SalaryTemplateController extends Controller
                         $salary_allowance_data['allowance_label'] = $v_salary_allowance_label;
                         $salary_allowance_data['allowance_value'] = $salary_allowance_value[$key];
 // *********** save add more value into tbl_salary_allowance    *******************
-                        
-                        // $this->payroll_model->_table_name = "tbl_salary_allowance"; // table name
-                        // $this->payroll_model->_primary_key = "salary_allowance_id"; // $id
+                      
                         if (!empty($salary_allowance_id[$key])) {
                             
                             $allowance_id = $salary_allowance_id[$key];
@@ -174,12 +162,9 @@ class SalaryTemplateController extends Controller
                     $adeduction_data['salary_template_id'] = $salary_template_id;
                     $adeduction_data['deduction_label'] = $d_deduction_label;
                     $adeduction_data['deduction_value'] = $ddeduction_data['deduction_value'][$dkey];
-                    $adeduction_data['user_id'] = auth()->user()->id;
+                    $adeduction_data['user_id'] = auth()->user()->added_by;
 
-// *********** save defualt value into tbl_salary_allowance    *******************
-                    //$this->payroll_model->_table_name = "tbl_salary_deduction"; // table name
-                    //$this->payroll_model->_primary_key = "salary_deduction_id"; // $id
-                    //$this->payroll_model->save($adeduction_data);
+
                     SalaryDeduction::create($adeduction_data);
                 }
             }
@@ -192,26 +177,7 @@ class SalaryTemplateController extends Controller
             $deduction_label = $request->deduction_label;
             $deduction_value = $request->deduction_value;
 
-            //$salary_deduction = get_any_field('tbl_salary_deduction', array('salary_template_id' => $salary_template_id), 'salary_deduction_id', true);
-            $salary_deduction1 = SalaryDeduction::all()->where('salary_template_id',$salary_template_id)->last();
-            // if (!empty($salary_deduction)) {
-            //     $salary_deduction = $salary_deduction1->salary_deduction_id;
-            //     $salary_deduction = array_column($salary_deduction, 'salary_deduction_id');
-            //     if (!empty($salary_deduction)) {
-
-            //         $delete_salary_deduction_id = array_diff($salary_deduction, $salary_deduction_id);
-            //         if (!empty($delete_salary_deduction_id)) {
-            //             foreach ($delete_salary_deduction_id as $deleted_id) {
-            //                 // $this->payroll_model->_table_name = "tbl_salary_deduction"; // table name
-            //                 // $this->payroll_model->_primary_key = "salary_deduction_id"; // $id
-            //                 // $this->payroll_model->delete($deleted_id);
-            //                 $salaryDeduction = SalaryDeduction::find($deleted_id);
-            //                 $salaryDeducyion->delete();
-            //             }
-            //         }
-
-            //     }
-            // }
+            
 
             if (!empty($deduction_label)) {
                 foreach ($deduction_label as $key => $v_deduction_label) {
@@ -238,7 +204,8 @@ class SalaryTemplateController extends Controller
       if(!empty($salary_template_id1)){
                     $activity =PayrollActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
                             'module_id'=>$salary_template_id,
                              'module'=>'Salary Template',
                             'activity'=>"Salary Template for  " .  $salary_template_id1->salary_grade. "  Created",
@@ -268,7 +235,7 @@ class SalaryTemplateController extends Controller
                     break;
 
             case 'employee':
-           $salary_grade_info = EmployeePayroll::where('payroll_id',$id)->first();
+           $salary_grade_info = EmployeePayroll::where('id',$id)->first();
           $salary_allowance_info=SalaryAllowance::where('salary_template_id', $salary_grade_info->salary_template_id)->get();
           $salary_deduction_info=SalaryDeduction::where('salary_template_id',$salary_grade_info->salary_template_id)->get();
          $employee_info =User::find($salary_grade_info->user_id);
@@ -282,7 +249,7 @@ class SalaryTemplateController extends Controller
         $end_date = $date->modify('last day of this month')->format('Y-m-d');
 
 
-           $salary_grade_info = EmployeePayroll::where('payroll_id',$id)->first();
+           $salary_grade_info = EmployeePayroll::where('id',$id)->first();
           $salary_allowance_info=SalaryAllowance::where('salary_template_id', $salary_grade_info->salary_template_id)->get();
           $salary_deduction_info=SalaryDeduction::where('salary_template_id',$salary_grade_info->salary_template_id)->get();
          $employee_info =User::find($salary_grade_info->user_id);
@@ -306,9 +273,9 @@ class SalaryTemplateController extends Controller
         $start_date = $date->modify('first day of this month')->format('Y-m-d');
         $end_date = $date->modify('last day of this month')->format('Y-m-d');
 
-           $salary_grade_info = EmployeePayroll::where('user_id' ,$salary_info->user_id)->first();
-          $salary_allowance_info=SalaryAllowance::where('salary_template_id', $salary_grade_info->salary_template_id)->get();
-          $salary_deduction_info=SalaryDeduction::where('salary_template_id',$salary_grade_info->salary_template_id)->get();
+           $salary_grade_info = EmployeePayroll::where('user_id' ,$salary_info->user_id)->where('disabled','0')->first();
+          $salary_allowance_info=SalaryPaymentAllowance::where('salary_payment_id', $id)->get();
+          $salary_deduction_info=SalaryPaymentDeduction::where('salary_payment_id', $id)->get();
          $employee_info =User::find($salary_info->user_id);
        
        $overtime_info =Overtime::where('user_id',$salary_info->user_id)->where('overtime_date','>=', $start_date)->where('overtime_date','<=', $end_date)->where('status', '3')->get();    
@@ -322,12 +289,14 @@ class SalaryTemplateController extends Controller
               case 'advance':
                       if($id > 0){
                         $advance_salary=AdvanceSalary::find($id);
-                         $all_employee=User::where('id','!=',1)->get();
-                       return view('payroll.add_advance_salary',compact('id','advance_salary','all_employee'));
+                         $all_employee=User::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+                    $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->where('added_by',auth()->user()->added_by)->get();
+                       return view('payroll.add_advance_salary',compact('id','advance_salary','all_employee','bank_accounts'));
                     }
                      else{
-                         $all_employee=User::where('id','!=',1)->get();
-                        return view('payroll.add_advance_salary',compact('all_employee','id'));
+                         $all_employee=User::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+                       $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->where('added_by',auth()->user()->added_by)->get();
+                        return view('payroll.add_advance_salary',compact('all_employee','id','bank_accounts'));
                   }
                       
                         break;
@@ -342,13 +311,20 @@ class SalaryTemplateController extends Controller
                    case 'overtime':
                       if($id > 0){
                         $overtime=Overtime::find($id);
-                         $all_employee=User::where('id','!=',1)->get();
-                       return view('payroll.add_overtime',compact('id','overtime','all_employee'));
+                         $all_employee=User::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+                         $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->where('added_by',auth()->user()->added_by)->get();
+                       return view('payroll.add_overtime',compact('id','overtime','all_employee','bank_accounts'));
                     }
                      else{
-                         $all_employee=User::where('id','!=',1)->get();
-                        return view('payroll.add_overtime',compact('all_employee','id'));
+                         $all_employee=User::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
+                        $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->where('added_by',auth()->user()->added_by)->get();
+                        return view('payroll.add_overtime',compact('all_employee','id','bank_accounts'));
                   }
+                      
+                        break;
+
+                     case 'import_overtime':
+                        return view('payroll.import_overtime');
                       
                         break;
 
@@ -374,8 +350,12 @@ class SalaryTemplateController extends Controller
         //
  $salary_template_info = SalaryTemplate::find($id);
 $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
- $salary_deduction_info=SalaryDeduction::where('salary_template_id',$id)->get();     
-        return view('payroll/salary_template',compact('salary_template_info','salary_deduction_info','salary_allowance_info','id'));
+ $salary_deduction_info=SalaryDeduction::where('salary_template_id',$id)->get(); 
+ $nssf=SalaryDeduction::where('salary_template_id',$id)->where('deduction_label','NSSF')->first(); 
+  $paye=SalaryDeduction::where('salary_template_id',$id)->where('deduction_label','PAYE')->first(); 
+   $heslb=SalaryDeduction::where('salary_template_id',$id)->where('deduction_label','HESLB')->first(); 
+    
+        return view('payroll/salary_template',compact('salary_template_info','salary_deduction_info','salary_allowance_info','id','paye','nssf','heslb'));
     }
 
     /**
@@ -392,7 +372,10 @@ $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
        
         $template_data['salary_grade'] = $request->salary_grade;
         $template_data['basic_salary'] = $request->basic_salary;
-        $template_data['user_id'] = auth()->user()->id;
+        $template_data['user_id'] = auth()->user()->added_by;
+          $template_data['checked'] =$request->checked;
+           $template_data['heslb_check'] =$request->heslb_check;
+
 
 // ************* Save into tbl_salary_template *************
       
@@ -422,7 +405,7 @@ $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
                     $alsalary_allowance_data['salary_template_id'] = $salary_template_id;
                     $alsalary_allowance_data['allowance_label'] = $h_salary_allowance_label;
                     $alsalary_allowance_data['allowance_value'] = $asalary_allowance_data['allowance_value'][$hkey];
-                    $alsalary_allowance_data['user_id'] = auth()->user()->id;
+                    $alsalary_allowance_data['user_id'] = auth()->user()->added_by;
 // *********** save defualt value into tbl_salary_allowance    *******************
                 $salary_allowance = SalaryAllowance::create($alsalary_allowance_data);
                 }
@@ -432,9 +415,18 @@ $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
             $salary_allowance_value = $request->allowance_value;
             // input id for update
             $salary_allowance_id = $request->salary_allowance_id;
+             $salary_allowance_rem = $request->removed_id;
             
-            //$salary_allowance = get_any_field('tbl_salary_allowance', array('salary_template_id' => $salary_template_id), 'salary_allowance_id', true);
+
             $salary_allowance1 = SalaryAllowance::all()->where('salary_template_id',$salary_template_id)->last();
+            
+             if (!empty($salary_allowance_rem)) {
+            for($i = 0; $i < count($salary_allowance_rem); $i++){
+               if(!empty($salary_allowance_rem[$i])){        
+               SalaryAllowance::where('salary_allowance_id',$salary_allowance_rem[$i])->delete();        
+                   }
+               }
+           }
             
          
             if (!empty($salary_allowance_label)) {
@@ -450,7 +442,6 @@ $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
                             
                             $allowance_id = $salary_allowance_id[$key];
                             SalaryAllowance::where('salary_allowance_id',$allowance_id)->update($salary_allowance_data);
-                            //$this->payroll_model->save($salary_allowance_data, $allowance_id);
                         } else {
                             SalaryAllowance::create($salary_allowance_data);
                             //$this->payroll_model->save($salary_allowance_data);
@@ -482,12 +473,9 @@ $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
                     $adeduction_data['salary_template_id'] = $salary_template_id;
                     $adeduction_data['deduction_label'] = $d_deduction_label;
                     $adeduction_data['deduction_value'] = $ddeduction_data['deduction_value'][$dkey];
-                    $adeduction_data['user_id'] = auth()->user()->id;
+                    $adeduction_data['user_id'] = auth()->user()->added_by;
 
-// *********** save defualt value into tbl_salary_allowance    *******************
-                    //$this->payroll_model->_table_name = "tbl_salary_deduction"; // table name
-                    //$this->payroll_model->_primary_key = "salary_deduction_id"; // $id
-                    //$this->payroll_model->save($adeduction_data);
+
                     SalaryDeduction::create($adeduction_data);
                 }
             }
@@ -499,29 +487,21 @@ $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
 // save add more value into tbl_deduction
             $deduction_label = $request->deduction_label;
             $deduction_value = $request->deduction_value;
+            
+             $salary_deduction_rem = $request->deduc_removed_id;
+            
+            
+             if (!empty($salary_deduction_rem)) {
+            for($i = 0; $i < count($salary_deduction_rem); $i++){
+               if(!empty($salary_deduction_rem[$i])){        
+               SalaryDeduction::where('salary_deduction_id',$salary_deduction_rem[$i])->delete();        
+                   }
+               }
+           }
 
-            //$salary_deduction = get_any_field('tbl_salary_deduction', array('salary_template_id' => $salary_template_id), 'salary_deduction_id', true);
-            $salary_deduction1 = SalaryDeduction::all()->where('salary_template_id',$salary_template_id)->last();
-            // if (!empty($salary_deduction)) {
-            //     $salary_deduction = $salary_deduction1->salary_deduction_id;
-            //     $salary_deduction = array_column($salary_deduction, 'salary_deduction_id');
-            //     if (!empty($salary_deduction)) {
+           
 
-            //         $delete_salary_deduction_id = array_diff($salary_deduction, $salary_deduction_id);
-            //         if (!empty($delete_salary_deduction_id)) {
-            //             foreach ($delete_salary_deduction_id as $deleted_id) {
-            //                 // $this->payroll_model->_table_name = "tbl_salary_deduction"; // table name
-            //                 // $this->payroll_model->_primary_key = "salary_deduction_id"; // $id
-            //                 // $this->payroll_model->delete($deleted_id);
-            //                 $salaryDeduction = SalaryDeduction::find($deleted_id);
-            //                 $salaryDeducyion->delete();
-            //             }
-            //         }
-
-            //     }
-            // }
-
-            if (!empty($deduction_label)) {
+            if (!empty($deduction_value)) {
                 foreach ($deduction_label as $key => $v_deduction_label) {
                     if (!empty($deduction_value[$key])) {
 
@@ -545,7 +525,8 @@ $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
                  if(!empty($salary_template_id)){
                     $activity =PayrollActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
                             'module_id'=>$id,
                              'module'=>'Salary Template',
                             'activity'=>"Salary Template for  " .  $salary_template_id->salary_grade. "  Updated ",
@@ -563,15 +544,19 @@ $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
      */
     public function destroy($id)
     {
-        //
+        /*
      SalaryDeduction::where('salary_template_id', $id)->delete();
          SalaryAllowance::where('salary_template_id', $id)->delete();
-      $salary_template_id = SalaryTemplate::find($id);
+         */
+         
+      $salary_template_id = SalaryTemplate::where('salary_template_id', $id)->first();
+
 
             if(!empty($salary_template_id)){
                     $activity =PayrollActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
                             'module_id'=>$id,
                              'module'=>'Salary Template',
                             'activity'=>"Salary Template  " .  $salary_template_id->salary_grade. "  Deleted ",
@@ -580,7 +565,21 @@ $salary_allowance_info=SalaryAllowance::where('salary_template_id',$id)->get();
        }
 
 
-       $salary_template_id->delete();
+       $salary_template_id->update(['disabled'=> '1']);
         return redirect(route('salary_template.index'))->with(['success'=>'Deleted Successfully']);
     }
+
+public function import(Request $request){
+
+        $data = Excel::import(new ImportSalaryTemplate, $request->file('file')->store('files'));        
+        return redirect()->back()->with(['success'=>'File Imported Successfully']);
+    }
+    
+     public function sample(Request $request){
+       $filepath = public_path('salary_template_sample.xlsx');
+       return Response::download($filepath);
+    }
+
+
+
 }

@@ -11,18 +11,7 @@ class PurchaseItemInventory extends Model
 
     protected $table = "purchase_item_inventories";
 
-    protected $fillable = [
-    'purchase_id',
-    'item_name',
-    'tax_rate',
-    'total_tax',
-    'quantity',
-    'total_cost',
-    'price',
-    'unit',        
-    'items_id',           
-    'order_no',      
-    'added_by'];
+   protected  $guarded = ['id'];
     
     public function user()
     {

@@ -1,155 +1,214 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="utf-8">
-    <title>Payslip</title>
-
-    <style type="text/css">
-        .bd {
-            width: 100%;
-        }
-
-        .banner {
-            border-bottom: 2px solid black;
-        }
-
-        .banner td {
-            border: 0px;
-        }
-
-        .banner td p {
-            font-size: 16px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-        table {
-            font-family: Arial, Helvetica, sans-serif;
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            padding: 8px 0 8px 5px;
-            text-align: left;
-            font-size: 13px;
-            border: 1px solid black;
-            background-color: #F2F2F2;
-        }
-
-        td {
-            padding: 10px 0 8px 8px;
-            
-            font-size: 13px;
-            color: black;
-            border: 1px solid black;
-        }
-
-        .head {
-            background-color: #F2F2F2;
-            font-size: 14px;
-            padding: 15px 5px 8px 15px;
-            border-radius: 5px;
-        }
-
-        .head tr td {
-            text-align: left;
-            font-size: 15px;
-            border: 0px;
-            padding-left: 20px;
-        }
-
-        .tbl1 {
-            width: 49%;
-            float: left;
-        }
-
-        .tbl2 {
-            width: 49%;
-            float: right;
-        }
-
-    .tbl_total {
-            width: 49%;
-            float: right;
-margin-top:250px;
-margin-right:-370px;
-        }
-
-        .tbl_total tr td {
-            border: 0px;
-        }
-
-     
-
-        .bg td {
-            background-color: #F2F2F2;
-        }
-    </style>
+    <title>Larave Generate Invoice PDF - Nicesnippest.com</title>
 </head>
-<body>
-   
-       
-      
-                        <?php
-$settings= App\Models\System::first();
+<style type="text/css">
+    body{
+        font-family: 'Roboto Condensed', sans-serif;
+    }
+    .m-0{
+        margin: 0px;
+    }
+    .p-0{
+        padding: 0px;
+    }
+    .pt-5{
+        padding-top:5px;
+    }
+    .mt-10{
+        margin-top:10px;
+    }
+   .mt-20{
+        margin-top:20px;
+    }
+.mt-90{
+        margin-top:150px;
+    }
 
+    .text-center{
+        text-align:center !important;
+    }
+    .w-100{
+        width: 100%;
+    }
+      .w-100-right{
+         width: 100%;
+            float: right;
+    }
+       .w-50{
+        width: 50%;
+    }
+    .w-50-right{
+        width: 49%;
+            float: right;
+    }
+      .w-50-left{
+        width: 49%;
+            float: left;
+    }
+    .w-85{
+        width:85%;   
+    }
+    .w-15{
+        width:15%;   
+    }
+    .logo img{
+        width:45px;
+        height:45px;
+        padding-top:30px;
+    }
+    .logo span{
+        margin-left:8px;
+        top:19px;
+        position: absolute;
+        font-weight: bold;
+        font-size:25px;
+    }
+    .gray-color{
+        color:#5D5D5D;
+    }
+    .text-bold{
+        font-weight: bold;
+    }
+    .border{
+        border:1px solid black;
+    }
+    table tbody tr, table thead th, table tbody td{
+        border: 1px solid #d2d2d2;
+        border-collapse:collapse;
+        padding:7px 8px;
+    }
+    table tr th{
+        background: #F4F4F4;
+        font-size:15px;
+    }
+    table tr td{
+        font-size:13px;
+    }
+    table{
+        border-collapse:collapse;
+    }
+    .box-text p{
+        line-height:10px;
+    }
+    .float-left{
+        float:left;
+    }
+    .total-part{
+        font-size:16px;
+        line-height:12px;
+    }
+    .total-right p{
+        padding-right:30px;
+    }
+footer {
+            color: #777777;
+            width: 100%;
+            height: 30px;
+            position: absolute;
+            bottom: 0;
+            border-top: 1px solid #aaaaaa;
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        table tfoot tr:first-child td {
+            border-top: none;
+        }
+ table tfoot tr td {
+  padding:7px 8px;
+        }
+
+
+        table tfoot tr td:first-child {
+            border: none;
+        }
+        .head{
+            font-size: 15px;
+        }
+.margin{
+            margin-top: -1%;
+            font-size: 10px;
+    }
+
+</style>
+<body>
+ <?php
+$settings= App\Models\System::where('added_by',auth()->user()->added_by)->first();
 
 ?>
+<div class="head-title">
+ <h1 class="text-center m-0 p-0 head"><img class="pl-lg" style="width: 120px;height: 120px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}"> </h1><br>
+    <h4 class="text-center m-0 p-0 head">{{$settings->name}}</h4><br>
+     <p class="text-center  margin">{{ $settings->address }}</p>
+      <p class="text-center  margin"> Phone: {{  $settings->phone}}</p>
+      <p class="text-center margin ">E: {{$settings->email}}</p>
+
+<br>
+    <h3 class="text-center m-0 p-0">Payslip <?php echo date('F  Y', strtotime($month)) ?></h3>
+</div>
+<div class="add-detail ">
+   <table class="table w-100 ">
+<tfoot>
        
- <div class="bd">
-<div id="payment_receipt">
-        <div style="width: 100%;">
-            <div align="center">
-                <table class="head">
-                    <tr>
-                        <td colspan="3" style="text-align: center; font-size: 18px; padding-bottom: 18px;">
-                            <strong>Payslip
-                                <br/>Salary Month
-                                : <?php echo date('F  Y', strtotime($month)) ?>
-                            </strong></td>
-                    </tr>
-                    <tr>
-                      
-                        <td>
-                            <strong>Name  :</strong> <?php echo $employee_info->name; ?>
-                        </td>
-                        <td><strong>Payslip No :</strong> <?php echo $pay->payslip_number; ?></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Mobile :</strong> <?php echo $employee_info->phone; ?></td>
-                      
-                            <td><strong>Email :</strong> <?php echo $employee_info->email; ?></td>
-                      
-                    </tr>
-                    <tr>
-                        <td><strong>Department :</strong> <?php echo $employee_info->department->name; ?>
-                        </td>
-                        <td><strong>Designation
-                                :</strong> <?php echo $employee_info->designation->name; ?></td>
-                        
-                    </tr>
-                </table>
-                <br/><br/>
-            </div>
-            <div align="center">
-                <div class="tbl1">
-                   <table>
-                        <tr>
-                            <th colspan="2"
-                                style="border: 0px; font-size: 20px;padding-left:0px;background: none;color: #000">
+    
+</tfoot>
+    </table>
+
+
+    <div style="clear: both;"></div>
+</div>
+<div class="table-section bill-tbl w-100 mt-10">
+    <table class="table w-100 mt-10">
+<tbody>
+       
+        <tr> <td> <strong>Name  </strong></td><td> <?php echo $employee_info->name; ?></td></tr>
+                 <tr> <td> <strong>Department  </strong></td><td> <?php echo $employee_info->department->name; ?></td></tr>
+                  <tr> <td> <strong>Payslip No </strong></td><td> {{$pay->payslip_number}}</td></tr>
+            <tr><td><strong>Pay Date </strong></td><td> @if(!empty($check_existing_payment)) <?php echo date('d/m/Y', strtotime($check_existing_payment->paid_date)); ?> @endif</td> </tr>       
+                    
+</tbody>
+    </table>
+</div>
+<!--
+<div class="table-section bill-tbl w-100 mt-10">
+    <table class="table w-100 mt-10">
+        <tr>
+            <th class="w-50">Payment Method</th>
+            <th class="w-50">Shipping Method</th>
+        </tr>
+        <tr>
+            <td>Cash On Delivery</td>
+            <td>Free Shipping - Free Shipping</td>
+        </tr>
+    </table>
+</div>
+-->
+
+                                
+
+<div class="table-section bill-tbl w-50-left">
+
+    <table class="table w-100 mt-20">
+<tr>
+                            <th colspan="2">
                                 Earnings</th>
                         </tr>
-                        <tr>
-                            <th>Type of Pay</th>
-                            <th>Amount</th>
-                        </tr>
-                        <?php
+<thead>
+        <tr>
+
+            <th class="w-50">Type of Pay</th>
+            <th class="w-50">Amount</th>
+        </tr>
+</thead>
+        <tbody>
+             <?php
                         $total_hours_amount = 0;
                          foreach ($salary_payment_details_info as $v_payment_details) :
                             ?>
                             <tr>
-                                 <td style="text-align: right">
+                                 <td>
                                     <strong> <?php
                                         if ($v_payment_details->salary_payment_details_label == 'overtime_salary' || $v_payment_details->salary_payment_details_label == 'hourly_rates') {
                                             $small = ($v_payment_details->salary_payment_details_label == 'overtime_salary' ? ' <small>( ' . lang('per_hour') . ')</small>' : '');
@@ -158,7 +217,7 @@ $settings= App\Models\System::first();
                                             $label = $v_payment_details->salary_payment_details_label;
                                         }
                                         echo $label; ?>
-                                        :&nbsp;&nbsp; </strong>
+                                         </strong>
                                 </td>
                                 <td> <?php
                                     if (is_numeric($v_payment_details->salary_payment_details_value)) {
@@ -180,9 +239,9 @@ $settings= App\Models\System::first();
                         if (!empty($allowance_info)):foreach ($allowance_info as $v_allowance) :
                             ?>
                             <tr>
-                                <td style="text-align: right">
+                                <td>
                                     <strong> <?php echo $v_allowance->salary_payment_allowance_label ?>
-                                        :&nbsp;&nbsp; </strong></td>
+                                         </strong></td>
                                 <td><?php echo number_format($v_allowance->salary_payment_allowance_value, 2); ?></td>
                             </tr>
                             <?php
@@ -190,53 +249,70 @@ $settings= App\Models\System::first();
                         endforeach;
                             ?>
                         <?php endif; ?>
-                    </table>
-                </div>
-               <?php
+       </tbody>
+</table>
+</div>
+
+ <?php
                 $deduction = 0;
                 if (!empty($deduction_info)):
                     ?>
-                    <div class="tbl2">
-                        <table>
-                            <tr>
-                                <th colspan="2"
-                                    style="border: 0px; font-size: 20px;padding-left:0px;background: none;color: #000">
+
+<div class="table-section bill-tbl w-50-right">
+
+    <table class="table w-100 mt-20">
+<tr>
+                                <th colspan="2">
                                     <strong>Deductions</strong></th>
                             </tr>
-                            <tr>
-                                <th>Type of Pay</th>
-                                <th>Amount</th>
-                            </tr>
-                            <?php foreach ($deduction_info as $v_deduction): ?>
-                                <tr>
-                                    <td style="text-align: right">
-                                        <strong><?php echo $v_deduction->salary_payment_deduction_label; ?> :&nbsp;&nbsp;</strong>
-                                    </td>
+<thead>
+        <tr>
 
-                                    <td>&nbsp; <?php
+            <th class=" col-sm-2 w-50">Type of Pay</th>
+            <th class="w-50">Amount</th>
+        </tr>
+</thead>
+        <tbody>
+            
+                        <?php foreach ($deduction_info as $v_deduction): ?>
+
+                            <tr>
+                                 <td>
+                                    <strong> <?php echo $v_deduction->salary_payment_deduction_label; ?>
+                                         </strong>
+                                </td>
+                                <td><?php
                                         echo number_format($v_deduction->salary_payment_deduction_value, 2);
                                         ?></td>
-                                </tr>
-                                <?php
+                            </tr>
+                        <?php
                                 $deduction += $v_deduction->salary_payment_deduction_value;
                             endforeach;
                             ?>
-                        </table>
-                    </div>
-                <?php endif; ?>
-</br></br>
+                      
+                     
+       </tbody>
+</table>
+</div>
+   <?php endif; ?>
 
-  <div class="tbl_total">
-                   <table class="">
-                    </br></br><tr>
-                     <td> </td>
-                        <td  colspan="2"
-                            style="border: 0px; font-size: 20px;background: none;color: #000;text-align: right;">
-                            <strong>Total Details</strong></td>
-                    </tr>
-                    <?php if (!empty($check_existing_payment)): ?>
+
+
+
+<br><br>
+<div class="table-section bill-tbl w-100 mt-90">
+
+    <table class="table w-100 mt-20">
+<tr>
+                                <th colspan="2">
+                                    <strong>Total Details</strong></th>
+                            </tr>
+
+        <tbody>
+            
+                      <?php if (!empty($check_existing_payment)): ?>
                         <tr>
-                            <td style="text-align: right;"  colspan="4"><strong> Gross Salary :&nbsp;&nbsp;</strong>
+                            <td ><strong> Gross Salary </strong>
                             </td>
                             <td>&nbsp; <?php
                                 if (!empty($rate)) {
@@ -250,7 +326,7 @@ $settings= App\Models\System::first();
                         </tr>
 
                         <tr>
-                            <td style="text-align: right"  colspan="4"><strong>Total Deduction :&nbsp;&nbsp;</strong>
+                            <td><strong>Total Deduction </strong>
                             </td>
 
                             <td> &nbsp; <?php
@@ -261,7 +337,7 @@ $settings= App\Models\System::first();
                     <?php endif; ?>
                     <?php if (!empty($check_existing_payment)): ?>
                         <tr>
-                            <td style="text-align: right"  colspan="4"><strong>Net Salary :&nbsp;&nbsp;</strong></td>
+                            <td ><strong>Net Salary</strong></td>
 
                             <td>&nbsp; <?php
                                 $net_salary = $gross - $deduction;
@@ -271,7 +347,7 @@ $settings= App\Models\System::first();
                     <?php endif; ?>
                     <?php if (!empty($check_existing_payment->fine_deduction)): ?>
                         <tr>
-                            <td style="text-align: right"  colspan="4"><strong>Fine Deduction :&nbsp;&nbsp;</strong>
+                            <td><strong>Fine Deduction </strong>
                             </td>
 
                             <td>&nbsp; <?php
@@ -280,11 +356,10 @@ $settings= App\Models\System::first();
                                 ?></td>
                         </tr>
                     <?php endif; ?>
-                    <tr class="bg">
-                        <td style="text-align: right;font-weight: bold"  colspan="4"><strong>Paid Amount
-                                :&nbsp;&nbsp;</strong></td>
+                    <tr>
+                        <td><strong>Paid Amount</strong></td>
 
-                        <td style="font-weight: bold;">&nbsp; <?php
+                        <td style="font-weight: bold;"><?php
                             if (!empty($check_existing_payment->fine_deduction)) {
                                 $paid_amount = $net_salary - $check_existing_payment->fine_deduction;
                             } else {
@@ -293,16 +368,71 @@ $settings= App\Models\System::first();
                             echo number_format($paid_amount, 2);
                             ?></td>
                     </tr>
-                </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-</div>
-<footer>
+       </tbody>
+</table>
 
+
+
+<br><br><br><br>
+<table class="table w-100 mt-10">
+<tfoot>
+<tr>
+         <td style="width: 50%;">
+            <div class="left" style="">
+        <div>........................................................</div>
+         <div><b>ACCOUNTS OFFICER</div>        
+          </div>  </td>
+
+            <td style="width: 50%;">
+            <div class="right" style="">
+        <div>............................................................... </div>
+        <div><b>SIGNATURE</b></div></td>
+
+</tr>
+
+<tr>
+            <td style="width: 50%;">
+            <div class="left" style="">
+        <div></div>
+        <div></div>
+        
+        </div></td>
+
+<td style="width: 50%;">
+            <div class="right" style="">
+        <div></div>
+        <div></div></td>
+
+
+</tr>
+
+ <tr>
+            <td style="width: 50%;">
+            <div class="left" style="">
+        <div>............................................................... </div>
+        <div><b>EMPLOYEE</b></div>
+        
+        </div></td>
+
+<td style="width: 50%;">
+            <div class="right" style="">
+        <div>............................................................... </div>
+        <div><b>SIGNATURE</b></div></td>
+
+
+</tr>
+
+
+  </tfoot>    
+</table>
+
+</div>
+   
+
+
+
+<footer>
+This is a computer generated invoice
 </footer>
 </body>
 </html>

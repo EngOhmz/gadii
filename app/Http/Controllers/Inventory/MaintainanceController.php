@@ -13,8 +13,6 @@ use App\Models\ServiceType;
 use App\Models\Service;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
-use App\Models\Requisition;
-use App\Models\RequisitionItem;
 
 class MaintainanceController extends Controller
 {
@@ -27,13 +25,13 @@ class MaintainanceController extends Controller
     {
         //
   
-        $maintain=Maintainance::all();
-        $truck = Truck::all(); 
-        $staff=FieldStaff::all();
+        $maintain=Maintainance::where('added_by',auth()->user()->added_by)->get();
+        $truck = Truck::where('disabled','0')->where('truck_type','Horse')->where('added_by',auth()->user()->added_by)->get();
+        $staff=FieldStaff::where('added_by',auth()->user()->added_by)->get();
        //$staff=User::where('id','!=','1')->get();  
-      $name =ServiceType::all();
-      $item =  Inventory::all(); 
-       return view('inventory.maintainance',compact('maintain','truck','staff','name','item'));
+      $name =ServiceType::where('added_by',auth()->user()->added_by)->get();
+     
+       return view('inventory.maintainance',compact('maintain','truck','staff','name'));
     }
 
     /**
@@ -89,12 +87,12 @@ class MaintainanceController extends Controller
         //
 
         $data=Maintainance::find($id);
-        $truck = Truck::all(); 
-       $staff=FieldStaff::all();
-      //$staff=User::where('id','!=','1')->get();
-   $name = ServiceType::all();
-      $item =  Inventory::all(); 
-       return view('inventory.maintainance',compact('data','truck','staff','id','name','item'));
+           $truck = Truck::where('disabled','0')->where('truck_type','Horse')->where('added_by',auth()->user()->added_by)->get();
+        $staff=FieldStaff::where('added_by',auth()->user()->added_by)->get();
+       //$staff=User::where('id','!=','1')->get();  
+      $name =ServiceType::where('added_by',auth()->user()->added_by)->get();
+     
+       return view('inventory.maintainance',compact('data','truck','staff','id','name'));
     }
 
     /**
@@ -195,7 +193,7 @@ class MaintainanceController extends Controller
         
      if($request->module == 'maintainance'){
         $maintain = Maintainance::find($request->module_id);
-        $data['report'] = 2;
+        $data['report'] = 1;
         $maintain->update($data);
       
       return redirect(route('maintainance.index'))->with(['success'=>'Mechanical Report Created Successfully']);
@@ -203,88 +201,12 @@ class MaintainanceController extends Controller
  
       elseif($request->module == 'service'){
         $service=Service::find($request->module_id);
-        $data['report'] = 2;
+        $data['report'] = 1;
         $service->update($data);
       
       return redirect(route('service.index'))->with(['success'=>'Mechanical Report Created Successfully']);
        }
  
     }
-
- public function save_requisition(Request $request)
-    {
-        //
-
-       $amountArr = str_replace(",","",$request->amount);
-        $nameArr =$request->item_name ;
-        $qtyArr = $request->quantity  ;
-        $priceArr = $request->price;    
-        $costArr = str_replace(",","",$request->total_cost)  ;
-
-
-     if(!empty($nameArr)){
-            for($i = 0; $i < 1; $i++){
-                if(!empty($nameArr[$i])){
-
-                    $lists= array(
-                        'purchase_date' => $request->date,
-                        'module' =>   $request->module,
-                        'module_id' =>   $request->module_id,  
-                        'purchase_amount' =>   $amountArr[$i], 
-                          'due_amount' =>   $amountArr[$i],    
-                       'status' =>   '0',                  
-                        'added_by' => auth()->user()->added_by);
-                       
-                     $purchase=Requisition::create($lists);  ;
-    
-    
-                }
-            }
-        }    
-
-
-        if(!empty($nameArr)){
-            for($i = 0; $i < count($nameArr); $i++){
-                if(!empty($nameArr[$i])){
-
-                    $items = array(
-                        'item_name' => $nameArr[$i],
-                        'quantity' =>   $qtyArr[$i],
-                           'price' =>  $priceArr[$i],
-                        'total_cost' =>  $costArr[$i],
-                         'items_id' => $nameArr[$i],
-                           'order_no' => $i,
-                           'added_by' => auth()->user()->added_by,
-                        'purchase_id' =>$purchase->id);
-                       
-                    RequisitionItem::create($items);  ;
-    
-    
-                }
-            }
-            $cost['reference_no']= "REQ_".$purchase->id."_".$purchase->purchase_date;
-           Requisition::where('id',$purchase->id)->update($cost);
-        }    
-
-  if($request->module == 'Maintainance'){
-        $maintain = Maintainance::find($request->module_id);
-        $data['report'] = 1;
-        $maintain->update($data);
-      
-      return redirect(route('maintainance.index'))->with(['success'=>'Requisition Created Successfully']);
-       }
- 
-      elseif($request->module == 'Service'){
-        $service=Service::find($request->module_id);
-        $data['report'] = 1;
-        $service->update($data);
-      
-      return redirect(route('service.index'))->with(['success'=>'Requisition Created Successfully']);
-       }
-
-    }
-
-
-
 
 }

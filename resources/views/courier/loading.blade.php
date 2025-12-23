@@ -8,14 +8,14 @@
             <div class="col-12 col-sm-6 col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Courier Loading </h4>
+                        <h4>Courier Freight </h4>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="myTab2" role="tablist">
                             @if(empty($id))
                             <li class="nav-item">
                                 <a class="nav-link @if(empty($id)) active show @endif" id="home-tab2" data-toggle="tab"
-                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Courier Loading </a>
+                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Courier Freight </a>
                             </li>
                             @else
                            <li class="nav-item">
@@ -26,11 +26,17 @@
                             @endif
 
                         </ul>
+
+
                         <div class="tab-content tab-bordered" id="myTab3Content">
+ {!! Form::open(array('route' => 'save.freight' ,'method'=>'POST', 'id' => 'frm-example' , 'name' => 'frm-example')) !!}
+    @csrf
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                  <table class="table datatable-basic table-striped">
+                             
+                                       
+                                  <table class="table datatable-basic table-striped" id="table-1">
                           <thead>
                                         <tr>
              <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
@@ -41,23 +47,24 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">REF NO</th>
+                                                    style="width: 126.484px;">REF NO</th>
+                                              <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Engine version: activate to sort column ascending"
+                                                    style="width: 161.219px;">WBN No</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Weight</th>
+                                                    style="width: 141.484px;">Location</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Route</th>
+                                                    style="width: 141.219px;">Tariff</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
                                                     style="width: 141.219px;">Client</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Amount</th>
+                                                   
 
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
@@ -79,33 +86,34 @@
                                             <tr class="gradeA even" role="row">
 
                                                 <td> {{$loop->iteration}}</td>
-                                                <td>{{$row->pacel_number}}</td>              
-                                               <td>{{$row->weight}} kgs</td>
-                                                <td>From {{$row->route->from}} to {{$row->route->to}}</td>
+                                                <td> {{$row->pacel_number}}</td>  
+                                           <td>{{$row->collect->wbn_no}}</td>              
+                                             <td> {{$row->start->name}} - {{$row->end->name}}</td>
+                                                <td>@if(!empty($row->route->zone_name)) {{$row->route->zone_name}} - {{$row->route->weight}}  @else {{$row->tariff_id }} @endif</td>
                                                 <td>{{$row->client->name}}</td>           
-                                                <td>{{$row->amount}}TZS</td>  
                                                     <!--<td>{{$row->receiver_name}}</td>-->
 
 
                                                 <td>
                                                     @if($row->status == 3)
-                                                    <div class="badge badge-success badge-shadow">Collected</div>
+                                                    <div class="badge badge-success badge-shadow">Packaged</div>
 
                                                     @endif
                                                 </td>
                                           
 
                                                 <td>
-                                               
-                                                 
+                                                 <input name="item_id[]" type="checkbox"  class="checks" value="{{$row->id}}"></td>
+
+                                                 <!--
                                                       <button type="button" class="btn btn-xs btn-primary"
                                             data-toggle="modal" data-target="#appFormModal"
                                             data-id="{{ $row->id }}" data-type="loading"
                                             onclick="model({{ $row->id }},'loading')">
-                                            Load
+                                            Freight
                                         </button>
-
-                                                </td>
+-->
+                                                
                                             </tr>
                                             @endforeach
 
@@ -114,195 +122,135 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade @if(!empty($id)) active show @endif" id="profile2" role="tabpanel"
-                                aria-labelledby="profile-tab2">
+                           
 
-                                <div class="card">
+
+<div class="card" >
                                     <div class="card-header">
-                                        @if(empty($id))
-                                        <h5>{{__('ordering.create_quotation')}}</h5>
-                                        @else
-                                        <h5>{{__('ordering.create_quotation')}}</h5>
-                                        @endif
+                                        <h5>Create Courier Freight Details</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-sm-12 ">
-                                                @if(isset($id) && ($type=="edit"))
-                                                {{ Form::model($id, array('route' => array('orders.update', $id), 'method' => 'PUT')) }}
-                                                @else
-                                                {{ Form::open(['route' => 'orders.store']) }}
-                                                @method('POST')
-                                                @endif
+                                            <div class="col-sm-12 ">   
 
-                                         <input type="hidden" name="id" value="{{isset($id) ? $id : ''}}">
+            
+                                                      
 
+           <div class="form-group">
+                <label class="col-lg-6 col-form-label">Freight Method</label>
 
-                                               
-
-
-                                                <br>
-                                                <h4 align="center">{{__('ordering.transport_cost')}}</h4>
-                                                <hr>
-                                           
-                                                <hr>
-                                                <button type="button" name="add" class="btn btn-success btn-xs add"><i
-                                                        class="fas fa-plus">{{__('ordering.add_cost')}}</i></button><br>
-                                                <br>
-                                                <table class="table table-bordered" id="cart">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>{{__('ordering.name')}}</th>
-                                                            <th>{{__('ordering.quantity')}}</th>
-                                                            <th>{{__('ordering.price')}}</th>
-                                                            <th>{{__('ordering.unit')}}</th>
-                                                            <th>{{__('ordering.tax')}}</th>
-                                                            <th>{{__('ordering.total')}}</th>
-                                                            <th>{{__('ordering.action')}}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
+                <div class="col-lg-12">
+                   <select class="form-control m-b method" name="method" required >
+                                                    <option value="">Select Freight Method</option>                                                          
+                                                            <option value="Truck Freight" >Truck Freight</option>
+                                                              <option value="Air Freight" >Air Freight</option>
+                                                              </select>
+</div>
+            </div>
 
 
-                                                    </tbody>
-                                                    <tfoot>
-                                                        @if(!empty($id))
-                                                        @if(!empty($items))
-                                                        @foreach ($items as $i)
-                                                        <tr class="line_items">
-                                                            <td><select name="item_name[]"
-                                                                    class="form-control item_name" required
-                                                                    data-sub_category_id={{$i->order_no}}>
-                                                                    <option value="">Select Item</option>@foreach($name
-                                                                    as $n) <option value="{{ $n->id}}"
-                                                                        @if(isset($i))@if($n->id == $i->item_name)
-                                                                        selected @endif @endif >{{$n->name}}</option>
-                                                                    @endforeach
-                                                                </select></td>
-                                                            <td><input type="text" name="quantity[]"
-                                                                    class="form-control item_quantity{{$i->order_no}}"
-                                                                    placeholder="quantity" id="quantity"
-                                                                    value="{{ isset($i) ? $i->quantity : ''}}"
-                                                                    required /></td>
-                                                            <td><input type="text" name="price[]"
-                                                                    class="form-control item_price{{$i->order_no}}"
-                                                                    placeholder="price" required
-                                                                    value="{{ isset($i) ? $i->price : ''}}" /></td>
-                                                            <td><input type="text" name="unit[]"
-                                                                    class="form-control item_unit{{$i->order_no}}"
-                                                                    placeholder="unit" required
-                                                                    value="{{ isset($i) ? $i->unit : ''}}" />
-                                                            <td><select name="tax_rate[]"
-                                                                    class="form-control item_tax'+count{{$i->order_no}}"
-                                                                    required>
-                                                                    <option value="0">Select Tax Rate</option>
-                                                                    <option value="0" @if(isset($i))@if('0'==$i->
-                                                                        tax_rate) selected @endif @endif>No tax</option>
-                                                                    <option value="0.18" @if(isset($i))@if('0.18'==$i->
-                                                                        tax_rate) selected @endif @endif>18%</option>
-                                                                </select></td>
-                                                            <input type="hidden" name="total_tax[]"
-                                                                class="form-control item_total_tax{{$i->order_no}}'"
-                                                                placeholder="total" required
-                                                                value="{{ isset($i) ? $i->total_tax : ''}}" readonly
-                                                                jAutoCalc="{quantity} * {price} * {tax_rate}" />
-                                                            <input type="hidden" name="saved_items_id[]"
-                                                                class="form-control item_saved{{$i->order_no}}"
-                                                                value="{{ isset($i) ? $i->saved_items_id : ''}}"
-                                                                required />
-                                                            <td><input type="text" name="total_cost[]"
-                                                                    class="form-control item_total{{$i->order_no}}"
-                                                                    placeholder="total" required
-                                                                    value="{{ isset($i) ? $i->total_cost : ''}}"
-                                                                    readonly jAutoCalc="{quantity} * {price}" /></td>
-                                                            <input type="hidden" name="items_id[]"
-                                                                class="form-control name_list"
-                                                                value="{{ isset($i) ? $i->items_id : ''}}" />
-                                                            <td><button type="button" name="remove"
-                                                                    class="btn btn-danger btn-xs rem"
-                                                                    value="{{ isset($i) ? $i->items_id : ''}}"><i
-                                                                        class="fas fa-trash"></i></button></td>
-                                                        </tr>
+          
 
-                                                        @endforeach
-                                                        @endif
-                                                        @endif
+             <div class="form-group truck" style="display:none;">
+                <label class="col-lg-6 col-form-label">Vehicle Reg No</label>
 
-                                                        <tr class="line_items">
-                                                            <td colspan="4"></td>
-                                                            <td><span class="bold">{{__('ordering.sub_total')}} </span>: </td>
-                                                            <td><input type="text" name="subtotal[]"
-                                                                    class="form-control item_total"
-                                                                    placeholder="subtotal" required
-                                                                    jAutoCalc="SUM({total_cost})" readonly></td>
-                                                        </tr>
-                                                        <tr class="line_items">
-                                                            <td colspan="4"></td>
-                                                            <td><span class="bold">{{__('ordering.tax')}} </span>: </td>
-                                                            <td><input type="text" name="tax[]"
-                                                                    class="form-control item_total" placeholder="tax"
-                                                                    required jAutoCalc="SUM({total_tax})" readonly>
-                                                            </td>
-                                                        </tr>
-                                                        @if(!@empty($data->discount > 0))
-                                                        <tr class="line_items">
-                                                            <td colspan="4"></td>
-                                                            <td><span class="bold">{{__('ordering.discount')}}</span>: </td>
-                                                            <td><input type="text" name="discount[]"
-                                                                    class="form-control item_discount"
-                                                                    placeholder="total" required
-                                                                    value="{{ isset($data) ? $data->discount : ''}}"
-                                                                    readonly></td>
-                                                        </tr>
-                                                        @endif
+                <div class="col-lg-12">
+                 <input type="text" class="form-control truck_id" name="truck_id" id="truck" >
+                </div>
+            </div>
 
-                                                        <tr class="line_items">
-                                                            <td colspan="4"></td>
-                                                            @if(!@empty($data->discount > 0))
-                                                            <td><span class="bold">Total</span>: </td>
-                                                            <td><input type="text" name="amount[]"
-                                                                    class="form-control item_total" placeholder="total"
-                                                                    required jAutoCalc="{subtotal} + {tax} - {discount}"
-                                                                    readonly></td>
-                                                            @else
-                                                            <td><span class="bold">{{__('ordering.total')}}</span>: </td>
-                                                            <td><input type="text" name="amount[]"
-                                                                    class="form-control item_total" placeholder="total"
-                                                                    required jAutoCalc="{subtotal} + {tax}" readonly>
-                                                            </td>
-                                                            @endif
-                                                        </tr>
-                                                    </tfoot>
-                                                </table>
+        
+      <div class="form-group awb" style="display:none;">
+                <label class="col-lg-6 col-form-label">AWB Number</label>
 
+                <div class="col-lg-12">
+                      <input type="text" class="form-control awb" name="awb" id="awb" >
+                </div>
+            </div>
 
+               <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Description</label>
 
-                                                <br>
-                                                <div class="form-group row">
+                <div class="col-lg-4">
+                  <textarea name="notes" value="" required class="form-control"></textarea>
+                    
+                </div>
+
+                <label class="col-lg-2 col-form-label">Loading Date</label>
+
+                <div class="col-lg-4">
+                    <input type="date" name="collection_date" value="<?php echo date('Y-m-d');  ?>" required class="form-control">
+                    <input type="hidden" name="type" value="loading" required class="form-control">
+                </div>
+            </div>
+
+        <div class="form-group row">
+         <label class="col-lg-2 col-form-label">Collectors</label>
+                <div class="col-lg-4">
+                 <select class="form-control m-b" name="receiver_id" required   id="receiver_id">           
+                                                                <option value="">Select Collectors</option>
+                                                                @if(!empty($supplier))
+                                                                @foreach($supplier as $row)
+
+                                                                <option value="{{ $row->id}}">{{$row->driver_name}}</option>
+
+                                                                @endforeach
+                                                                @endif
+
+                                                            </select>
+                                                        </div>
+                <label class="col-lg-2 col-form-label">Loading Cost</label>
+
+                <div class="col-lg-4">
+                 <input type="number" name="costs"   value="0" class="form-control costs" >
+                     <input type="hidden" name="id" value="" required class="form-control fid">                       
+
+</div></div>
+
+<div class="form-group row">  
+ <label class="col-lg-2 col-form-label payment1"  style="display:none;">Payment Type</label>
+
+                <div class="col-lg-4 payment2"  style="display:none;">
+                   <select class="form-control type m-b payment_type" name="payment_type"  id="payment_type" >
+                <option value="">Select Payment Type</option>                                                            
+                        <option value="cash">On Cash</option>
+                           <option value="credit">On Credit</option>
+                          </select>
+            </div>
+</div>
+
+ <div class="form-group row account" id="account" style="display:none;">
+<label  class="col-lg-2 col-form-label">Bank/Cash Account</label>
+
+                <div class="col-lg-4">
+                   <select class="form-control m-b" name="bank_id" id="bank_id">
+                <option value="">Select Payment Account</option> 
+                      @foreach ($bank_accounts as $bank)                                                             
+                        <option value="{{$bank->id}}">{{$bank->account_name}}</option>
+                           @endforeach
+                          </select>
+                </div>
+            </div>
+
+       <br><div class="form-group row">
                                                     <div class="col-lg-offset-2 col-lg-12">
-                                                        @if(!@empty($id) && ($type=="edit") )
-
-                                                        <a class="btn btn-sm btn-danger float-right m-t-n-xs"
-                                                            href="{{ route('purchase.index')}}">
-                                                            cancel
-                                                        </a>
                                                         <button class="btn btn-sm btn-primary float-right m-t-n-xs"
-                                                            data-toggle="modal" data-target="#myModal"
-                                                            type="submit">Update</button>
-                                                        @else
-                                                        <button class="btn btn-sm btn-primary float-right m-t-n-xs"
-                                                            type="submit">Save</button>
-                                                        @endif
+                                                            type="submit" id="freight" >Save</button>
+                                               
                                                     </div>
                                                 </div>
-                                                {!! Form::close() !!}
-                                            </div>
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+       
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+ </div>
+
+ {!! Form::close() !!}
 
                         </div>
                     </div>
@@ -314,12 +262,11 @@
 </section>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
     </div>
 </div>
-</div>
-</div>
+
 
 
 
@@ -331,7 +278,7 @@
        $('.datatable-basic').DataTable({
             autoWidth: false,
             "columnDefs": [
-                {"orderable": false, "targets": [3]}
+                {"targets": [3]}
             ],
            dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
             "language": {
@@ -343,7 +290,111 @@
         
         });
     </script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+<script>
+$(document).ready(function (){
+   var table = $('.datatable-basic').DataTable();
+   
+   // Handle form submission event 
+   $('#frm-example').on('submit', function(e){
+      var form = this;
+    var rowCount = $('#table-1 >tbody >tr').length;
+console.log(rowCount);
+
+
+if(rowCount == '1'){
+var c= $('#table-1 >tbody >tr').find('input[type=checkbox]');
+
+  if(c.is(':checked')){ 
+var tick=c.val();
+console.log(tick);
+
+$(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'checked_item_id[]')
+                  .val(tick)  );
+
+}
+
+}
+
+
+else if(rowCount > '1'){
+
+      // Encode a set of form elements from all pages as an array of names and values
+      var params = table.$('input').serializeArray();
+
+      // Iterate over all form elements
+      $.each(params, function(){     
+         // If element doesn't exist in DOM
+         if(!$.contains(document, form[this.name])){
+            // Create a hidden element 
+            $(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'checked_item_id[]')
+                  .val(this.value)
+            );
+         } 
+      });      
+}
+   
+
+   });  
+    
+});
+
+
+</script>
+
+<script>
+    $(document).ready(function(){
+   
+
+ $(document).on('change', '.payment_type', function(){
+var id=$(this).val() ;
+console.log(id);
+         if($(this).val() == 'cash') {
+          $('.account').show(); 
+          $("#bank_id").prop('required',true);
+        } else {
+            $('.account').hide(); 
+            $("#bank_id").prop('required',false);
+        } 
+
+
+});
+
+
+    });
+</script>
+
+
+<script>
+    $(document).ready(function(){
+   
+
+ $(document).on('change', '.costs', function(){
+var id=$(this).val() ;
+console.log(id);
+         if($(this).val() > 0) {      
+          $('.payment1').show(); 
+       $('.payment2').show(); 
+        $("#payment_type").prop('required',true);
+        } else {
+           $('.payment1').hide(); 
+       $('.payment2').hide(); 
+      $('.account').hide();
+      $("#payment_type").prop('required',false);
+        } 
+
+
+});
+
+
+    });
+</script>
+
 
 <script type="text/javascript">
     function model(id, type) {
@@ -371,5 +422,29 @@
 
     }
     </script>
+
+<script>
+    $(document).ready(function(){
+   
+
+ $(document).on('change', '.method', function(){
+var id=$(this).val() ;
+console.log(id);
+         if($(this).val() == 'Truck Freight') {
+          $('.truck').show(); 
+           $('.awb').hide(); 
+        }else if($(this).val() == 'Air Freight') {
+          $('.truck').hide(); 
+           $('.awb').show(); 
+        }else {
+            $('.awb').hide(); 
+              $('.truck').hide(); 
+        } 
+
+});
+
+
+    });
+</script>
 
 @endsection

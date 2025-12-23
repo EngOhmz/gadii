@@ -54,6 +54,7 @@ CKEDITOR.editorConfig = function( config ) {
 	// Extra config
 	// ------------------------------
 
+   config.width = 200;
 	// Set the most common block elements.
 	config.format_tags = 'p;h1;h2;h3;h4;h5;h6;pre';
 
@@ -62,6 +63,9 @@ CKEDITOR.editorConfig = function( config ) {
 
 	// Allow content rules
 	config.allowedContent = true;
+	
+	config.basicEntities = false;
+    config.fillEmptyBlocks = false;
 
 	// Allow any class and any inline style
 	config.extraAllowedContent = '*(*);*{*}';

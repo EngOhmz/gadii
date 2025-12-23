@@ -28,14 +28,14 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                   <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -59,6 +59,7 @@
                                                     style="width: 98.1094px;">Actions</th>
                                             </tr>
                                         </thead>
+                                         
                                         <tbody>
                                             @if(!@empty($client))
                                             @foreach ($client as $row)
@@ -71,15 +72,24 @@
 
 
                                                 <td>
+                                                 <div class="form-inline">
 
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        href="{{ route("courier_client.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <a class="btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4"
-                                                        href="{{ route("courier_client.destroy", $row->id)}}">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
+                                                            <a class="list-icons-item text-primary" title="Edit"
+                                                                onclick="return confirm('Are you sure?')"
+                                                                href="{{ route("courier_client.edit", $row->id)}}"><i class="icon-pencil7"></i>
+                                                                    </a>
+                                                                   
+ 
+                                                            {!! Form::open(['route' =>
+                                                            ['courier_client.destroy',$row->id], 'method' => 'delete'])
+                                                            !!}
+                                                            
+                                                            {{ Form::close() }}
+                                                       
+
+                                                    </div>
+
+                                               
 
 
                                                 </td>
@@ -122,6 +132,15 @@
                                                                 class="form-control" required>
                                                         </div>
                                                     </div>
+                                                  <div class="form-group row"><label
+                                                            class="col-lg-2 col-form-label">Client Code</label>
+
+                                                        <div class="col-lg-10">
+                                                            <input type="text" name="code"
+                                                                value="{{ isset($data) ? $data->code : ''}}"
+                                                                class="form-control" required>
+                                                        </div>
+                                                    </div>
                                                     <div class="form-group row"><label
                                                             class="col-lg-2 col-form-label">Phone</label>
 
@@ -161,6 +180,15 @@
                                                                 class="form-control">
                                                         </div>
                                                     </div>
+                                      <div class="form-group row"><label
+                                                            class="col-lg-2 col-form-label">VRN</label>
+
+                                                        <div class="col-lg-10">
+                                                            <input type="text" name="VRN"
+                                                                value="{{ isset($data) ? $data->VRN : ''}}"
+                                                                class="form-control">
+                                                        </div>
+                                                    </div>
 
 
                                                 <div class="form-group row">
@@ -196,23 +224,21 @@
 @endsection
 
 @section('scripts')
-<script>
-
-
-
-$('.demo4').click(function() {
-    swal({
-        title: "Are you sure?",
-        text: "You will not be able to recover this imaginary file!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: false
-    }, function() {
-        swal("Deleted!", "Your imaginary file has been deleted.", "success");
-    });
-});
-</script>
+ <script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 @endsection

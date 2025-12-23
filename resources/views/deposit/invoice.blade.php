@@ -1,4 +1,4 @@
-<div class="modal-dialog modal-lg" role="document">
+
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">Invoice List</h5>
@@ -10,14 +10,14 @@
  <div class="modal-body">
 
             <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                   <table class="table datatable-modal table-striped">
                                         <thead>
                                             <tr>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Reference</th>
+                                                    style="width: 156.484px;">Reference</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
@@ -25,7 +25,7 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Invoice Date</th>
+                                                    style="width: 156.484px;">Invoice Date</th>
                                              
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
@@ -88,9 +88,10 @@
 
 
 
-        
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+ 
+ <div class="modal-footer ">
+ 
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
 
 
@@ -101,3 +102,21 @@
 </div>
 
 
+@yield('scripts')
+
+<script>
+       $('.datatable-modal').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>

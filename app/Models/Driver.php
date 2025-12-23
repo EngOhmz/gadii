@@ -10,7 +10,7 @@ class Driver extends Model
     use HasFactory;
     protected $table = "drivers";
 
- protected $fillable = ['driver_name','licence','address','referee','mobile_no','experience','profile','added_by','driver_status', 'status','type','available'];
+ protected $guarded = ['id','_token'];
     
     public function user()
     {

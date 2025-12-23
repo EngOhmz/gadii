@@ -17,7 +17,7 @@ class FieldStaffController extends Controller
     public function index()
     {
         //
-        $fieldstaff= FieldStaff::all();
+        $fieldstaff= FieldStaff::where('added_by',auth()->user()->added_by)->where('disabled',0)->get();
       
         return view('inventory.fieldstaff',compact('fieldstaff'));
     }
@@ -42,7 +42,7 @@ class FieldStaffController extends Controller
     {
         //
         $data=$request->post();
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $fieldstaff = FieldStaff::create($data);
  
         return redirect(route('fieldstaff.index'))->with(['success'=>'Field Staff Created Successfully']);
@@ -85,7 +85,7 @@ class FieldStaffController extends Controller
         $fieldstaff=FieldStaff::find($id);
 
         $data=$request->post();
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $fieldstaff->update($data);
  
         return redirect(route('fieldstaff.index'))->with(['success'=>'Field Staff Updated Successfully']);
@@ -102,7 +102,7 @@ class FieldStaffController extends Controller
     {
         //
         $fieldstaff=FieldStaff::find($id);
-        $fieldstaff->delete();
+        $fieldstaff->update(['disabled'=> '1']);
  
         return redirect(route('fieldstaff.index'))->with(['success'=>'Field Staff Deleted Successfully']);
     }

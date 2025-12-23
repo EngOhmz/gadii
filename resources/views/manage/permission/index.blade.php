@@ -8,29 +8,31 @@
         <div class="row">
             <div class="col-12 col-sm-6 col-lg-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4>Manage Permissions</h4>
-                    </div>
-                    <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                         <!--  
+                   <div class="card-header header-elements-sm-inline">
+								<h4 class="card-title"> Permissions</h4>
+								<div class="header-elements">
+								   
+                             
                         <button type="button" class="btn btn-outline-info btn-xs px-4"
                             data-toggle="modal" data-target="#addPermissionModal">
                         <i class="fa fa-plus-circle"></i>
                         Add
                     </button>
--->
-
-
-                        </ul>
+									
+				                	</div>
+			                	
+							</div>
+                    <div class="card-body">
+                      
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped" id="table-1">
                                     <thead>
                     <tr>
                         <th>S/N</th>
+                         <th>Name</th>
                         <th>Slug</th>
                         <th>Module</th>
                         <th>Actions</th>
@@ -43,12 +45,11 @@
                     @can($f)
                         <tr>
                             <th>{{ $loop->iteration }}</th>
+                             <td>{{ $permission->name }}</td>
                             <td>{{ $permission->slug }}</td>
                             <td>{{ $permission->modules->slug  ?? '' }}</td>
-                            <td align="right">
-                                unmodified
-                                <!--
-                                {!! Form::open(['route' => ['permissions.destroy', $permission->id], 'method' => 'delete']) !!}
+                            <td >
+                                 <div class="form-inline">
                                 <button type="button" class="btn btn-outline-info btn-xs edit_permission_btn"
                                         data-toggle="modal"
                                         data-id="{{$permission->id}}"
@@ -56,10 +57,11 @@
                                         data-slug="{{$permission->slug}}"
                                         data-module="{{ isset($permission->modules->id) ? $permission->modules->id:'' }}">
                                     <i class="fa fa-edit"></i> Edit
-                                </button>
+                                </button>&nbsp
+                                 {!! Form::open(['route' => ['permissions.destroy', $permission->id], 'method' => 'delete']) !!}
                                 {{ Form::button('<i class="fas fa-trash"></i> Delete', ['type' => 'submit', 'class' => 'btn btn-outline-danger btn-xs', 'onclick' => "return confirm('Are you sure?')"]) }}
                                 {{ Form::close() }}
--->
+                                </div>
                             </td>
                         </tr>
                     @endcan
@@ -96,8 +98,24 @@
             $('#id').val(id);
             $('#p-name_').val(name);
             $('#p-slug_').val(slug);
-            $('#p-module_').val(module);
+            $('#p-module_').val(module).change();;
             $('#editPermissionModal').modal('show');
+        });
+    </script>
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
         });
     </script>
 @endsection

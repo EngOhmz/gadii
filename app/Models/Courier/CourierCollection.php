@@ -10,31 +10,31 @@ class CourierCollection extends Model
     use HasFactory;
     protected $table = "courier_collection";
 
-    protected $fillable = [      
-        'weight',
-     'due_weight',
-        'status',
-       'amount',
-  'route_id',
-'start_location',
-'end_location',
-'receiver_name',
-'owner_id',
-    'pacel_id', 
-   'pacel_name', 
-  'pacel_number', 
-        'added_by'];
+ protected $guarded = ['id','_token'];
+
 
        public function  client(){
     
         return $this->belongsTo('App\Models\Courier\CourierClient','owner_id');
       }
-      public function route(){
+      public function start(){
     
-        return $this->belongsTo('App\Models\Route','route_id');
+        return $this->belongsTo('App\Models\Region','start_location');
+      }
+       public function end(){
+    
+        return $this->belongsTo('App\Models\Region','end_location');
+      }
+
+       public function route(){
+    
+        return $this->belongsTo('App\Models\Tariff','tariff_id');
       }
          
-         
+           public function  courier(){
+    
+        return $this->belongsTo('App\Models\Courier\Courier','pacel_id');
+      }
     
     public function user()
     {

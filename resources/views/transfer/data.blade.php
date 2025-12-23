@@ -28,39 +28,29 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table border="0" cellspacing="15" cellpadding="20">
-        <tbody>
+                                
+                               
 
-<tr>
-                 <td></td><td></td><td></td>
-        <td><b>Date Filter</b></td><td></td><td><b>Minimum date:</b></td>
-            <td><input type="text" id="min" name="min"   class="form-control "></td>
-       
-            <td><b>Maximum date:</b></td>
-            <td><input type="text" id="max" name="max"   class="form-control "></td>
-        </tr>
-    </tbody></table>
-
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped">
                                        <thead>
                                             <tr>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Reference</th>
+                                                    style="width: 126.484px;">Reference</th>
                                            
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">From Account</th>
+                                                    style="width: 156.484px;">From Account</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">To Account</th>
+                                                    style="width: 151.219px;">To Account</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -99,27 +89,29 @@
                                                 </td>
 
                                                 <td>
+                                               
                                                     @if($row->status == 0)
-                                                    <div class="row">
+                                                    <div class="form-inline">
                                                        
-                                                        <div class="col-lg-6">
-<a class="btn btn-icon btn-info" title="Edit" onclick="return confirm('Are you sure?')"   href="{{ route("transfer2.edit", $row->id)}}"><i class="fa fa-edit"></i></a>
-                                                        </div>
-                                                     
-                                                        <div class="col-lg-6">
-                                                            {!! Form::open(['route' => ['transfer2.destroy',$row->id], 'method' => 'delete']) !!}
-                                                            {{ Form::button('<i class="fas fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-icon btn-danger', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                            {{ Form::close() }}
-                                                        </div>
-                                                     
-                                                    </div>
+                                                       
+<a class="list-icons-item text-primary" title="Edit" onclick="return confirm('Are you sure?')"   href="{{ route("transfer.edit", $row->id)}}"><i class="icon-pencil7"></i></a>&nbsp
+                                                        
+                                                            {!! Form::open(['route' => ['transfer.destroy',$row->id], 'method' => 'delete']) !!}
+                                                           {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::close() }}
+&nbsp
                                                   
-
-                                                    <div class="btn-group">
-                                                        <button class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">Change<span class="caret"></span></button>
-                                                        <ul class="dropdown-menu animated zoomIn">
-                                                            <a  class="nav-link" title="Confirm Payment" onclick="return confirm('Are you sure? you want to confirm')"  href="{{ route('transfer2.approve', $row->id)}}">Confirm Payment</a></li>
-                                                                          </ul></div>
+       
+                                                  
+                                                 <div class="dropdown">
+                                  <a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+                                                                <div class="dropdown-menu">
+                                                            <a  class="nav-link" title="Confirm Payment" onclick="return confirm('Are you sure? you want to confirm')"  href="{{ route('transfer.approve', $row->id)}}">Confirm Payment</a></li>
+                                                                                                                                              
+</div>
+                                </div>
+</div>
+             
                                                 
                                                  
                                                     @endif
@@ -149,9 +141,9 @@
                                         <div class="row">
                                             <div class="col-sm-12 ">
                                                 @if(isset($id))
-                                                {{ Form::model($id, array('route' => array('transfer2.update', $id), 'method' => 'PUT')) }}
+                                                {{ Form::model($id, array('route' => array('transfer.update', $id), 'method' => 'PUT')) }}
                                                 @else
-                                                {{ Form::open(['route' => 'transfer2.store']) }}
+                                                {{ Form::open(['route' => 'transfer.store']) }}
                                                 @method('POST')
                                                 @endif
 
@@ -213,7 +205,7 @@
                                                     <div class="col-lg-8">
                                                         <input type="date" name="date" required
                                                             placeholder=""
-                                                            value="{{ isset($data) ? $data->date: date('Y-m-d')}}" {{Auth::user()->can('edit-date') ? '' : 'readonly'}}
+                                                            value="{{ isset($data) ? $data->date: date('Y-m-d')}}" {{Auth::user()->can('edit-date') ? '' : ''}}
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -264,99 +256,24 @@
 @endsection
 
 @section('scripts')
-<script>
-var minDate, maxDate;
- 
-// Custom filtering function which will search data in column four between two values
-$.fn.dataTable.ext.search.push(
-    function( settings, data, dataIndex ) {
-        var min = minDate.val();
-        var max = maxDate.val();
-        var date = new Date( data[5] );
- 
-        if (
-            ( min === null && max === null ) ||
-            ( min === null && date <= max ) ||
-            ( min <= date   && max === null ) ||
-            ( min <= date   && date <= max )
-        ) {
-            return true;
-        }
-        return false;
-    }
-);
 
-
-
-</script>
 
 <script>
-$(document).ready(function() {
-    new TomSelect("#from_account_id",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
-        }
-    });
-    new TomSelect("#to_account_id",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
-        }
-    });
-  // Create date inputs
-    minDate = new DateTime($('#min'), {
-        format: 'YYYY-MM-DD'
-    });
-    maxDate = new DateTime($('#max'), {
-         format: 'YYYY-MM-DD'
-    });
-
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-    
-    });
-
-  var table = $('#table-1').DataTable();
- 
-    // Refilter the table
-    $('#min, #max').on('change', function () {
-        table.draw();
-    });
-
-});
-</script>
+        
+        });
+    </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 @endsection

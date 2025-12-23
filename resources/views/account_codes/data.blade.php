@@ -28,6 +28,9 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
+                                
+                               
+                                        
                                      <table class="table datatable-basic table-striped">
                                            <thead>
                                             <tr>
@@ -39,20 +42,17 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Account Codes</th>
+                                                    style="width: 126.484px;">Account Codes</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Account Name</th>
+                                                    style="width: 156.484px;">Account Name</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Account Group</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 91.219px;">Account Status</th>
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    style="width: 151.219px;">Account Group</th>
+                                                   
+                                                <th class="always-visible" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
                                                     style="width: 128.1094px;">Actions</th>
@@ -61,22 +61,38 @@
                                          <tbody>
                                             @if(!@empty($codes))
                                             @foreach ($codes as $row)
+                                             
+                                            <?php
+                                    $bfr=App\Models\JournalEntry::where('account_id',$row->id)->where('added_by',auth()->user()->added_by)->count();
+                                    ?>
+                                    
                                             <tr class="gradeA even" role="row">
                                                 <th>{{ $loop->iteration }}</th>
                                                 <td>{{$row->account_codes}}</td>
                                                 <td>{{$row->account_name}}</td>
-                                                <td>{{$row->account_group}}</td>                                           
-                                                  <td>{{$row->account_status}}</td>                                              
+                                                <td>@if(!empty($row->groupAccount->name)) {{$row->groupAccount->name}} @else {{$row->account_group}} @endif</td>                                           
+                                                                                            
 
-                                                 <td><div class="form-inline">
+                                                 <td>
+                                                 <div class="form-inline">
+                                                    
+                                                    @if($row->edited == '1')
                                                     <a class="list-icons-item text-primary"
                                                         href="{{ route("account_codes.edit", $row->id)}}">
                                                       <i class="icon-pencil7"></i>
                                                     </a>&nbsp
 
+                                                  @if($bfr == '0')
                                               {!! Form::open(['route' => ['account_codes.destroy',$row->id], 'method' => 'delete']) !!}
                                 {{ Form::button(' <i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')",]) }}
                                                   {{ Form::close() }}
+                                                  @endif
+                                                  
+                                                    @else
+                                                    
+                                                     <i class="icon-lock4" title="You cannot edit/delete this account" data-bs-popup="tooltip" data-bs-placement="bottom"></i>
+                                                     
+                                                    @endif
                                                     
 
                                                 </div>
@@ -130,23 +146,25 @@
                                                         class="col-lg-2 col-form-label">Account Group</label>
 
                                                     <div class="col-lg-8">
-                                                    <select class="form-control m-b" id="account_group" name="account_group" required>
-                                                    <option value="">Select Account Group</option>                                                     
-                                                            @foreach ($group_account as $group)                                                             
-                                                                <option value="{{$group->name}}" @if(isset($data))@if($data->account_group == $group->name) selected @endif @endif >{{$group->name}}</option>
-                                                               @endforeach
+                                                     <div class="input-group mb-2">
+                                                    <select class="form-control append-button-single-field group" id="account_group" name="account_group" required>
+                                                    <option value="">Select Account Group</option>  
+                                                      
+                                                      @foreach($group_account as $group)
+                                                      <option value="{{$group->id}}" @if(isset($data))@if($data->account_group == $group->id) selected @endif @endif>{{$group->name}}</option>
+                                                       @endforeach
+                                                      
                                                         </select>
+                                                        &nbsp
+
+                                            <button class="btn btn-outline-secondary" type="button" data-toggle="modal" value="" onclick="model('1','group')"data-target="#appFormModal" href="appFormModal">
+                                                <i class="icon-plus-circle2"></i></button>
+
+                                                            </div>
                                                     </div>
                                                 </div>
                                               
-                                                 <div class="form-group row"><label
-                                                        class="col-lg-2 col-form-label">Account Status</label>
-
-                                                    <div class="col-lg-8">
-                                                  <input type="radio" value="Active" name="account_status"  required="required" checked> Active  &nbsp&nbsp &nbsp&nbsp&nbsp&nbsp &nbsp&nbsp
-                                                  <input type="radio" value="Inactive"  required="required" name="account_status" > Inactive 
-                                                    </div>
-                                                </div>
+                                                
 
                                                 <div class="form-group row">
                                                     <div class="col-lg-offset-2 col-lg-12">
@@ -177,27 +195,118 @@
     </div>
 </section>
 
+ <div class="modal fade " data-backdrop="" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+
+        </div>
+    </div>
+
 
 
 @endsection
 
 @section('scripts')
- <script>
-       $('.datatable-basic').DataTable({
-            autoWidth: false,
-            "columnDefs": [
-                {"orderable": false, "targets": [3]}
-            ],
-           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
-            "language": {
-               search: '<span>Filter:</span> _INPUT_',
-                searchPlaceholder: 'Type to filter...',
-                lengthMenu: '<span>Show:</span> _MENU_',
-             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
-            },
-        
+
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/jquery.dataTables.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/buttons.dataTables.min.css') }}">
+
+<script src="{{asset('assets/datatables/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('assets/datatables/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.print.min.js')}}"></script>
+<script>
+
+      $('.datatable-basic').DataTable(
+        {
+        dom: 'Bfrtip',
+
+        buttons: [
+          {extend: 'copyHtml5',title: 'ACCOUNT CODES ',  exportOptions:{columns: ':visible :not(.always-visible)'},footer: true},
+           {extend: 'excelHtml5',title: 'ACCOUNT CODES' , exportOptions:{columns: ':visible :not(.always-visible)'}, footer: true},
+           {extend: 'csvHtml5',title: 'ACCOUNT CODES' ,  exportOptions:{columns: ':visible :not(.always-visible)'},footer: true},
+            {extend: 'pdfHtml5',title: 'ACCOUNT CODES',  exportOptions:{columns: ':visible :not(.always-visible)'},footer: true,customize: function(doc) {
+doc.content[1].table.widths = [ '10%', '10%', '50%','30%'];
+}
+},
+            {extend: 'print',title: 'ACCOUNT CODES' , exportOptions:{columns: ':visible :not(.always-visible)'}, footer: true}
+
+                ],
+        }
+      );
+     
+    </script>
+    
+    
+     <script>
+        $(document).ready(function() {
+
+            $(document).on('click', '.add_group', function(e) {
+                e.preventDefault();
+                console.log(1);
+                $.ajax({
+                type: 'GET',
+                url: '{{ url('gl_setup/save_group') }}',
+                data: $('.addGroupForm').serialize(),
+                dataType: "json",
+                success: function(response) {
+                    console.log(response);
+                    
+                    var id = response["group_account"]["id"];
+                    var name = response["group_account"]["id"];
+                    var type=response["group_account"]["name"];
+                    console.log(id);
+
+                    var option = "<option value='" + id + "'  selected>" + name + " </option>";
+
+                    $('#account_group').append(option);
+                    $('#appFormModal').hide();
+
+
+
+                }
+            });
+                
+                
+            });
+
+
         });
     </script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+
+    
+    <script type="text/javascript">
+        function model(id, type) {
+
+            $.ajax({
+                type: 'GET',
+                url: '{{ url('gl_setup/glModal') }}',
+                data: {
+                    'id': id,
+                    'type': type,
+                },
+                cache: false,
+                async: true,
+                success: function(data) {
+                    //alert(data);
+                    $('#appFormModal > .modal-dialog').html(data);
+                },
+                error: function(error) {
+                    $('#appFormModal').modal('toggle');
+
+                }
+            });
+
+        }
+
+
+
+    </script>
+    
+    
+    
+ 
 
 @endsection

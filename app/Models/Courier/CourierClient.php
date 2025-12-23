@@ -10,7 +10,8 @@ class CourierClient extends Model
     use HasFactory;
     protected $table = 'courier_clients';
 
-    protected $fillable = ['user_id','name','address','phone','TIN','email'];
+  protected $guarded = ['id','_token'];
+
     public function user()
     {
         return $this->belongsTo('App\Models\User');

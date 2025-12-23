@@ -1,4 +1,3 @@
-
            
 
 <div class="" id="test">
@@ -6,7 +5,7 @@
                 <label class="col-lg-6 col-form-label">Truck </label>
 
                 <div class="col-lg-12">
-                    <select class="form-control truck_id" name="truck_id"  id="truck" required>
+                    <select class="form-control m-b truck_id" name="truck_id"  id="truck" required>
                                                       
                                                         <option value="">Select Truck</option>
                                                                         @if(!empty($truck))
@@ -27,3 +26,11 @@
 
         </div>
       
+@yield('scripts')
+<script>
+/*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+</script>

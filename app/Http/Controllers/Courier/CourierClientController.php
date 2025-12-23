@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Courier;
 
 use App\Http\Controllers\Controller;
 use App\Models\Courier\CourierClient;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class CourierClientController  extends Controller
@@ -16,7 +19,7 @@ class CourierClientController  extends Controller
     public function index()
    {
        //
-       $client = CourierClient::all();     
+       $client = CourierClient::where('user_id',auth()->user()->added_by)->get();     
        return view('courier.client',compact('client'));
    }
 
@@ -38,12 +41,34 @@ class CourierClientController  extends Controller
     */
    public function store(Request $request)
    {
-       //
+       //added_by
 
       $data=$request->post();
-      $data['user_id']=auth()->user()->id;
+      $data['user_id']=auth()->user()->added_by;
+      $data['added_by']=auth()->user()->added_by;
       $client = CourierClient::create($data);
 
+/*
+  $user = User::create([
+            'name' => $request['name'],          
+            'email' => $request['email'],
+            'address' => $request['address'],
+            'password' => Hash::make(11223344),
+            'phone' => $request['phone'],
+            'client_id'=>$client->id,
+            'added_by' => auth()->user()->added_by,
+            'status' => 1,
+       'department_id' => 0,
+        'designation_id' => 0,
+        'joining_date' => 0,
+        ]);
+        
+        $user->roles()->detach();
+        $role_id = Role::where('slug','CLIENT')->first();
+        $user->roles()->attach($role_id->id);
+      
+       
+*/
       return redirect(route('courier_client.index'))->with(['success'=>'Client Created Successfully']);
    }
 
@@ -83,9 +108,17 @@ class CourierClientController  extends Controller
        //
        $client = CourierClient::find($id);
        $data=$request->post();
-       $data['user_id']=auth()->user()->id;
+       $data['user_id']=auth()->user()->added_by;
        $client->update($data);
 
+/*
+        $user = User::where('client_id',$id)->update([
+            'name' => $request['name'],          
+            'email' => $request['email'],
+            'address' => $request['address'],
+            'phone' => $request['phone'],
+        ]);
+*/        
        return redirect(route('courier_client.index'))->with(['success'=>'Client Updated Successfully']);
    }
 

@@ -28,18 +28,18 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped" id="table-1">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Date</th>
+                                                    style="width: 126.484px;">Date</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -60,7 +60,7 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Action</th>
+                                                    style="width: 138.1094px;">Action</th>
                                             </tr>
                                         </thead>
                                       
@@ -68,13 +68,13 @@
                                             @foreach ($maintain as $row)
                                             <tr class="gradeA even" role="row">
                                                 <th>{{ $loop->iteration }}</th>
-                                                <td>{{Carbon\Carbon::parse($row->date)->format('M d, Y')}}</td>
+                                                <td>{{Carbon\Carbon::parse($row->date)->format('d/m/Y')}}</td>
                                                 <td>
                                                     @php    
                                                     $tr=App\Models\Truck::where('id', $row->truck)->get();   
                                                   @endphp
                                                      @foreach($tr as $t)
-                                                     <a href="#view{{$row->truck}}" data-toggle="modal">{{$t->reg_no}} -{{$t->truck_name}}</a>
+                                                     <a href="#view{{$row->truck}}" data-toggle="modal">{{$t->truck_name}} - {{$t->reg_no}}</a>
                                                     @endforeach
                                                 </td>
                                               
@@ -97,35 +97,33 @@
                                                     <div class="badge badge-success badge-shadow">Complete</div>
                                                     @endif
                                                 </td>
+                                                
                                                 <td>
+                                                 <div class="form-inline">
                                                     @if($row->status == 0)
-                                                    <a class="btn btn-xs btn-outline-primary text-uppercase px-2 rounded"
+                                                    <a class="list-icons-item text-success"
                                                     href="{{ route("maintainance.approve", $row->id)}}" onclick="return confirm('Are you sure?')" title="Change Status">
-                                                    <i class="fa fa-check"></i>
-                                                </a>
+                                                    <i class="icon-checkmark3"></i>
+                                                </a>&nbsp
                                               
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
+                                                     <a class="list-icons-item text-primary"
                                                         href="{{ route("maintainance.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
+                                                        <i class="icon-pencil7"></i>
+                                                    </a>&nbsp
                                                    
-
                                                     {!! Form::open(['route' => ['maintainance.destroy',$row->id],
                                                     'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                  {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
                                                     {{ Form::close() }}
 
                                     @else
-    @if($row->report == 0)
-                         <a class="nav-link" title="Assign"
-                                                    data-toggle="modal" href=""  value="{{ $row->id}}" data-type="assign" data-target="#appFormModal"
-                                                    onclick="model({{ $row->id }},'maintainance')">Create Mechanical Report </a> 
-  @elseif($row->report == 1)
-                         <a class="nav-link" title="View"
-                                                    data-toggle="modal" href=""  value="{{ $row->id}}" data-type="view" data-target="#appFormModal"
-                                                    onclick="model({{ $row->id }},'mechanical_maintainance')">View Mechanical Report </a>  
+                                @if($row->report == 0)
+                         <a title="Assign" data-toggle="modal" href=""  value="{{ $row->id}}" data-type="assign" data-target="#appFormModal" onclick="model({{ $row->id }},'maintainance')">Create Mechanical Report </a> 
+                            @elseif($row->report == 1)
+                         <a title="View" data-toggle="modal" href=""  value="{{ $row->id}}" data-type="view" data-target="#appFormModal" onclick="model({{ $row->id }},'mechanical_maintainance')">View Mechanical Report </a>  
   @endif
 @endif
+</div>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -168,15 +166,12 @@
                                                 
                                                     <label class="col-lg-2 col-form-label">Truck</label>
                                                     <div class="col-lg-4">
-                                                        <select class="form-control" name="truck" required
-                                                                id="supplier_id">
+                                                        <select class="form-control m-b " name="truck" required id="truck_id">
                                                         <option value="">Select Truck Name</option>
                                                         @if(!empty($truck))
                                                         @foreach($truck as $row)
 
-                                                        <option @if(isset($data))
-                                                            {{ $data->truck == $row->id  ? 'selected' : ''}}
-                                                            @endif value="{{$row->id}}">{{$row->reg_no}} -{{$row->truck_name}}</option>
+                                                    <option @if(isset($data)) {{ $data->truck == $row->id  ? 'selected' : ''}} @endif value="{{$row->id}}"> {{$row->truck_name}} - {{$row->reg_no}}</option>
 
                                                         @endforeach
                                                         @endif
@@ -190,15 +185,10 @@
                                                 <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Type</label>
                                                    <div class="col-lg-4">
-                                                    <select class="form-control" name="type" required
-                                                    id="supplier_id">
+                                                    <select class="form-control m-b" name="type" required id="type">
                                                     <option value="">Select Type</option>
-                                                    <option @if(isset($data))
-                                                        {{$data->type == 'Minor'  ? 'selected' : ''}}
-                                                        @endif value="Minor">Minor</option>
-                                                        <option @if(isset($data))
-                                                        {{$data->type == 'Major'  ? 'selected' : ''}}
-                                                        @endif value="Major">Major</option>
+                                                    <option @if(isset($data)) {{$data->type == 'Minor'  ? 'selected' : ''}} @endif value="Minor">Minor</option>
+                                                    <option @if(isset($data)) {{$data->type == 'Major'  ? 'selected' : ''}}@endif value="Major">Major</option>
                                                       
                                                 </select>
                                                     </div>
@@ -209,15 +199,12 @@
                                                         class="col-lg-2 col-form-label">Mechanical</label>
 
                                                     <div class="col-lg-4">
-                                                        <select class="form-control" name="mechanical" required
-                                                        id="supplier_id">
+                                                    <select class="form-control m-b" name="mechanical" required id="staff">
                                                 <option value="">Select Mechanical</option>
                                                 @if(!empty($staff))
                                                 @foreach($staff as $row)
 
-                                                <option @if(isset($data))
-                                                    {{$data->mechanical == $row->id  ? 'selected' : ''}}
-                                                    @endif value="{{ $row->id}}">{{$row->name}}</option>
+                                                <option @if(isset($data)) {{$data->mechanical == $row->id  ? 'selected' : ''}} @endif value="{{ $row->id}}">{{$row->name}}</option>
 
                                                 @endforeach
                                                 @endif
@@ -230,8 +217,7 @@
                                                     class="col-lg-2 col-form-label">Reason</label>
 
                                                 <div class="col-lg-10">
-                                                    <textarea name="reason" 
-                                            class="form-control" required>@if(isset($data)){{ $data->reason }} @endif</textarea>
+                                                    <textarea name="reason" class="form-control" required>@if(isset($data)){{ $data->reason }} @endif</textarea>
                                                 </div>
                                             </div>
 
@@ -267,8 +253,8 @@
 @if(!empty($maintain))
 @foreach( $maintain as $row)
 <!-- Modal -->
-<div class="modal inmodal " id="view{{$row->truck}}"  tabindex="-1" role="dialog" aria-hidden="true">
-                     <div class="modal-dialog modal-lg"><div class="modal-dialog modal-lg" role="document">
+<div class="modal fade " id="view{{$row->truck}}"  tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog modal-lg"><div class="modal-dialog modal-lg" role="document">
 <div class="modal-content">
    <div class="modal-header">
        <h5 class="modal-title"  style="text-align:center;"> 
@@ -276,7 +262,7 @@
         $tr=App\Models\Truck::where('id', $row->truck)->get();   
       @endphp
          @foreach($tr as $t)
-         Maintainance History For {{$t->truck_name}}
+         Maintainance History For {{$t->truck_name}} - {{$t->reg_no}}
         @endforeach
         <h5>
        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -287,7 +273,7 @@
 
    <div class="modal-body">
 <div class="table-responsive">
-                       <table class="table table-bordered table-striped">
+                       <table class="table datatable-basic table-striped">
 <thead>
                <tr>
                 <th>#</th>
@@ -310,7 +296,7 @@
 
                             <tr>
                                 <th>{{ $loop->iteration }}</th>
-                                <td>{{Carbon\Carbon::parse($h->date)->format('M d, Y')}}</td>
+                                <td>{{Carbon\Carbon::parse($h->date)->format('d/m/Y')}}</td>
                               
                                 <td>
                                     @php    
@@ -349,70 +335,16 @@
 
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 
 @endsection
 
 @section('scripts')
-<script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
-            },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
 
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-
-
-$('.demo4').click(function() {
-    swal({
-        title: "Are you sure?",
-        text: "You will not be able to recover this imaginary file!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: false
-    }, function() {
-        swal("Deleted!", "Your imaginary file has been deleted.", "success");
-    });
-});
-</script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -426,13 +358,15 @@ $(document).ready(function() {
         var html = '';
         html += '<tr class="line_items">';
         html +=
-            '<td><select name="item_name[]" class="form-control item_name" required  data-sub_category_id="' +
+            '<td><select name="item_name[]" class="form-control m-b item_name" required  data-sub_category_id="' +
             count +
             '"><option value="">Select </option>@foreach($name as $n) <option value="{{ $n->id}}">{{$n->name}}</option>@endforeach</select></td>';
         html +=
-            '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_inv"><i class="fas fa-trash"></i></button></td>';
+            '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_inv"><i class="icon-trash"></i></button></td>';
 console.log(html);
         $("#service > tbody ").append(html);
+        
+         $('.m-b').select2({});
     
     });
 
@@ -458,7 +392,7 @@ $(document).ready(function() {
         var html = '';
         html += '<tr class="line_items">';
         html +='<td><br><textarea name="recommedation[]" class="form-control item_name" required  data-sub_category_id="' + count + '"></textarea></td>';
-        html +='<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_re"><i class="fas fa-trash"></i></button></td>';
+        html +='<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_re"><i class="icon-trash"></i></button></td>';
 console.log(html);
         $("#recommedation > tbody ").append(html);
     
@@ -479,7 +413,7 @@ console.log(html);
 
 $.ajax({
     type: 'GET',
-     url: '{{url("invModal")}}',
+     url: '{{url("inventory/invModal")}}',
     data: {
         'id': id,
         'type':type,
@@ -488,7 +422,7 @@ $.ajax({
     async: true,
     success: function(data) {
         //alert(data);
-        $('.modal-dialog').html(data);
+        $('#appFormModal > .modal-dialog').html(data);
     },
     error: function(error) {
         $('#appFormModal').modal('toggle');

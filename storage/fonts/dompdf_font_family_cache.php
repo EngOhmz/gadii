@@ -97,5 +97,14 @@ return array (
     'bold' => $fontDir . '/nunito_bold_b310fe0dffa1a1465eb3f51c50723140',
     '800' => $fontDir . '/nunito_800_7cb477d60ee64f173e2c8f18ed066c5a',
   ),
+  'open sans' => array(
+    'normal' => $fontDir . '/open_sans_normal_da59a9c5214844a109aa8ec3d9a30e3a',
+  ),
+  'poppins' => array(
+    '300' => $fontDir . '/poppins_300_7bd74212042e2303e96e1e2a59c91153',
+    'normal' => $fontDir . '/poppins_normal_41eae6f88194706e4cb26de3ac737d8a',
+    '600' => $fontDir . '/poppins_600_8766355d2de6e5a80a8dfebc31aeaedf',
+    '500' => $fontDir . '/poppins_500_2a496847b9018af565e71324a9cbc097',
+  ),
 );
 }; ?>

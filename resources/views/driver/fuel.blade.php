@@ -95,7 +95,7 @@
                                                 <div class="tab-pane fade @if($type =='fuel') active show @endif" id="home2" role="tabpanel"
                                                     aria-labelledby="home-tab2">
                                                     <div class="table-responsive">
-                                                        <table class="table table-striped" id="table-1">
+                                                        <table class="table datatable-basic table-striped">
                                                             <thead>
                                                                 <tr>
                                 
@@ -166,6 +166,22 @@
 @endsection
 
 @section('scripts')
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [0]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
 <script>
     function myFunction() {

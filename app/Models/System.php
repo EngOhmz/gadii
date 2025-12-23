@@ -8,7 +8,7 @@ class System extends Model
 {
     protected $table = "system_control";
     
-    protected $fillable = ['name','picture','email','address','vat','tin','phone','added_by'];
+   protected $guarded = ['id','_token'];
 
     public $timestamps = false;
     

@@ -11,21 +11,19 @@ class CourierItem extends Model
 
     protected $table = "courier_items";
 
-    protected $fillable = [
-    'pacel_id',
-    'item_name',
-    'tax_rate',
-    'total_tax',
-    'quantity',
-    'total_cost',
-    'price',
-    'unit',        
-    'items_id',           
-    'order_no',      
-    'added_by'];
+    protected $guarded = ['id','_token'];
     
     public function user()
     {
         return $this->belongsTo('App\Models\user');
     }
+public function to(){
+    
+        return $this->belongsTo('App\Models\Region','to_region_id');
+      }
+
+public function item(){
+    
+        return $this->belongsTo('App\Models\Tariff','item_name');
+      }
 }

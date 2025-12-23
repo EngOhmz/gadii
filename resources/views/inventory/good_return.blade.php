@@ -5,7 +5,7 @@
 <section class="section">
     <div class="section-body">
         <div class="row">
-            <div class="col-12 col-sm-6 col-lg-12">
+            <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Good Return</h4>
@@ -28,7 +28,7 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped" id="table-1">
                                         <thead>
                                             <tr role="row">
 
@@ -314,7 +314,7 @@ $('.demo4').click(function() {
         $(document).on('change', '.truck', function() {
             var id = $(this).val();
             $.ajax({
-                url: '{{url("findReturnService")}}',
+                url: '{{url("inventory/findReturnService")}}',
                 type: "GET",
                 data: {
                     id: id

@@ -6,17 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\AccountCodes;
 use App\Models\Fuel\Fuel;
 use App\Models\Fuel\Refill;
+use App\Models\Fuel\RefillPayment;
 use App\Models\Supplier;
 use App\Models\JournalEntry;
 use App\Models\Transaction;
 use App\Models\Accounts;
 use App\Models\Route;
+use App\Models\User;
 use App\Models\Region;
 use App\Models\District;
 use App\Models\Truck;
 use Illuminate\Http\Request;
 use App\Models\Expenses;
-
+use App\Models\Payment_methodes;
+use  DateTime;
 
 class FuelController extends Controller
 {
@@ -28,12 +31,13 @@ class FuelController extends Controller
     public function index()
     {
         //
-        $truck = Truck::all(); 
-        $route=Route::all();    
-        $fuel = Fuel::all();    
-        $refill=Refill::all(); 
+        $truck = Truck::where('disabled','0')->where('truck_type','Horse')->where('added_by',auth()->user()->added_by)->get();
+        $route=Route::where('added_by',auth()->user()->added_by)->get();      
+       $fuel = Fuel::where('added_by',auth()->user()->added_by)->where('fuel_used','>','0')->orderBy('date', 'desc')->get(); 
+        $refill=Refill::where('added_by',auth()->user()->added_by)->get(); 
 $region = Region::all();   
-        return view('fuel.fuel',compact('truck','route','fuel','refill','region'));
+         $staff=User::where('added_by',auth()->user()->added_by)->get(); 
+        return view('fuel.fuel',compact('truck','route','fuel','refill','region','staff'));
     }
 
     /**
@@ -56,10 +60,10 @@ $region = Region::all();
     {
         //
         $data = $request->all();
-        $route=Route::where('id',$request->route_id)->first();
+        $route=Route::where('added_by',auth()->user()->added_by)->where('id',$request->route_id)->first();
         $data['fuel_used']=$request->fuel_used;;
         $data['due_fuel']=$request->fuel_used;;
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $fuel= Fuel::create($data);
 
 
@@ -85,14 +89,19 @@ $region = Region::all();
                  $id=$request->id;
                  $type = $request->type;
 
-                 $supplier=Supplier::all() ;
-                $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
+                 $supplier=Supplier::where('user_id',auth()->user()->added_by)->get() ;
+                $bank_accounts=AccountCodes::where('added_by',auth()->user()->added_by)->where('account_status','Bank')->get() ;
                  if($type == 'refill'){
                     return view('fuel.addrefill',compact('id','bank_accounts','supplier'));
                 
                  }elseif($type == 'adjustment'){
                     $data =  Fuel::find($id);
                  return view('fuel.addadjustment',compact('id','data'));  
+                 }
+                 else if($type == 'edit_refill'){
+                      $data=Refill::find($id);
+                    return view('fuel.editrefill',compact('id','supplier','data'));
+                
                  }
 
                  }
@@ -107,10 +116,12 @@ $region = Region::all();
     {
         //
         $data =  Fuel::find($id);
-        $truck = Truck::all(); 
-        $route=Route::all();    
-   $region = Region::all();   
-        return view('fuel.fuel',compact('truck','route','data','id','region'));
+         $truck = Truck::where('disabled','0')->where('truck_type','Horse')->where('added_by',auth()->user()->added_by)->get();
+        $route=Route::where('added_by',auth()->user()->added_by)->get();    
+   $region = Region::all();  
+  $refill=Refill::where('added_by',auth()->user()->added_by)->get(); 
+      $staff=User::where('added_by',auth()->user()->added_by)->get();  
+        return view('fuel.fuel',compact('truck','route','data','id','region','refill','staff'));
     }
 
     /**
@@ -145,9 +156,12 @@ $region = Region::all();
             if($receipt['litres'] >= 0){
                 $receipt['truck'] = $sales->truck_id;
                 $receipt['route'] = $sales->route_id;
-                $receipt['total_cost'] = $request->price * $request->litres;
+                $receipt['total_cost'] = $request->price ;
+               $receipt['due_cost'] = $request->price ;
+               $receipt['status'] = '0' ;
+               $receipt['price'] = $request->price / $request->litres;
                 $receipt['fuel_id'] = $id;
-                $receipt['added_by'] = auth()->user()->id;
+                $receipt['added_by'] = auth()->user()->added_by;
                 
                 //update due amount from invoice table
                 $data['due_fuel'] =  $sales->due_fuel-$receipt['litres'];              
@@ -155,100 +169,175 @@ $region = Region::all();
                 $refill = Refill::create($receipt);
 
            $t=Truck::find($sales->truck_id);
+             $account= AccountCodes::where('account_name','Fuel')->where('added_by',auth()->user()->added_by)->first();
+$bank= AccountCodes::where('added_by',auth()->user()->added_by)->where('account_name','Payables')->first();
+ $supp = Supplier::find($refill->supplier);
 
-             if($refill->payment_type == 'cash'){            
-                $cr= AccountCodes::where('account_name','Fuel')->first();
+             if($refill->payment_type == 'cash'){  
+
+             $sales =Refill::find($refill->id);
+            $method= Payment_methodes::where('name','Cash')->first();
+
+               $receipt['trans_id'] = "TRFL".$refill->id.substr(str_shuffle(1234567890), 0, 4);
+                $receipt['added_by'] = auth()->user()->added_by;
+                 $receipt['fuel_id'] =$sales->fuel_id;
+                $receipt['refill_id'] =$refill->id;
+                 $receipt['supplier_id'] =$refill->supplier;
+               $receipt['amount'] = $sales->total_cost;
+                $receipt['date'] = $sales->date;
+                 $receipt['payment_method'] = $method->id;
+                  $receipt['account_id'] =$request->account_id;
+
+                //update due amount from invoice table
+                 $b['due_cost'] =  0;
+               $b['status'] = 2;              
+                $sales->update($b);
+                 
+                $payment = RefillPayment::create($receipt);
+
+
+
                 $journal = new JournalEntry();
-              $journal->account_id = $cr->id;
-              $date = explode('-',$refill->created_at);
-              $journal->date =   $refill->created_at ;
+        $journal->account_id =     $account->id ;;
+    $date = explode('-',$refill->date);
+              $journal->date =   $refill->date ;
+              $journal->year = $date[0];
+              $journal->month = $date[1];
+         $journal->transaction_type = 'fuel';
+              $journal->name = 'Fuel Refill';
+             $journal->income_id=    $refill->id;;
+           $journal->truck_id= $refill->truck;
+              $journal->supplier_id= $refill->supplier;
+              $journal->notes= 'Fuel Refill On Cash Payment to Supplier ' . $supp->name.' for Truck '.$t->truck_name. ' - '. $t->reg_no;
+        $journal->added_by= auth()->user()->added_by;;
+        $journal->debit =   $refill->total_cost ;
+        $journal->save();
+
+         $journal = new JournalEntry();
+        $journal->account_id = $bank->id;;
+        $date = explode('-',  $refill->date);
+         $journal->date =   $refill->date ;
+              $journal->year = $date[0];
+              $journal->month = $date[1];
+        $journal->transaction_type = 'fuel';
+              $journal->name = 'Fuel Refill';
+             $journal->income_id=    $refill->id;;
+           $journal->truck_id= $refill->truck;
+              $journal->supplier_id= $refill->supplier;
+        $journal->credit =    $refill->total_cost ;;
+       $journal->added_by= auth()->user()->added_by;;
+      $journal->notes= 'Fuel Refill On Cash Payment to Supplier ' . $supp->name.' for Truck '.$t->truck_name. ' - '. $t->reg_no;
+        $journal->save();
+          
+
+                $journal = new JournalEntry();
+              $journal->account_id = $bank->id;;;
+              $date = explode('-',$refill->date);
+              $journal->date =   $refill->date ;
               $journal->year = $date[0];
               $journal->month = $date[1];
              $journal->transaction_type = 'fuel';
-              $journal->name = 'Fuel Refill';
+              $journal->name = 'Fuel Refill Payment';
               $journal->debit = $refill->total_cost ;
        $journal->truck_id= $sales->truck_id;
-              $journal->payment_id= $refill->id;
-        $journal->added_by=auth()->user()->id;
-               $journal->notes= "Payment for Fuel Refill for Truck " .$t->truck_name. " - ". $t->reg_no;
+           $journal->supplier_id= $refill->supplier;
+              $journal->payment_id= $payment->id;
+        $journal->added_by=auth()->user()->added_by;
+               $journal->notes= 'Payment for Fuel Refill to Supplier ' . $supp->name.' for Truck '.$t->truck_name. ' - '. $t->reg_no;
               $journal->save();
       
       
 
               $journal = new JournalEntry();
               $journal->account_id = $request->account_id;
-              $date = explode('-',$refill->created_at);
-              $journal->date =   $refill->created_at ;
+              $date = explode('-',$refill->date);
+              $journal->date =   $refill->date ;
               $journal->year = $date[0];
               $journal->month = $date[1];
              $journal->transaction_type = 'fuel';
-              $journal->name = 'Fuel Refill';
+              $journal->name = 'Fuel Refill Payment';
               $journal->credit =$refill->total_cost ;
               $journal->truck_id= $sales->truck_id;
-              $journal->payment_id= $refill->id;
-               $journal->added_by=auth()->user()->id;
-                 $journal->notes= "Payment for Fuel Refill for Truck " .$t->truck_name. " - ". $t->reg_no;
+             $journal->supplier_id= $refill->supplier;
+              $journal->payment_id= $payment->id;
+               $journal->added_by=auth()->user()->added_by;
+                 $journal->notes= 'Payment for Fuel Refill to Supplier ' . $supp->name.' for Truck '.$t->truck_name. ' - '. $t->reg_no;
               $journal->save();
 
-
-        if(!empty($account)){
-$balance=$account->balance - $refill->total_cost ;
+$bank_account= Accounts::where('added_by',auth()->user()->added_by)->where('account_id',$request->account_id)->first();
+        if(!empty($bank_account)){
+$balance=$bank_account->balance - $refill->total_cost ;
 $item_to['balance']=$balance;
-$account->update($item_to);
+$bank_account->update($item_to);
 }
 
 else{
-  $cr= AccountCodes::where('id',$request->account_id)->first();
+  $cr= AccountCodes::where('added_by',auth()->user()->added_by)->where('id',$request->account_id)->first();
 
      $new['account_id']= $request->account_id;
        $new['account_name']= $cr->account_name;
       $new['balance']= 0-$refill->total_cost;
        $new[' exchange_code']='TZS';
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 $balance=0-$refill->total_cost;
      Accounts::create($new);
 }
         
    // save into tbl_transaction
                             $transaction= Transaction::create([
-                                'module' => 'Fuel Refill',
+                                'module' => 'Fuel Refill Paymnet',
                                  'module_id' => $refill->id,
                                'account_id' => $request->account_id,
-                                'code_id' => $cr->id,
-                                'name' => 'Fuel Refill Payment for truck ' .$t->truck_name,
+                                'code_id' => $bank->id,
+                                'name' => 'Fuel Refill Payment for truck ' .$t->reg_no,
                                 'type' => 'Expense',
                                 'amount' =>$refill->total_cost,
                                 'debit' => $refill->total_cost,
                                  'total_balance' =>$balance,
                                 'date' => date('Y-m-d'),
                                    'status' => 'paid' ,
-                                'notes' => 'This expense is from fuel refill payment. Payment to Truck '.$t->truck_name ,
-                                'added_by' =>auth()->user()->id,
+                                'notes' => 'This expense is from fuel refill payment. Payment to Truck '.$t->reg_no ,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
                               
 
 }
 
     else if($refill->payment_type == 'credit'){
- $account= AccountCodes::where('account_name','Fuel')->first();
-$bank= AccountCodes::where('account_name','Payables')->first();
 
-                 $expenses = new Expenses();
-            $expenses->name ='Fuel Refill on Credit';
-             $expenses->type='Expenses';
-       $expenses->amount = $refill->total_cost ;
-         $expenses->date  = $refill->created_at  ;
-         $expenses->account_id  = $account->id ;
-             $expenses->bank_id  = $bank->id;
-             $expenses->notes  = "Fuel Refill  on Credit for Truck " .$t->truck_name ;
-             $expenses->status  = '0' ;
-             $expenses->exchange_code =   'TZS';
-             $expenses->exchange_rate=  '1';
-             $random = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(4/strlen($x)) )),1,4);
-             $expenses->trans_id = "TRANS_EXP_".$random;
-             $expenses->added_by = auth()->user()->id;
-              $expenses->refill_id =$refill->id;
-             $expenses->save();
+
+
+  $journal = new JournalEntry();
+        $journal->account_id =     $account->id ;;
+    $date = explode('-',$refill->date);
+              $journal->date =   $refill->date ;
+              $journal->year = $date[0];
+              $journal->month = $date[1];
+         $journal->transaction_type = 'fuel';
+              $journal->name = 'Fuel Refill Credit';
+             $journal->income_id=    $refill->id;;
+           $journal->truck_id= $refill->truck;
+              $journal->supplier_id= $refill->supplier;
+              $journal->notes= 'Fuel Refill On Credit Payment to Supplier ' . $supp->name.' for Truck '.$t->truck_name. ' - '. $t->reg_no;
+        $journal->added_by= auth()->user()->added_by;;
+        $journal->debit =   $refill->total_cost ;
+        $journal->save();
+
+         $journal = new JournalEntry();
+        $journal->account_id = $bank->id;;
+        $date = explode('-',  $refill->date);
+         $journal->date =   $refill->date ;
+              $journal->year = $date[0];
+              $journal->month = $date[1];
+        $journal->transaction_type = 'fuel';
+              $journal->name = 'Fuel Refill Credit';
+             $journal->income_id=    $refill->id;;
+           $journal->truck_id= $refill->truck;
+              $journal->supplier_id= $refill->supplier;
+        $journal->credit =    $refill->total_cost ;;
+       $journal->added_by= auth()->user()->added_by;;
+      $journal->notes='Fuel Refill On Credit Payment to Supplier ' . $supp->name.' for Truck '.$t->truck_name. ' - '. $t->reg_no;
+        $journal->save();
 }
 
 
@@ -267,12 +356,101 @@ $bank= AccountCodes::where('account_name','Payables')->first();
 
     }
 
+
+ if($request->type == 'edit_refill'){
+
+              $refill = Refill::find($id);
+             
+                 if($refill->total_cost < $request->price){
+                  $due=$request->price - $refill->total_cost ;
+                  $receipt['due_cost'] = $refill->due_cost +  $due ;
+               if($refill->status == '2'){
+                     $receipt['status'] = '1' ; 
+                        }
+                      else{
+                          $receipt['status'] = $refill->status;
+                     }
+
+
+                   }
+
+                   else if($refill->total_cost  > $request->price){
+                  $due=$refill->total_cost - $request->price ;
+
+                    if($due <= 0){
+                    $receipt['due_cost'] =0;
+                      $receipt['status'] = '2' ; 
+                   }
+
+                 else{
+                    $receipt['due_cost'] =$refill->due_cost -  $due;
+                      $receipt['status'] = $refill->status; ; 
+                   } 
+
+                   }
+
+           else if($refill->total_cost  == $request->price){
+                  $due=$refill->total_cost - $request->price ;
+
+                    $receipt['due_cost'] =$refill->total_cost -  $due;
+                      $receipt['status'] = $refill->status; ; 
+
+                   }
+
+                $receipt['total_cost'] = $request->price ;
+                $receipt['supplier'] = $request->supplier ;
+             $receipt['date'] = $request->date ;
+               $receipt['price'] = $request->price / $request->litres;
+
+                  $refill->update($receipt);
+
+$account= AccountCodes::where('added_by',auth()->user()->added_by)->where('account_name','Fuel')->first();
+$bank= AccountCodes::where('added_by',auth()->user()->added_by)->where('account_name','Payables')->first();
+ $t=Truck::find($refill->truck);
+  $supp = Supplier::find($refill->supplier);
+
+$journal = JournalEntry::where('added_by',auth()->user()->added_by)->where('transaction_type','fuel')->where('income_id', $refill->id)->whereNotNull('debit')->first();
+        $journal->account_id =     $account->id ;;
+    $date = explode('-',$refill->date);
+              $journal->date =   $refill->date ;
+              $journal->year = $date[0];
+              $journal->month = $date[1];
+         $journal->transaction_type = 'fuel';
+              $journal->name = 'Fuel Refill Credit';
+             $journal->income_id=    $refill->id;;
+           $journal->truck_id= $refill->truck;
+              $journal->supplier_id= $refill->supplier;
+              $journal->notes= 'Fuel Refill On Credit Payment to Supplier ' . $supp->name.' for Truck '.$t->truck_name. ' - '. $t->reg_no;
+        $journal->added_by= auth()->user()->added_by;;
+        $journal->debit =   $refill->total_cost ;
+        $journal->save();
+
+        $journal = JournalEntry::where('added_by',auth()->user()->added_by)->where('transaction_type','fuel')->where('income_id', $refill->id)->whereNotNull('credit')->first();
+        $journal->account_id = $bank->id;;
+        $date = explode('-',  $refill->date);
+         $journal->date =   $refill->date ;
+              $journal->year = $date[0];
+              $journal->month = $date[1];
+        $journal->transaction_type = 'fuel';
+              $journal->name = 'Fuel Refill Credit';
+             $journal->income_id=    $refill->id;;
+           $journal->truck_id= $refill->truck;
+              $journal->supplier_id= $refill->supplier;
+        $journal->credit =    $refill->total_cost ;;
+       $journal->added_by= auth()->user()->added_by;;
+      $journal->notes= 'Fuel Refill On Credit Payment to Supplier ' . $supp->name.' for Truck '.$t->truck_name. ' - '. $t->reg_no;
+        $journal->save();
+
+            return redirect(route('refill_list'))->with(['success'=>'Refill Updated Successfully']);
+
+        }
+
         else{
         $data = $request->all();
         $route=Route::where('id',$request->route_id)->first();
         $data['fuel_used']=$request->fuel_used;
         $data['due_fuel']=$request->fuel_used;
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $fuel->update($data);
         return redirect(route('fuel.index'))->with(['success'=>'Fuel Updated Successfully']);
 
@@ -292,7 +470,7 @@ $bank= AccountCodes::where('account_name','Payables')->first();
         //
     $fuel=  Fuel::find($id);
 
-$refill=Refill::where('fuel_id',$id)->delete();
+$refill=Refill::where('added_by',auth()->user()->added_by)->where('fuel_id',$id)->delete();
 $fuel->delete();
  return redirect(route('fuel.index'))->with(['success'=>'Fuel Deleted Successfully']);
     }
@@ -301,17 +479,18 @@ $fuel->delete();
     {
         //
         $data = $request->all();
-        if($request->from_district_id != $request->to_district_id){
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
 
        $from_region=Region::find($request->from_region_id);
       $to_region=Region::find($request->to_region_id);
 
-         $from_district=District::find($request->from_district_id);
-      $to_district=District::find($request->to_district_id);
-      
-      $data['from']=$from_region->name ." - ". $from_district->name ;
-      $data['to']=$to_region->name ." - ". $to_district->name ;
+
+        $specific_place = $request->depature_specific_place;      
+       $arrive_place = $request->arrive_specific_place;
+
+    
+     $data['from']=$specific_place ;
+     $data['to']=$arrive_place;
       $route = Route::create($data);
 
        
@@ -320,7 +499,7 @@ $fuel->delete();
            $data = Route::get(['id', 'from','to']);
            return response()->json($route);
        }
-    }
+    
 }
     public function approve($id)
     {
@@ -332,6 +511,48 @@ $fuel->delete();
         $data['due_fuel']=$fuel->due_fuel + $fuel->fuel_adjustment;
         $fuel->update($data);
         return redirect(route('fuel.index'))->with(['success'=>'Approved Successfully']);
+    }
+
+
+ public function return_fuel()
+    {
+        //
+        $truck = Truck::where('disabled','0')->where('truck_type','Horse')->where('added_by',auth()->user()->added_by)->get();
+        $route=Route::where('added_by',auth()->user()->added_by)->get();    
+        //$fuel = Fuel::where('added_by',auth()->user()->added_by)->get();    
+       $fuel = Fuel::where('added_by',auth()->user()->added_by)->where('fuel_used','0')->orderBy('date', 'desc')->get(); 
+        $refill=Refill::where('added_by',auth()->user()->added_by)->get(); 
+$region = Region::all();   
+        return view('fuel.return_fuel',compact('truck','route','fuel','refill','region'));
+    }
+
+public function fuel_report(Request $request)
+    {
+       
+        $start_date = $request->start_date;
+
+        $date = new DateTime($start_date . '-01');
+        $start= $date->modify('first day of this month')->format('Y-m-d');
+        $end = $date->modify('last day of this month')->format('Y-m-d');
+     
+        if($request->isMethod('post')){
+            $data= Fuel::where('added_by',auth()->user()->added_by)->whereBetween('date',[$start,$end])->orderBy('date', 'desc')->get();
+        }else{
+            $data=[];
+        }
+
+       
+
+        return view('fuel.fuel_report',
+            compact('start_date',
+                'data'));
+    }
+
+public function refill_list()
+    {
+        //
+        $fuel =Refill::where('added_by',auth()->user()->added_by)->orderBy('date', 'desc')->get();    
+        return view('fuel.refill',compact('fuel'));
     }
 
 }

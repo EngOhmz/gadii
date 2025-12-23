@@ -11,18 +11,7 @@ class Training extends Model
 
     protected $table = "tbl_training";
 
-    protected $fillable = [
-    'staff_id',
-    'remarks',
-   'training_name',
-    'vendor_name',
-    'start_date',
-    'end_date',
-    'status',
-    'performance',
-        'attachment',
-        'training_cost',      
-    'added_by'];
+protected $guarded = ['id','_token'];
     
 
     public function  staff(){

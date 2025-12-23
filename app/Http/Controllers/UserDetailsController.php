@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Session;
 use App\Models\UserDetails\BasicDetails;
 use App\Models\UserDetails\BankDetails;
-
+use App\Models\UserDetails\SalaryDetails;
 
 class UserDetailsController extends Controller
 {
@@ -47,24 +47,31 @@ class UserDetailsController extends Controller
     {
         //
         $type = $request->type;
-        $id = auth()->user()->id;
         $data = $request->except('type','_token','_method');
-        $data['user_id'] = $id;
+        $data['added_by'] = auth()->user()->added_by;
          if($type == "basic"){ 
-        $detail = BasicDetails::all()->where('user_id',$id);
-        if(count($detail) > 0)
-        $basic = BasicDetails::where('user_id',$id)->update($data);
+        $detail =BasicDetails::where('user_id',$request->user_id)->first();
+        if(!empty($detail))
+        $basic = BasicDetails::where('user_id',$request->user_id)->update($data);
         else
         $basic = BasicDetails::create($data);
+
         }elseif($type == "bank"){
-            $detail = BankDetails::all()->where('user_id',$id);
-            if(count($detail) > 0)
-            $basic = BankDetails::where('user_id',$id)->update($data);
+            $detail = BankDetails::where('user_id',$request->user_id)->first();
+              if(!empty($detail))
+            $basic = BankDetails::where('user_id',$request->user_id)->update($data);
             else
             $basic = BankDetails::create($data);
+
+        }elseif($type == "salary"){
+            $detail = SalaryDetails::where('user_id',$request->user_id)->first();
+               if(!empty($detail))
+            $basic = SalaryDetails::where('user_id',$request->user_id)->update($data);
+            else
+            $basic = SalaryDetails::create($data);
         }
 
-        return redirect(route('user_details.index'))->with(['success'=>$type]);
+        return redirect(route('user.details',$request->user_id))->with(['success'=>"User Details Updated Successfully",'type'=>$type]);
     }
 
     /**

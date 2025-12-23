@@ -5,7 +5,7 @@
 .month-menu {
     background: #ffffff;
     box-shadow: 0 3px 12px 0 rgb(0 0 0 / 15%);
-    margin-top: 10px !important;
+  
 
     margin-bottom: 0;
     padding-left: 0;
@@ -14,7 +14,7 @@
 .month-menu li {
     border-bottom: 1px solid #cfdbe2;
 list-style: none;
-  font-size: 13px;
+  font-size: 17px;
 }
 
 .month-menu > li > a {
@@ -22,17 +22,14 @@ list-style: none;
     border-radius: 0;
     border-top: 0;
     color: #444;
-  padding: 6px 10px !important;
+  padding: 6px 20px !important;
 }
 
-.month-menu> li.active {
+.month-menu> li > a.active {
     background-color: #1797be !important;
-
+ color: #fff;
 }
 
-.month-menu >li.active>a {
-    color: #fff;
-}
 </style>
     <!-- ************ Expense Report List start ************-->
 
@@ -42,7 +39,7 @@ list-style: none;
   <div class="card-header">
                 <h4>Health Contribution</h4>
             </div>
-            {!! Form::open(array('url' => Request::url(), 'method' => 'post','class'=>'form-horizontal', 'name' => 'form')) !!}  
+           {!! Form::open(array('url' => Request::url(), 'method' => 'post','class'=>'form-horizontal', 'name' => 'form')) !!}  
                 {{csrf_field()}}
                   <div class="card-body">
   <div class="form-group row">
@@ -58,7 +55,7 @@ list-style: none;
                <div class="col-sm-3">
                 <button type="submit" id="submit" title="Search"
                         class="btn btn-purple">
-                    <i class="fa fa-search"></i></button>
+                    <i class="icon-search4"></i></button>
 </div>
 </div>
 </div>
@@ -79,20 +76,18 @@ list-style: none;
                     foreach ($nssf_salary_info as $key => $v_nssf_salary):
                         $month_name = date('F', strtotime($year . '-' . $key)); // get full name of month by date query
                         ?>
-                        <li class="<?php
-                        if ($current_month == $key) {
-                            echo 'active';
-                        }
-                        ?>">
-                            <a aria-expanded="<?php
+                        <li class="nav-item">
+                            <a class="nav-link @if($current_month == $key) active show @endif" aria-selected="<?php
                             if ($current_month == $key) {
                                 echo 'true';
                             } else {
                                 echo 'false';
                             }
-                            ?>" data-toggle="tab" href="#<?php echo $month_name ?>">
-                                <i class="fa fa-calendar fa-fw"></i> <?php echo $month_name; ?> </a>
+                            ?>" data-toggle="tab" role="tab" href="#<?php echo $month_name ?>" >
+                                <i class="icon-calendar2"></i> {{$month_name}} </a>
                         </li>
+
+                        
                     <?php endforeach; ?>
                 </ul>
 </div>
@@ -109,9 +104,9 @@ list-style: none;
                     foreach ($nssf_salary_info as $key => $v_nssf_salary):
                         $month_name = date('F', strtotime($year . '-' . $key)); // get full name of month by date query
                         ?>
-                        <div id="<?php echo $month_name ?>" class="tab-pane <?php
+                        <div id="<?php echo $month_name ?>" role="tabpanel" class="tab-pane fade <?php
                         if ($current_month == $key) {
-                            echo 'active';
+                            echo 'active show';
                         }
                         ?>">
       
@@ -119,35 +114,37 @@ list-style: none;
 $id=0;
 ?>                      
                                <div class="card-header">
-<strong><i class="fa fa-calendar"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
+<div class="form-inline">
+<strong><i class="icon-calendar2"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
      
+          
+        </div>
    
 </div>
 
   <div class="card-body">  
                                 <!-- Table -->
                                 <div class="table-responsive">
-                <table class="table table-striped "id="table-1">
+               <table class="table datatable-basic table-striped" id="table-1">
                                     <thead>
                                     <tr>
                                         <th>Name</th>
                                         <th>Payment Date</th>
-                                        <th>Amount</th>
-                                        <th>Employer Contribution</th>
-
+                                        <th>Contribution</th>
+                                       
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <?php
+                                     <?php
                                     $total_amount = 0;
                                     if (!empty($v_nssf_salary)): foreach ($v_nssf_salary as $nssf_salary) : ?>
                                         <tr>
                                             <td><?php echo $nssf_salary->user->name ?></td>
                                              <td><?php echo date('d/m/Y', strtotime($nssf_salary->date)) ?></td>
                                             <td><?php echo number_format($nssf_salary->credit, 2);
-                                                $total_amount += $nssf_salary->credit;
+                                                $total_amount += $nssf_salary->credit ;
                                                 ?></td>
-                                            <td><?php echo number_format($nssf_salary->credit, 2);?></td>
+
                                            
 
                                            
@@ -156,22 +153,18 @@ $id=0;
                                         $key++;
                                     endforeach;
                                         ?>
-                                     <tr class="total_amount">
+                                  <?php endif; ?>
+                                     </tbody>
+                                   <tfoot>
+                                      <tr class="total_amount">
                                             <td colspan="2" style="text-align: right;">
                                                 <strong>Total Amount : </strong></td>
                                             <td colspan="">
                                                 <strong><?php echo number_format($total_amount, 2); ?></strong>
                                             </td>
-                                 <td colspan="" >
-                                                <strong><?php echo number_format($total_amount, 2); ?></strong>
-                                            </td>
                                         </tr>
-                                    <?php else : ?>
-                                        <td colspan="6">
-                                            <strong>Nothing to Display</strong>
-                                        </td>
-                                    <?php endif; ?>
-                                    </tbody>
+                                   
+                                    </tfoot>
                                 </table>
 </div>
     </div>
@@ -189,9 +182,9 @@ $id=0;
                     foreach ($user_nssf_salary_info as $key => $v_user_nssf_salary):
                         $month_name = date('F', strtotime($year . '-' . $key)); // get full name of month by date query
                         ?>
-                        <div id="<?php echo $month_name ?>" class="tab-pane <?php
+                         <div id="<?php echo $month_name ?>" role="tabpanel" class="tab-pane fade <?php
                         if ($current_month == $key) {
-                            echo 'active';
+                            echo 'active show';
                         }
                         ?>">
       
@@ -199,35 +192,36 @@ $id=0;
 $id=0;
 ?>                      
                                <div class="card-header">
-<strong><i class="fa fa-calendar"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
+<div class="form-inline">
+<strong><i class="icon-calendar2"></i> &nbsp<?php echo $month_name . ' ' . $year; ?></strong> 
      
+          
+        </div>
    
 </div>
 
   <div class="card-body">  
                                 <!-- Table -->
                                 <div class="table-responsive">
-                <table class="table table-striped "id="table-1">
+                <table class="table datatable-basic table-striped "id="table-1">
                                     <thead>
                                     <tr>
-                                        <th>Name</th>
+                                       <th>Name</th>
                                         <th>Payment Date</th>
-                                        <th>Amount</th>
-                                        <th>Employer Contribution</th>
+                                        <th> Contribution</th>
                                        
                                     </tr>
                                     </thead>
                                     <tbody>
-                                   <?php
+                                    <?php
                                     $user_total_amount = 0;
                                     if (!empty($v_user_nssf_salary)): foreach ($v_user_nssf_salary as $user_nssf_salary) : ?>
                                                    <tr>
                                             <td><?php echo $user_nssf_salary->user->name ?></td>
                                              <td><?php echo date('d/m/Y', strtotime($user_nssf_salary->date)) ?></td>
-                                            <td><?php echo number_format($user_nssf_salary->credit, 2);
+                                           <td><?php echo number_format($user_nssf_salary->credit, 2);
                                                 $user_total_amount += $user_nssf_salary->credit;
                                                 ?></td>
-                                            <td><?php echo number_format($user_nssf_salary->credit, 2);?></td>
                                            
 
                                            
@@ -236,22 +230,19 @@ $id=0;
                                         $key++;
                                     endforeach;
                                         ?>
+                           <?php endif; ?>
+                                     </tbody>
+                                   <tfoot>
                                      <tr class="total_amount">
-                                            <td colspan="2" style="text-align: right;">
+                                             <td colspan="2" style="text-align: right;">
                                                 <strong>Total Amount : </strong></td>
                                             <td colspan="">
                                                 <strong><?php echo number_format($user_total_amount, 2); ?></strong>
                                             </td>
-                                 <td colspan="" >
-                                                <strong><?php echo number_format($user_total_amount, 2); ?></strong>
-                                            </td>
+
                                         </tr>
-                                    <?php else : ?>
-                                        <td colspan="6">
-                                            <strong>Nothing to Display</strong>
-                                        </td>
-                                    <?php endif; ?>
-                                    </tbody>
+                                   
+                                    </tfoot>
                                 </table>
 </div>
     </div>
@@ -273,18 +264,33 @@ $id=0;
 </div></div>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 @endsection
 
 
 
 @section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+<script src="{{ asset('assets2/js/bootstrap-datepicker.min.js') }}"></script>
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 <script type="text/javascript">
  $(document).ready(function(){
   $("#datepicker").datepicker({
@@ -295,6 +301,35 @@ $id=0;
   });   
 })
 
+ </script>
+<script type="text/javascript">
+ $(document).ready(function(){
+  $("#datepicker").datepicker({
+     format: "yyyy",
+     viewMode: "years", 
+     minViewMode: "years",
+     autoclose:true
+  });   
+})
+
+ </script>
+ <script type="text/javascript">
+ $(document).ready(function () {
+    $('.month-menu li a').click(function(e) {
+        console.log(1);
+        
+
+        $('.month-menu li a.active').removeClass('active');
+        var $parent = $(this).parent();
+        $parent.addClass('active');
+        
+        
+        
+        e.preventDefault();
+    });
+});
+
+ 
  </script>
 
 <script type="text/javascript">
@@ -390,5 +425,6 @@ $(document).on('change', '.monthyear', function() {
 
 });
 </script>
+
 
 @endsection

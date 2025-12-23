@@ -10,19 +10,7 @@ class Fuel extends Model
     use HasFactory;
     protected $table = "fuels";
 
-    protected $fillable = [      
-        'truck_id',
-     'driver_id',
-        'route_id',
-        'fuel_rate',
-        'fuel_used',  
-        'due_fuel',      
-        'fuel_adjustment',
-        'reason',
-        'status_approve',
-   'approved_by',
-  'movement_id',
-        'added_by'];
+   protected  $guarded = ['id'];
 
         public function route(){
 

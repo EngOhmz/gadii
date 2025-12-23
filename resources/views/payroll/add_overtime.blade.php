@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document">
+
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">
@@ -30,7 +30,7 @@
                 <label class="col-lg-6 col-form-label">Employee <span class="required">*</span></label>
 
                 <div class="col-lg-12">
-                   <select name="user_id" style="width: 100%" id="user_id" class="form-control select_box">
+                   <select name="user_id" style="width: 100%" id="user_id" class="form-control m-b select_box">
                             <option value="">Select Employee</option>
                             <?php if (!empty($all_employee)): ?>
                                 <?php foreach ($all_employee as  $v_employee) : ?>
@@ -106,11 +106,22 @@
             @endcan
 
 
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="submit" class="btn btn-primary" id="save">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+
+
+ <div class="modal-footer">
+            <button class="btn btn-primary"  type="submit" id="save"><i class="icon-checkmark3 font-size-base mr-1"></i>Save</button>
+            <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
         </form>
-    </div>
+    
 </div>
+
+@yield('scripts')
+<script>
+/*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+</script>

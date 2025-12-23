@@ -37,7 +37,7 @@
 
 <br>
 
-<?php if (strtotime($purchases->due_date) < time() && $purchases->status != '2' && $purchases->status != '7') {
+<?php if (strtotime($purchases->due_date) < time() && $purchases->collected == 0 ) {
     $start = strtotime(date('Y-m-d H:i'));
     $end = strtotime($purchases->due_date);
 
@@ -62,10 +62,10 @@
 <br>
  
                 <div class="card">
-                    <div class="padding-20">
+                   <div class="card-body">
                        
                         <?php
-$settings= App\Models\System::first();
+$settings= App\Models\System::where('added_by',auth()->user()->added_by)->first();
 
 
 ?>
@@ -74,7 +74,7 @@ $settings= App\Models\System::first();
                                 aria-labelledby="home-tab2">
                                 <div class="row">
                                    <div class="col-lg-6 col-xs-6 ">
-                <img class="pl-lg" style="width: 153px;height: 120px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
+                <img class="pl-lg" style="width: 153px;height: 120px;" src="{{url('assets/img/logo')}}/{{$settings->picture}}">
             </div>
                                   
  <div class="col-lg-3 col-xs-3">
@@ -83,7 +83,7 @@ $settings= App\Models\System::first();
 
                                       <div class="col-lg-3 col-xs-3">
                                         
-                                       <h5 class=mb0">REF NO : {{$purchases->pacel_number}}</h5>
+                                       <h5 class="mb0">REF NO : {{$purchases->confirmation_number}}</h5>
                                       Invoice Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}                  
               <br>Due Date : {{Carbon\Carbon::parse($purchases->due_date)->format('d/m/Y')}}                                          
            <br>Sales Agent: {{$purchases->user->name }} 
@@ -187,98 +187,85 @@ $settings= App\Models\System::first();
 
                                        
                                     </tbody>
-</table>
-                            </div>
 
-                                     <div class="row" >
-                                              <div class="col-lg-8"> </div>
-                                        <div class="col-lg-4 pv">
+<tfoot>
+<tr>
+<td colspan="5"></td>
+<td>Sub Total</td>
+<td>{{number_format($sub_total,2)}}  {{$purchases->currency_code}}</td>
+</tr>
 
-                <div class="clearfix">
-                    <p class="pull-left">Sub Total</p>
-                    <p class="pull-right mr">{{number_format($sub_total,2)}}  {{$purchases->currency_code}}</p>
-                </div>
+<tr>
+<td colspan="5"></td>
+<td>Total Tax </td>
+<td>{{number_format($tax,2)}}  {{$purchases->currency_code}}</td>
+</tr>
 
-          @if(!@empty($tax > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Total Tax - VAT (18 %)</p>
-                    <p class="pull-right mr">{{number_format($tax,2)}}  {{$purchases->currency_code}}</p>
-                </div>
-  @endif
+<tr>
+<td colspan="5"></td>
+<td>Total Amount</td>
+<td>{{number_format($gland_total - $purchases->discount ,2)}}  {{$purchases->currency_code}}</td>
+</tr>
 
- @if(!@empty($purchases->discount > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Discount</p>
-                    <p class="pull-right mr">{{number_format($purchases->discount,2)}}  {{$purchases->currency_code}}</p>
-                </div>
-@endif
- <div class="clearfix">
-                    <p class="pull-left">Total Amount</p>
-                    <p class="pull-right mr">{{number_format($gland_total - $purchases->discount ,2)}}  {{$purchases->currency_code}}</p>
-                </div>
+ @if(!@empty($purchases->due_amount < $purchases->amount))
+     <tr>
+<td colspan="5"></td>
+                    <td>Paid Amount</p>
+                    <td>{{number_format(($purchases->amount - $purchases->due_amount),2)}}  {{$purchases->currency_code}}</p>
+                </tr>
 
-
-
-  @if(!@empty($purchases->due_amount < $purchases->amount))
-        <div class="clearfix">
-                    <p class="pull-left">Paid Amount</p>
-                    <p class="pull-right mr">{{number_format($purchases->amount - $purchases->due_amount,2)}}  {{$purchases->currency_code}}</p>
-                </div>
-
-      <div class="clearfix">
-                    <p class="pull-left h3 text-danger">Total Due</p>
-                    <p class="pull-right mr">{{number_format($purchases->due_amount,2)}}  {{$purchases->currency_code}}</p>
-                </div>
+      <tr>
+<td colspan="5"></td>
+                    <td class="text-danger">Total Due</td>
+                    <td>{{number_format($purchases->due_amount,2)}}  {{$purchases->currency_code}}</td>
+                </tr>
 @endif
 
 <br>
  @if($purchases->currency_code != 'TZS')
- <b>Exchange Rate 1 {{$purchases->currency_code}} = {{$purchases->exchange_rate}} TZS</b>
+ <tr>
+<td colspan="5"></td>
+ <td><b>Exchange Rate 1 {{$purchases->currency_code}} </b></td>
+ <td><b> {{$purchases->exchange_rate}} TZS</b></td>
+</tr>
 <p></p>
 <br>
-                <div class="clearfix">
-                    <p class="pull-left">Sub Total</p>
-                    <p class="pull-right mr">{{number_format($sub_total * $purchases->exchange_rate,2)}}  TZS</p>
-                </div>
+              <tr>
+<td colspan="5"></td>
+<td>Sub Total</td>
+<td>{{number_format($sub_total * $purchases->exchange_rate,2)}}  TZS</td>
+</tr>
 
-          @if(!@empty($tax > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Total Tax</p>
-                    <p class="pull-right mr">{{number_format($tax * $purchases->exchange_rate,2)}}   TZS</p>
-                </div>
-  @endif
+<tr>
+<td colspan="5"></td>
+<td>Total Tax <small class="pr-sm">(VAT 18 %)</small></td>
+<td>{{number_format($tax * $purchases->exchange_rate,2)}}   TZS</td>
+</tr>
 
- @if(!@empty($purchases->discount > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Discount</p>
-                    <p class="pull-right mr">{{number_format($purchases->discount * $purchases->exchange_rate,2)}}   TZS</p>
-                </div>
+<tr>
+<td colspan="5"></td>
+<td>Total Amount</td>
+<td>{{number_format($purchases->exchange_rate * ($gland_total-$purchases->discount) ,2)}}   TZS</td>
+</tr>
+
+ @if(!@empty($purchases->due_amount < $purchases->amount))
+     <tr>
+                    <td>Paid Amount</p>
+                    <td>{{number_format($purchases->exchange_rate * ($purchases->amount  - $purchases->due_amount),2)}}  TZS</p>
+                </tr>
+
+      <tr>
+                    <td class="text-danger">Total Due</td>
+                    <td>{{number_format(($purchases->due_amount * $purchases->exchange_rate),2)}}  TZS</td>
+                </tr>
 @endif
- <div class="clearfix">
-                    <p class="pull-left">Total Amount</p>
-                    <p class="pull-right mr">{{number_format($purchases->exchange_rate * ($gland_total-$purchases->discount) ,2)}}   TZS</p>
-                </div>
-
-
-
-  @if(!@empty($purchases->due_amount < $purchases->amount))
-        <div class="clearfix">
-                    <p class="pull-left">Paid Amount</p>
-                    <p class="pull-right mr">{{number_format($purchases->exchange_rate * ($purchases->amount - $purchases->due_amount),2)}}  TZS</p>
-                </div>
-
-      <div class="clearfix">
-                    <p class="pull-left h3 text-danger">Total Due</p>
-                    <p class="pull-right mr">{{number_format($purchases->due_amount * $purchases->exchange_rate,2)}}  TZS</p>
-                </div>
 @endif
+</tfoot>
 
-@endif
+</table>
+                            </div>
 
-
-
-</div>
-
+                                   
                                 
                              
                             </div>
@@ -287,7 +274,7 @@ $settings= App\Models\System::first();
 
                     </div>
                 </div>
-            </div>
+          
 
          
 

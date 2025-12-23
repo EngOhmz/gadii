@@ -1,181 +1,174 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <?php
 $settings= App\Models\System::first();
 ?>
 <head>
+    <title>GAD Industries ERP. </title>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>EMA ERP - by Ujuzinet</title>
 
-    <!-- Global stylesheets -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet"
-        type="text/css">
-    <link href="asset('global_assets/css/icons/icomoon/styles.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="{{asset('assets2/css/all.min.css') }}" rel="stylesheet" type="text/css">
-    <!-- /global stylesheets -->
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet">
+     <link href="{{ asset('global_assets/css/icons/icomoon/styles.min.css') }}" rel="stylesheet" type="text/css">
 
-    <!-- Core JS files -->
-    <script src="asset('global_assets/js/main/jquery.min.js') }}"></script>
-    <script src="asset('global_assets/js/main/bootstrap.bundle.min.js') }}"></script>
-    <!-- /core JS files -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <!-- Theme JS files -->
-    <script src="{{asset('assets2/js/app.js') }}"></script>
-    <!-- /theme JS files -->
+    <link rel="stylesheet" href="css/style.css">
+    <link href="{{ asset('assets/login/css/style.css') }}" rel="stylesheet" type="text/css">
+    
+    <script src="{{ asset('global_assets/js/main/jquery.min.js') }}"></script>
+    <script src="{{ asset('global_assets/js/main/bootstrap.bundle.min.js') }}"></script>
+    
+     <style>
+.show_hide_password {
+   
+   
+    position: absolute;
+    top: 50px;
+    right: 13px;
+    float: right;
+    cursor: pointer;
+}
+.icon-hide:before {
+    content: "\ecae";
+}
+
+.icon-show:before {
+    content: "\ecab";
+}
+
+</style>
 
 </head>
 
 <body>
-
-    <!-- Main navbar -->
-    <div class="navbar navbar-expand-lg navbar-dark bg-indigo navbar-static">
-        <div class="navbar-brand ml-2 ml-lg-0">
-            <a href="index.html" class="d-inline-block">
- 
-                <img src="{{url('public/assets/img/logo')}}/{{!empty($settings->picture) ? $settings->picture: ''}}" alt="">            {{ !empty($settings->name) ? $settings->name: ''}}
-            </a>
-        </div>
-
-        <div class="d-flex justify-content-end align-items-center ml-auto">
-            <ul class="navbar-nav flex-row">
-<!--
-                <li class="nav-item">
-                    <a href="#" class="navbar-nav-link">
-                        <i class="icon-lifebuoy"></i>
-                        <span class="d-none d-lg-inline-block ml-2">Support</span>
-                    </a>
-                </li>
-   <li class="nav-item">
-                    <a href="#" class="navbar-nav-link">
-                        <i class="icon-user-lock"></i>
-                        <span class="d-none d-lg-inline-block ml-2">Login</span>
-                    </a>
-                </li>
--->
-                <li class="nav-item">
-                    <a  href="{{route('register')}}" class="navbar-nav-link">
-                        <i class="icon-user-plus"></i>
-                        <span class="d-none d-lg-inline-block ml-2">Register</span>
-                    </a>
-                </li>
-             
-            </ul>
-        </div>
-    </div>
-    <!-- /main navbar -->
+    <section class="ftco-section">
+        <div class="container">
+            @if (!empty(Session::get('error')))
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 
-    <!-- Page content -->
-    <div class="page-content">
+                <div class="bootstrap-growl alert alert-danger "
+                    style="position:absolute;margin:0px;z-index:9999; top:20px;width:250px;right:20px">
 
-        <!-- Main content -->
-        <div class="content-wrapper">
-
-            <!-- Inner content -->
-            <div class="content-inner">
-
-                <!-- Content area -->
-                <div class="content d-flex justify-content-center align-items-center">
-
-                    <!-- Login form -->
-                    <form class="login-form" method="POST" action="{{ route('login') }}">
-                        @csrf
-                        <div class="card mb-0">
-                            <div class="card-body">
-                                <div class="text-center mb-3">
-         
-                                    <h5 class="mb-0">Login</h5>
-                                    <span class="d-block text-muted">Enter your credentials below</span>
+                    <a class="close" data-dismiss="alert" href="#">&times;</a>
+                    {{ Session::get('error') }}
+                </div>
+            @endif
+            <script>
+                $(".alert").delay(6000).slideUp(200, function() {
+                    $(this).alert(close);
+                });
+            </script>
+            <div class="row justify-content-center">
+                 <div class="col-md-6 text-center mb-5">
+					{{-- <h2 class="heading-section"><img width="150px" src="{{asset('assets/login/emasuite_logo.png')}}"/></h2> --}}
+				</div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-12 col-lg-10">
+                    <div class="wrap d-md-flex">
+                        <div class="text-wrap p-4 p-lg-5 text-center d-flex align-items-center order-md-last">
+                            <div class="text w-100">
+                                <h2>Welcome to GAD ERP</h2>
+                                {{-- <p>Dont have an account?<a style="color:white" href="{{route('register')}}">    Create One</p>
+                                <a href="{{route('register')}}" class="btn btn-white btn-outline-white">Sign Up</a> --}}
+                            </div>
+                        </div>
+                        <div class="login-wrap p-4 p-lg-5">
+                            <div class="d-flex">
+                                <div class="w-100">
+                                    <h2 class="heading-section">Sign In</h2>
                                 </div>
-
-                                <div class="form-group form-group-feedback form-group-feedback-left">
-                                    <input id="email" type="text"
+                                <div class="w-100">
+                                    <p class="social-media d-flex justify-content-end">
+                                        <a href="#"
+                                            class="social-icon d-flex align-items-center justify-content-center"><span
+                                                class="fa fa-facebook"></span></a>
+                                        <a href="#"
+                                            class="social-icon d-flex align-items-center justify-content-center"><span
+                                                class="fa fa-twitter"></span></a>
+                                        <a href="#"
+                                            class="social-icon d-flex align-items-center justify-content-center"><span
+                                                class="fa fa-instagram"></span></a>
+                                    </p>
+                                </div>
+                            </div>
+                            <form class="login-form" method="POST" action="{{ route('login') }}">
+                                @csrf
+                                <div class="form-group mb-3">
+                                    <label class="label" for="name">Username</label>
+                                    <input id="email" type="text" placeholder="Enter your email or phone number"
                                         class="form-control @error('email') is-invalid @enderror" name="email"
                                         tabindex="1" required autofocus>
                                     @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
                                     @enderror
-                                    <div class="form-control-feedback">
-                                        <i class="icon-user text-muted"></i>
-                                    </div>
                                 </div>
-
-                                <div class="form-group form-group-feedback form-group-feedback-left">
-                                    <input id="password" type="password"
+                                <div class="form-group mb-3">
+                                    <label class="label" for="password">Password</label>
+                                    <input id="password" type="password" placeholder="Enter your password"
                                         class="form-control @error('password') is-invalid @enderror" name="password"
                                         tabindex="2" required>
+                                    <span class="icon-hide show_hide_password"></span>
                                     @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
                                     @enderror
-                                    <div class="form-control-feedback">
-                                        <i class="icon-lock2 text-muted"></i>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="form-control  submit px-3" 
+                                    style="
+                                    background: linear-gradient(135deg, #0d6efd 0%, #0d6efd 100%);
+                                    background: -o-linear-gradient(315deg, #f75959 0%, #C9E0EE 100%);
+                                    color:#fff"
+                                    
+                                    >Sign in</button>
+                                </div>
+                                <div class="form-group d-md-flex">
+                                    <div class="w-50 text-left">
+                                        {{--<label class="checkbox-wrap checkbox-primary mb-0">Remember Me
+                                            <input type="checkbox" checked>
+                                            <span class="checkmark"></span>
+                                        </label>--}}
+                                    </div>
+                                    <div class="w-50 text-md-right">
+                                        <a href="{{ url('forgetPassword') }}">Forgot password?</a>
                                     </div>
                                 </div>
-
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-primary btn-block">Sign in</button>
-                                </div>
-
-                                <div class="text-center">
-                                    <a href="login_password_recover.html">Forgot password?</a>
-                                </div>
-                       <div class="text-center mt-4 mb-3">
-                  <div class="text-job text-muted"> Don't have an account? <a href="{{route('register')}}">Create One</a></div>
-                </div>
-                            </div>
+                            </form>
                         </div>
-                    </form>
-                    <!-- /login form -->
-
-                </div>
-                <!-- /content area -->
-
-
-                <!-- Footer -->
-                <div class="navbar navbar-expand-lg navbar-light">
-                    <div class="text-center d-lg-none w-100">
-                        <button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse"
-                            data-target="#navbar-footer">
-                            <i class="icon-unfold mr-2"></i>
-                            Footer
-                        </button>
-                    </div>
-
-                    <div class="navbar-collapse collapse" id="navbar-footer">
-                        <span class="navbar-text">
-                            &copy; <?php echo date('Y'); ?> <a href="#">EMA ERP</a> by <a
-                                href="https://ema.co.tz/" target="_blank">Ujuzinet  Company Limited</a>
-                        </span>
-
-                        <ul class="navbar-nav ml-lg-auto">
-                            <li class="nav-item"><a href="https://ema.co.tz/" class="navbar-nav-link"
-                                    target="_blank"><i class="icon-lifebuoy mr-2"></i> Support</a></li>
-                            <li class="nav-item"><a href="https://ema.co.tz/"
-                                    class="navbar-nav-link" target="_blank"><i class="icon-file-text2 mr-2"></i>
-                                    Docs</a></li>
-                            <li class="nav-item"><a
-                                    href="https://ema.co.tz/"
-                                    class="navbar-nav-link font-weight-semibold"><span class="text-pink"><i
-                                            class="icon-cart2 mr-2"></i> Purchase</span></a></li>
-                        </ul>
                     </div>
                 </div>
-                <!-- /footer -->
-
             </div>
-            <!-- /inner content -->
-
         </div>
-        <!-- /main content -->
+    </section>
 
-    </div>
-    <!-- /page content -->
+    <script src="{{ asset('assets/login/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/login/js/popper.js') }}"></script>
+    <script src="{{ asset('assets/login/js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/login/js/main.js') }}"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.show_hide_password').click(function() {
+                var passwordField = $('#password');
+                var passwordFieldType = passwordField.attr('type');
+                if (passwordFieldType === 'password') {
+                    passwordField.attr('type', 'text');
+                    $(this).removeClass('icon-hide');
+                    $(this).addClass('icon-show');
+                } else {
+                    passwordField.attr('type', 'password');
+                    $(this).removeClass('icon-show');
+                    $(this).addClass('icon-hide');
+                }
+            });
+        });
+    </script>
 
 </body>
 

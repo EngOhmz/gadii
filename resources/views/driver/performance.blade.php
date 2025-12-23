@@ -24,6 +24,7 @@
                                         href="#tab1"  aria-controls="profile"
                                             aria-selected="false">Perfomance</a>
                                     </li>
+                                     @can('view-cargo-menu')
                                      <li class="nav-item">
                                         <a class="nav-link " id="#tab3" 
                                             href="{{ route('driver.fuel', $driver->id)}}"  aria-controls="profile"
@@ -36,7 +37,7 @@
                                             aria-selected="false">Routes</a>
                                     </li>
                                    
-                                     
+                                  @endcan   
 
 
                                 </ul>
@@ -68,14 +69,14 @@
                                                 <div class="tab-pane fade @if($type =='performance') active show @endif" id="home2" role="tabpanel"
                                                     aria-labelledby="home-tab2">
                                                     <div class="table-responsive">
-                                                        <table class="table table-striped" id="table-1">
+                                                      <table class="table datatable-basic table-striped">
                                                             <thead>
                                                                 <tr role="row">
                                 
                                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                                     rowspan="1" colspan="1"
                                                                     aria-label="Browser: activate to sort column ascending"
-                                                                    style="width: 208.531px;">#</th>
+                                                                    style="width: 28.531px;">#</th>
                                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
                                                                         colspan="1" aria-label="Engine version: activate to sort column ascending"
                                                                         style="width: 141.219px;">Report Issue</th>
@@ -106,17 +107,18 @@
                                                                     <td></td>                
                                                                     @endif
                                 
-                                                                    <td>
-                                                                        
-                                                                        <a class="btn btn-xs btn-outline-primary text-uppercase px-2 rounded"
+                                                                    <td>                                                                       
+                                                                        <div class="form-inline">
+                                                                        <a  class="list-icons-item text-primary"
                                                                         href="{{ route("performance.edit", $row->id)}}">
                                                                         <i class="fa fa-edit"></i>
                                                                     </a>
 
                                                                     {!! Form::open(['route' => ['performance.destroy',$row->id],
                                                     'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                 {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
                                                     {{ Form::close() }}
+           </div>     
 
                                 
                                 
@@ -250,7 +252,23 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [0]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
+<script src="{{ asset('assets2/js/bootstrap-datepicker.min.js') }}"></script>
 <script>
     function myFunction() {
        // alert('hellow')

@@ -12,10 +12,10 @@ class Requisition extends Model
 
    public function user()
     {
-        return $this->belongsTo('App\Models\User','added_by');
+        return $this->belongsTo('App\Models\User','user_agent');
     }
 
-   public function  supplier(){
+ public function  supplier(){
     
         return $this->belongsTo('App\Models\Supplier','supplier_id');
       }

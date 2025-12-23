@@ -16,7 +16,7 @@ class ActivityController extends Controller
     public function index()
     {
         //
-        $activity = Activity::all();
+        $activity = Activity::where('added_by', auth()->user()->added_by)->get();
 
        
         return view('order_movement.activity',compact('activity'));

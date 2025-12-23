@@ -8,7 +8,7 @@
             <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>User Details</h4>
+                        <h4>User Details For {{ $user->name }}</h4>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -24,17 +24,27 @@
                                             href="#tab2" role="tab" aria-controls="profile"
                                             aria-selected="false">Bank Details</a>
                                     </li>
+                                  <li class="nav-item">
+                                        <a class="nav-link @if($type == 'salary' || $type == 'edit-salary') active  @endif" onclick="{ $type = 'salary'}" id="#tab3" data-toggle="tab"
+                                            href="#tab3" role="tab" aria-controls="profile"
+                                            aria-selected="false">Salary Details</a>
+                                    </li>
+                                    
+                                    
+                                      <li class="nav-item">
+                                        <a class="nav-link @if($type == 'notification') active  @endif" onclick="{ $type = 'notification'}" id="#tab4" data-toggle="tab"
+                                            href="#tab4" role="tab" aria-controls="profile"
+                                            aria-selected="false">Notifications</a>
+                                    </li>
+                                    
+<!--
                                     <li class="nav-item">
                                         <a class="nav-link @if($type == 'fertilizer') active  @endif" onclick="{ $type = 'fertilizer'}" id="#fertilizer" data-toggle="tab"
                                             href="#fertilizer" role="tab" aria-controls="profile"
                                             aria-selected="false">Document Details</a>
                                     </li>
 
-                                    <li class="nav-item">
-                                        <a class="nav-link @if($type == 'irrigation') active  @endif" onclick="{ $type = 'irrigation'}" id="#irrigation" data-toggle="tab"
-                                            href="#irrigation" role="tab" aria-controls="profile"
-                                            aria-selected="false">Sarary Details</a>
-                                    </li>
+                                   
 
                                     <li class="nav-item">
                                         <a class="nav-link @if($type == 'sowings') active  @endif" onclick="myFunction()" id="#tab2" data-toggle="tab"
@@ -75,12 +85,8 @@
                                             href="#post_harvest" role="tab" aria-controls="profile"
                                             aria-selected="false">Client Issues</a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link @if($type == 'post_harvest') active  @endif" onclick="{ $type = 'post_harvest'}" id="#post_harvest" data-toggle="tab"
-                                            href="#post_harvest" role="tab" aria-controls="profile"
-                                            aria-selected="false">Activities</a>
-                                    </li>
-
+                                  
+-->
 
                                 </ul>
                             </div>
@@ -90,7 +96,10 @@
                                  @include('user_details.tabs.tab1')
                                  @include('user_details.tabs.tab2')
                                  @include('user_details.tabs.tab3')
-                                 @include('user_details.tabs.tab4')
+                                  @include('user_details.tabs.tab4')
+                                  
+<!--
+                                
                                  @include('user_details.tabs.tab5')
                                  @include('user_details.tabs.tab6')
                                  @include('user_details.tabs.tab7')
@@ -99,7 +108,7 @@
                                  @include('user_details.tabs.tab10')
                                  @include('user_details.tabs.tab11')
                                  @include('user_details.tabs.tab12')
-                                  
+                                 --> 
                                 
 
 
@@ -135,6 +144,25 @@
 @endsection
 
 @section('scripts')
+
+<script>
+       $('.datatable-notif').DataTable({
+            autoWidth: false,
+            ordering:false,
+            "columnDefs": [
+                {"targets": [0]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
+    
 <script>
     function myFunction() {
        // alert('hellow')
@@ -142,5 +170,7 @@
   //element.classList.add("active");
 }
 </script>
+
+
 @endsection
 

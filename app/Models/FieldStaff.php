@@ -11,9 +11,7 @@ class FieldStaff extends Model
 
     protected $table = "field_staff";
 
-    protected $fillable = [
-    'name',
-    'added_by'];
+    protected $guarded = ['id'];
     
     public function user()
     {

@@ -10,18 +10,16 @@ class TruckInsurance extends Model
     use HasFactory;
     protected $table = "truck_insurances";
 
-    protected $fillable = [      
-        'broker_name',
-        'company',
-        'expire_date',
-        'cover',  
-        'value',      
-        'cover_date',
-        'truck_id',
-        'added_by'];
+     protected $guarded = ['id','_token'];
     
     public function user()
     {
         return $this->belongsTo('App\Models\user');
     }
+    
+     public function supplier()
+    {
+        return $this->belongsTo('App\Models\Supplier','broker_name');
+    }
+
 }

@@ -8,6 +8,7 @@ use App\Models\Truck;
 use Illuminate\Http\Request;
 use App\Models\AccountCodes;
 use App\Models\JournalEntry;
+use App\Models\Supplier;
 
 class StickerController extends Controller
 {
@@ -41,40 +42,43 @@ class StickerController extends Controller
     {
         //
         $data = $request->all();
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $truck= Sticker::create($data);
+$supp=Truck::find($truck->truck_id);
 
-$dr= AccountCodes::where('account_name',LATRA STICKER')->first();
+$dr= AccountCodes::where('account_name','LATRA')->where('added_by',auth()->user()->added_by)->first();
 $journal = new JournalEntry();
   $journal->account_id = $dr->id;
-  $date = explode('-',$truck->created_at);
-  $journal->date =   $truck->created_at ;
+  $date = explode('-',$truck->issue_date);
+  $journal->date =   $truck->issue_date ;
   $journal->year = $date[0];
   $journal->month = $date[1];
 $journal->transaction_type = 'truck_sticker';
   $journal->name = 'Truck LATRA STICKER';
   $journal->debit = $truck->value;
-  $journal->payment_id= $truck->id;
+  $journal->income_id= $truck->id;
   $journal->truck_id= $truck->truck_id;
-  $journal->added_by=auth()->user()->id;
+ $journal->supplier_id  = $request->officer ;
+  $journal->added_by=auth()->user()->added_by;
   $journal->notes= "Truck LATRA STICKER for the truck " .$supp->truck_name ." - ". $supp->reg_no ;
   $journal->save();
 
 
 
-  $codes= AccountCodes::where('account_name','Payables')->first();
+  $codes= AccountCodes::where('account_name','Payables')->where('added_by',auth()->user()->added_by)->first();
   $journal = new JournalEntry();
   $journal->account_id = $codes->id;
-  $date = explode('-',$truck->created_at);
-  $journal->date =   $truck->created_at ;
+  $date = explode('-',$truck->issue_date);
+  $journal->date =   $truck->issue_date ;
   $journal->year = $date[0];
   $journal->month = $date[1];
  $journal->transaction_type = 'truck_sticker';
   $journal->name = 'Truck LATRA STICKER';
   $journal->credit =$truck->value;
-  $journal->payment_id= $truck->id;
+  $journal->income_id= $truck->id;
   $journal->truck_id= $truck->truck_id;
-  $journal->added_by=auth()->user()->id;
+ $journal->supplier_id  = $request->officer ;
+  $journal->added_by=auth()->user()->added_by;
   $journal->notes= "Truck LATRA STICKER for the truck " .$supp->truck_name ." - ". $supp->reg_no ;
   $journal->save();
   
@@ -105,7 +109,8 @@ $journal->transaction_type = 'truck_sticker';
         $data =  Sticker::find($id);      
         $truck=  Truck::where('id',$data->truck_id)->first();
         $type = "edit-sticker";
-        return view('truck.sticker',compact('data','id','type','truck'));
+          $client=Supplier::where('user_id', auth()->user()->added_by)->get();
+        return view('truck.sticker',compact('data','id','type','truck','client'));
     }
 
     /**
@@ -121,42 +126,45 @@ $journal->transaction_type = 'truck_sticker';
         $truck= Sticker::find($id);   
 
         $data = $request->all();   
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
 
        
         $truck->update($data);
 
-       $dr= AccountCodes::where('account_name',LATRA STICKER')->first();
-$journal = JournalEntry::where('transaction_type','truck_sticker')->where('payment_id', $truck->truck_id)->whereNotNull('debit')->first();
+$supp=Truck::find($truck->truck_id);
+       $dr= AccountCodes::where('account_name','LATRA')->where('added_by',auth()->user()->added_by)->first();
+$journal = JournalEntry::where('transaction_type','truck_sticker')->where('income_id', $truck->id)->whereNotNull('debit')->first();
   $journal->account_id = $dr->id;
-  $date = explode('-',$truck->created_at);
-  $journal->date =   $truck->created_at ;
+  $date = explode('-',$truck->issue_date);
+  $journal->date =   $truck->issue_date ;
   $journal->year = $date[0];
   $journal->month = $date[1];
 $journal->transaction_type = 'truck_sticker';
   $journal->name = 'Truck LATRA STICKER';
   $journal->debit = $truck->value;
-  $journal->payment_id= $truck->id;
+  $journal->income_id= $truck->id;
   $journal->truck_id= $truck->truck_id;
-  $journal->added_by=auth()->user()->id;
+ $journal->supplier_id  = $request->officer ;
+  $journal->added_by=auth()->user()->added_by;
   $journal->notes= "Truck LATRA STICKER for the truck " .$supp->truck_name ." - ". $supp->reg_no ;
  $journal->update();
 
 
 
-  $codes= AccountCodes::where('account_name','Payables')->first();
- $journal = JournalEntry::where('transaction_type','truck_sticker')->where('payment_id', $truck->truck_id)->whereNotNull('credit')->first();
+  $codes= AccountCodes::where('account_name','Payables')->where('added_by',auth()->user()->added_by)->first();
+ $journal = JournalEntry::where('transaction_type','truck_sticker')->where('income_id', $truck->id)->whereNotNull('credit')->first();
   $journal->account_id = $codes->id;
-  $date = explode('-',$truck->created_at);
-  $journal->date =   $truck->created_at ;
+  $date = explode('-',$truck->issue_date);
+  $journal->date =   $truck->issue_date ;
   $journal->year = $date[0];
   $journal->month = $date[1];
  $journal->transaction_type = 'truck_sticker';
   $journal->name = 'Truck LATRA STICKER';
   $journal->credit =$truck->value;
-  $journal->payment_id= $truck->id;
+  $journal->income_id= $truck->id;
   $journal->truck_id= $truck->truck_id;
-  $journal->added_by=auth()->user()->id;
+ $journal->supplier_id  = $request->officer ;
+  $journal->added_by=auth()->user()->added_by;
   $journal->notes= "Truck LATRA STICKER for the truck " .$supp->truck_name ." - ". $supp->reg_no ;
  $journal->update();
   
@@ -174,8 +182,9 @@ $journal->transaction_type = 'truck_sticker';
     {
         //
         $truck= Sticker::find($id);
-       JournalEntry::where('transaction_type','truck_sticker')->where('payment_id', $id)->delete();
+         $a=$truck->truck_id;
+       JournalEntry::where('transaction_type','truck_sticker')->where('income_id', $id)->delete();
         $truck->delete();
-        return redirect(route('truck.sticker'))->with(['success'=>"Sticker Deleted Successfully",'type'=>"sticker"]);
+        return redirect(route('truck.sticker',$a))->with(['success'=>"Sticker Deleted Successfully",'type'=>"sticker"]);
     }
 }

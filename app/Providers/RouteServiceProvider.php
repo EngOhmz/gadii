@@ -21,7 +21,9 @@ class RouteServiceProvider extends ServiceProvider
 
     protected $namespace = 'App\Http\Controllers'; 
 
-    public const INDEX = '/access_control/users_details';
+    // public const INDEX = '/access_control/users_details';
+    
+    public const INDEX = '/home';
     
     /**
      * The controller namespace for the application.

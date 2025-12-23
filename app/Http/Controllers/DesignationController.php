@@ -16,8 +16,8 @@ class DesignationController extends Controller
     }
     public function index()
     {  
-        $permissions = Designation::all();
-         $department = Departments::all();
+        $permissions = Designation::all()->where('disabled','0')->where('added_by',auth()->user()->added_by);
+         $department = Departments::all()->where('disabled','0')->where('added_by',auth()->user()->added_by);
         return view('manage.designation.index', compact('permissions','department'));
     }
 
@@ -28,9 +28,11 @@ class DesignationController extends Controller
 
     public function store(Request $request)
     {
+       
         $role = Designation::create([
             'name' => $request->name,
            'department_id' => $request->department_id,
+           'added_by' => auth()->user()->added_by,
         ]);
         return redirect(route('designations.index'));
     }
@@ -58,7 +60,7 @@ class DesignationController extends Controller
     public function destroy($id)
     {
         $role = Designation::find($id);
-        $role->delete();
+        $role->update(['disabled' => '1']);
         return redirect(route('designations.index'));
     }
 }

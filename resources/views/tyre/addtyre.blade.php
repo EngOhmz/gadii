@@ -1,4 +1,3 @@
-<div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">Assign Truck</h5>
@@ -12,13 +11,12 @@
                      
               
 
-                <input type="hidden" name="id" value="{{$id}}" required class="form-control">
+                <input type="hidden" name="id" value="{{$id}}"  class="form-control" required>
 
                                                 <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Mechanical</label>
                                                     <div class="col-lg-4">
-                                   <select name="staff"
-                    class="form-control" required>
+                                   <select name="staff"  class="form-control m-m" id="staff" required>                   
                     <option value="">Select</option>
                     @foreach($staff as $s) 
                     <option value="{{ $s->id}}">{{$s->name}}</option>
@@ -41,7 +39,7 @@
 
 
 
-                                      @if(!empty($truck->due_diff >0 ))
+                                      @if(!empty($truck->due_1 >0 ))
                                             <table class="table table-bordered" id="service">
                                                 <thead>
                                                     <tr>
@@ -52,18 +50,18 @@
                                                 </thead>
                                                 <tbody >
                                               <?php   
-                                    for($i = 0; $i < $truck->due_diff ; $i++){
+                                    for($i = 0; $i < $truck->due_1 ; $i++){
                                        ?>
                                    <tr>
                                  <td> 
-                        <select name="tyre_diff[]"  class="form-control" required>                   
+                        <select name="tyre_1[]"  class="form-control m-m" required>                   
                         <option value="">Select Item</option>
                         @foreach($name as $n) 
-                    <option value="{{ $n->id}}">{{$n->reference}}</option>
+                    <option value="{{ $n->id}}">{{$n->serial_no}}</option>
                     @endforeach
                 </select></td>
-                    <td>  <input type="text" name="diff_position[]" value="Diff"   class="form-control"  required readonly></td>
-                 <td><button type="button" name="remove" class="btn btn-danger btn-xs remove_diff"><i class="fas fa-trash"></i></button></td>
+                    <td>  <input type="text" name="position_1[]" value="Position 1"   class="form-control"  required readonly></td>
+                 <td><button type="button" name="remove" class="btn btn-danger btn-xs remove_1"><i class="icon-trash"></i></button></td>
   <?php  }    ?>
 
                                                 </tbody>
@@ -71,7 +69,7 @@
                                             </table>
                                             @endif
 
-                                      @if(!empty($truck->due_rear >0 ))
+                                      @if(!empty($truck->due_2 >0 ))
                                             <table class="table table-bordered" id="service">
                                                 <thead>
                                                     <tr>
@@ -82,18 +80,18 @@
                                                 </thead>
                                                 <tbody >
                                               <?php   
-                                    for($i = 0; $i < $truck->due_rear ; $i++){
+                                    for($i = 0; $i < $truck->due_2 ; $i++){
                                        ?>
                                    <tr>
                                  <td> 
-                        <select name="tyre_rear[]"  class="form-control" required>                   
+                        <select name="tyre_2[]"  class="form-control m-m"  required>                   
                         <option value="">Select Item</option>
                         @foreach($name as $n) 
-                    <option value="{{ $n->id}}">{{$n->reference}}</option>
+                    <option value="{{ $n->id}}">{{$n->serial_no}}</option>
                     @endforeach
                 </select></td>
-                    <td>  <input type="text" name="rear_position[]" value="Rear"   class="form-control"  required readonly></td>
-                 <td><button type="button" name="remove" class="btn btn-danger btn-xs remove_rear"><i class="fas fa-trash"></i></button></td>
+                    <td>  <input type="text" name="position_2[]" value="Position 2"   class="form-control"  required readonly></td>
+                 <td><button type="button" name="remove" class="btn btn-danger btn-xs remove_2"><i class="icon-trash"></i></button></td>
   <?php  }    ?>
 
                                                 </tbody>
@@ -103,7 +101,7 @@
                                    
 
 
-                                      @if(!empty($truck->due_trailer >0 ))
+                                      @if(!empty($truck->due_3 >0 ))
                                             <table class="table table-bordered" id="service">
                                                 <thead>
                                                     <tr>
@@ -114,18 +112,115 @@
                                                 </thead>
                                                 <tbody >
                                               <?php   
-                                    for($i = 0; $i < $truck->due_trailer ; $i++){
+                                    for($i = 0; $i < $truck->due_3 ; $i++){
                                        ?>
                                    <tr>
                                  <td> 
-                        <select name="tyre_trailer[]"  class="form-control" required>                   
+                        <select name="tyre_3[]"  class="form-control m-m"  required>                   
                         <option value="">Select Item</option>
                         @foreach($name as $n) 
-                    <option value="{{ $n->id}}">{{$n->reference}}</option>
+                    <option value="{{ $n->id}}">{{$n->serial_no}}</option>
                     @endforeach
                 </select></td>
-                    <td>  <input type="text" name="trailer_position[]" value="Trailer"   class="form-control"  required readonly></td>
-                 <td><button type="button" name="remove" class="btn btn-danger btn-xs remove_trailer"><i class="fas fa-trash"></i></button></td>
+                    <td>  <input type="text" name="position_3[]" value="Position 3"   class="form-control"  required readonly></td>
+                 <td><button type="button" name="remove" class="btn btn-danger btn-xs remove_3"><i class="icon-trash"></i></button></td>
+  <?php  }    ?>
+
+                                                </tbody>
+                                               
+                                            </table>
+                                            @endif
+                                            
+                                            
+                                                              @if(!empty($truck->due_4 >0 ))
+                                            <table class="table table-bordered" id="service">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Tyre</th>
+                                                          <th>Tyre Position</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody >
+                                              <?php   
+                                    for($i = 0; $i < $truck->due_4 ; $i++){
+                                       ?>
+                                   <tr>
+                                 <td> 
+                        <select name="tyre_4[]"  class="form-control m-m"  required>                   
+                        <option value="">Select Item</option>
+                        @foreach($name as $n) 
+                    <option value="{{ $n->id}}">{{$n->serial_no}}</option>
+                    @endforeach
+                </select></td>
+                    <td>  <input type="text" name="position_4[]" value="Position 4"   class="form-control"  required readonly></td>
+                 <td><button type="button" name="remove" class="btn btn-danger btn-xs remove_4"><i class="icon-trash"></i></button></td>
+  <?php  }    ?>
+
+                                                </tbody>
+                                               
+                                            </table>
+                                            @endif
+                                            
+                                            
+                                                              @if(!empty($truck->due_5 >0 ))
+                                            <table class="table table-bordered" id="service">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Tyre</th>
+                                                          <th>Tyre Position</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody >
+                                              <?php   
+                                    for($i = 0; $i < $truck->due_5 ; $i++){
+                                       ?>
+                                   <tr>
+                                 <td> 
+                        <select name="tyre_5[]"  class="form-control m-m"  required>                   
+                        <option value="">Select Item</option>
+                        @foreach($name as $n) 
+                    <option value="{{ $n->id}}">{{$n->serial_no}}</option>
+                    @endforeach
+                </select></td>
+                    <td>  <input type="text" name="position_5[]" value="Position 5"   class="form-control"  required readonly></td>
+                 <td><button type="button" name="remove" class="btn btn-danger btn-xs remove_5"><i class="icon-trash"></i></button></td>
+  <?php  }    ?>
+
+                                                </tbody>
+                                               
+                                            </table>
+                                            @endif
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                                              @if(!empty($truck->due_6 >0 ))
+                                            <table class="table table-bordered" id="service">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Tyre</th>
+                                                          <th>Tyre Position</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody >
+                                              <?php   
+                                    for($i = 0; $i < $truck->due_6 ; $i++){
+                                       ?>
+                                   <tr>
+                                 <td> 
+                        <select name="tyre_6[]"  class="form-control m-m"  required>                   
+                        <option value="">Select Item</option>
+                        @foreach($name as $n) 
+                    <option value="{{ $n->id}}">{{$n->serial_no}}</option>
+                    @endforeach
+                </select></td>
+                    <td>  <input type="text" name="position_6[]" value="Position 6"   class="form-control"  required readonly></td>
+                 <td><button type="button" name="remove" class="btn btn-danger btn-xs remove_6"><i class="icon-trash"></i></button></td>
   <?php  }    ?>
 
                                                 </tbody>
@@ -137,10 +232,16 @@
         </div>
 
 </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <div class="modal-footer ">
+             <button class="btn btn-primary"  type="submit" id="save" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
         {!! Form::close() !!}
     </div>
-</div>
+
+@yield('scripts')
+<script>
+
+//$('.m-m').select2({dropdownParent: $('#appFormModal'), });
+$('.m-m').select2({ });
+</script>

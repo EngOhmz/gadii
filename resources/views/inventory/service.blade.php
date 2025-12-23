@@ -5,7 +5,7 @@
 <section class="section">
     <div class="section-body">
         <div class="row">
-            <div class="col-12 col-sm-6 col-lg-12">
+            <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Service</h4>
@@ -28,14 +28,14 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped" id="table-1">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
@@ -60,7 +60,7 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Action</th>
+                                                    style="width: 128.1094px;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -68,13 +68,13 @@
                                             @foreach ($service as $row)
                                             <tr class="gradeA even" role="row">
                                                 <th>{{ $loop->iteration }}</th>
-                                                <td>{{Carbon\Carbon::parse($row->date)->format('M d, Y')}}</td>
+                                                <td>{{Carbon\Carbon::parse($row->date)->format('d/m/Y')}}</td>
                                                 <td>
                                                     @php    
                                                     $tr=App\Models\Truck::where('id', $row->truck)->get();   
                                                   @endphp
                                                      @foreach($tr as $t)
-                                                     <a href="#view{{$row->truck}}" data-toggle="modal">{{$t->reg_no}} -{{$t->truck_name}}</a>
+                                                     <a href="#view{{$row->truck}}" data-toggle="modal">{{$t->truck_name}} - {{$t->reg_no}}</a>
                                                     @endforeach
                                                 </td>
                                              
@@ -98,34 +98,43 @@
                                                     @endif
                                                 </td>
                                                 <td>
+                                                 <div class="form-inline">
                                                     @if($row->status == 0)
-                                                    <a class="btn btn-xs btn-outline-primary text-uppercase px-2 rounded"
-                                                    href="{{ route("service.approve", $row->id)}}" onclick="return confirm('Are you sure?')" title="Change Status">
-                                                    <i class="fa fa-check"></i>
-                                                </a>
-                                              
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        href="{{ route("service.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                   
-                                                    {!! Form::open(['route' => ['service.destroy',$row->id],
-                                                    'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                    {{ Form::close() }}
+                                            <a class="list-icons-item text-success"
+                                            href="{{ route("service.approve", $row->id)}}" onclick="return confirm('Are you sure?')" title="Change Status">
+                                            <i class="icon-checkmark3"></i>
+                                        </a>&nbsp
+                                      
+                                             <a class="list-icons-item text-primary"
+                                                href="{{ route("service.edit", $row->id)}}">
+                                                <i class="icon-pencil7"></i>
+                                            </a>&nbsp
+                                           
+                                            {!! Form::open(['route' => ['service.destroy',$row->id],
+                                            'method' => 'delete']) !!}
+                                          {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                            {{ Form::close() }}
 
-                               @else
-    @if($row->report == 0)
-                         <a class="nav-link" title="Assign"
-                                                    data-toggle="modal" href=""  value="{{ $row->id}}" data-type="assign" data-target="#appFormModal"
-                                                    onclick="model({{ $row->id }},'service')">Create Mechanical Report </a>  
-    @elseif($row->report == 1)
-                         <a class="nav-link" title="View"
-                                                    data-toggle="modal" href=""  value="{{ $row->id}}" data-type="view" data-target="#appFormModal"
-                                                    onclick="model({{ $row->id }},'mechanical_service')">View Mechanical Report </a>  
+                                    @else
+                                    
+                                    <div class="dropdown">
+                                     <a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+                                      <div class="dropdown-menu">
+                                    
+                                    
+                                @if($row->report == 0)
+                         <a class="nav-link" title="Assign" data-toggle="modal" href=""  value="{{ $row->id}}" data-type="assign" data-target="#appFormModal" onclick="model({{ $row->id }},'service')">Create Mechanical Report </a> 
+                            @elseif($row->report == 1)
+                         <a class="nav-link" title="View" data-toggle="modal" href=""  value="{{ $row->id}}" data-type="view" data-target="#appFormModal" onclick="model({{ $row->id }},'mechanical_service')">View Mechanical Report </a>  
   @endif
+  
+                                        @if($row->order == 0)
+                        <a class="nav-link" title="Purchase" data-toggle="modal" href=""  value="{{ $row->id}}" data-type="assign" data-target="#appFormModal" onclick="model({{ $row->id }},'purchase')">Create Purchase Order </a> 
+                                        @endif
+                                                                </div>
+                                                                    </div>
 @endif
-
+</div>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -168,15 +177,12 @@
                                                 
                                                     <label class="col-lg-2 col-form-label">Truck</label>
                                                     <div class="col-lg-4">
-                                                        <select class="form-control" name="truck" required
-                                                                id="supplier_id">
+                                                    <select class="form-control m-b" name="truck" required id="truck_id">
                                                         <option value="">Select Truck Name</option>
                                                         @if(!empty($truck))
                                                         @foreach($truck as $row)
 
-                                                        <option @if(isset($data))
-                                                            {{ $data->truck == $row->id  ? 'selected' : ''}}
-                                                            @endif value="{{$row->id}}">{{$row->reg_no}} - {{$row->truck_name}}</option>
+                                                    <option @if(isset($data)) {{ $data->truck == $row->id  ? 'selected' : ''}} @endif value="{{$row->id}}">{{$row->truck_name}} - {{$row->reg_no}}</option>
 
                                                         @endforeach
                                                         @endif
@@ -202,8 +208,7 @@
                                                         class="col-lg-2 col-form-label">Mechanical</label>
 
                                                     <div class="col-lg-4">
-                                                        <select class="form-control" name="mechanical" required
-                                                        id="supplier_id">
+                                                        <select class="form-control m-b" name="mechanical" required id="staff">
                                                 <option value="">Select Mechanical</option>
                                                 @if(!empty($staff))
                                                 @foreach($staff as $row)
@@ -276,7 +281,7 @@
                                                         <td><button type="button" name="remove"
                                                                 class="btn btn-danger btn-xs rem"
                                                                 value="{{ isset($i) ? $i->id : ''}}"><i
-                                                                    class="fas fa-trash"></i></button></td>
+                                                                    class="icon-trash"></i></button></td>
                                                     </tr>
 
                                                     @endforeach
@@ -319,9 +324,10 @@
                                                         
                                                        
                                         <td>
-                              <select name="item_name[]" class="form-control item_name" required><option value="">Select Item</option>@foreach($i_name as $n) <option  @if(isset($in))
-                                                    {{$in->item_name== $n->id  ? 'selected' : ''}}
-                                                    @endif value="{{ $n->id}}">{{$n->name}}</option>@endforeach</select>        
+                              <select name="item_name[]" class="form-control m-b item_name" required>
+                              <option value="">Select Item</option>@foreach($i_name as $n) 
+                              <option  @if(isset($in)){{$in->item_name== $n->id  ? 'selected' : ''}}@endif value="{{ $n->id}}">{{$n->name}}</option>@endforeach
+                              </select>        
                                             </td>
                                       <td><input type="number" name="quantity[]"   class="form-control item_qty{{$in->order_no}}"   value="{{ isset($in) ? $in->quantity : ''}}"  required /></td>
                                                               
@@ -329,7 +335,7 @@
                                                         <td><button type="button" name="remove"
                                                                 class="btn btn-danger btn-xs rem_inv"
                                                                 value="{{ isset($in) ? $in->id : ''}}"><i
-                                                                    class="fas fa-trash"></i></button></td>
+                                                                    class="icon-trash"></i></button></td>
 
                                                 <input type="hidden" name="saved_inv_id[]"
                                                                 class="form-control item_saved{{$i->order_no}}"
@@ -380,7 +386,7 @@
 @if(!empty($service))
 @foreach( $service as $row)
 <!-- Modal -->
-<div class="modal inmodal " id="view{{$row->truck}}"  tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="view{{$row->truck}}"  tabindex="-1" role="dialog" aria-hidden="true">
                      <div class="modal-dialog modal-lg"><div class="modal-dialog modal-lg" role="document">
 <div class="modal-content">
    <div class="modal-header">
@@ -400,7 +406,7 @@
 
    <div class="modal-body">
 <div class="table-responsive">
-                       <table class="table table-bordered table-striped">
+                       <table class="table datatable-basic table-striped">
 <thead>
                <tr>
                 <th>#</th>
@@ -462,7 +468,7 @@
 @if(!empty($service))
 @foreach( $service as $row)
 <!-- Modal -->
-<div class="modal inmodal " id="minor{{$row->id}}"  tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade " id="minor{{$row->id}}"  tabindex="-1" role="dialog" aria-hidden="true">
                      <div class="modal-dialog modal-lg"><div class="modal-dialog modal-lg" role="document">
 <div class="modal-content">
    <div class="modal-header">
@@ -491,9 +497,11 @@
                    <td >{{$row->major}}</td>
                </tr>
                        </table>
+                       
+                       <br>
 
-
-                       <table class="table table-bordered table-striped">
+<p><h4>Minor Service</h4></p>
+                       <table class="table datatable-m table-striped">
 <thead>
 
     
@@ -514,7 +522,7 @@
     @foreach($minor as $m)
 
                             <tr>
-                                <th>{{ $loop->iteration }}</th>
+                                <td>{{ $loop->iteration }}</td>
                                 <td >{{$m->minor }}</td>
                                
                    
@@ -534,68 +542,35 @@
 @endforeach
 @endif
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 @endsection
 
 @section('scripts')
-<script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
-            },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
+ <script>
+        $('.datatable-m').DataTable({
+            autoWidth: false,
+            "columnDefs": [{
+                "targets": [0]
+            }],
+            dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+                search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+                paginate: {
+                    'first': 'First',
+                    'last': 'Last',
+                    'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;',
+                    'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;'
                 }
-            }
-        ]
+            },
 
-    });
-
-});
-
-
-$('.demo4').click(function() {
-    swal({
-        title: "Are you sure?",
-        text: "You will not be able to recover this imaginary file!",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#DD6B55",
-        confirmButtonText: "Yes, delete it!",
-        closeOnConfirm: false
-    }, function() {
-        swal("Deleted!", "Your imaginary file has been deleted.", "success");
-    });
-});
-</script>
+        });
+    </script>
 
 
     
@@ -614,7 +589,7 @@ $('.demo4').click(function() {
                   
             html += '<td><textarea name="minor[]" class="form-control item_price' + count +'" required  value="" style="margin-top:10px;"/></textarea></td>';
            
-            html +='<td><button type="button" name="remove" class="btn btn-danger btn-xs remove"><i class="fas fa-trash"></i></button></td>';
+            html +='<td><button type="button" name="remove" class="btn btn-danger btn-xs remove"><i class="icon-trash"></i></button></td>';
     
             $("#cart > tbody ").append(html);
            
@@ -650,12 +625,13 @@ $(document).ready(function() {
         count++;
         var html = '';
         html += '<tr class="line_items">';
-        html +='<td><select name="item_name[]" class="form-control item_name" required  data-sub_category_id="' +count +'"><option value="">Select Item</option>@foreach($i_name as $i_n) <option value="{{ $i_n->id}}">{{$i_n->name}}</option>@endforeach</select></td>';
+        html +='<td><select name="item_name[]" class="form-control m-b item_name" required  data-sub_category_id="' +count +'"><option value="">Select Item</option>@foreach($i_name as $i_n) <option value="{{ $i_n->id}}">{{$i_n->name}}</option>@endforeach</select></td>';
           html +='<td><input type="number" name="quantity[]"   class="form-control item_qty"   value=""  required /></td>';
         html +=
-            '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_inv"><i class="fas fa-trash"></i></button></td>';
+            '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_inv"><i class="icon-trash"></i></button></td>';
 console.log(html);
         $("#inventory > tbody ").append(html);
+         $('.m-b').select2({});
     
     });
 
@@ -689,13 +665,14 @@ $(document).ready(function() {
         var html = '';
         html += '<tr class="line_items">';
         html +=
-            '<td><select name="item_name[]" class="form-control item_name" required  data-sub_category_id="' +
+            '<td><select name="item_name[]" class="form-control m-b item_name" required  data-sub_category_id="' +
             count +
             '"><option value="">Select </option>@foreach($name as $n) <option value="{{ $n->id}}">{{$n->name}}</option>@endforeach</select></td>';
         html +=
-            '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_inv"><i class="fas fa-trash"></i></button></td>';
+            '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_inv"><i class="icon-trash"></i></button></td>';
 console.log(html);
         $("#service > tbody ").append(html);
+         $('.m-b').select2({});
     
     });
 
@@ -721,7 +698,7 @@ $(document).ready(function() {
         var html = '';
         html += '<tr class="line_items">';
         html +='<td><br><textarea name="recommedation[]" class="form-control item_name" required  data-sub_category_id="' + count + '"></textarea></td>';
-        html +='<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_re"><i class="fas fa-trash"></i></button></td>';
+        html +='<td><button type="button" name="remove" class="btn btn-danger btn-xs remove_re"><i class="icon-trash"></i></button></td>';
 console.log(html);
         $("#recommedation > tbody ").append(html);
     
@@ -742,7 +719,7 @@ console.log(html);
 
 $.ajax({
     type: 'GET',
-     url: '{{url("invModal")}}',
+     url: '{{url("inventory/invModal")}}',
     data: {
         'id': id,
         'type':type,
@@ -751,7 +728,7 @@ $.ajax({
     async: true,
     success: function(data) {
         //alert(data);
-        $('.modal-dialog').html(data);
+        $('#appFormModal > .modal-dialog').html(data);
     },
     error: function(error) {
         $('#appFormModal').modal('toggle');
@@ -762,5 +739,5 @@ $.ajax({
 }
 
     </script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+
 @endsection

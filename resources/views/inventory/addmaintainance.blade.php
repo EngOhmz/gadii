@@ -1,4 +1,3 @@
-<div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal"><?php echo ucfirst($type);?> Mechanical Report </h5>
@@ -26,7 +25,7 @@
                                                 <br>
                                               <h4 align="center">Enter Service Type</h4>
                                   <a href="javascript:void(0);" id="add_more" class="addService"><i  class="fa fa-plus"></i>&nbsp;Add  Item</a><br>
-                                            <hr>
+                                           
                                             <table class="table table-bordered" id="service">
                                                 <thead>
                                                     <tr>
@@ -43,8 +42,8 @@
                                             </table>
 
                                     
-
-                                         <h4 align="center">Enter Recommedation</h4>
+                                            <br>
+                                         <br><h4 align="center">Enter Recommedation</h4>
                           <a href="javascript:void(0);" id="add_more" class="addRecommedation"><i  class="fa fa-plus"></i>&nbsp;Add  Item</a><br>
                                <table class="table table-bordered" id="recommedation">
                                                 <thead>
@@ -67,10 +66,9 @@
                                                             
 
         </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="submit" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <div class="modal-footer ">
+             <button class="btn btn-primary"  type="submit" id="save" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
         {!! Form::close() !!}
     </div>
-</div>

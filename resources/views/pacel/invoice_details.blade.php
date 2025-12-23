@@ -30,8 +30,9 @@
                 <a class="btn btn-xs btn-danger " data-placement="top" href="{{ route('pacel.pay',$purchases->id)}}" title="Add Payment"> Pay Invoice  </a>   
               @endif
              
-             <a class="btn btn-xs btn-success" href="{{ route('invoice_pdfview',['download'=>'pdf','id'=>$purchases->id]) }}"  title="" > Download PDF </a>         
-                                         
+             <a class="btn btn-xs btn-success" href="{{ route('invoice_pdfview',['download'=>'pdf','id'=>$purchases->id]) }}"  title="" > Download PDF </a>      
+   
+                 
     </div>
 
 <br>
@@ -43,10 +44,10 @@
 <br>
  
                 <div class="card">
-                    <div class="padding-20">
+                  <div class="card-body">
                        
                         <?php
-$settings= App\Models\System::first();
+$settings= App\Models\System::where('added_by',auth()->user()->added_by)->first();
 
 
 ?>
@@ -64,7 +65,7 @@ $settings= App\Models\System::first();
 
                                       <div class="col-lg-3 col-xs-3">
                                         
-                                       <h5 class=mb0">REF NO : {{$purchases->pacel_number}}</h5>
+                                       <h5 class="mb0">REF NO : {{$purchases->confirmation_number}}</h5>
                                       Invoice Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}                                                         
            <br>Sales Agent: {{$purchases->user->name }} 
                                       
@@ -79,10 +80,8 @@ $settings= App\Models\System::first();
                                             <span class="badge badge-danger badge-shadow">Cancelled</span>
                                             @endif
 
-                                        <br>Currency: {{$purchases->currency_code }}                                                
-                    
-                    
-                
+                                        <br>Currency: {{$purchases->currency_code }}      
+                                                
             </div>
                                 </div>
 
@@ -131,7 +130,8 @@ $settings= App\Models\System::first();
                     <tr>
                         <th style="color:white;">#</th>
                         <th style="color:white;">Route Name</th>
-                  <th style="color:white;">Charge Type</th>
+                  <!--<th style="color:white;">Charge Type</th>-->
+                     <th style="color:white;">Truck</th>
                         <th style="color:white;">Qty</th>
                         <th  style="color:white;">Price</th>
                         <th style="color:white;">Tax</th>
@@ -154,17 +154,14 @@ $settings= App\Models\System::first();
                                         ?>
                                             <td class=""><strong class="block">From {{$item_name->from}}  to  {{$item_name->to}} ({{$row->distance}} km)</strong>
                                               @if(!empty($row->end))
-                                              <br>Arrival Location/Address - {{$row->end}}
+                                            <!--  <br>Arrival Location/Address - {{$row->end}} -->
                                                  @endif
                                          </td>
-                                           <td class="">{{ $row->charge_type }} </td>
+                                           <!--<td class="">{{ $row->charge_type }} </td>-->
+                                            <td class="">{{ $row->truck->reg_no }} </td>
                                             <td class="">{{ $row->quantity }} </td>
                                         <td class="">{{number_format($row->price ,2)}}  </td>                                         
-                                         <td class="">
-                                  @if(!@empty($row->total_tax > 0))
-                              {{number_format($row->total_tax ,2)}} 
-@endif
-</td>
+                                         <td class="">{{number_format($row->total_tax ,2)}}</td>
                                             <td class="">{{number_format($row->total_cost ,2)}} </td>
                                             
                                         </tr>
@@ -173,102 +170,86 @@ $settings= App\Models\System::first();
 
                                        
                                     </tbody>
-</table>
-                            </div>
+<tfoot>
+<tr>
+<td colspan="5"></td>
+<td>Sub Total</td>
+<td>{{number_format($sub_total,2)}}  {{$purchases->currency_code}}</td>
+</tr>
 
-                                     <div class="row" >
-                                              <div class="col-lg-8"> </div>
-                                        <div class="col-lg-4 pv">
+<tr>
+<td colspan="5"></td>
+<td>Total Tax </td>
+<td>{{number_format($tax,2)}}  {{$purchases->currency_code}}</td>
+</tr>
 
-                <div class="clearfix">
-                    <p class="pull-left">Sub Total</p>
-                    <p class="pull-right mr">{{number_format($sub_total,2)}}  {{$purchases->currency_code}}</p>
-                </div>
+<tr>
+<td colspan="5"></td>
+<td>Total Amount</td>
+<td>{{number_format($gland_total - $purchases->discount ,2)}}  {{$purchases->currency_code}}</td>
+</tr>
 
-          @if(!@empty($tax > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Total Tax - VAT (18 %)</p>
-                    <p class="pull-right mr">{{number_format($tax,2)}}  {{$purchases->currency_code}}</p>
-                </div>
-  @endif
+ @if(!@empty($purchases->due_amount < $purchases->amount))
+     <tr>
+<td colspan="5"></td>
+                    <td>Paid Amount</p>
+                    <td>{{number_format(($purchases->amount - $purchases->due_amount),2)}}  {{$purchases->currency_code}}</p>
+                </tr>
 
- @if(!@empty($purchases->discount > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Discount</p>
-                    <p class="pull-right mr">{{number_format($purchases->discount,2)}}  {{$purchases->currency_code}}</p>
-                </div>
-@endif
- <div class="clearfix">
-                    <p class="pull-left">Total Amount</p>
-                    <p class="pull-right mr">{{number_format($gland_total - $purchases->discount ,2)}}  {{$purchases->currency_code}}</p>
-                </div>
-
-
-
-  @if(!@empty($purchases->due_amount < $purchases->amount))
-        <div class="clearfix">
-                    <p class="pull-left">Paid Amount</p>
-                    <p class="pull-right mr">{{number_format($purchases->amount - $purchases->due_amount,2)}}  {{$purchases->currency_code}}</p>
-                </div>
-
-      <div class="clearfix">
-                    <p class="pull-left h3 text-danger">Total Due</p>
-                    <p class="pull-right mr">{{number_format($purchases->due_amount,2)}}  {{$purchases->currency_code}}</p>
-                </div>
+      <tr>
+<td colspan="5"></td>
+                    <td class="text-danger">Total Due</td>
+                    <td>{{number_format($purchases->due_amount,2)}}  {{$purchases->currency_code}}</td>
+                </tr>
 @endif
 
 <br>
  @if($purchases->currency_code != 'TZS')
- <b>Exchange Rate 1 {{$purchases->currency_code}} = {{$purchases->exchange_rate}} TZS</b>
+ <tr>
+<td colspan="5"></td>
+ <td><b>Exchange Rate 1 {{$purchases->currency_code}} </b></td>
+ <td><b> {{$purchases->exchange_rate}} TZS</b></td>
+</tr>
 <p></p>
 <br>
-                <div class="clearfix">
-                    <p class="pull-left">Sub Total</p>
-                    <p class="pull-right mr">{{number_format($sub_total * $purchases->exchange_rate,2)}}  TZS</p>
-                </div>
+              <tr>
+<td colspan="5"></td>
+<td>Sub Total</td>
+<td>{{number_format($sub_total * $purchases->exchange_rate,2)}}  TZS</td>
+</tr>
 
-          @if(!@empty($tax > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Total Tax</p>
-                    <p class="pull-right mr">{{number_format($tax * $purchases->exchange_rate,2)}}   TZS</p>
-                </div>
-  @endif
+<tr>
+<td colspan="5"></td>
+<td>Total Tax</td>
+<td>{{number_format($tax * $purchases->exchange_rate,2)}}   TZS</td>
+</tr>
 
- @if(!@empty($purchases->discount > 0))
-        <div class="clearfix">
-                    <p class="pull-left">Discount</p>
-                    <p class="pull-right mr">{{number_format($purchases->discount * $purchases->exchange_rate,2)}}   TZS</p>
-                </div>
+<tr>
+<td colspan="5"></td>
+<td>Total Amount</td>
+<td>{{number_format($purchases->exchange_rate * ($gland_total-$purchases->discount) ,2)}}   TZS</td>
+</tr>
+
+ @if(!@empty($purchases->due_amount < $purchases->amount))
+     <tr>
+<td colspan="5"></td>
+                    <td>Paid Amount</p>
+                    <td>{{number_format($purchases->exchange_rate * ($purchases->amount  - $purchases->due_amount),2)}}  TZS</p>
+                </tr>
+
+      <tr>
+<td colspan="5"></td>
+                    <td class="text-danger">Total Due</td>
+                    <td>{{number_format(($purchases->due_amount * $purchases->exchange_rate),2)}}  TZS</td>
+                </tr>
 @endif
- <div class="clearfix">
-                    <p class="pull-left">Total Amount</p>
-                    <p class="pull-right mr">{{number_format($purchases->exchange_rate * ($gland_total-$purchases->discount) ,2)}}   TZS</p>
-                </div>
-
-
-
-  @if(!@empty($purchases->due_amount < $purchases->amount))
-        <div class="clearfix">
-                    <p class="pull-left">Paid Amount</p>
-                    <p class="pull-right mr">{{number_format($purchases->exchange_rate * ($purchases->amount - $purchases->due_amount),2)}}  TZS</p>
-                </div>
-
-      <div class="clearfix">
-                    <p class="pull-left h3 text-danger">Total Due</p>
-                    <p class="pull-right mr">{{number_format($purchases->due_amount * $purchases->exchange_rate,2)}}  TZS</p>
-                </div>
 @endif
-
-@endif
-
-
-
-</div>
+</tfoot>
+</table>
 
                                 
                              
-                            </div>
-
+                          
                         </div>
 
                     </div>
@@ -280,8 +261,8 @@ $settings= App\Models\System::first();
   @if(!empty($payments[0]))
             <div class="col-12 col-md-12 col-lg-12">
                 <div class="card">
-                    <div class="padding-20">
-                        <h5 class="mb0" style="text-align:center">PAYMENT DETAILS</h5>
+                    <div class="card-body">
+                        <br><h5 class="mb0" style="text-align:center">PAYMENT DETAILS</h5>
                       <div class="tab-content" id="myTab3Content">
                             <div class="tab-pane fade show active" id="about" role="tabpanel"
                                 aria-labelledby="home-tab2">
@@ -295,14 +276,15 @@ $settings= App\Models\System::first();
        
                                  ?>
                                 <div class="table-responsive">
-            <table class="table" cellspacing="0" width="100%">
+         <table class="table datatable-basic table-striped">
                                     <thead>
                                         <tr>
                                             <th>Transaction ID</th>
                         <th>Payment Date</th>
                         <th>Amount</th>
                         <th>Payment Mode</th>
-                        <th>Action</th>
+                        <th>Payment Account</th>
+                        
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -319,10 +301,9 @@ $method= App\Models\Payment_methodes::find($row->payment_method);
                                                <td class="">{{Carbon\Carbon::parse($row->date)->format('d/m/Y')}}  </td>
                                             <td class="">{{ number_format($row->amount ,2)}} {{$purchases->currency_code}}</td>
                                             <td class="">{{ $method->name }}</td>
-                                            <td class=""><a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                            title="Edit" onclick="return confirm('Are you sure?')"
-                                            href="{{ route('pacel_payment.edit', $row->id)}}"><i
-                                                class="fa fa-edit"></i></a></td>
+                                            <td class="">{{ $row->payment->account_name }}</td>
+                                            
+ 
                                         </tr>
                                         @endforeach
                                        
@@ -345,9 +326,53 @@ $method= App\Models\Payment_methodes::find($row->payment_method);
 </section>
 
 
+<!-- discount Modal -->
+  <div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+                          <div class="modal-dialog">
+    </div>
+</div>
    
 @endsection
 
 @section('scripts')
+ <script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
+<script type="text/javascript">
+    function model(id,type) {
 
+        $.ajax({
+            type: 'GET',
+            url: '{{url("pacelModal")}}',
+            data: {
+                'id': id,
+                'type':type,
+            },
+            cache: false,
+            async: true,
+            success: function(data) {
+                //alert(data);
+                $('.modal-dialog').html(data);
+            },
+            error: function(error) {
+                $('#appFormModal').modal('toggle');
+
+            }
+        });
+
+    }
+</script>
 @endsection

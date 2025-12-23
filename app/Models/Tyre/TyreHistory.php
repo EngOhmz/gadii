@@ -9,18 +9,10 @@ class TyreHistory extends Model
 {
     use HasFactory;
 
-    use HasFactory;
 
     protected $table = "tyre_histories";
 
-    protected $fillable = [
-    'purchase_id',
-    'items_id', 
-    'quantity',                 
-     'supplier_id',
-    'purchase_date', 
-     'location',  
-    'added_by'];
+    protected  $guarded = ['id'];
     
     public function user()
     {

@@ -11,15 +11,7 @@
                         <h4>Bank Reconciliation</h4>
                     </div>
                     <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link @if(empty($id)) active show @endif" id="home-tab2" data-toggle="tab"
-                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Bank Reconciliation
-                                    List</a>
-                            </li>
                        
-
-                        </ul>
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
@@ -31,9 +23,8 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
 
         <div class="panel-heading">
             <h6 class="panel-title">
-                Unreconciled Entries
                 @if(!empty($start_date))
-                    for the period: <b>{{$start_date}} to {{$end_date}} for {{$bank->account_name}}</b>
+                    For the period: <b>{{Carbon\Carbon::parse($start_date)->format('d/m/Y')}}  to {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}} for {{$bank->account_name}}</b>
                 @endif
             </h6>
         </div>
@@ -66,7 +57,7 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
                 </div>
                 <div class="col-md-4">
                     <label class="">Bank</label>
-                    {!! Form::select('account_id',$chart_of_accounts,$account_id, array('class' => 'select2','id'=>'account_id', 'placeholder'=>'Select','required'=>'required')) !!}
+                    {!! Form::select('account_id',$chart_of_accounts,$account_id, array('class' => 'form-control m-b','id'=>'account_id', 'placeholder'=>'Select','required'=>'required')) !!}
                 </div>
 
    <div class="col-md-4">
@@ -88,10 +79,9 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
             <div class="panel-body ">
                 <div class="table-responsive">
 
-                    {{ Form::open(['route' => 'reconcile.save']) }}
                     
-                    @method('POST')
-                    <table id="data-table" class="table table-striped table-condensed table-hover">
+                    {!! Form::open(array('route' => 'reconcile.save','method'=>'POST', 'id' => 'frm-example' , 'name' => 'frm-example')) !!}
+                    <table  class="table datatable-basic table-striped" id="table-1">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -119,7 +109,7 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
                                 @else
                                 <td>Deposit</td>
                                 @endif
-                                <td>{{ $key->date }}</td>
+                                <td>{{Carbon\Carbon::parse($key->date)->format('d/m/Y')}}</td>
                                 <td>{{ number_format(abs($key->debit -$key->credit),2) }}</td>
                                 <td>{{$key->notes }}</td>
                                 <td><input name="trans_id[]" type="checkbox"  class="checks" value="{{$key->id}}"></td>
@@ -127,16 +117,9 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
                             </tr>
                         @endforeach
                         </tbody>
-                        <tfoot>
-                            <tr class="custom-color-with-td">
-                                <td style="text-align: right;" colspan="3"></td>
-                                <td></td>
-                                    <td></td>
-                                     <td><input type="submit" value="Save" name="update" class="btn btn-success"></td>
-    
-                            </tr>
-                        </tfoot>
+                       
                     </table>
+                 <input type="submit" value="Save" name="update" class="btn btn-success">
                     {!! Form::close() !!}
                 </div>
             </div>
@@ -163,51 +146,88 @@ $bank=App\Models\AccountCodes::where('id',$account_id)->first();
 @endsection
 
 @section('scripts')
+
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/jquery.dataTables.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/buttons.dataTables.min.css') }}">
+
+<script src="{{asset('assets/datatables/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('assets/datatables/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.print.min.js')}}"></script>
+
 <script>
-$(document).ready(function() {
-    new TomSelect("#account_id",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
-        }
-    });
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+ $('.datatable-basic').DataTable({
+   autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
 });
 </script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
+<script>
+$(document).ready(function (){
+   var table = $('.datatable-basic').DataTable();
+   
+   // Handle form submission event 
+   $('#frm-example').on('submit', function(e){
+      var form = this;
+
+      var rowCount = $('#table-1 >tbody >tr').length;
+console.log(rowCount);
+
+
+if(rowCount == '1'){
+var c= $('#table-1 >tbody >tr').find('input[type=checkbox]');
+
+  if(c.is(':checked')){ 
+var tick=c.val();
+console.log(tick);
+
+$(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'checked_trans_id[]')
+                  .val(tick)  );
+
+}
+
+}
+
+
+else if(rowCount > '1'){
+      // Encode a set of form elements from all pages as an array of names and values
+      var params = table.$('input').serializeArray();
+
+      // Iterate over all form elements
+      $.each(params, function(){     
+         // If element doesn't exist in DOM
+         if(!$.contains(document, form[this.name])){
+            // Create a hidden element 
+            $(form).append(
+               $('<input>')
+                  .attr('type', 'hidden')
+                  .attr('name', 'checked_trans_id[]')
+                  .val(this.value)
+            );
+         } 
+      });      
+
+}
+   
+   });  
+    
+});
+
+
+</script>
 @endsection

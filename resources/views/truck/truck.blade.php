@@ -22,24 +22,33 @@
                                     data-toggle="tab" href="#profile2" role="tab" aria-controls="profile"
                                     aria-selected="false">New Truck</a>
                             </li>
-
+                          <li class="nav-item">
+                                <a class="nav-link  " id="importExel-tab"
+                                    data-toggle="tab" href="#importExel" role="tab" aria-controls="profile"
+                                    aria-selected="false">Import Truck Stickers</a>
+                            </li>
+                     <li class="nav-item">
+                                <a class="nav-link  " id="import-tab"
+                                    data-toggle="tab" href="#import" role="tab" aria-controls="profile"
+                                    aria-selected="false">Import Truck Insurance</a>
+                            </li>
                         </ul>
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 30.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Truck Name</th>
+                                                    style="width: 98.484px;">Truck Name</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
@@ -51,24 +60,12 @@
                                                  <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Ownership</th>
-                                                   <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Location</th>
+                                                    style="width: 98.1094px;">Location</th>
                                                  
-                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Capacity</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Status</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 98.1094px;">Action</th>
+                                                    style="width: 170.1094px;">Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -79,35 +76,21 @@
                                                 <td>{{$row->truck_name }}</td>
                                                 <td>{{$row->reg_no}}</td>
                                                 <td>{{$row->truck_type}}</td>
-                                        <td>
-                                             @if($row->type == 'owned')
-                                               Owned by Company
-                                              @else
-                                               Third Party Company
-                                         @endif
-                                                <td>
-                                                  
-                                                    {{$row->region->name}}
-                                                
-                                                </td>
-                                                <td>{{$row->capacity}} KG </td>
-                                                <td>{{$row->truck_status}}</td>
-                                                <td>
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
+                                                <td>{{$row->region->name}}<td>
+                                               <div class="form-inline">
+                                                    <a class="list-icons-item text-success"
                                                     href="{{ route('truck.insurance', $row->id)}}">
-                                                    <i class="fa fa-eye"></i>
-                                                </a>
-                                                    <a class="btn btn-xs btn-outline-primary text-uppercase px-2 rounded"
+                                                    <i class="icon-eye"></i>
+                                                </a>&nbsp
+                                                    <a class="list-icons-item text-primary"
                                                         href="{{ route("truck.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    
-                                                    {!! Form::open(['route' => ['truck.destroy',$row->id],
-                                                    'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                    {{ Form::close() }}
+                                                        <i class="icon-pencil7"></i>
+                                                    </a>&nbsp
 
-                                                    
+                                                     @if($row->disabled == 0)
+                                                     <a  style="color:red;font-weight:bold;" title="Disable" onclick="return confirm('Are you sure? you want to disable the truck')"  href="{{ route('truck.disable', $row->id)}}">Disable the Truck</a>
+                                              @endif
+                                                    </div>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -158,7 +141,7 @@
                                                     class="col-lg-2 col-form-label">Location</label>
 
                                                 <div class="col-lg-10">
-                                                   <select class="form-control select2" style="width: 100%" name="location" required>
+                                                   <select class="form-control m-b" style="width: 100%" name="location" required>
                                                        <option value="">Select </option>
                                                         @if(!empty($region))
                                                                 @foreach($region as $row)
@@ -178,17 +161,19 @@
                                                 class="col-lg-2 col-form-label">Truck Type</label>
 
                                             <div class="col-lg-10">
-                                               <select class="form-control select2" style="width: 100%" name="truck_type" required>
+                                               <select class="form-control m-b" style="width: 100%" name="truck_type" required>
                                                    <option value="">Select Truck Type</option>
-                                               <option @if(isset($data))
-                                                   {{$data->truck_type == 'Trailer'  ? 'selected' : ''}}
-                                                   @endif value="Trailer">Trailer</option>
                                                    <option @if(isset($data))
                                                    {{$data->truck_type == 'Horse'  ? 'selected' : ''}}
                                                    @endif value="Horse">Horse</option>
                                                    <option @if(isset($data))
-                                                   {{$data->truck_type== 'Vehicle'  ? 'selected' : ''}}
-                                                   @endif value="Vehicle">Vehicle</option>
+                                                   {{$data->truck_type == 'Trailer'  ? 'selected' : ''}}
+                                                   @endif value="Trailer">Trailer</option>
+                                                @can('manage-inventory-menu')
+                                                   <option @if(isset($data))
+                                                   {{$data->truck_type== 'Dump'  ? 'selected' : ''}}
+                                                   @endif value="Dump">Dump</option>
+                                                   @endcan
                                            </select>
                                                 
                                             </div>
@@ -197,7 +182,7 @@
                                                 class="col-lg-2 col-form-label"> Ownership</label>
 
                                             <div class="col-lg-10">
-                                               <select class="form-control select2" style="width: 100%" name="type" required>
+                                               <select class="form-control m-b" style="width: 100%" name="type" required>
                                                    <option value="">Select</option>
                                                <option @if(isset($data))
                                                    {{$data->type == 'owned'  ? 'selected' : ''}}
@@ -228,35 +213,62 @@
                                                     </div>
                                                 </div>
                                                 
-                                                  <div class="form-group row"><label
-                                                        class="col-lg-2 col-form-label">No of tyres in Diff Position</label>
+                                                  @if(empty($id))
+                                                  @can('manage-tire-menu')
+                                                  
+                                                  <div class="form-group row">
+                                                  <label class="col-lg-3 col-form-label">No of tyres in Position 1</label>
 
-                                                    <div class="col-lg-10">
-                                                        <input type="text" name="total_diff"
-                                                            value="{{ isset($tyre) ? $tyre->total_diff : ''}}"
+                                                    <div class="col-lg-3">
+                                                        <input type="number" name="total_1" min="1" max="2"
+                                                            value="{{ isset($tyre) ? $tyre->total_1 : ''}}"
+                                                            class="form-control"   required>
+                                                    </div>
+                                                    <label class="col-lg-3 col-form-label">No of tyres in Position 2</label>
+
+                                                    <div class="col-lg-3">
+                                                        <input type="number" name="total_2" min="1" max="2"
+                                                            value="{{ isset($tyre) ? $tyre->total_2 : ''}}"
                                                             class="form-control"   required>
                                                     </div>
                                                 </div>
                                                 
-                            <div class="form-group row"><label
-                                                        class="col-lg-2 col-form-label">No of tyres in Rear Position</label>
+                                                <div class="form-group row">
+                                                  <label class="col-lg-3 col-form-label">No of tyres in Position 3</label>
 
-                                                    <div class="col-lg-10">
-                                                        <input type="text" name="total_rear"
-                                                            value="{{ isset($tyre) ? $tyre->total_rear : ''}}"
+                                                    <div class="col-lg-3">
+                                                        <input type="number" name="total_3" min="1" max="2"
+                                                            value="{{ isset($tyre) ? $tyre->total_3 : ''}}"
+                                                            class="form-control"   required>
+                                                    </div>
+                                                    <label class="col-lg-3 col-form-label">No of tyres in Position 4</label>
+
+                                                    <div class="col-lg-3">
+                                                        <input type="number" name="total_4" min="1" max="2"
+                                                            value="{{ isset($tyre) ? $tyre->total_4 : ''}}"
                                                             class="form-control"   required>
                                                     </div>
                                                 </div>
-                                         
-                                              <div class="form-group row"><label
-                                                        class="col-lg-2 col-form-label">No of tyres in Trailer Position</label>
+                                                
+                                                <div class="form-group row">
+                                                  <label class="col-lg-3 col-form-label">No of tyres in Position 5</label>
 
-                                                    <div class="col-lg-10">
-                                                        <input type="text" name="total_trailer"
-                                                            value="{{ isset($tyre) ? $tyre->total_trailer : ''}}"
+                                                    <div class="col-lg-3">
+                                                        <input type="number" name="total_5" min="1" max="2"
+                                                            value="{{ isset($tyre) ? $tyre->total_5 : ''}}"
+                                                            class="form-control"   required>
+                                                    </div>
+                                                    <label class="col-lg-3 col-form-label">No of tyres in Position 6</label>
+
+                                                    <div class="col-lg-3">
+                                                        <input type="number" name="total_6" min="1" max="2"
+                                                            value="{{ isset($tyre) ? $tyre->total_6 : ''}}"
                                                             class="form-control"   required>
                                                     </div>
                                                 </div>
+                          
+                                                @endcan
+                                                @endif
 
                                                     <div class="form-group row">
  
@@ -281,6 +293,86 @@
                                     </div>
                                 </div>
                             </div>
+
+   <div class="tab-pane fade" id="importExel" role="tabpanel"
+                            aria-labelledby="importExel-tab">
+
+                            <div class="card">
+                                <div class="card-header">
+                                     <form action="{{ route('sticker.sample') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <button class="btn btn-success">Download Sample</button>
+                                        </form>
+                                 
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 ">
+                                            <div class="container mt-5 text-center">
+                                                <h4 class="mb-4">
+                                                 Import Excel & CSV File   
+                                                </h4>
+                                                <form action="{{ route('sticker.import') }}" method="POST" enctype="multipart/form-data">
+                                            
+                                                    @csrf
+                                                    <div class="form-group mb-4">
+                                                        <div class="custom-file text-left">
+                                                            <input type="file" name="file" class="form-control" id="customFile" required>
+                                                        </div>
+                                                    </div>
+                                                    <button class="btn btn-primary">Import Truck Sticker</button>
+                                          
+                                        </form>
+                                       
+                                    </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+  <div class="tab-pane fade" id="import" role="tabpanel"
+                            aria-labelledby="import-tab">
+
+                            <div class="card">
+                                <div class="card-header">
+                                     <form action="{{ route('insurance.sample') }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <button class="btn btn-success">Download Sample</button>
+                                        </form>
+                                 
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-12 ">
+                                            <div class="container mt-5 text-center">
+                                                <h4 class="mb-4">
+                                                 Import Excel & CSV File   
+                                                </h4>
+                                                <form action="{{ route('insurance.import') }}" method="POST" enctype="multipart/form-data">
+                                            
+                                                    @csrf
+                                                    <div class="form-group mb-4">
+                                                        <div class="custom-file text-left">
+                                                            <input type="file" name="file" class="form-control" id="customFile" required>
+                                                        </div>
+                                                    </div>
+                                                    <button class="btn btn-primary">Import Truck Insurance</button>
+                                          
+                                        </form>
+                                       
+                                    </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         </div>
                     </div>

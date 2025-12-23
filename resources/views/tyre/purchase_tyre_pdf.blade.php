@@ -113,17 +113,28 @@ $settings= App\Models\System::first();
 <div class="head-title">
     <h1 class="text-center m-0 p-0">Tire</h1>
 </div>
-<div class="add-detail mt-10">
-    <div class="w-50 float-left mt-10">
-        <p class="m-0 pt-5 text-bold w-100">Reference : <span class="gray-color">{{$purchases->reference_no}}</span></p>
-        <p class="m-0 pt-5 text-bold w-100">Purchase Date : <span class="gray-color">{{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}</span></p>
-
-    </div>
-<!--
-    <div class="w-50 float-left logo mt-10">
-        <img src="{{url('public/assets/img/logo')}}/{{$settings->picture}}" >   
-    </div>
--->
+<div class="add-detail ">
+   <table class="table w-100 ">
+<tfoot>
+       
+        <tr>
+            <td class="w-50">
+                <div class="box-text">
+                        <img class="pl-lg" style="width: 133px;height:120px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
+                </div>
+            </td>
+  
+                  <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td>
+                 
+            <td class="w-50">
+                <div class="box-text">
+                   <p> <strong>Reference : {{$purchases->reference_no}}</strong></p>
+      <p> <strong>Purchase Date : {{Carbon\Carbon::parse($purchases->purchase_date)->format('d/m/Y')}}</strong></p>
+                </div>
+            </td>
+        </tr>
+</tfoot>
+    </table>
     <div style="clear: both;"></div>
 </div>
 <div class="table-section bill-tbl w-100 mt-10">
@@ -206,11 +217,11 @@ $settings= App\Models\System::first();
                  <?php
                                              $item_name = App\Models\Tyre\TyreBrand::find($row->item_name);
                                         ?>
-                <td>From {{$item_name->brand}}   </td>
+                <td>{{$item_name->brand}}   </td>
              <td >{{number_format($row->price ,2)}}</td>               
                 <td >{{ $row->quantity }}</td>   
-                <td>  {{number_format($row->total_tax ,2)}} {{$purchases->exchange_code}}</td>                           
-                <td >{{number_format($row->total_cost ,2)}} {{$purchases->exchange_code}}</td>
+                <td>  {{number_format($row->total_tax ,2)}} </td>                           
+                <td >{{number_format($row->total_cost ,2)}} </td>
                 
             </tr>
            @endforeach
@@ -224,8 +235,7 @@ $settings= App\Models\System::first();
                <td></td> 
             </td>
         </tr>
-  <tr>
-       <tr>
+<tr>
             <td colspan="4">  </td>
                 <td> <b> Sub Total</b></td>
                <td>{{number_format($sub_total,2)}}  {{$purchases->exchange_code}}</td> 
@@ -238,45 +248,31 @@ $settings= App\Models\System::first();
             </td>
         </tr>
 
+
+  <tr>
+            <td colspan="4">  </td>
+                <td><b>Shipping Cost</b></td>
+               <td>{{number_format($purchases->shipping_cost,2)}}  {{$purchases->exchange_code}}</td> 
+            </td>
+        </tr>
+
+ <tr>
+            <td colspan="4">  </td>
+                <td><b>Discount</b></td>
+               <td>{{number_format($purchases->discount,2)}}  {{$purchases->exchange_code}}</td> 
+            </td>
+        </tr>
+
   <tr>
             <td colspan="4">  </td>
                 <td><b>  Total Amount</b></td>
-               <td>{{number_format($gland_total,2)}}  {{$purchases->exchange_code}}</td> 
+               <td>{{number_format(($gland_total +$purchases->shipping_cost) - $purchases->discount   ,2)}}  {{$purchases->exchange_code}}</td> 
             </td>
         </tr>
   </tfoot>
     </table>
 
-  <table class="table w-100 mt-10">
-<tr>
-         <td style="width: 50%;">
-            <div class="left" style="">
-        <div><u>  <h3><b>BANK DETAILS</b></h3></u> </div>
-         <div><b>Account Name</b>:  DALASHO ENTERPRISES LIMITED</div>
-        <div><b>Account Number</b>:  0150386968400 </div>
-        <div><b>Bank Name</b>: CRDB BANK</div>
-        <div><b>Branch</b>: OYSTERBAY BRANCH</div>
-        <div><b>Swift Code</b>: Corutztz</div>
-          </div>     
-        </tr>
-<!--
-    <tr>
-        <td style="width: 50%;">
-            <div class="right" style="">
-        <div><u> <h3><b> Account Details For Us-Dollar</b></h3></u> </div>
-        <div><b>Account Name</b>:  Isumba Trans Ltd</div>
-        <div><b>Account Number</b>:  10201632013 </div>
-        <div><b>Bank Name</b>: Bank of Africa</div>
-        <div><b>Branch</b>: Business Centre</div>
-        <div><b>Swift Code</b>: EUAFTZ TZ</div>
-        <div></div>
-        </div></td>
-    </tr>
--->
-
-      
-</table>
-
+  
 
 </div>
 

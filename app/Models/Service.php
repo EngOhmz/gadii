@@ -11,19 +11,10 @@ class Service extends Model
 
     protected $table = "services";
 
- protected $fillable = [      
-         'truck',
-         'truck_name',
-     'reg_no',
-         'driver',
-         'mechanical',
-         'date',
-         'reading',
-         'history',     
-        'major',
-          'report',  
-        'status',   
-        'added_by'];
+ protected $guarded = [
+         'id',      
+       'token'];
+    
 
         public function user()
         {

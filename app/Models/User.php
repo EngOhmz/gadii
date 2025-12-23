@@ -9,6 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use App\Models\post;
 use Laravel\Sanctum\HasApiTokens;
 use App\Permissions\HasPermissionsTrait;
+
+use App\Models\School\StudentSubject;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -19,7 +22,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $table = 'users';
+    
+    protected $guarded = ['id','_token'];
 
+/*
     protected $fillable = [
         'name',
         'email',
@@ -28,10 +34,17 @@ class User extends Authenticatable
         'phone',
         'added_by',
         'status',
+        'store_id',
+        'user_type',
+        'reference_no',
+        'affiliate_no',
+        'joining_date',
+    'disabled_date',
+    'disabled',
  'department_id',
 'designation_id'
     ];
-
+*/
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -50,6 +63,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    public function subjects()
+    {
+        return $this->belongsToMany(StudentSubject::class, 'teacher_subject', 'teacher_id', 'subject_id')
+                    ->withTimestamps();
+    }
+    
     public function posts()
     {
         return $this->hasMany('App\Models\post');

@@ -23,8 +23,8 @@ class TrainingController extends Controller
     public function index()
     {
         //
-        $staff=User::where('id','!=',1)->get();    
-        $training = Training::all();    
+        $staff=User::where('disabled','0')->where('added_by',auth()->user()->added_by)->get();    
+        $training = Training::where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
         return view('training.training',compact('staff','training'));
     }
 
@@ -47,7 +47,7 @@ class TrainingController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $data['status']=0;
 
         if ($request->hasFile('attachment')) {
@@ -109,7 +109,7 @@ class TrainingController extends Controller
     {
         //
         $data = Training::find($id);
-        $staff=User::where('id','!=',1)->get();    
+        $staff=User::where('disabled','0')->where('added_by',auth()->user()->added_by)->get();     
         
         return view('training.training',compact('staff','data','id'));
     }
@@ -127,7 +127,7 @@ class TrainingController extends Controller
         $training= Training::find($id);
 
    $data = $request->all();
-      $data['added_by']=auth()->user()->id;
+      $data['added_by']=auth()->user()->added_by;
 
         if ($request->hasFile('attachment')) {
                     $file=$request->file('attachment');
@@ -162,7 +162,7 @@ class TrainingController extends Controller
     {
         //
         $training=  Training::find($id);
-        $training->delete();
+        $training->update(['disabled' => '1']);
     }
 
    public function start($id)
@@ -187,7 +187,7 @@ class TrainingController extends Controller
     {
         //
          $training = Training::find($id);
-        $data['application_status'] = 3;
+        $data['status'] = 3;
         $training->update($data);
         return redirect(route('training.index'))->with(['success'=>'Terminated Successfully']);
     }

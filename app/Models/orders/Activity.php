@@ -9,21 +9,14 @@ class Activity extends Model
 {
     use HasFactory;
 
-    protected $table = "activities";
+    protected $table = "cargo_activities";
 
-    protected $fillable = [
-    'module_id',
-    'module',
-    'date',
-    'activity',
-    'notes',   
-'loading_id',
-    'added_by'];
+    protected $guarded = ['id'];
     
    
     public function user(){
     
-        return $this->belongsTo('App\Models\User','added_by');
+        return $this->belongsTo('App\Models\User','user_id');
       }
 
      

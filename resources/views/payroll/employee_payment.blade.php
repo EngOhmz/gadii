@@ -19,7 +19,7 @@
                                 *</span></label>
 
                         <div class="col-sm-5">
-                            <select required name="departments_id" class="form-control select_box">
+                            <select required name="departments_id" class="form-control m-b select_box">
                                 <option value="">Select Department </option>
                                 <?php if (!empty($all_department_info)): foreach ($all_department_info as $v_department_info) :
                                     if (!empty($v_department_info->name)) {
@@ -136,6 +136,13 @@ $total_amount=0;
 
                             </div>
                             <div class="card-body">
+                         <div class="">
+                                    <label class="control-label">Payment Date</label>
+                                    <input type="date" name="paid_date"  value="<?php echo date('Y-m-d') ?>"    class="salary form-control">
+
+                              
+                                </div>
+
                                 <div class="">
                                     <label class="control-label">Gross Salary </label>
                                     <input type="text" name="house_rent_allowance" disabled value="<?php
@@ -148,6 +155,7 @@ $total_amount=0;
                                 }
                                 ?>" class="salary form-control">
                                 </div>
+                                   <input type="hidden" name="gross" value="{{$gross}}">
                                 <div class="">
                                     <label class="control-label">Total Deduction</label>
                                     <input type="text" name="" disabled value="<?php
@@ -207,7 +215,7 @@ $total_amount=0;
                                 <div class="">
                                     <!-- Payment Type -->
                                     <label class="control-label">Payment Method <span class="required"> *</span></label>
-                                    <select name="payment_type" class="form-control "
+                                    <select name="payment_type" class="form-control m-b"
                                         onchange="get_payment_value(this.value)" required>
                                         <option value="">Select Payment Method</option>
                                         <?php
@@ -255,7 +263,7 @@ $total_amount=0;
                                     <?php echo (empty($check_salary_payment->account_id)) ? 'style="display:block"' : '' ?>>
                                     <label class="control-label">Payment Account <span class="required"> *</span></label>
                                     <div class="">
-                                        <select name="account_id" style="width:100%;" class="form-control select_box" required>
+                                        <select name="account_id" style="width:100%;" class="form-control m-b select_box" required>
                                         <option value="">Select Payment Account</option>
                                             <?php
                                       
@@ -271,8 +279,16 @@ $total_amount=0;
                                     </div>
                                   
                                 </div>
-                                <div class="form-group mt-lg">
-                                    <div class="col-sm-5">
+
+
+                           <div class="">
+                                    <label class="control-label">Bank Charges </label>
+                                    <input type="number"  name="bank_charges" class="form-control charge">
+                                       
+                                </div>
+<br>
+                               <div class="form-group mt-lg">
+                                    <div class="col-sm-6">
                                         <button type="submit" name="sbtn" value="1"
                                             class="btn btn-primary btn-block">update
                                         </button>
@@ -295,7 +311,7 @@ $total_amount=0;
                             <div class="card-body">     
                     <!-- Table -->
                    <div class="table-responsive">
-                <table class="table table-striped "id="table-1">
+                <table class="table datatable-basic table-striped" id="table-1">
                         <thead>
                         <tr>
                             <th>Month</th>
@@ -353,7 +369,7 @@ if (!empty($row->fine_deduction)) {
 
                       <div class = "input-group"> 
                       
-                                <a href="#" class="btn btn-info btn-xs" title="View" data-toggle="modal" data-target="#appFormModal"  data-id="{{ $row->id }}" data-type="template"   onclick="model({{ $row->id }},'payment')">View Payment Details</a>
+                                <a href="#" class="btn btn-info btn-xs" title="View" data-toggle="modal" data-target="#appFormModal"  data-id="{{ $row->id }}" data-type="template"   onclick="model({{ $row->id }},'payment')">View </a>
                                                
                     </div>&nbsp
                     </div>
@@ -374,17 +390,33 @@ if (!empty($row->fine_deduction)) {
 <?php endif; ?>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 @endsection
 
 
 
 @section('scripts')
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
+
 <script type="text/javascript">
     function model(id, type) {
 

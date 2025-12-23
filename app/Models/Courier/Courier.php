@@ -11,35 +11,11 @@ class Courier extends Model
 
     protected $table = "courier";
 
-    protected $fillable = [
-    'pacel_name',
-    'pacel_number',
-    'date',
-   'due_date',
-    'owner_id',
-    'confirmation_number',
-    'weight',
-    'route_id',
-    'receiver_name',
-        'docs',
-        'non_docs',
-        'bags',
-        'mobile',
-      'currency_code',
-        'exchange_rate',
-        'amount',
-        'tax',
-        'due_amount',
-        'discount',
-        'instructions',
-    'status',
-    'good_receive',    
-    'added_by'];
-    
+      protected $guarded = ['id','_token'];
 
     public function  route(){
     
-        return $this->belongsTo('App\Models\Route','route_id');
+        return $this->belongsTo('App\Models\Tariff','tariff_id');
       }
 
       public function  supplier(){
@@ -51,4 +27,10 @@ class Courier extends Model
     
         return $this->belongsTo('App\Models\User','added_by');
       }
+
+public function from(){
+    
+        return $this->belongsTo('App\Models\Region','from_region_id');
+      }
+      
 }

@@ -12,7 +12,7 @@
                     </div>
                     <div class="card-body">
                     <div class="table-responsive">
-        <table class="table table-striped" id="table-1">
+        <table class="table datatable-basic table-striped" id="table-1">
             <thead>
                 <tr>
                 <th>#</th>
@@ -34,20 +34,22 @@
                                                 <td>{{number_format($row->salaryTemplates->basic_salary,2)}}</td>
                                      
                                                 <td>
-                                                  <div class="form-inline">
-                      <div class = "input-group"> 
-                <a href="#"  class="btn btn-outline-success btn-xs" title="View"  data-toggle="modal" data-target="#appFormModal"  data-id="{{ $row->payroll_id }}" data-type="template"   onclick="model({{ $row->payroll_id }},'employee')">
-                        <i class="fa fa-eye"></i></a>                                                             
-                    </div>&nbsp
-                      <div class = "input-group"> 
-                      <a href="{{ route("employee.edit", $row->user->department_id)}}" class="btn btn-outline-primary btn-xs" title="Edit"><i class="fa fa-edit"></i></a> 
-                   </div>&nbsp
-                      <div class = "input-group"> 
-         {!! Form::open(['route' => ['employee.destroy',$row->payroll_id], 'method' => 'delete']) !!}                                                   
-                                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-outline-danger  btn-xs ', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
-                                                                    {{ Form::close() }}
-                </div>
+                                           <div class="form-inline">
+                <a href="#"  class="list-icons-item text-info" title="View"  data-toggle="modal" data-target="#appFormModal"  data-id="{{ $row->id }}" data-type="template"   onclick="model({{ $row->id }},'employee')">
+                        <i class="icon-eye"></i></a>                                                             
+                    &nbsp
+
+                      <a href="{{ route("employee.edit", $row->user->department_id)}}" class="list-icons-item text-primary"  title="Edit"><i class="icon-pencil7"></i></a> 
+                   &nbsp
+
+                  
+           {!! Form::open(['route' => ['employee.destroy',$row->id], 'method' => 'delete']) !!}                                                     
+          {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                
                     </div>
+
+                                              
+            
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -66,17 +68,32 @@
 </section>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 @endsection
 
 
 
 @section('scripts')
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 <script type="text/javascript">
     function model(id, type) {
 

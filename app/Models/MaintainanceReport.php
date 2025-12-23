@@ -11,11 +11,10 @@ class MaintainanceReport extends Model
 
     protected $table = "maintainance_report";
 
-    protected $fillable = [
-    'maintainance_id',
-     'item_name',         
-    'order_no',      
-    'added_by'];
+  protected $guarded = [
+         'id',      
+       'token'];
+    
     
     public function user()
     {

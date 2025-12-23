@@ -29,8 +29,8 @@ class AccountController extends Controller
     public function index()
     {
       
-      $account = Accounts::all();
- $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
+      $account = AccountCodes::where('account_status','Bank')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get() ;
+ $bank_accounts=AccountCodes::where('account_status','Bank')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get() ;
      $currency = Currency::all();
           $group_account = GroupAccount::all();
         return view('account.data', compact('currency','account','group_account','bank_accounts'));

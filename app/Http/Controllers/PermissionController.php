@@ -15,8 +15,8 @@ class PermissionController extends Controller
     }
     public function index()
     {  // , compact('permissions', 'modules')
-        $permissions = Permission::all();
-        $modules = SystemModule::all();
+        $permissions = Permission::all()->where('hidden','0');
+        $modules = SystemModule::where('disabled','0')->get();
         return view('manage.permission.index', compact('permissions', 'modules'));
     }
 
@@ -30,6 +30,7 @@ class PermissionController extends Controller
         $role = Permission::create([
             'slug' => str_replace(' ', '-', $request->slug),
             'sys_module_id' => $request->module_id,
+             'name' => $request->name,
         ]);
         return redirect(route('permissions.index'));
     }
@@ -50,6 +51,7 @@ class PermissionController extends Controller
         $role = Permission::find($request->id);
         $role->slug = str_replace(' ', '-', $request->slug);
         $role->sys_module_id = $request->module_id;
+        $role->name = $request->name;
         $role->save();
         return redirect(route('permissions.index'));
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\POS;
 
 use App\Http\Controllers\Controller;
 use App\Models\AccountCodes;
+use App\Models\POS\Activity;
 use App\Models\POS\PurchasePayments;
 use App\Models\JournalEntry;
 use App\Models\Payment_methodes;
@@ -12,6 +13,7 @@ use App\Models\Supplier;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\Accounts;
+use PDF;
 
 class PurchasePaymentController extends Controller
 {
@@ -23,6 +25,9 @@ class PurchasePaymentController extends Controller
     public function index()
     {
         //
+        
+        $payments=PurchasePayments::where('added_by',auth()->user()->added_by)->get();
+        return view('pos.purchases.payments',compact('payments'));
     }
 
     /**
@@ -48,11 +53,15 @@ class PurchasePaymentController extends Controller
         $receipt = $request->all();
         $sales =Purchase::find($request->purchase_id);
 
-        if(($receipt['amount'] <= $sales->purchase_amount + $sales->purchase_tax)){
+          $count=PurchasePayments::count();
+        $pro=$count+1;
+
+        if(($receipt['amount'] <= $sales->due_amount)){
             if( $receipt['amount'] >= 0){
-                $receipt['trans_id'] = "TRANS_INV-".$request->purchase_id.'-'. substr(str_shuffle(1234567890), 0, 1).'-'.date('d/m/y');
-                $receipt['added_by'] = auth()->user()->id;
-                
+                $receipt['trans_id'] = "TPP-".$pro;
+                $receipt['added_by'] = auth()->user()->added_by;
+                 $receipt['account_id'] = $request->account_id;
+
                 //update due amount from invoice table
                 $data['due_amount'] =  $sales->due_amount-$receipt['amount'];
                 if($data['due_amount'] != 0 ){
@@ -66,20 +75,22 @@ class PurchasePaymentController extends Controller
 
                 $supp=Supplier::find($sales->supplier_id);
 
-                $codes= AccountCodes::where('account_name','Payables')->first();
+                $codes= AccountCodes::where('account_name','Payables')->where('added_by',auth()->user()->added_by)->first();
                 $journal = new JournalEntry();
                 $journal->account_id = $codes->id;
                   $date = explode('-',$request->date);
                 $journal->date =   $request->date ;
                 $journal->year = $date[0];
                 $journal->month = $date[1];
-               $journal->transaction_type = 'inventory_payment';
-                $journal->name = 'Inventory Payment';
+              $journal->transaction_type = 'pos_purchases_payment';
+               $journal->name = 'Purchases Payment';
                 $journal->debit =$receipt['amount'] *  $sales->exchange_rate;
                   $journal->payment_id= $payment->id;
+                   $journal->supplier_id= $sales->supplier_id;
                  $journal->currency_code =   $sales->exchange_code;
                 $journal->exchange_rate=  $sales->exchange_rate;
-                   $journal->notes= "Clear Creditor  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
+                  $journal->added_by=auth()->user()->added_by;
+                   $journal->notes= "Clear Creditor Purchase Order " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
                 $journal->save();
           
         
@@ -89,13 +100,15 @@ class PurchasePaymentController extends Controller
               $journal->date =   $request->date ;
               $journal->year = $date[0];
               $journal->month = $date[1];
-              $journal->transaction_type = 'inventory_payment';
-              $journal->name = 'Inventory Payment';
+               $journal->transaction_type = 'pos_purchases_payment';
+               $journal->name = 'Purchases Payment';
               $journal->credit = $receipt['amount'] *  $sales->exchange_rate;
               $journal->payment_id= $payment->id;
+               $journal->supplier_id= $sales->supplier_id;
                $journal->currency_code =   $sales->exchange_code;
               $journal->exchange_rate=  $sales->exchange_rate;
-                 $journal->notes= "Payment for Clear Credit  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
+               $journal->added_by=auth()->user()->added_by;
+                 $journal->notes= "Payment for Clear Credit Purchase Order " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
               $journal->save();
     
  $account= Accounts::where('account_id',$request->account_id)->first();
@@ -113,18 +126,18 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= 0-$payment->amount;
        $new[' exchange_code']=$sales->exchange_code;
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 $balance=0-$payment->amount;
      Accounts::create($new);
 }
         
    // save into tbl_transaction
                             $transaction= Transaction::create([
-                                'module' => 'Inventory Payment',
+                               'module' => 'POS Purchases Payment',
                                  'module_id' => $payment->id,
                                'account_id' => $request->account_id,
                                 'code_id' => $codes->id,
-                                'name' => 'Inventory Payment with reference no ' .$sales->reference_no,
+                                'name' => 'POS Purchases Payment with reference no ' .$sales->reference_no,
                                  'transaction_prefix' => $payment->trans_id,
                                 'type' => 'Expense',
                                 'amount' =>$payment->amount ,
@@ -134,9 +147,22 @@ $balance=0-$payment->amount;
                                 'payment_methods_id' =>$payment->payment_method,
                                'paid_by' => $sales->supplier_id,
                                    'status' => 'paid' ,
-                                'notes' => 'This expense is from inventory payment. The Reference is ' .$sales->reference_no ,
-                                'added_by' =>auth()->user()->id,
+                                'notes' => 'This expense is from pos purchases Payment. The Reference is ' .$sales->reference_no . ' by Supplier '.  $supp->name  ,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
+
+             
+           if(!empty($payment)){
+                    $activity =Activity::create(
+                        [ 
+                            'added_by'=>auth()->user()->added_by,
+       'user_id'=>auth()->user()->id,
+                            'module_id'=>$payment->id,
+                             'module'=>'Purchase Payment',
+                            'activity'=>"Purchase with reference no  " .  $sales->reference_no. "  is Paid",
+                        ]
+                        );                      
+       }
 
                 return redirect(route('purchase.index'))->with(['success'=>'Payment Added successfully']);
             }else{
@@ -173,7 +199,7 @@ $balance=0-$payment->amount;
         $data=PurchasePayments::find($id);
         $invoice = Purchase::find($data->purchase_id);
         $payment_method = Payment_methodes::all();
-        $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
+        $bank_accounts=AccountCodes::where('account_status','Bank')->where('disabled','0')->where('added_by',auth()->user()->added_by)->get();
         return view('pos.purchases.purchase_edit_payments',compact('invoice','payment_method','data','id','bank_accounts'));
     }
 
@@ -192,9 +218,9 @@ $balance=0-$payment->amount;
         $receipt = $request->all();
         $sales =Purchase::find($request->purchase_id);
        
-        if(($receipt['amount'] <= $sales->purchase_amount + $sales->purchase_tax)){
+        if(($receipt['amount'] <= $sales->due_amount)){
             if( $receipt['amount'] >= 0){
-                $receipt['added_by'] = auth()->user()->id;
+                $receipt['added_by'] = auth()->user()->added_by;
                 
                 //update due amount from invoice table
                 if($payment->amount <= $receipt['amount']){
@@ -232,7 +258,7 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= 0-$receipt['amount'];
        $new[' exchange_code']=$sales->exchange_code;
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 
 $balance=0-$receipt['amount'];
      Accounts::create($new);
@@ -256,14 +282,14 @@ $balance=0-$receipt['amount'];
                 $journal->date =   $request->date ;
                 $journal->year = $date[0];
                 $journal->month = $date[1];
-               $journal->transaction_type = 'inventory_payment';
-                $journal->name = 'Inventory Payment';
+             $journal->transaction_type = 'pos_purchases_payment';
+               $journal->name = 'Purchases Payment';
                 $journal->debit =$receipt['amount'] *  $sales->exchange_rate;
                   $journal->payment_id= $payment->id;
                  $journal->currency_code =   $sales->exchange_code;
                 $journal->exchange_rate=  $sales->exchange_rate;
-             $journal->added_by=auth()->user()->id;
-                   $journal->notes= "Clear Creditor  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
+                  $journal->added_by=auth()->user()->added_by;
+                   $journal->notes= "Clear Creditor Purchase Order " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
                 $journal->update();
           
         
@@ -274,34 +300,34 @@ $balance=0-$receipt['amount'];
               $journal->date =   $request->date ;
               $journal->year = $date[0];
               $journal->month = $date[1];
-              $journal->transaction_type = 'inventory_payment';
-              $journal->name = 'Inventory Payment';
+          $journal->transaction_type = 'pos_purchases_payment';
+               $journal->name = 'Purchases Payment';
               $journal->credit = $receipt['amount'] *  $sales->exchange_rate;
               $journal->payment_id= $payment->id;
                $journal->currency_code =   $sales->exchange_code;
               $journal->exchange_rate=  $sales->exchange_rate;
-                $journal->added_by=auth()->user()->id;
-                 $journal->notes= "Payment for Clear Credit  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
+               $journal->added_by=auth()->user()->added_by;
+                 $journal->notes= "Payment for Clear Credit Purchase Order " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
               $journal->update();
 
  // save into tbl_transaction
-                            $transaction= Transaction::where('module','Inventory Payment')->where('module_id',$id)->update([
-                                'module' => 'Inventory Payment',
+                            $transaction= Transaction::where('module','POS Purchases Payment')->where('module_id',$id)->update([
+                             'module' => 'POS Purchases Payment',
                                  'module_id' => $payment->id,
                                'account_id' => $request->account_id,
                                 'code_id' => $codes->id,
-                                'name' => 'Inventory Payment with reference no ' .$sales->reference_no,
+                                'name' => 'POS Purchases Payment with reference no ' .$sales->reference_no,
                                  'transaction_prefix' => $payment->trans_id,
                                 'type' => 'Expense',
                                 'amount' =>$payment->amount ,
                                 'debit' => $payment->amount,
                                  'total_balance' =>$balance,
                                 'date' => date('Y-m-d', strtotime($request->date)),
-                              'paid_by' => $sales->supplier_id,
                                 'payment_methods_id' =>$payment->payment_method,
+                               'paid_by' => $sales->supplier_id,
                                    'status' => 'paid' ,
-                                'notes' => 'This expense is from inventory payment. The Reference is ' .$sales->reference_no ,
-                                'added_by' =>auth()->user()->id,
+                                'notes' => 'This expense is from pos purchases Payment. The Reference is ' .$sales->reference_no . ' by Supplier '.  $supp->name  ,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
 
                 return redirect(route('purchase.index'))->with(['success'=>'Payment Added successfully']);
@@ -328,4 +354,25 @@ $balance=0-$receipt['amount'];
     {
         //
     }
+    
+     public function payment_pdfview(Request $request)
+    {
+        
+        //if landscape heigth * width but if portrait widht *height      // dd($dataResult);
+        $customPaper = array(0,0,198.425,494.80);
+        
+        $data=PurchasePayments::find($request->id);
+        $purchases = Purchase::find($data->purchase_id);
+
+        view()->share(['purchases'=>$purchases,'data'=> $data]);
+
+        if($request->has('download')){
+        $pdf = PDF::loadView('pos.purchases.payments_pdf')->setPaper($customPaper, 'portrait');
+         return $pdf->download('PURCHASE PAYMENT REF NO # ' .  $data->trans_id . ".pdf");
+        }
+        return view('payment_pdfview');
+    }
+    
+    
+   
 }

@@ -24,6 +24,30 @@
                                             href="{{ route('truck.sticker', $truck->id)}}"  aria-controls="profile"
                                             aria-selected="false">LATRA Sticker</a>
                                     </li>
+                                  <li class="nav-item">
+                                        <a class="nav-link" id="#tab2" 
+                                            href="{{ route('truck.permit', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">Road Permit</a>
+                                    </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" id="#tab2" 
+                                            href="{{ route('truck.comesa', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">COMESA</a>
+                                    </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" id="#tab2" 
+                                            href="{{ route('truck.carbon', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">CARBON</a>
+                                <li class="nav-item">
+                                        <a class="nav-link" id="#tab5" 
+                                            href="{{ route('truck.wma', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">WMA</a> 
+                                </li> 
+                                 <li class="nav-item">
+                                        <a class="nav-link" id="#tab6" 
+                                            href="{{ route('truck.device', $truck->id)}}"  aria-controls="profile"
+                                            aria-selected="false">Tracking Device</a> 
+                                </li>
                                <li class="nav-item">
                                         <a class="nav-link  active" id="#tab3" 
                                             href="{{ route('truck.fuel', $truck->id)}}"  aria-controls="profile"
@@ -95,7 +119,7 @@
                                                 <div class="tab-pane fade @if($type =='fuel') active show @endif" id="home2" role="tabpanel"
                                                     aria-labelledby="home-tab2">
                                                     <div class="table-responsive">
-                                                        <table class="table table-striped" id="table-1">
+                                                        <table class="table datatable-basic table-striped">
                                                             <thead>
                                                                 <tr>
                                 
@@ -166,6 +190,22 @@
 @endsection
 
 @section('scripts')
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
 <script>
     function myFunction() {

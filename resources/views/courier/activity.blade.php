@@ -38,29 +38,23 @@
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 146.484px;">Staff Phone</th>
-
-                                                    
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">REF NO - Shipment Name</th>
+                                                    style="width: 126.484px;">WB No</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Weight</th>
+                                                    style="width: 146.484px;">Route</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Route</th>
+                                                    style="width: 106.219px;">Tariff</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Date</th>
+                                                    style="width: 121.219px;">Date</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Activity Performed</th>
+                                                    style="width: 161.219px;">Activity Performed</th>
 
                                             </tr>
                                         </thead>
@@ -68,51 +62,19 @@
                                             @if(!@empty($activity))
                                             @foreach ($activity as $row)
                                             <tr class="gradeA even" role="row">
-                                                @if ($row->module == 'Order')
-                                               
-                                                @php
-                                                 $order=App\Models\orders\Transport_quotation::find($row->module_id);
-                                                                                            
-                                            @endphp
-
-                                            @else
                                             @php
-                                            $pacel=App\Models\Courier\CourierLoading::find($row->loading_id); 
-                                            $route = App\Models\Route::find($pacel->route_id); 
+                                            $pacel=App\Models\Courier\CourierCollection::find($row->collection_id); 
+                                            $route = App\Models\Tariff::find($pacel->tariff_id); 
+                                            $start = App\Models\Region::find($pacel->start_location); 
+                                           $end = App\Models\Region::find($pacel->end_location); 
                                         @endphp
                                         
-                                            @endif
 
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{$row->user->name}}</td>
-                                                <td>{{$row->user->phone}}</td>
-                                                
-                                              
-
-                                                @if ($row->module == 'Order')
-                                                <td>
-                                                    @php
-                                                    $name=App\Models\Crops_type::where('id',$order->crop_type)->first();
-                                                @endphp
-                                                    {{$name->crop_name}}</td>  
-                                               
-                                                @else
-                                             
-                                                <td>{{$pacel->pacel_number}} - {{$pacel->pacel_name}} </td>
-                                                   @endif
-
-                                                   @if ($row->module == 'Order')
-                                                   <td> {{$order->quantity}} kgs</td> 
-                                                   @else                                               
-                                                   <td>{{$pacel->weight}} kgs </td>
-                                                      @endif
-
-                                                    @if ($row->module == 'Order')
-                                                      <td> From {{$order->start_location}} to {{$order->end_location}}</td> 
-                                                      @else                                               
-                                                      <td> From {{$route->from}} to {{$route->to}}</td>
-                                                         @endif
-
+                                                <td>{{$pacel->wbn_no}}  </td>                                            
+                                                   <td>From {{$start->name}} to {{$end->name}} </td>                                        
+                                                      <td>@if(!empty($route)) {{$route->zone_name}} - {{$route->weight}} @else {{$pacel->tariff_id }} @endif   </td>
                                                 <td>{{$row->date}}</td>
                                                 <td>{{$row->activity}}</td>
                                             </tr>
@@ -136,12 +98,11 @@
 </section>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
     </div>
 </div>
-</div>
-</div>
+
 
 
 

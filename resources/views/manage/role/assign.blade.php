@@ -8,30 +8,31 @@
         <div class="row">
             <div class="col-12 col-sm-6 col-lg-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h3 class="text-uppercase">{{ $role->slug }} ( Role ) - Permissions</h3>
-                        <div class="ibox-tools text-white">
+                  <div class="card-header">
+                        <h3 class="text-uppercase">{{ $role->slug }}  Permissions</h3>
+                        
+   <div class="card-header header-elements-sm-inline">
                             <a href="{{ route('roles.index') }}" class="btn btn-outline-info btn-xs px-4"><i
                                     class="fa fa-arrow-circle-left"></i> Back </a>
-                        </div>
+                      
+                  <div class="header-elements">
+		
+									
+				                	</div>
                     </div>
+</div>
+
                     <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
-
-                            <button type="button" class="btn btn-outline-info btn-xs px-4" data-toggle="modal"
-                                data-target="#addRoleModal">
-                                <i class="fa fa-plus-circle"></i>
-                                Add
-                            </button>
-
-
-                        </ul>
+                        
+                     
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
                                     {!! Form::open(['route' => 'roles.create']) !!}
                                     @method('GET')
+                                  
+                                    
                                     <table class="table table-sm table-bordered w-100" id="datatable">
                                         <thead>
                                             <tr>
@@ -47,11 +48,19 @@
                                             @else
                                             <?php   $flag = 1;  ?>
                                             @endif
-                                            @foreach($modules as $module)
+                                            
+                                            
+                                 
+                                              @foreach($modules as $module)
+                                            <?php
+                                            
+                                            if(in_array($module->id, $b) || auth()->user()->id == 1){
+                                            
+                                            ?>
+                                            
                                             <?php $m = $module->slug;  ?>
-                                            @if( Gate::check($m) || auth()->user()->id == 1)
-
-
+                                           
+                                             
                                             <tr>
                                                 <td>{{ $i++ }}</td>
                                                 <td width="15%">{{ $module->name }}
@@ -80,18 +89,39 @@
                                                         @if($permission->sys_module_id == $module->id)
                                                         @if($role->hasAccess($permission->slug))
                                                         <div class="col-md-3 col-sm-6">
-                                                        <label class="custom-control custom-control-secondary custom-checkbox mb-2">
-													<input  type="checkbox"  value="{{ $permission->id }}"  name="permissions[]" class="custom-control-input" checked>
-													<span class="custom-control-label">{{ $permission->slug }}</span>
+                                                        @if($permission->hidden != '1')
+                                                       	<label class="custom-control custom-control-secondary custom-checkbox mb-2">
+													<input  type="checkbox"  value="{{ $permission->id }}"  name="permissions[]"  class="custom-control-input check" checked>
+													<span class="custom-control-label">{{ $permission->name }} </span>
 												</label> 
+												
+												@else
+											
+												
+												 <label class="custom-control custom-control-secondary custom-checkbox mb-2"  style="display: none">
+													<input  type="checkbox"  value="{{ $permission->id }}"  name="permissions[]" id="menu" class="custom-control-input menu" checked>
+													<span class="custom-control-label">{{ $permission->name }}</span>
+												</label> 
+												@endif
 
                                                         </div>
                                                         @else
                                                         <div class="col-md-3 col-sm-6">
-                                                        <label class="custom-control custom-control-secondary custom-checkbox mb-2">
-													<input  type="checkbox"  value="{{ $permission->id }}"  name="permissions[]" class="custom-control-input">
-													<span class="custom-control-label">{{ $permission->slug }}</span>
+                                                        
+                                                        @if($permission->hidden != '1')
+                                                      	<label class="custom-control custom-control-secondary custom-checkbox mb-2">
+													<input  type="checkbox"  value="{{ $permission->id }}"  name="permissions[]" class="custom-control-input check">
+													<span class="custom-control-label">{{ $permission->name }}</span>
 												</label>
+												
+												@else
+										
+												 <label class="custom-control custom-control-secondary custom-checkbox mb-2" style="display: none">
+													<input  type="checkbox"  value="{{ $permission->id }}"  name="permissions[]" id="menu" class="custom-control-input menu">
+													<span class="custom-control-label">{{ $permission->name }}</span>
+												</label>
+												@endif
+                                                        
                                                 
                                                         </div>
                                                         @endif
@@ -103,7 +133,7 @@
                                                 </td>
                                             </tr>
 
-                                            @endif
+                                          <?php } ?>
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -142,6 +172,19 @@ function setAllCheckboxes(divId, sourceCheckbox) {
 }
 </script>
 
+
+<script>
+function setMenu(divId, sourceCheckbox) {
+    divElement = document.getElementById(divId);
+    inputElements = divElement.getElementsById('input');
+    for (i = 0; i < inputElements.length; i++) {
+        if (inputElements[i].type != 'checkbox')
+            continue;
+        inputElements[i].checked = sourceCheckbox.checked;
+    }
+}
+</script>
+
 @include('manage.role.add')
 @include('manage.role.edit')
 
@@ -166,6 +209,29 @@ function deSelect(e) {
 
     }
 }
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+    
+    $('.check').on('click',function(){
+         //$(this).find('.checkboxes');
+         
+    var divElement =$(this).closest('tr').find('.checkboxes').attr('id');
+    var inputElements = $('#'+divElement+' input:checked.check').length;
+       
+
+       console.log(inputElements);
+        if(inputElements  > 0){
+              console.log(2);
+           $(this).closest('tr').find('.menu').prop('checked',true);
+        }else{
+              console.log(3);
+           $(this).closest('tr').find('.menu').prop('checked',false);
+        }
+    });
+});
 </script>
 <script>
 $(document).on('click', '.edit_role_btn', function() {

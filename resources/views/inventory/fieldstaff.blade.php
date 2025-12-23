@@ -28,18 +28,22 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
                                                     style="width: 186.484px;">Name</th>
+                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Platform(s): activate to sort column ascending"
+                                                    style="width: 186.484px;">Type</th>
                                                
                                                
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
@@ -54,19 +58,22 @@
                                             <tr class="gradeA even" role="row">
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{$row->name }}</td>
+                                                <td>{{$row->type }}</td>
+                                                
+                                               
                                                 
                                                 <td>
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        href="{{ route("fieldstaff.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
+                                                <div class="form-inline">
+                                                    <a class="list-icons-item text-primary" href="{{ route("fieldstaff.edit", $row->id)}}">
+                                                       <i class="icon-pencil7"></i>
                                                     </a>
                                                    
 
                                                     {!! Form::open(['route' => ['fieldstaff.destroy',$row->id],
                                                     'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit','style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
                                                     {{ Form::close() }}
-
+                                                       </div>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -105,6 +112,19 @@
                                                     </div>
                                                 </div>
                                                
+                                                      
+                                         <div class="form-group row"><label
+                                                class="col-lg-2 col-form-label">Type</label>
+
+                                            <div class="col-lg-10">
+                                               <select class="form-control m-b"  name="type" required>
+                                                   <option value="">Select</option>
+                                               <option @if(isset($data)){{$data->type == 'Permanent'  ? 'selected' : ''}} @endif value="Permanent">Permanent</option>
+                                                <option @if(isset($data)) {{$data->type == 'Temporary'  ? 'selected' : ''}} @endif value="Temporary">Temporary</option>
+                                                 </select>
+                                                
+                                            </div>
+                                        </div>
                                               
                                                 <div class="form-group row">
                                                     <div class="col-lg-offset-2 col-lg-12">
@@ -139,6 +159,22 @@
 @endsection
 
 @section('scripts')
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 <script>
 $(document).ready(function() {
     $('.dataTables-example').DataTable({

@@ -2,6 +2,7 @@
 
 
 @section('content')
+        
 <section class="section">
     <div class="section-body">
         <div class="row">
@@ -11,15 +12,7 @@
                         <h4>Journal Entry Report</h4>
                     </div>
                     <div class="card-body">
-                        <ul class="nav nav-tabs" id="myTab2" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link @if(empty($id)) active show @endif" id="home-tab2" data-toggle="tab"
-                                    href="#home2" role="tab" aria-controls="home" aria-selected="true">Journal Entry Report
-                                    List</a>
-                            </li>
-                       
-
-                        </ul>
+                      
                         <div class="tab-content tab-bordered" id="myTab3Content">
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
@@ -27,9 +20,8 @@
 <br>
         <div class="panel-heading">
             <h6 class="panel-title">
-                Journal Entries 
-                @if(!empty($start_date))
-                    for the period: <b>{{$start_date}} to {{$end_date}}</b>
+               @if(!empty($start_date))
+                  For the period: <b>{{Carbon\Carbon::parse($start_date)->format('d/m/Y')}}  to {{Carbon\Carbon::parse($end_date)->format('d/m/Y')}}</b>
                 @endif
             </h6>
         </div>
@@ -61,8 +53,18 @@
                 ?>">
                 </div>
                 <div class="col-md-4">
-                    <label class="">Chart of Accounts</label>
-                    {!! Form::select('account_id',$chart_of_accounts,$account_id, array('class' => 'select2','id'=>'account_id', 'placeholder'=>'Select','required'=>'required')) !!}
+                    <label class="">Account</label>
+                   <select class="form control m-b account" id="account_id" name="account_id" required>
+                   <option value="">Select Account</option>
+                     <option value="all" @if(isset($account_id)){{  $account_id == 'all'  ? 'selected' : ''}} @endif>All Accounts</option>
+                   @foreach($chart_of_accounts as $group => $ch)
+                   <optgroup label="{{$group}}"> @foreach($ch as $chart)
+                   <option value="{{$chart->id}}" @if(isset($account_id)){{  $account_id == $chart->id  ? 'selected' : ''}} @endif>{{$chart->account_name}}</option>
+                   @endforeach
+                   </optgroup> 
+                   @endforeach
+              
+                   </select>
                 </div>
 
    <div class="col-md-4">
@@ -83,11 +85,14 @@
         <div class="panel panel-white">
             <div class="panel-body ">
                 <div class="table-responsive">
-                     <table class="table table-striped table-condensed table-hover" id="tableExport" style="width:100%;">
+                
+                                    
+                                    
+                     <table class="table datatable-button-html5-basic">
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Transaction Type</th>
+                            <th> Type</th>
                             <th>Date</th>
                             <th>Account Name</th>
                             <th>Debit</th>
@@ -104,10 +109,10 @@ $cr=0;
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{$key->transaction_type}}</td>
-                                <td>{{ $key->date }}</td>
+                                <td>{{Carbon\Carbon::parse($key->date)->format('d/m/Y')}}</td>
                                 <td>
                                     @if(!empty($key->chart))
-                                        {{ $key->chart->name }}
+                                        {{ $key->chart->account_name }}
                                     @endif
                                 </td>
                                  
@@ -131,6 +136,7 @@ $cr+=$key->credit;
                                     
     
                             </tr>
+                            
                         </tfoot>
                     </table>
                 </div>
@@ -158,51 +164,48 @@ $cr+=$key->credit;
 @endsection
 
 @section('scripts')
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/jquery.dataTables.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/datatables/css/buttons.dataTables.min.css') }}">
+
+<script src="{{asset('assets/datatables/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('assets/datatables/js/dataTables.buttons.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/jszip.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/pdfmake.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/vfs_fonts.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.html5.min.js')}}"></script>
+<script src="{{asset('assets/datatables/js/buttons.print.min.js')}}"></script>
 <script>
-$(document).ready(function() {
-    new TomSelect("#account_id",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
+
+      $('.datatable-button-html5-basic').DataTable(
+        {
+        dom: 'lBfrtip',
+
+        buttons: [
+          {extend: 'copyHtml5',title: 'JOURNAL ENTRY REPORT FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d-m-Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d-m-Y')}} ', footer: true},
+           {extend: 'excelHtml5',title: 'JOURNAL ENTRY REPORT FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d-m-Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d-m-Y')}}' , footer: true},
+           {extend: 'csvHtml5',title: 'JOURNAL ENTRY REPORT FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d-m-Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d-m-Y')}}' , footer: true},
+            {extend: 'pdfHtml5',title: 'JOURNAL ENTRY REPORT FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d-m-Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d-m-Y')}}', footer: true,
+           
+},
+            {extend: 'print',title: 'JOURNAL ENTRY REPORT FOR THE PERIOD {{Carbon\Carbon::parse($start_date)->format('d-m-Y')}} TO {{Carbon\Carbon::parse($end_date)->format('d-m-Y')}}' , footer: true}
+
+                ],
         }
-    });
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
-            },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
+      );
+     
+    </script>
 
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
 
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
+ <script>
+        $(document).ready(function(){
+            /*
+                         * Multiple drop down select
+                         */
+            $('.m-b').select2({ width: '100%', });
 
-    });
 
-});
-</script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+
+        });
+    </script>
 
 @endsection

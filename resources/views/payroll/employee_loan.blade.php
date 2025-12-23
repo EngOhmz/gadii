@@ -29,14 +29,14 @@
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
                                
-                                    <table class="table table-striped" id="table-1">
+                                    <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -86,21 +86,26 @@
                                                </td>
                                                       
                                                 <td>
-                                                  @if ($row->status == '0') 
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        href="{{ route("employee_loan.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <a class="btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4"
-                                                        href="{{ route("employee_loan.destroy", $row->id)}}">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
+                                               <div class="form-inline">
+                                                   @if ($row->status == '0') 
+                                                  <a class="list-icons-item text-primary"
+                                                        title="Edit" onclick="return confirm('Are you sure?')"
+                                                        href="{{ route('employee_loan.edit', $row->id)}}"><i
+                                                            class="icon-pencil7"></i></a>&nbsp
+                                                         
 
+                                                    {!! Form::open(['route' => ['employee_loan.destroy',$row->id],
+                                                    'method' => 'delete']) !!}
+                                                    {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::close() }}
+
+                                               
                                                 @can('approve-payment')
-                                     <a href="{{ route('employee_loan.approve',$row->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="fa fa-thumbs-up"></i> Approve</a >   
-                                       <a href="{{ route('employee_loan.reject',$row->id)}}" class="btn btn-danger mr" nclick="return confirm('Are you sure you want to Reject?')"><i class="fa fa-times"></i> Reject</a >   
+                                     <a href="{{ route('employee_loan.approve',$row->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="icon-thumbs-up3"></i> Approve</a >   
+                                       <a href="{{ route('employee_loan.reject',$row->id)}}" class="btn btn-danger mr" nclick="return confirm('Are you sure you want to Reject?')"><i class="icon-cross3"></i> Reject</a >   
                                                       @endcan 
                              @endif 
+</div>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -134,21 +139,26 @@
                                                </td>
                                                       
                                                 <td>
-                                                  @if ($row->status == '0') 
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        href="{{ route("employee_loan.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <a class="btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4"
-                                                        href="{{ route("employee_loan.destroy", $row->id)}}">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
+                                                  <div class="form-inline">
+                                                   @if ($row->status == '0') 
+                                                  <a class="list-icons-item text-primary"
+                                                        title="Edit" onclick="return confirm('Are you sure?')"
+                                                        href="{{ route('employee_loan.edit', $row->id)}}"><i
+                                                            class="icon-pencil7"></i></a>&nbsp
+                                                            
 
+                                                    {!! Form::open(['route' => ['employee_loan.destroy',$row->id],
+                                                    'method' => 'delete']) !!}
+                                                    {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::close() }}
+
+                                               
                                                 @can('approve-payment')
-                                     <a href="{{ route('employee_loan.approve',$row->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="fa fa-thumbs-up"></i> Approve</a >   
-                                       <a href="{{ route('employee_loan.reject',$row->id)}}" class="btn btn-danger mr" nclick="return confirm('Are you sure you want to Reject?')"><i class="fa fa-times"></i> Reject</a >   
+                                     <a href="{{ route('employee_loan.approve',$row->id)}}" class="btn btn-success mr" onclick="return confirm('Are you sure you want to Approve?')"><i class="icon-thumbs-up3"></i> Approve</a >   
+                                       <a href="{{ route('employee_loan.reject',$row->id)}}" class="btn btn-danger mr" nclick="return confirm('Are you sure you want to Reject?')"><i class="icon-cross3"></i> Reject</a >   
                                                       @endcan 
                              @endif 
+</div>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -185,7 +195,7 @@
                                                             class="col-lg-2 col-form-label">Employee <span class="required">*</span></label>
 
                                                         <div class="col-lg-10">
-                                                         <select name="user_id" style="width: 100%" id="user_id" class="form-control user">
+                                                         <select name="user_id" style="width: 100%" id="user_id" class="form-control m-b user">
                             <option value="">Select Employee</option>
                             <?php if (!empty($all_employee)): ?>
                                 <?php foreach ($all_employee as  $v_employee) : ?>
@@ -245,9 +255,24 @@
                                                                                                                     
 
 </div>
+ <div class=""> <p class="form-control-static" id="month_errors" style="text-align:center;color:red;"></p>   </div> 
                                                     </div>
 
                        
+                         <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Bank/Cash Account </label>
+
+                <div class="col-lg-10">
+                      <select class="form-control m-b" name="bank_id" required>
+                                    <option value="">Select Payment Account</option> 
+                                          @foreach ($bank_accounts as $bank)                                                             
+                                            <option value="{{$bank->id}}" @if(isset($advance_salary))@if($advance_salary->bank_id == $bank->id) selected @endif @endif >{{$bank->account_name}}</option>
+                                               @endforeach
+                                              </select>
+                    
+                </div>
+            </div>
+          
 
                                          <div class="form-group row"><label
                                                             class="col-lg-2 col-form-label">Reason</label>
@@ -297,17 +322,31 @@
 </section>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 @endsection
 
 @section('scripts')
 
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+<script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 
 <script type="text/javascript">
     function model(id, type) {
@@ -369,6 +408,34 @@ $(document).ready(function() {
 
     });
 
+
+$(document).on('change', '.monthyear', function() {
+        var id = $(this).val();
+    var user=$('#user_id').val();
+        $.ajax({
+            url: '{{url("payroll/findLoanMonth")}}',
+            type: "GET",
+            data: {
+                id: id,
+                  user: user,
+            },
+            dataType: "json",
+            success: function(data) {
+              console.log(data);
+            $("#month_errors").empty();
+            $("#save").attr("disabled", false);
+             if (data != '') {
+           $("#month_errors").append(data);
+           $("#save").attr("disabled", true);
+} else {
+  
+}
+            
+       
+            }
+
+        });
+  });
 
 
 

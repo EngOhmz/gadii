@@ -56,7 +56,7 @@ class LicenceController extends Controller
         $data['expire']=$request->expire;
         $data['driver_id']=$request->driver_id;
         $data['attachment']=$name;
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $licence= Licence::create($data);
  
         return redirect(route('driver.licence', $request->driver_id))->with(['success'=>"Licence Created Successfully",'type'=>"licence"]);
@@ -119,7 +119,7 @@ class LicenceController extends Controller
         $data['year']=$request->year;
         $data['expire']=$request->expire;
         $data['driver_id']=$request->driver_id;        
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
 
         if(!empty($licence->attachment)){
         if($request->hasFile('attachment')){

@@ -27,22 +27,24 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                   <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr>
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Ref No</th>
-                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                    rowspan="1" colspan="1"
-                                                    aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Item Name</th>
+                                                    style="width: 146.484px;">Ref No</th>
+                                                    
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 141.219px;">Status</th>
+                                                    style="width: 141.219px;">Product</th>
+                                                    
+                                                <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                    rowspan="1" colspan="1"
+                                                    aria-label="Engine version: activate to sort column ascending"
+                                                    style="width: 141.219px;">Description</th>
 
                                               
 
@@ -57,90 +59,47 @@
                                             @foreach ($billofmaterial as $row)
                                             <tr class="gradeA even" role="row">
 
-                                                <td>
+                                               <td>
                                                     <a class="nav-link" id="profile-tab2"
                                                             href="{{ route('bill_of_material.show',$row->id)}}" role="tab"
                                                             aria-selected="false">{{$row->reference_no}}</a>
-                                                </td>
-                                                <td>
-                                                @php
-                                                $data = \App\Models\Manufacturing\Inventory::find($row->manufactured_item);
-                                                @endphp
-                                                      {{ !empty($data) ? $data->name : ""}}
-                                                </td>
+                                                </td> 
                                                 
-                                               
-                                               
-
-
+                                                 @php $product_m = App\Models\POS\Items::find($row->product); @endphp
+                                                
+                                                @if(!empty($product_m))
                                                 <td>
-                                                    @if($row->status == 0)
-                                                    <div class="badge badge-danger badge-shadow">Not Approved</div>
-                                                    @elseif($row->status == 1)
-                                                    <div class="badge badge-warning badge-shadow">Not Paid</div>
-                                                    @elseif($row->status == 2)
-                                                    <div class="badge badge-info badge-shadow">Partially Paid</div>
-                                                    @elseif($row->status == 3)
-                                                    <span class="badge badge-success badge-shadow">Fully Paid</span>
-                                                    @elseif($row->status == 4)
-                                                    <span class="badge badge-danger badge-shadow">Cancelled</span>
-
-                                                    @endif
+                                                     {{$product_m->name}}
                                                 </td>
-                                               
-                                                 @if($row->status != 4 && $row->status != 3)
+                                                @else
+                                                <td>-</td>
+                                                @endif
+                                                
                                                 <td>
-                                                    @if($row->good_receive == 0)
+                                                    {{$row->description}}
+                                                </td>
+                                             
+
+                                              
+                                               
+                                                <td>
+                                                   <div class="form-inline">
                                                     <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
                                                         title="Edit" onclick="return confirm('Are you sure?')"
                                                         href="{{ route('bill_of_material.edit', $row->id)}}"><i
-                                                            class="fa fa-edit"></i></a>
-                                                            @endif
+                                                            class="icon-pencil7"></i></a>&nbsp
 
                                                     {!! Form::open(['route' => ['bill_of_material.destroy',$row->id],
                                                     'method' => 'delete']) !!}
-                                                    {{ Form::button('<i class="fa fa-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'class' => 'btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
                                                     {{ Form::close() }}
-
-                                                    <div class="btn-group">
-                                                        <button class="btn btn-xs btn-success dropdown-toggle"
-                                                            data-toggle="dropdown">Change<span
-                                                                class="caret"></span></button>
-                                                        <ul class="dropdown-menu animated zoomIn">
-                                                            @if($row->status == 0)
-                                                            <li> <a class="nav-link" id="profile-tab2"
-                                                                    href="{{ route('inventory.approve',$row->id)}}"
-                                                                    role="tab"
-                                                                    aria-selected="false" onclick="return confirm('Are you sure?')">Approve Bill</a>
-                                                            </li>
-                                                            @endif
-                                                            @if($row->status != 0 && $row->status != 4 && $row->status != 3 && $row->good_receive == 0)
-                                                            <li> <a class="nav-link" id="profile-tab2"
-                                                                    href="{{ route('inventory.receive',$row->id)}}"
-                                                                    role="tab"
-                                                                    aria-selected="false">Good Receive</a>
-                                                            </li>
-                                                            @endif
-                                                             @if($row->status != 0 && $row->status != 4 && $row->status != 3 && $row->good_receive == 1)
-                                                            <li> <a class="nav-link" id="profile-tab2"
-                                                                    href="{{ route('inventory.pay',$row->id)}}"
-                                                                    role="tab"
-                                                                    aria-selected="false">Make Payments</a>
-                                                            </li>
-                                                            @endif
-                                                             @if($row->good_receive == 0)
-                                                            <li class="nav-item"><a class="nav-link" title="Cancel"
-                                                                    onclick="return confirm('Are you sure?')"
-                                                                    href="{{ route('inventory.cancel', $row->id)}}">Cancel
-                                                                   Bill</a></li>
-                                        @endif
-                                                        </ul>
+                                                    
                                                     </div>
 
+                                                   
+
                                                 </td>
-                                                @else
-                                                <td></td>
-                                                @endif
+                                                
                                             </tr>
                                             @endforeach
 
@@ -178,51 +137,138 @@
                                                 value="{{$type}}" />
 
                                                 <div class="form-group row">
-                                                    <label class="col-lg-2 col-form-label">Select Item To be manufactured</label>
-                                                    <div class="col-lg-4">
-                                                        <select class="form-control" name="manufactured_item" required
-                                                        id="location">
-                                                        <option value="">Select Item</option>
-                                                        @if(!empty($item))
-                                                        @foreach($item as $row)
-
-                                                        <option @if(isset($data))
-                                                            {{  $data->manfactured_item == $row->id  ? 'selected' : ''}}
-                                                            @endif value="{{ $row->id}}">{{$row->name}}</option>
-
-                                                        @endforeach
-                                                        @endif
-
-                                                    </select>
+                                                    <label class="col-lg-4 col-form-label">Enter Description Of Bill of Material</label>
+                                                    <div class="col-lg-8">
+                                                        <input type="text" name="description"
+                                                                    class="form-control"
+                                                                    placeholder="Description....." required
+                                                                    value="{{ isset($data) ? $data->description : ''}}" />
                                                         
                                                     </div>
-                                                    <label class="col-lg-2 col-form-label">Select Work Centre</label>
-                                                    <div class="col-lg-4">
-                                                        <div class="input-group">
-                                                      <select class="form-control" name="work_centre1" required
-                                                        id="location">
-                                                        <option value="">Select Work Centre</option>
-                                                        @if(!empty($work_centre))
-                                                        @foreach($work_centre as $row)
-
-                                                        <option @if(isset($data))
-                                                            {{  $data->work_centre == $row->id  ? 'selected' : ''}}
-                                                            @endif value="{{ $row->id}}">{{$row->name}}</option>
-
-                                                        @endforeach
-                                                        @endif
-
-                                                    </select>
-                                                       <!--     <div class="input-group-append">
-                                                                <button class="btn btn-primary" type="button"
-                                                                    data-toggle="modal" value=""
-                                                                    data-target="#appFormModal"  href="appFormModal"><i
-                                                                        class="fa fa-plus-circle"></i></button>
-                                                            </div> -->
-                                                        </div>
+                                                    
+                                                </div>
+                                                
+                                                <div class="form-group row">
+                                                <label class="col-lg-4 col-form-label">Bill Of Material Type</label>
+                                                   <div class="col-lg-8">
+                                                   <select class="form-control m-b related_class" name="bill_type" required
+                                                                id="bill_type">
+                                                                <option >Select Type </option>
+                                                                <option value="1" @if(isset($data))@if($data->bill_type == '1') selected @endif @endif >Finish Goods Type</option>
+                                                                <option value="2" @if(isset($data))@if($data->bill_type == '2') selected @endif @endif >Semi-Finished Type</option>
+                                                             </select>
                                                     </div>
                                                 </div>
+                                                
+                                                
+                                                 <div id="projectDiv" style="display:none">
+                                                
+                                                <div class="form-group row">
+                                                <label class="col-lg-4 col-form-label">Products For Manufacture</label>
+                                                      <div class="col-lg-8">
+                                                   <select class="form-control m-b" name="product" required
+                                                                id="product">
+                                                                <option value="">Select Product Name</option>
+                                                                @if(!empty($products))
+                                                                @foreach($products as $row)
 
+                                                                <option @if(isset($data))
+                                                                    {{  $data->product == $row->id  ? 'selected' : ''}}
+                                                                    @endif value="{{ $row->id}}">{{$row->name}}</option>
+
+                                                                @endforeach
+                                                                @endif
+                                                                
+                                                                @if(!empty($bottles))
+                                                                @foreach($bottles as $row2)
+
+                                                                <option @if(isset($data))
+                                                                    {{  $data->product == $row2->id  ? 'selected' : ''}}
+                                                                    @endif value="{{ $row2->id}}">{{$row2->name}}</option>
+
+                                                                @endforeach
+                                                                @endif
+
+                                                        </select> 
+                                                    </div>
+                                                                
+                                                </div>
+                                                
+                                                </div>
+                                                
+                                                
+                                                <div id="leadsDiv" style="display:none">
+                                                
+                                                <div class="form-group row">
+                                                <label class="col-lg-4 col-form-label">Semi Finished Products For Manufacture</label>
+                                                   <div class="col-lg-8">
+                                                   <select class="form-control m-b" name="product22" 
+                                                                id="product">
+                                                                <option value="">Select Semi Finished Product Name </option>
+                                                                @if(!empty($semis))
+                                                                @foreach($semis as $row)
+
+                                                                <option @if(isset($data))
+                                                                    {{  $data->product == $row->id  ? 'selected' : ''}}
+                                                                    @endif value="{{ $row->id}}">{{$row->name}}</option>
+
+                                                                @endforeach
+                                                                @endif
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                </div>
+                                                
+                                                
+                                                
+                                                
+                                                 <div class="form-group row">
+                                                 <label class="col-lg-4 col-form-label">Excise Duty (Per Litre)</label>
+
+                                                    <div class="col-lg-8">
+                                                        <input type="number" name="duty_excess" step="any" required
+                                                            value="{{ isset($data) ? $data->duty_excess : ''}}"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                             <!--   <div class="form-group row">
+                                                 <label class="col-lg-4 col-form-label">Need To Add Materials To be Used</label>
+                                                 
+                                                    <div class="col-lg-8">
+                                                    <select class="form-control m-b related_class2233" name="material_needed" required
+                                                                id="material_needed">
+                                                                <option >Select Type </option>
+                                                                <option value="0" @if(isset($data))@if($data->material_needed == '0') selected @endif @endif >No</option>
+                                                                <option value="1" @if(isset($data))@if($data->material_needed == '1') selected @endif @endif >Yes</option>
+                                                             </select>
+                                                    </div>
+
+                                                </div>  -->
+                                                
+                                              <!--   <div class="form-group row">
+                                                <label class="col-lg-4 col-form-label">Store Location For Manufacture</label>
+                                                      <div class="col-lg-8">
+                                                   <select class="form-control m-b" name="location_id" required
+                                                                id="location_id">
+                                                                <option value="">Select Store Location</option>
+                                                                @if(!empty($locations))
+                                                                @foreach($locations as $row)
+
+                                                                <option @if(isset($data))
+                                                                    {{  $data->location_id == $row->id  ? 'selected' : ''}}
+                                                                    @endif value="{{ $row->id}}">{{$row->name}}</option>
+
+                                                                @endforeach
+                                                                @endif
+
+                                                        </select>
+                                                    </div>
+                                                                
+                                                </div>  -->
 
 
                                                 <br>
@@ -237,10 +283,7 @@
                                                 <table class="table table-bordered" id="cart">
                                                     <thead>
                                                         <tr>
-                                                            <th>Name</th>
-                                                            <th>Description</th>
-                                                            <th>Location</th>
-                                                            <th>Work Centre</th>
+                                                            <th>Item Name</th>
                                                             <th>Quantity</th>
                                                             <th>Unit</th>
                                                             <th>Action</th>
@@ -256,52 +299,33 @@
                                                         @foreach ($items as $i)
                                                         <tr class="line_items">
                                                             <td><select name="item_name[]"
-                                                                    class="form-control item_name" required
+                                                                    class="form-control m-b item_name" required
                                                                     data-sub_category_id={{$i->order_no}}>
-                                                                    <option value="">Select Item</option>@foreach($name
-                                                                    as $n) <option value="{{ $n->id}}"
-                                                                        @if(isset($i))@if($n->id == $i->item_name)
-                                                                        selected @endif @endif >{{$n->name}}</option>
+                                                                    <option value="">Select Item</option>
+                                                                    @foreach($name as $n) 
+                                                                     <option @if(isset($i)) {{  $i->items_id == $n->id  ? 'selected' : ''}} @endif value="{{ $n->id}}" >{{$n->name}}</option>
                                                                     @endforeach
                                                                 </select></td>
-                                                                  <td><input type="text" name="description[]"
-                                                                    class="form-control item_quantity{{$i->order_no}}"
-                                                                    placeholder="description" id="description"
-                                                                    value="{{ isset($i) ? $i->description : ''}}"
-                                                                    required /></td>
-                                                                      <td><select name="location[]"
-                                                                    class="form-control location" required
-                                                                    data-sub_category_id={{$i->order_no}}>
-                                                                    <option value="">Select Location</option>@foreach($location
-                                                                    as $n) <option value="{{ $n->id}}"
-                                                                        @if(isset($i))@if($n->id == $i->location)
-                                                                        selected @endif @endif >{{$n->name}}</option>
-                                                                    @endforeach
-                                                                </select></td>
-                                                                 <td><select name="work_centre[]"
-                                                                    class="form-control location" required
-                                                                    data-sub_category_id={{$i->order_no}}>
-                                                                    <option value="">Select Work Centre</option>@foreach($work_centre
-                                                                    as $n) <option value="{{ $n->id}}"
-                                                                        @if(isset($i))@if($n->id == $i->location)
-                                                                        selected @endif @endif >{{$n->name}}</option>
-                                                                    @endforeach
-                                                                </select></td>
-                                                            <td><input type="number" name="quantity[]"
+                                                            <td><input type="number" name="quantity[]" step="any"
                                                                     class="form-control item_quantity{{$i->id}}"
                                                                     placeholder="quantity" id="quantity"
                                                                     value="{{ isset($i) ? $i->quantity : ''}}"
                                                                     required /></td>
                                                             
-                                                            <td><input type="text" name="unit[]"
+                                                            <td><input type="text" name="unit[]" 
                                                                     class="form-control item_unit{{$i->order_no}}"
                                                                     placeholder="unit" required
                                                                     value="{{ isset($i) ? $i->unit : ''}}" />
-                                                        </td>
+                                                                </td>       
                                                       
                                                             <input type="hidden" name="items_id[]"
                                                                 class="form-control name_list"
                                                                 value="{{ isset($i) ? $i->id : ''}}" />
+                                                                
+                                                            <input type="hidden" name="saved_items_id[]"
+                                                                class="form-control item_saved{{$i->order_no}}"
+                                                                value="{{ isset($i) ? $i->id : ''}}"
+                                                                required />    
                                                             <td><button type="button" name="remove"
                                                                     class="btn btn-danger btn-xs rem"
                                                                     value="{{ isset($i) ? $i->id : ''}}"><i
@@ -444,44 +468,21 @@
 
 @section('scripts')
 <script>
-$(document).ready(function() {
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"orderable": false, "targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-
-    });
-
-});
-</script>
-<script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+        
+        });
+    </script>
 
 <script>
 $(document).ready(function() {
@@ -515,6 +516,46 @@ $(document).ready(function() {
 });
 </script>
 
+    <script type="text/javascript">
+$(document).ready(function() {
+
+    $(document).on('change', '.related_class', function() {
+
+
+        var id = $(this).val();
+
+        if (id == '1') {
+            $('#projectDiv').show();
+            $('#leadsDiv').hide();
+        } else if (id == '2') {
+            $('#projectDiv').hide();
+            $('#leadsDiv').show();
+        }
+
+
+    });
+});
+</script>
+
+    <script type="text/javascript">
+$(document).ready(function() {
+
+    $(document).on('change', '.related_class2233', function() {
+
+
+        var id = $(this).val();
+
+        if (id == '0') {
+            $('#leadsDiv22').hide();
+        } else if (id == '1') {
+            $('#leadsDiv22').show();
+        }
+
+
+    });
+});
+</script>
+
 
 
 <script type="text/javascript">
@@ -543,31 +584,22 @@ $(document).ready(function() {
         var html = '';
         html += '<tr class="line_items">';
         html +=
-            '<td><select name="item_name[]" class="form-control item_name" required  data-sub_category_id="' +
+            '<td><select name="item_name[]" class="form-control m-b item_name" required  data-sub_category_id="' +
             count +
             '"><option value="">Select Item</option>@foreach($name as $n) <option value="{{ $n->id}}">{{$n->name}}</option>@endforeach</select></td>';
         html +=
-            '<td><input type="number" name="description[]" class="form-control item_quantity" data-category_id="' +
-            count + '"placeholder ="description" id ="description" required /></td>';
-        html +=
-            '<td><select name="location[]" class="form-control location" required  data-sub_category_id="' +
-            count +
-            '"><option value="">Select Location</option>@foreach($location as $l) <option value="{{ $l->id}}">{{$l->name}}</option>@endforeach</select></td>';
-        html +=
-            '<td><select name="work_centre[]" class="form-control work_centre" required  data-sub_category_id="' +
-            count +
-            '"><option value="">Select Item</option>@foreach($work_centre as $w) <option value="{{ $w->id}}">{{$w->name}}</option>@endforeach</select></td>';
-            
-        html +=
-            '<td><input type="number" name="quantity[]" class="form-control item_quantity" data-category_id="' +
+            '<td><input type="number" step="any" name="quantity[]" class="form-control item_quantity" data-category_id="' +
             count + '"placeholder ="quantity" id ="quantity" required /></td>';
-      
+            
         html += '<td><input type="text" name="unit[]" class="form-control item_unit' + count +
-            '" placeholder ="unit" required /></td>';
+            '" placeholder ="unit" required /></td>';   
+            
         html +=
             '<td><button type="button" name="remove" class="btn btn-danger btn-xs remove"><i class="fas fa-trash"></i></button></td>';
 
         $('tbody').append(html);
+      $('.m-b').select2({
+                            });
         autoCalcSetup();
     });
 

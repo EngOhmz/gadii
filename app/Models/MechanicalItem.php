@@ -11,13 +11,10 @@ class MechanicalItem extends Model
 
     protected $table = "mechanical_item";
 
-    protected $fillable = [      
-         'module',
-         'module_id',
-         'item_name',
-         'order_no',
-         'date',   
-        'added_by'];
+   protected $guarded = [
+         'id',      
+       'token'];
+    
     
         public function service(){
     

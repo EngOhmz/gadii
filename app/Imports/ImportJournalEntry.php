@@ -25,37 +25,63 @@ class ImportJournalEntry  implements ToCollection,WithHeadingRow
     *
     * @return \Illuminate\Database\Eloquent\Model|null
     */
+    
+     public $notploaded; 
+     
     public function collection(Collection $rows)
     {
      
-        //  $myDateTime = DateTime::createFromFormat('Y-m-d', strtotime($row[2]));
-        //  $year = $myDateTime->format('Y');
-        //  $month = $myDateTime->format('M');
 
-
+        $total_dr=0;
+          $total_cr=0;
+          
+         //check sum    
          foreach ($rows as $row) 
       {
+            $total_dr+= $row['debit'];
+         $total_cr+= $row['credit'];
+         
+          $sum=abs($total_dr-$total_cr);
+          
+      }
+      
+      
+          
+         foreach ($rows as $row) 
+      {
+          
+
+         if($sum != '0'){
+             $this->notploaded = 'not uploaded';
+             
+         }
+          
+         
+          
+          else{
           $new= \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date'])->format('Y-m-d');
-//dd($new);
-              $date = explode('-', $new);
-     $journal= JournalEntry::create([
-        'gl_code' => AccountCodes::where('account_name',$row['name'])->get()->first()->account_codes,
-        'account_id' => AccountCodes::where('account_name',$row['name'])->get()->first()->account_id,
-       'date' =>  \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date'])->format('Y-m-d'), 
+          //dd($new);
+
+        $date = explode('-', $new);
+         $journal= JournalEntry::create([
+        'account_id' => AccountCodes::where('account_name',$row['name'])->where('added_by',auth()->user()->added_by)->get()->first()->id,
+        'date' =>  \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date'])->format('Y-m-d'), 
         'month' => $date[1],     
         'year' => $date[0],
-        'credit' => $row['credit'],
         'debit' => $row['debit'],
-        'transaction_type' => 'import_entry',
-        'added_by' => auth()->user()->id,
+        'credit' => $row['credit'],
+        'notes' => $row['notes'],
+        'name' => 'Import Journal',
+        'transaction_type' => 'import_journal',
+        'added_by' => auth()->user()->added_by,
         ]);
         
 if(!empty($row['credit'])){
-        $credit=AccountCodes::where('account_name',$row['name'])->first();
+        $credit=AccountCodes::where('added_by',auth()->user()->added_by)->where('account_name',$row['name'])->first();
 //dd($credit);
-    if($credit->account_group == 'Cash and Cash Equivalent'){
+    if($credit->account_status == 'Bank'){
 
-     $account= Accounts::where('account_id',$credit->account_id)->first();
+     $account= Accounts::where('account_id',$credit->id)->first();
 
 if(!empty($account)){
 $balance=$account->balance - $row['credit'] ;
@@ -64,15 +90,15 @@ $account->update($item_to);
 }
 
 else{
-  $cr= AccountCodes::where('id',$credit->account_id)->first();
+  $cr= AccountCodes::where('added_by',auth()->user()->added_by)->where('id',$credit->id)->first();
 $balance=0- $row['credit'];
 
  Accounts::create([
-  'account_id'=>$credit->account_id,
+  'account_id'=>$credit->id,
       'account_name'=> $cr->account_name,
       'balance'=> $balance,
        'exchange_code'=>'TZS',
-        'added_by'=>auth()->user()->id,
+        'added_by'=>auth()->user()->added_by,
 ]);
    
 
@@ -83,7 +109,7 @@ $balance=0- $row['credit'];
                               $transaction= Transaction::create([
                                 'module' => 'Import Journal Entry',
                                  'module_id' =>   $journal->id,
-                               'account_id' => AccountCodes::where('account_name',$row['name'])->get()->first()->account_id,
+                               'account_id' => AccountCodes::where('account_name',$row['name'])->get()->first()->id,
                                 'name' => 'Import Journal Entry Payment',
                                 'type' => 'Expense',
                                 'amount' =>$row['credit'],
@@ -92,7 +118,7 @@ $balance=0- $row['credit'];
                                 'date' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date'])->format('Y-m-d'), 
                                    'status' => 'paid' ,
                                 'notes' => 'This expense is from import journal entry payment.' ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
 }
 
@@ -100,10 +126,10 @@ $balance=0- $row['credit'];
 
     
 if(!empty($row['debit'])){
-  $debit=AccountCodes::where('account_name',$row['name'])->first();
-    if($debit->account_group == 'Cash and Cash Equivalent'){
+  $debit=AccountCodes::where('added_by',auth()->user()->added_by)->where('account_name',$row['name'])->first();
+    if($debit->account_status == 'Bank'){
 
-     $account= Accounts::where('account_id',$debit->account_id)->first();
+     $account= Accounts::where('added_by',auth()->user()->added_by)->where('account_id',$debit->id)->first();
 
 if(!empty($account)){
 $balance=$account->balance +  $row['debit'];
@@ -112,15 +138,15 @@ $account->update($item_to);
 }
 
 else{
-  $cr= AccountCodes::where('id',$debit->account_id)->first();
+  $cr= AccountCodes::where('added_by',auth()->user()->added_by)->where('id',$debit->id)->first();
 $balance=0+$row['debit'];
 
  Accounts::create([
-     'account_id'=>$debit->account_id,
+     'account_id'=>$debit->id,
       'account_name'=> $cr->account_name,
       'balance'=> $balance,
        'exchange_code'=>'TZS',
-        'added_by'=>auth()->user()->id,
+        'added_by'=>auth()->user()->added_by,
 ]);
 
 
@@ -130,7 +156,7 @@ $balance=0+$row['debit'];
                           $transaction= Transaction::create([
                                     'module' => 'Import Journal Entry',
                                  'module_id' =>   $journal->id,
-                               'account_id' => AccountCodes::where('account_name',$row['name'])->get()->first()->account_id,
+                               'account_id' => AccountCodes::where('account_name',$row['name'])->get()->first()->id,
                                  'name' => 'Import Journal Entry Payment',
                                 'type' => 'Income',
                                 'amount' =>$row['debit'] ,
@@ -139,11 +165,17 @@ $balance=0+$row['debit'];
                                   'date' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['date'])->format('Y-m-d'), 
                                    'status' => 'paid' ,
                                 'notes' => 'This income is from import journal entry payment.' ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
 
 }
 }    
+
+
+}
+
+
+
 
     
     }

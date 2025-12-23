@@ -57,7 +57,7 @@ class PerformanceController extends Controller
         $data['effect']=$request->effect;
         $data['driver_id']=$request->driver_id;
        
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $performance= Performance::create($data);
  
         return redirect(route('driver.performance', $request->driver_id))->with(['success'=>"Performance Created Successfully",'type'=>"performance"]);
@@ -120,7 +120,7 @@ class PerformanceController extends Controller
         $data['explanation']=$request->explanation;
         $data['effect']=$request->effect;
         $data['driver_id']=$request->driver_id;
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
 
         if(!empty($performance->attachment)){
         if($request->hasFile('attachment')){

@@ -11,17 +11,29 @@ class InventoryHistory extends Model
 
     protected $table = "inventory_histories";
 
-    protected $fillable = [
-    'purchase_id',
-    'items_id', 
-    'quantity',                 
-     'supplier_id',
-    'purchase_date', 
-     'location',  
-    'added_by'];
+    protected $guarded = ['id'];
     
-    public function user()
-    {
-        return $this->belongsTo('App\Models\user');
+      public function purchase(){
+
+        return $this->belongsTo('App\Models\PurchaseInventory','purchase_id');
     }
+    
+
+ 
+public function supplier(){
+
+    return $this->BelongsTo('App\Models\Supplier','supplier_id');
+}
+ public function  store(){
+    
+        return $this->belongsTo('App\Models\Location','location');
+      }
+      
+      
+      public function user(){
+
+    return $this->BelongsTo('App\Models\User','user_id');
+}
+      
+    
 }

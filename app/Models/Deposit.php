@@ -10,21 +10,10 @@ class Deposit extends Model
 
     public $timestamps = false;
 
-    protected $fillable = [
-        'bank_id',
-        'trans_id',
-        'amount',
-        'date',
-        'type',
-       'name',
-      'ref',
-        'status',
-        'exchange_rate',
-        'exchange_code',
-        'payment_method',
-        'notes',   
-        'account_id', 
-        'added_by'];
+    protected $guarded = [
+        'id',
+        '_token',
+        ];
     
       public function classAccount()
     {

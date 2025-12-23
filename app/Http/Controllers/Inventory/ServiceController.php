@@ -10,8 +10,15 @@ use App\Models\ServiceInventory;
 use App\Models\ServiceItem;
 use App\Models\ServiceType;
 use App\Models\Truck;
-use App\Models\Inventory;
 use Illuminate\Http\Request;
+use App\Models\JournalEntry;
+use App\Models\AccountCodes;
+use App\Models\Inventory;
+use App\Models\InventoryHistory;
+use App\Models\PurchaseInventory;
+use App\Models\PurchaseItemInventory;
+use App\Models\Supplier;
+use App\Models\InventoryList;
 
 class ServiceController extends Controller
 {
@@ -23,12 +30,12 @@ class ServiceController extends Controller
     public function index()
     {
         //
-        $service=Service::all();
-        $truck = Truck::all();
-       $staff=FieldStaff::all();
+        $service=Service::where('added_by',auth()->user()->added_by)->get();
+        $truck = Truck::where('disabled','0')->where('truck_type','Horse')->where('added_by',auth()->user()->added_by)->get(); 
+       $staff=FieldStaff::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
        //$staff=User::where('id','!=','1')->get();  
-       $i_name = Inventory::all();
-      $name =ServiceType::all();
+       $i_name = Inventory::where('added_by',auth()->user()->added_by)->get();
+      $name =ServiceType::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
        return view('inventory.service',compact('service','truck','staff','i_name','name'));
     }
 
@@ -139,11 +146,11 @@ class ServiceController extends Controller
         $data=Service::find($id);
         $items=ServiceItem::where('service_id',$id)->get();
        $inv=ServiceInventory::where('service_id',$id)->get();
-        $truck = Truck::all();
-        $staff=FieldStaff::all();
+        $truck = Truck::where('disabled','0')->where('truck_type','Horse')->where('added_by',auth()->user()->added_by)->get(); 
+       $staff=FieldStaff::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
        //$staff=User::where('id','!=','1')->get();  
-  $i_name = Inventory::all();
-     $name =ServiceType::all();
+       $i_name = Inventory::where('added_by',auth()->user()->added_by)->get();
+      $name =ServiceType::where('added_by',auth()->user()->added_by)->where('disabled','0')->get();
        return view('inventory.service',compact('data','truck','staff','id','items','i_name','inv','name'));
     }
 
@@ -292,6 +299,185 @@ $qtyArr =$request->quantity ;
 }
         return redirect(route('service.index'))->with(['success'=>'Service Completed Successfully']);
     }
+    
+    
+     public function save_purchase(Request $request)
+    {
+        //
+
+        $count =  PurchaseInventory::where('added_by', auth()->user()->added_by)->count();
+        $pro = $count + 1;
+        $data['reference_no'] = 'PINV0' . $pro;
+        $data['supplier_id']=$request->supplier_id;
+        $data['purchase_date']=$request->purchase_date;
+        $data['due_date']=$request->due_date;
+        $data['location']=$request->location;
+        $data['exchange_code']=$request->exchange_code;
+        $data['exchange_rate']=$request->exchange_rate;
+        $data['purchase_amount']='1';
+        $data['due_amount']='1';
+        $data['purchase_tax']='1';
+        $data['status']='1';
+        $data['good_receive']='0';
+        $data['branch_id'] = $request->branch_id;
+        $data['user_agent'] = $request->user_agent;
+        $data['user_id'] = auth()->user()->id;
+        $data['added_by']= auth()->user()->added_by;
+
+        $purchase = PurchaseInventory::create($data);
+        
+        $amountArr = str_replace(",","",$request->amount);
+        $totalArr =  str_replace(",","",$request->tax);
+
+        $nameArr =$request->item_name ;
+        $qtyArr = $request->quantity  ;
+        $priceArr = $request->price;
+        $rateArr = $request->tax_rate ;
+        $unitArr = $request->unit  ;
+        $costArr = str_replace(",","",$request->total_cost)  ;
+        $taxArr =  str_replace(",","",$request->total_tax );
+
+        
+        $savedArr =$request->item_name ;
+        
+       $subArr = str_replace(',', '', $request->subtotal);
+        $totalArr = str_replace(',', '', $request->tax);
+        $amountArr = str_replace(',', '', $request->amount);
+        $disArr = str_replace(',', '', $request->discount);
+        $shipArr = str_replace(',', '', $request->shipping_cost);
+
+        if (!empty($nameArr)) {
+            for ($i = 0; $i < count($amountArr); $i++) {
+                if (!empty($amountArr[$i])) {
+                    $t = [
+                        'purchase_amount' => $subArr[$i],
+                        'purchase_tax' => $totalArr[$i],
+                        'shipping_cost' => $shipArr[$i],
+                        'discount' => $disArr[$i],
+                        'due_amount' => $amountArr[$i],
+                    ];
+
+                     PurchaseInventory::where('id', $purchase->id)->update($t);
+                }
+            }
+        }
+        
+        if(!empty($nameArr)){
+            for($i = 0; $i < count($nameArr); $i++){
+                if(!empty($nameArr[$i])){
+                   
+
+                    $items = array(
+                        'item_name' => $nameArr[$i],
+                        'quantity' =>   $qtyArr[$i],
+                         'due_quantity' =>   $qtyArr[$i],
+                        'tax_rate' =>  $rateArr [$i],
+                         'unit' => $unitArr[$i],
+                           'price' =>  $priceArr[$i],
+                        'total_cost' =>  $costArr[$i],
+                        'total_tax' =>   $taxArr[$i],
+                         'items_id' => $savedArr[$i],
+                           'order_no' => $i,
+                           'added_by' => auth()->user()->added_by,
+                        'purchase_id' =>$purchase->id);
+                       
+                     PurchaseItemInventory::create($items);  ;
+    
+    
+                }
+            }
+          
+            
+        }    
+        
+        
+         $inv = PurchaseInventory::find($purchase->id);
+            $supp=Supplier::find($inv->supplier_id);
+            
+                if ($inv->discount > 0) {
+                $disc = AccountCodes::where('account_name', 'Purchase Discount')->where('added_by', auth()->user()->added_by)->first();
+                $journal = new JournalEntry();
+                $journal->account_id = $disc->id;
+                $date = explode('-', $inv->purchase_date);
+                $journal->date = $inv->purchase_date;
+                $journal->year = $date[0];
+                $journal->month = $date[1];
+                $journal->transaction_type = 'inventory';
+                $journal->name = 'Inventory Purchase';
+                $journal->debit = $inv->discount * $inv->exchange_rate;
+                $journal->income_id = $inv->id;
+                $journal->branch_id = $inv->branch_id;
+                $journal->currency_code = $inv->exchange_code;
+                $journal->exchange_rate = $inv->exchange_rate;
+                $journal->added_by = auth()->user()->added_by;
+                $journal->notes = 'Inventory Purchase Discount for Purchase Order ' . $inv->reference_no . ' by Supplier ' . $supp->name;
+                $journal->save();
+
+                $cr = AccountCodes::where('account_name', 'Inventory')
+                    ->where('added_by', auth()->user()->added_by)
+                    ->first();
+                $journal = new JournalEntry();
+                $journal->account_id = $cr->id;
+                $date = explode('-', $inv->purchase_date);
+                $journal->date = $inv->purchase_date;
+                $journal->year = $date[0];
+                $journal->month = $date[1];
+                $journal->transaction_type = 'inventory';
+                $journal->name = 'Inventory Purchase';
+                $journal->credit = $inv->discount * $inv->exchange_rate;
+                $journal->income_id = $inv->id;
+                $journal->currency_code = $inv->exchange_code;
+                $journal->exchange_rate = $inv->exchange_rate;
+                $journal->added_by = auth()->user()->added_by;
+                $journal->notes = 'Inventory Purchase Discount for Purchase Order ' . $inv->reference_no . ' by Supplier ' . $supp->name;
+                $journal->save();
+            }
+
+            if ($inv->shipping_cost > 0) {
+                $shp = AccountCodes::where('account_name', 'Shipping Cost')
+                    ->where('added_by', auth()->user()->added_by)
+                    ->first();
+                $journal = new JournalEntry();
+                $journal->account_id = $shp->id;
+                $date = explode('-', $inv->purchase_date);
+                $journal->date = $inv->purchase_date;
+                $journal->year = $date[0];
+                $journal->month = $date[1];
+               $journal->transaction_type = 'inventory';
+                $journal->name = 'Inventory Purchase';
+                $journal->debit = $inv->shipping_cost * $inv->exchange_rate;
+                $journal->income_id = $inv->id;
+                $journal->currency_code = $inv->exchange_code;
+                $journal->exchange_rate = $inv->exchange_rate;
+                $journal->added_by = auth()->user()->added_by;
+                $journal->notes = 'Inventory Purchase Shipping Cost for Purchase Order ' . $inv->reference_no . ' by Supplier ' . $supp->name;
+                $journal->save();
+
+                $codes = AccountCodes::where('account_name', 'Payables')
+                    ->where('added_by', auth()->user()->added_by)
+                    ->first();
+                $journal = new JournalEntry();
+                $journal->account_id = $codes->id;
+                $date = explode('-', $inv->purchase_date);
+                $journal->date = $inv->purchase_date;
+                $journal->year = $date[0];
+                $journal->month = $date[1];
+                $journal->transaction_type = 'inventory';
+                $journal->name = 'Inventory Purchase';
+                $journal->income_id = $inv->id;
+                $journal->credit = $inv->shipping_cost * $inv->exchange_rate;
+                $journal->currency_code = $inv->exchange_code;
+                $journal->exchange_rate = $inv->exchange_rate;
+                $journal->added_by = auth()->user()->added_by;
+                $journal->notes = 'Credit Inventory Shipping Cost for Purchase Order  ' . $inv->reference_no . ' by Supplier ' . $supp->name;
+                $journal->save();
+            }
+
+        
+         return redirect(route('service.index'))->with(['success'=>'Purchase Order Created Successfully']);
+        
+    }
+
 
 
 }

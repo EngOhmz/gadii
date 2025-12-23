@@ -5,7 +5,7 @@
 <section class="section">
     <div class="section-body">
         <div class="row">
-            <div class="col-12 col-sm-6 col-lg-12">
+            <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card">
                     <div class="card-header">
                         <h4>Route</h4>
@@ -28,14 +28,14 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table-1">
+                                   <table class="table datatable-basic table-striped">
                                         <thead>
                                             <tr role="row">
 
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 208.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -65,17 +65,20 @@
 
 
                                                 <td>
+                                  <div class="form-inline">
+                                                    <a class="list-icons-item text-primary"
+                                                        title="Edit" onclick="return confirm('Are you sure?')"
+                                                        href="{{ route('routes.edit', $row->id)}}"><i
+                                                            class="icon-pencil7"></i></a>&nbsp
+                                                          
 
-                                                    <a class="btn btn-xs btn-outline-info text-uppercase px-2 rounded"
-                                                        href="{{ route("routes.edit", $row->id)}}">
-                                                        <i class="fa fa-edit"></i>
-                                                    </a>
-                                                    <a class="btn btn-xs btn-outline-danger text-uppercase px-2 rounded demo4"
-                                                        href="{{ route("routes.destroy", $row->id)}}">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
+                                                    {!! Form::open(['route' => ['routes.destroy',$row->id],
+                                                    'method' => 'delete']) !!}
+                                                    {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::close() }}
+                                              </div>
 
-
+                                                    
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -88,6 +91,8 @@
                             </div>
                             <div class="tab-pane fade @if(!empty($id)) active show @endif" id="profile2" role="tabpanel"
                                 aria-labelledby="profile-tab2">
+
+<?php $a=1; ?>
 
                                 <div class="card">
                                     <div class="card-header">
@@ -109,9 +114,9 @@
 
                                                    <div class="form-row">
                                   <div class="form-group col-md-6">
-                                    <label for="inputState">Departure Region</label>
-                                    <select  id="from_region_id" name="from_region_id" class="form-control from_region">
-                                      <option ="">Select Departure Region</option>
+                                    <label for="inputState">Departure Location</label>
+                                    <select  id="from_region_id" name="from_region_id" class="form-control m-b from_region">
+                                      <option ="">Select Departure Location</option>
                                       @if(!empty($region))
                                                         @foreach($region as $row)
 
@@ -122,43 +127,29 @@
                                                         @endforeach
                                                         @endif
                                     </select>
+                                <button class="btn btn-primary" type="button" data-toggle="modal" onclick="model({{ $a }},'departure')" value="{{ $a}}" data-target="#appFormModal"><i class="icon-plus-circle2"></i></button>
                                   </div>
+                                    <div class="form-group col-md-6">
+                                          <label class=" col-form-label">Departure Specific Place</label>
 
-                     @if(!empty($data))
-                      <div class="form-group col-md-6">
-                                    <label for="inputState">Departure District</label>
-                                    <select id="from_district_id" name="from_district_id" class="form-control from_district">
-                                      <option>Select Departure District</option>
-                                    @if(!empty($from_district))
-                                                        @foreach($from_district as $row)
-
-                                                        <option @if(isset($data))
-                                                            {{ $data->from_district_id == $row->id  ? 'selected' : ''}}
-                                                            @endif value="{{$row->id}}">{{$row->name}}</option>
-
-                                                        @endforeach
-                                                        @endif
-                                    </select>
-                                  </div>
-                 @else
-              <div class="form-group col-md-6">
-                                    <label for="inputState">Departure District</label>
-                                      <select id="from_district_id" name="from_district_id" class="form-control from_district">
-                                      <option selected="">Select Departure District</option>
-                                    
-                                    </select>
-                                  </div>
-  @endif
+                                                      
+                                                            <input type="text" name="depature_specific_place" 
+                                                                value="{{ isset($data) ? $data->depature_specific_place : ''}}"
+                                                                class="form-control">
+                                                   
+                                                        </div>
+      
                             
                              </div>
 
 
 
-                                                                         <div class="form-row">
+
+                                    <div class="form-row">
                                   <div class="form-group col-md-6">
-                                    <label for="inputState">Arrival Region</label>
-                                    <select  id="to_region_id" name="to_region_id" class="form-control to_region">
-                                      <option ="">Select Arrival Region</option>
+                                    <label for="inputState">Arrival Location</label>
+                                    <select  id="to_region_id" name="to_region_id" class="form-control m-b to_region">
+                                      <option ="">Select Arrival  Location</option>
                                       @if(!empty($region))
                                                         @foreach($region as $row)
 
@@ -169,38 +160,19 @@
                                                         @endforeach
                                                         @endif
                                     </select>
+                         <button class="btn btn-primary" type="button" data-toggle="modal" onclick="model({{ $a }},'arrival')" value="{{ $a}}" data-target="#appFormModal"><i class="icon-plus-circle2"></i></button>
                                   </div>
+                                      <div class="form-group col-md-6">
+                                   <label class="col-form-label">Arrive Specific Place</label>
 
-                     @if(!empty($data))
-                      <div class="form-group col-md-6">
-                                    <label for="inputState">Arrival District</label>
-                                    <select id="to_district_id" name="to_district_id" class="form-control to_district">
-                                      <option>Select Arrival District</option>
-                                    @if(!empty($to_district))
-                                                        @foreach($to_district as $row)
-
-                                                        <option @if(isset($data))
-                                                            {{ $data->to_district_id == $row->id  ? 'selected' : ''}}
-                                                            @endif value="{{$row->id}}">{{$row->name}}</option>
-
-                                                        @endforeach
-                                                        @endif
-                                    </select>
-                                  </div>
-                 @else
-              <div class="form-group col-md-6">
-                                    <label for="inputState">Arrival District</label>
-                                    <select id="to_district_id" name="to_district_id" class="form-control to_district">
-                                      <option selected="">Select Arrival District</option>
-                                    
-                                    </select>
-                                  </div>
-  @endif
-                            
-            
-
+                                                        
+                                                            <input type="text" name="arrive_specific_place" 
+                                                                value="{{ isset($data) ? $data->arrive_specific_place : ''}}"
+                                                                class="form-control">
+                                                        </div>
                              </div>
-
+                                                    
+                                                    
 
                                                     <div class="form-group row"><label
                                                             class="col-lg-2 col-form-label">Distance (KM)</label>
@@ -208,9 +180,61 @@
                                                         <div class="col-lg-10">
                                                             <input type="number" name="distance"  step="0.001"
                                                                 value="{{ isset($data) ? $data->distance : ''}}"
-                                                                class="form-control">
+                                                                class="form-control" required>
                                                         </div>
                                                     </div>
+                                                    
+                                                    
+                                                    
+                                                     <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Loaded Fuel (Litres) </label>
+
+                <div class="col-lg-4">
+                    <input type="number" step="0.01" min="0" name="loaded_fuel" value="{{ isset($data) ? $data->loaded_fuel : ''}}"  required class="form-control">
+                    
+                </div>
+
+                <label class="col-lg-2 col-form-label">Empty Fuel (Litres) </label>
+
+                <div class="col-lg-4">
+                    <input type="number" step="0.01" min="0" name="empty_fuel" value="{{ isset($data) ? $data->empty_fuel : ''}}"  class="form-control">
+                    
+                </div>
+            </div>
+                                                    
+                                                    
+                                                     <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Road Toll </label>
+
+                <div class="col-lg-4">
+                    <input type="number" step="0.01" min="0" name="road_toll" value="{{ isset($data) ? $data->road_toll : '0'}}"  class="form-control">
+                    
+                </div>
+
+                <label class="col-lg-2 col-form-label">Toll Gate </label>
+
+                <div class="col-lg-4">
+                    <input type="number" step="0.01" min="0" name="toll_gate" value="{{ isset($data) ? $data->toll_gate : '0'}}"  class="form-control">
+                    
+                </div>
+            </div>
+            
+  <div class="form-group row">
+                <label class="col-lg-2 col-form-label">Council </label>
+
+                <div class="col-lg-4">
+                    <input type="number" step="0.01" min="0" name="council" value="{{ isset($data) ? $data->council : '0'}}"  class="form-control">
+                    
+                </div>
+
+                <label class="col-lg-2 col-form-label">Consultant </label>
+
+                <div class="col-lg-4">
+                    <input type="number" step="0.01" min="0" name="consultant" value="{{ isset($data) ? $data->consultant : '0'}}"  class="form-control">
+                    
+                </div>
+            </div>
+          
 
                                                 <div class="form-group row">
                                                     <div class="col-lg-offset-2 col-lg-12">
@@ -241,14 +265,35 @@
     </div>
 </section>
 
+<!-- discount Modal -->
+  <div class="modal fade " id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+                          <div class="modal-dialog">
+  
+</div>
+  </div>
+
 
 @endsection
 
 @section('scripts')
 <script>
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>
 
-
-
+<script>
 $('.demo4').click(function() {
     swal({
         title: "Are you sure?",
@@ -266,29 +311,34 @@ $('.demo4').click(function() {
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 
 
+
+
 <script>
 $(document).ready(function() {
 
-    $(document).on('change', '.from_region', function() {
+    var msg='The Location already exists. Create another one.';
+
+    $(document).on('keyup', '.location', function() {
         var id = $(this).val();
         $.ajax({
-            url: '{{url("findFromRegion")}}',
+            url: '{{url("findLocation")}}',
             type: "GET",
             data: {
-                id: id
+                id: id,
             },
             dataType: "json",
-            success: function(response) {
-                console.log(response);
-                $("#from_district_id").empty();
-                $("#from_district_id").append('<option value="">Select Departure District</option>');
-                $.each(response,function(key, value)
-                {
-                 
-                    $("#from_district_id").append('<option value=' + value.id+ '>' + value.name + '</option>');
-                   
-                });                      
-               
+            success: function(data) {
+              console.log(data);
+            $("#errors").empty();
+            $("#save").attr("disabled", false);
+             if (data != '') {
+          $("#errors").append(msg);
+                 $("#save").attr("disabled", true);
+} else {
+  
+}
+            
+       
             }
 
         });
@@ -298,36 +348,74 @@ $(document).ready(function() {
 });
 </script>
 
+<script type="text/javascript">
+    function model(id,type) {
 
-<script>
-$(document).ready(function() {
-
-    $(document).on('change', '.to_region', function() {
-        var id = $(this).val();
         $.ajax({
-            url: '{{url("findToRegion")}}',
-            type: "GET",
+            type: 'GET',
+            url: '{{url("locationModal")}}',
             data: {
-                id: id
+                'id': id,
+                'type':type,
             },
-            dataType: "json",
-            success: function(response) {
-                console.log(response);
-                $("#to_district_id").empty();
-                $("#to_district_id").append('<option value="">Select Arrival District</option>');
-                $.each(response,function(key, value)
-                {
-                 
-                    $("#to_district_id").append('<option value=' + value.id+ '>' + value.name + '</option>');
-                   
-                });                      
-               
-            }
+            cache: false,
+            async: true,
+            success: function(data) {
+                //alert(data);
+                $('#appFormModal > .modal-dialog').html(data);
+            },
+            error: function(error) {
+                $('#appFormModal').modal('toggle');
 
+            }
         });
 
-    });
+    }
+    
 
-});
-</script>
+
+
+
+
+    function saveLocation(e){
+     
+     
+     var location= $('#location').val();
+     var type = $('#type').val();
+
+     
+          $.ajax({
+            type: 'GET',
+            url: '{{url("addLocation")}}',
+             data: {
+                 'location':location,
+
+             },
+          dataType: "json",
+             success: function(response) {
+                console.log(response);
+
+                               var id = response.id;
+                             var point = response.name;
+
+                             var option = "<option value='"+id+"'  selected>"+point+"</option>"; 
+ 
+                                   if(type == 'departure'){
+                             $('#from_region_id').append(option);
+                              $('#appFormModal').hide();
+                               $('.modal-backdrop').remove();
+                        }
+                          else{
+                             $('#to_region_id').append(option);
+                              $('#appFormModal').hide();
+                                $('.modal-backdrop').remove();
+                           }
+                   
+                           
+               
+            }
+          
+        });
+}
+    </script>
 @endsection

@@ -11,25 +11,11 @@ class Leave extends Model
 
     protected $table = "tbl_leave_application";
 
-    protected $fillable = [
-    'staff_id',
-    'leave_category_id',
-    'reason',
-   'leave_type',
-    'hours',
-    'leave_start_date',
-    'leave_end_date',
-    'application_status',
-    'application_date',
-        'attachment',
-        'comments',
-        'approve_by',
-    'added_by'];
-    
+    protected $guarded = ['id','_token'];
 
     public function  staff(){
     
-        return $this->belongsTo('App\Models\user','staff_id');
+        return $this->belongsTo('App\Models\User','staff_id');
       }
 
       public function category(){

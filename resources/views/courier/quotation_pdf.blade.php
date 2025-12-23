@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Larave Generate Invoice PDF - Nicesnippest.com</title>
+    <title>Courier Quotation PDF </title>
 </head>
 <style type="text/css">
     body{
@@ -99,11 +99,11 @@ footer {
 </style>
 <body>
  <?php
-$settings= App\Models\System::first();
-
+$settings= App\Models\System::where('added_by',auth()->user()->added_by)->first();
+$items=App\Models\SystemDetails::where('system_id',$settings->id)->get();
 ?>
 <div class="head-title">
-    <h2 class="text-center m-0 p-0">Courier Invoice</h1>
+    <h2 class="text-center m-0 p-0">Customer Quotation</h1>
 </div>
 
 
@@ -114,7 +114,7 @@ $settings= App\Models\System::first();
         <tr>
             <td class="w-50">
                 <div class="box-text">
-                        <img class="pl-lg" style="width: 133px;height:120px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
+                        <img class="pl-lg" style="width: 133px;height:120px;" src="{{url('assets/img/logo')}}/{{$settings->picture}}">
                 </div>
             </td>
   
@@ -122,8 +122,8 @@ $settings= App\Models\System::first();
                  
             <td class="w-50">
                 <div class="box-text">
-                   <p> <strong>Invoice : {{$purchases->pacel_number}}</strong></p>
-      <p> <strong>Invoice Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}</strong></p>
+                   <p> <strong>Quotation : {{$purchases->confirmation_number}}</strong></p>
+      <p> <strong>Quotation Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}</strong></p>
                 </div>
             </td>
         </tr>
@@ -192,9 +192,11 @@ $settings= App\Models\System::first();
 <thead>
         <tr>
              <th class="col-sm-1 w-50">#</th>
-            <th class=" col-sm-2 w-50" >Item Name</th>
+             <th class="col-sm-1 w-50">Waybill No</th>
+            <th class=" col-sm-2 w-50" >Tariff</th>
+              <th class=" col-sm-2 w-50" >Route</th>
             <th class="w-50">Price</th>
-            <th class="w-50">Qty</th>
+             <th class="w-50">Unit</th>
             <th class="w-50">Tax</th>
             <th class="w-50">Total</th>
         </tr>
@@ -210,14 +212,16 @@ $settings= App\Models\System::first();
 
             <tr align="center">
                 <td>{{$i++}}</td>
+                    <td class=""> {{$row->wbn_no}}</td>
                  <?php
-                                        $item_name = App\Models\Courier\CourierList::find($row->item_name);
+                                        $item_name = App\Models\Tariff::find($row->item_name);
                                         ?>
-                <td>{{$item_name->name}} </td>
+                <td> @if(!empty($item_name)) {{$item_name->zone_name}} - {{$item_name->weight}}  @else {{$row->item_name }} @endif </td>
+   <td class="">{{ $purchases->from->name }} -  {{ $row->to->name }}</td>
              <td >{{number_format($row->price ,2)}}</td>               
-                <td >{{ $row->quantity }}</td>
-                <td>  {{number_format($row->total_tax ,2)}} {{$purchases->currency_code}}</td>                           
-                <td >{{number_format($row->total_cost ,2)}} {{$purchases->currency_code}}</td>
+               <td class="">{{ $row->unit }} </td> 
+                <td>  {{number_format($row->total_tax ,2)}} </td>                           
+                <td >{{number_format($row->total_cost ,2)}} </td>
                 
             </tr>
            @endforeach
@@ -226,27 +230,27 @@ $settings= App\Models\System::first();
 
   <tfoot>
 <tr>
-            <td colspan="4">  </td>
+            <td colspan="6">  </td>
                 <td> </td>
                <td></td> 
             </td>
         </tr>
   <tr>
        <tr>
-            <td colspan="4">  </td>
+            <td colspan="6">  </td>
                 <td> <b> Sub Total</b></td>
                <td>{{number_format($sub_total,2)}}  {{$purchases->currency_code}}</td> 
             </td>
         </tr>
   <tr>
-            <td colspan="4">  </td>
+            <td colspan="6">  </td>
                 <td><b>  VAT  (18%)</b></td>
                <td>{{number_format($tax,2)}}  {{$purchases->currency_code}}</td> 
             </td>
         </tr>
 
   <tr>
-            <td colspan="4">  </td>
+            <td colspan="6">  </td>
                 <td><b>  Total Amount</b></td>
                <td>{{number_format($gland_total,2)}}  {{$purchases->currency_code}}</td> 
             </td>
@@ -254,41 +258,46 @@ $settings= App\Models\System::first();
   </tfoot>
     </table>
 
-<table class="table w-100 mt-10">
-<tr>
-         <td style="width: 50%;">
-            <div class="left" style="">
-        <div><u>  <h3><b>BANK DETAILS</b></h3></u> </div>
-         <div><b>Account Name</b>:  EMA LOGISTIC</div>
-        <div><b>Account Number</b>:  0150386968400 </div>
-        <div><b>Bank Name</b>: CRDB BANK</div>
-        <div><b>Branch</b>: OYSTERBAY BRANCH</div>
-        <div><b>Swift Code</b>: Corutztz</div>
-          </div>     
-        </tr>
-<!--
-    <tr>
-        <td style="width: 50%;">
-            <div class="right" style="">
-        <div><u> <h3><b> Account Details For Us-Dollar</b></h3></u> </div>
-        <div><b>Account Name</b>:  Isumba Trans Ltd</div>
-        <div><b>Account Number</b>:  10201632013 </div>
-        <div><b>Bank Name</b>: Bank of Africa</div>
-        <div><b>Branch</b>: Business Centre</div>
-        <div><b>Swift Code</b>: EUAFTZ TZ</div>
-        <div></div>
-        </div></td>
-    </tr>
--->
+<br><br><br>
 
+
+
+
+  <table class="table w-100 mt-20" >
+<tfoot>
+@if(!empty($items))
+@foreach ($items->chunk(2) as $chunk)
+<tr>
+  @foreach ($chunk as $i)
+<?php
+$word_curr= App\Models\Currency::where('code',$i->exchange_code)->first();
+?>
+
+
+         <td style="width: 50%;">
+
+         <div><u> <h3><b> Account Details For {{$word_curr->name}}</b></h3></u> </div>
+         <div><b>Account Name</b>:   {{$i->account_name}}</div>
+        <div><b>Account Number</b>:   {{$i->account_number}} </div>
+        <div><b>Bank Name</b>:  {{$i->bank_name}}</div>
+        <div><b>Branch</b>:  {{$i->branch_name}}</div>
+        <div><b>Swift Code</b>:  {{$i->swift_code}}</div>
+         
+ @endforeach
+</tr>  
+ @endforeach
+@endif
+
+       
+    
+
+</tfoot>
       
 </table>
-
-
 </div>
 
 <footer>
-This is a computer generated invoice
+This is a computer generated Quotation
 </footer>
 </body>
 </html>

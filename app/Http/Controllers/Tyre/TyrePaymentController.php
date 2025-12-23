@@ -13,6 +13,7 @@ use App\Models\Tyre\PurchaseTyre;
 use App\Models\Tyre\TyreActivity;
 use App\Models\Tyre\TyrePayment;
 use Illuminate\Http\Request;
+use PDF;
 
 class TyrePaymentController extends Controller
 {
@@ -48,11 +49,14 @@ class TyrePaymentController extends Controller
 
         $receipt = $request->all();
         $sales =PurchaseTyre::find($request->purchase_id);
+        
+         $count=TyrePayment::count();
+        $pro=$count+1;
 
-        if(($receipt['amount'] <= $sales->purchase_amount + $sales->purchase_tax)){
+        if(($receipt['amount'] <= $sales->due_amount)){
             if( $receipt['amount'] >= 0){
-                $receipt['trans_id'] = "TRANS_TYRE-".$request->purchase_id.'-'. substr(str_shuffle(1234567890), 0, 1).'-'.$request->date;
-                $receipt['added_by'] = auth()->user()->id;
+              $receipt['trans_id'] = "TTP-".$pro;
+                $receipt['added_by'] = auth()->user()->added_by;
                 
                 //update due amount from invoice table
                 $data['due_amount'] =  $sales->due_amount-$receipt['amount'];
@@ -68,7 +72,7 @@ class TyrePaymentController extends Controller
                 if(!empty($payment)){
                     $activity = TyreActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
                             'module_id'=>$payment->id,
                             'module'=>'Purchase Payment',
                             'activity'=>"Purchase Payment Created",
@@ -79,7 +83,7 @@ class TyrePaymentController extends Controller
 
         $supp=Supplier::find($sales->supplier_id);
 
-        $codes= AccountCodes::where('account_name','Payables')->first();
+        $codes= AccountCodes::where('account_name','Payables')->where('added_by', auth()->user()->added_by)->first();
         $journal = new JournalEntry();
         $journal->account_id = $codes->id;
           $date = explode('-',$request->date);
@@ -90,9 +94,10 @@ class TyrePaymentController extends Controller
         $journal->name = 'Tire Payment';
         $journal->debit =$receipt['amount'] *  $sales->exchange_rate;
           $journal->payment_id= $payment->id;
+             $journal->supplier_id= $sales->supplier_id;
          $journal->currency_code =   $sales->exchange_code;
         $journal->exchange_rate=  $sales->exchange_rate;
- $journal->added_by=auth()->user()->id;
+ $journal->added_by=auth()->user()->added_by;
            $journal->notes= "Clear Creditor  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
         $journal->save();
   
@@ -107,9 +112,10 @@ class TyrePaymentController extends Controller
       $journal->name = 'Tire Payment';
       $journal->credit = $receipt['amount'] *  $sales->exchange_rate;
       $journal->payment_id= $payment->id;
+          $journal->supplier_id= $sales->supplier_id;
        $journal->currency_code =   $sales->exchange_code;
       $journal->exchange_rate=  $sales->exchange_rate;
- $journal->added_by=auth()->user()->id;
+ $journal->added_by=auth()->user()->added_by;
          $journal->notes= "Payment for Clear Credit  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
       $journal->save();
 
@@ -129,7 +135,7 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= 0-$payment->amount;
        $new[' exchange_code']=$sales->exchange_code;
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 $balance=0-$payment->amount;
      Accounts::create($new);
 }
@@ -151,7 +157,7 @@ $balance=0-$payment->amount;
                                'paid_by' => $sales->supplier_id,
                                    'status' => 'paid' ,
                                 'notes' => 'This expense is from tire payment. The Reference is ' .$sales->reference_no ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
 
 
@@ -211,9 +217,9 @@ $balance=0-$payment->amount;
         $receipt = $request->all();
         $sales =PurchaseTyre::find($request->purchase_id);
        
-        if(($receipt['amount'] <= $sales->purchase_amount + $sales->purchase_tax)){
+        if(($receipt['amount'] <= $sales->due_amount)){
             if( $receipt['amount'] >= 0){
-                $receipt['added_by'] = auth()->user()->id;
+                $receipt['added_by'] = auth()->user()->added_by;
                 
                 //update due amount from invoice table
                 if($payment->amount <= $receipt['amount']){
@@ -251,7 +257,7 @@ else{
        $new['account_name']= $cr->account_name;
       $new['balance']= 0-$receipt['amount'];
        $new[' exchange_code']=$sales->exchange_code;
-        $new['added_by']=auth()->user()->id;
+        $new['added_by']=auth()->user()->added_by;
 
 $balance=0-$receipt['amount'];
      Accounts::create($new);
@@ -270,7 +276,7 @@ $balance=0-$receipt['amount'];
                 if(!empty($payment)){
                     $activity = TyreActivity::create(
                         [ 
-                            'added_by'=>auth()->user()->id,
+                            'added_by'=>auth()->user()->added_by,
                             'module_id'=>$id,
                             'module'=>'Purchase Payment',
                             'activity'=>"Purchase Payment Updated",
@@ -295,7 +301,7 @@ $balance=0-$receipt['amount'];
           $journal->payment_id= $payment->id;
          $journal->currency_code =   $sales->exchange_code;
         $journal->exchange_rate=  $sales->exchange_rate;
- $journal->added_by=auth()->user()->id;
+ $journal->added_by=auth()->user()->added_by;
            $journal->notes= "Clear Creditor  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
         $journal->update();
   
@@ -312,7 +318,7 @@ $balance=0-$receipt['amount'];
       $journal->payment_id= $payment->id;
        $journal->currency_code =   $sales->exchange_code;
       $journal->exchange_rate=  $sales->exchange_rate;
- $journal->added_by=auth()->user()->id;
+ $journal->added_by=auth()->user()->added_by;
          $journal->notes= "Payment for Clear Credit  with reference no " .$sales->reference_no. " by Supplier ".  $supp->name ; ;
       $journal->update();
 
@@ -333,7 +339,7 @@ $balance=0-$receipt['amount'];
                                 'payment_methods_id' =>$payment->payment_method,
                                    'status' => 'paid' ,
                                 'notes' => 'This expense is from tire payment. The Reference is ' .$sales->reference_no ,
-                                'added_by' =>auth()->user()->id,
+                                'added_by' =>auth()->user()->added_by,
                             ]);
 
                 return redirect(route('purchase_tyre.index'))->with(['success'=>'Payment Added successfully']);
@@ -358,5 +364,24 @@ $balance=0-$receipt['amount'];
     public function destroy($id)
     {
         //
+    }
+    
+    
+     public function payment_pdfview(Request $request)
+    {
+        
+        //if landscape heigth * width but if portrait widht *height      // dd($dataResult);
+        $customPaper = array(0,0,198.425,494.80);
+        
+        $data=TyrePayment::find($request->id);
+        $purchases = PurchaseTyre::find($data->purchase_id);
+
+        view()->share(['purchases'=>$purchases,'data'=> $data]);
+
+        if($request->has('download')){
+        $pdf = PDF::loadView('tyre.payments_pdf')->setPaper($customPaper, 'portrait');
+         return $pdf->download('TYRE PURCHASE PAYMENT REF NO # ' .  $data->trans_id . ".pdf");
+        }
+        return view('payment_pdfview');
     }
 }

@@ -22,8 +22,8 @@ class ClassAccountController extends Controller
      */
     public function index()
     {
-      
-        $class = ClassAccount::all();
+        $added_by = auth()->user()->added_by;
+        $class = ClassAccount::where('added_by',$added_by)->where('disabled','0')->get();
         return view('class_account.data', compact('class'));
     }
 
@@ -52,16 +52,18 @@ class ClassAccountController extends Controller
             'class_type' => 'required', 
           
         ]);
+        
+        $added_by = auth()->user()->added_by;
             $class_account = new ClassAccount();
             $class_account->class_name = $request->class_name;           
             $class_account->class_type = $request->class_type;
-            $class_account->added_by = auth()->user()->id;;
+            $class_account->added_by = auth()->user()->added_by;
 
-           $class_value=AccountType::where('type',$request->class_type)->first();
+           $class_value=AccountType::where('type',$request->class_type)->where('added_by',$added_by)->first();
      
-         $before=ClassAccount::where('class_type',$request->class_type)->latest('id')->first();
+         $before=ClassAccount::where('class_type',$request->class_type)->where('added_by',$added_by)->where('disabled','0')->latest('id')->first();
           if(!empty($before)){
-         $count=ClassAccount::where('class_type',$request->class_type)->count();
+         $count=ClassAccount::where('class_type',$request->class_type)->where('added_by',$added_by)->where('disabled','0')->count();
 
                 if($count == '9'){
   return redirect(route('class_account.index'))->with(['error'=>'You have exceeded the limit for the class.']);
@@ -119,15 +121,17 @@ class ClassAccountController extends Controller
        $class_account->class_id = $request->class_id;
         $class_account->class_type = $request->class_type;
  
+ $added_by = auth()->user()->added_by;
+
          $old = ClassAccount::find($id);
 
 if($old->class_type != $request->class_type){
 
       $class_value=AccountType::where('type',$request->class_type)->first();
      
-         $before=ClassAccount::where('class_type',$request->class_type)->latest('id')->first();
+         $before=ClassAccount::where('class_type',$request->class_type)->where('added_by',$added_by)->where('disabled','0')->latest('id')->first();
           if(!empty($before)){
-               $count=ClassAccount::where('class_type',$request->class_type)->count();
+               $count=ClassAccount::where('class_type',$request->class_type)->where('added_by',$added_by)->where('disabled','0')->count();
                 if($count == '9'){
   return redirect(route('class_account.index'))->with(['error'=>'You have exceeded the limit for the class.']);
 
@@ -163,7 +167,8 @@ else{
     public function destroy($id)
     {
         
-        ClassAccount::destroy($id);
+        $class=ClassAccount::find($id);
+        $class->update(['disabled'=>'1']);
         //Flash::success(trans('general.successfully_deleted'));
         return redirect(route('class_account.index'))->with(['success'=>'Class Account Deleted.']);
     }

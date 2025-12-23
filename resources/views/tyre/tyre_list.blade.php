@@ -1,4 +1,4 @@
-<div class="modal-dialog modal-lg" role="document">
+
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">Tyre list</h5>
@@ -11,7 +11,7 @@
            
                                             <div class="table-responsive">
                                                 
-                                            <table class="table table-bordered" id="service">
+                                            <table class="table datatable-modal table-striped"  id="service">
                                                 <thead>
                                                     <tr>
                                                       <th>#</th>
@@ -27,7 +27,7 @@
                                             @foreach ($tyre as $row)
                                             <tr class="gradeA even" role="row">
                                                 <th>{{ $loop->iteration }}</th>
-                                                <td>{{$row->tyre->reference }}</td>
+                                                <td>{{$row->tyre->serial_no }}</td>
                                                 <td>{{$row->position}}</td>
                                                
                                             </tr>
@@ -43,10 +43,28 @@
                                     
 </div>
 </div>
-        <div class="modal-footer bg-whitesmoke br">
-         
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+      <div class="modal-footer ">
+
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
         {!! Form::close() !!}
     </div>
-</div>
+
+@yield('scripts')
+<script>
+       $('.datatable-modal').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [1]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
+            },
+        
+        });
+    </script>

@@ -20,6 +20,7 @@ use App\Models\JournalEntry;
 use App\Models\orders\OrderMovement;
 use App\Models\Region;
 use App\Models\CargoCollection;
+use App\Models\User;
 
 class PacelController extends Controller
 {
@@ -31,10 +32,21 @@ class PacelController extends Controller
     public function index()
     {
         //
-        $pacel = Pacel::where('good_receive','0')->orwhere('status','7')->get();
-        $route = Route::all();
-        $users = Client::all();
-          $name = PacelList::all();
+        // $pacel = Pacel::where('added_by', auth()->user()->added_by)->where('good_receive','0')->where('status','!=','400')->orwhere('status','7')->orwhere('status','0')->latest()->get();
+
+        $pacel = Pacel::where('added_by', auth()->user()->added_by)
+                        ->where('good_receive', '0')
+                        ->where(function($query) {
+                            $query->where('status', '!=', '400')
+                                ->orWhere('status', '7')
+                                ->orWhere('status', '0');
+                        })
+                        ->latest()
+                        ->get();
+
+        $route = Route::where('added_by',auth()->user()->added_by)->get(); 
+        $users = Client::where('owner_id', auth()->user()->added_by)->get();
+          $name = PacelList::where('added_by', auth()->user()->added_by)->get();
           $currency = Currency::all();
         return view('pacel.quotation',compact('pacel','route','users','name','currency'));
     }
@@ -79,12 +91,12 @@ class PacelController extends Controller
      'currency_code' => $request->currency_code,
      'exchange_rate' => $request->exchange_rate,
      'instructions' => $request->instructions  ,
-     'added_by'=>auth()->user()->id,
+     'added_by'=>auth()->user()->added_by,
 ]);
 
 
-    $number = "PCL-".$pacel->id;
-       $confirmation_number = "PCL-".$random.$pacel->id;
+    $number = "PCL".$pacel->id;
+       $confirmation_number = "PCL".$random.$pacel->id;
   $amountArr = str_replace(",","",$request->amount);
  $totalArr =  str_replace(",","",$request->tax);
 
@@ -124,14 +136,16 @@ class PacelController extends Controller
               if($chargeArr[$i]=='1'){
                       $type[$i]='Flat';
                         }
+                     else if($chargeArr[$i]== $distanceArr[$i]){
+                    $type[$i]='Distance';
+                        }
                      else{
-                      $type[$i]='Distance';
+                      $type[$i]='Rate';
                         }
                 $items = array(
                     'item_name' => $nameArr[$i],
                     'quantity' =>   $qtyArr[$i],
                     'tax_rate' =>  $rateArr [$i],
-                     'unit' => $unitArr[$i],
                      'charge_type' =>  $type[$i],
                     'distance' => $distanceArr[$i],
                        'price' =>  $priceArr[$i],
@@ -139,7 +153,7 @@ class PacelController extends Controller
                     'total_tax' =>   $taxArr[$i],
                      'items_id' => $savedArr[$i],
                        'order_no' => $i,
-                       'added_by'=>auth()->user()->id,
+                       'added_by'=>auth()->user()->added_by,
                     'pacel_id' =>$pacel->id);
 
                  PacelItem::create($items);  ;
@@ -180,9 +194,9 @@ class PacelController extends Controller
     {
         //
         $data =  Pacel::find($id);
-        $route = Route::all();
-        $users = Client::all();
-        $name = PacelList::all();
+        $route =Route::where('added_by',auth()->user()->added_by)->get(); 
+        $users = Client::where('owner_id', auth()->user()->added_by)->get();
+        $name = PacelList::where('added_by', auth()->user()->added_by)->get();
         $items = PacelItem::where('pacel_id',$id)->get(); 
          $currency = Currency::all();
         return view('pacel.quotation',compact('data','id','users','name','route','items','currency'));
@@ -197,9 +211,11 @@ class PacelController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        $pacel = Pacel::find($id);
+       
 
+if($request->type == ''){
+        $pacel = Pacel::find($id);
+       
         Pacel::where('id',$id)->update([
             'pacel_name' => $request->pacel_name ,
           'date' => $request->date ,
@@ -214,7 +230,7 @@ class PacelController extends Controller
             'currency_code' => $request->currency_code,
             'exchange_rate' => $request->exchange_rate,
             'instructions' => $request->instructions  ,
-            'added_by'=>auth()->user()->id,
+            'added_by'=>auth()->user()->added_by,
        ]);
        
        
@@ -250,7 +266,6 @@ class PacelController extends Controller
         $qtyArr = $request->quantity  ;
         $priceArr = $request->price;
         $rateArr = $request->tax_rate ;
-        $unitArr = $request->unit  ;
       $chargeArr =$request->charge;
  $distanceArr = $request->distance  ;
         $costArr = str_replace(",","",$request->total_cost)  ;
@@ -271,17 +286,19 @@ class PacelController extends Controller
            if(!empty($nameArr)){
                for($i = 0; $i < count($nameArr); $i++){
                    if(!empty($nameArr[$i])){
-                      if($chargeArr[$i]=='1'){
+                    if($chargeArr[$i]=='1'){
                       $type[$i]='Flat';
                         }
+                     else if($chargeArr[$i]== $distanceArr[$i]){
+                    $type[$i]='Distance';
+                        }
                      else{
-                      $type[$i]='Distance';
+                      $type[$i]='Rate';
                         }
                 $items = array(
                     'item_name' => $nameArr[$i],
                     'quantity' =>   $qtyArr[$i],
                     'tax_rate' =>  $rateArr [$i],
-                     'unit' => $unitArr[$i],
                      'charge_type' =>  $type[$i],
                     'distance' => $distanceArr[$i],
                        'price' =>  $priceArr[$i],
@@ -289,7 +306,7 @@ class PacelController extends Controller
                     'total_tax' =>   $taxArr[$i],
                      'items_id' => $savedArr[$i],
                        'order_no' => $i,
-                       'added_by'=>auth()->user()->id,
+                       'added_by'=>auth()->user()->added_by,
                     'pacel_id' =>$pacel->id);
                         
                            if(!empty($expArr[$i])){
@@ -312,6 +329,192 @@ class PacelController extends Controller
        
               
             return redirect(route('pacel_quotation.index'))->with(['success'=>'Updated Successfully']);
+}
+
+elseif($request->type="invoice"){
+        $pacel = PacelInvoice::find($id);
+
+$random = substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil(4/strlen($x)) )),1,4);
+if(!empty($pacel->confirmation_number)){
+$number=$pacel->confirmation_number;
+}
+else{
+$number="PINV-".$random.$id;
+}
+
+$cargo=PacelInvoice::where('added_by', auth()->user()->added_by)->where('pacel_number', 'like', "PCLINV")->first();
+if(!empty($cargo)){
+$pnumber=$pacel->pacel_number;
+}
+else{
+$pnumber="PCLINV-".$id;
+}
+
+        PacelInvoice::where('id',$id)->update([
+            'pacel_number' => $pnumber,
+             'confirmation_number' => $number,
+            'exchange_rate' => $request->exchange_rate,
+           'added_by'=>auth()->user()->added_by
+       ]);
+       
+       
+
+         $amountArr = str_replace(",","",$request->amount);
+        $totalArr =  str_replace(",","",$request->tax);
+
+     
+
+            if(!empty($amountArr)){
+                for($i = 0; $i < count($amountArr); $i++){
+                    if(!empty($amountArr[$i])){
+                        $t = array(
+                            'amount' =>  $amountArr[$i],
+                            'due_amount' =>  $amountArr[$i],
+                            'tax' =>   $totalArr[$i]);
+        
+                              PacelInvoice::where('id',$id)->update($t);  
+        
+        
+                    }
+                }
+            }    
+
+       
+
+       
+        $nameArr =$request->item_name ;
+       $qtyArr = $request->quantity;  
+      $chargeArr =$request->charge;
+     $distanceArr = $request->distance  ;
+        $priceArr = $request->price;
+        $rateArr = $request->tax_rate ;
+        $costArr = str_replace(",","",$request->total_cost)  ;
+        $taxArr =  str_replace(",","",$request->total_tax );
+         $savedArr =$request->items_id ;
+         $expArr = $request->pacel_item_id ;
+       
+       
+    
+
+           if(!empty($priceArr)){
+               for($i = 0; $i < count( $priceArr); $i++){
+                   if(!empty( $priceArr[$i])){
+                 if($chargeArr[$i]=='1'){
+                      $type[$i]='Flat';
+                        }
+                     else if($chargeArr[$i]== $distanceArr[$i]){
+                    $type[$i]='Distance';
+                        }
+                     else{
+                      $type[$i]='Rate';
+                        }
+                 
+                $items = array(
+                      'item_name' => $nameArr[$i],
+                    'quantity' =>   $qtyArr[$i],
+                     'charge_type' =>  $type[$i],
+                    'distance' => $distanceArr[$i],
+                    'tax_rate' =>  $rateArr [$i],
+                       'price' =>  $priceArr[$i],
+                    'total_cost' =>  $costArr[$i],
+                    'total_tax' =>   $taxArr[$i],
+                     'items_id' => $savedArr[$i],
+                       'added_by'=>auth()->user()->id,
+                    'pacel_id' =>$pacel->id);
+                        
+                        
+                            PacelInvoiceItem::where('id',$expArr[$i])->update($items);  
+                            $lists=  PacelInvoiceItem::where('id',$expArr[$i])->first();
+    
+                          
+        
+            $inv= PacelInvoice::find($id);
+           $cr= AccountCodes::where('account_name','Sales')->where('added_by',auth()->user()->added_by)->first();
+          $journal = JournalEntry::where('transaction_type','cargo')->where('income_id', $id)->where('reference', $expArr[$i])->whereNotNull('credit')->first();
+        $journal->account_id = $cr->id;
+       $journal->transaction_type = 'cargo';
+        $journal->name = 'Cargo Invoice';
+        $journal->credit =  $costArr[$i] *  $inv->exchange_rate;
+        $journal->income_id= $pacel->id;
+        $journal->exchange_rate= $inv->exchange_rate;
+     $journal->added_by=auth()->user()->added_by;
+        $journal->save();
+
+if($taxArr[$i] > 0){
+       $tax= AccountCodes::where('account_name','VAT OUT')->where('added_by',auth()->user()->added_by)->first();
+          $tax_journal = JournalEntry::where('transaction_type','cargo')->where('income_id', $id)->where('account_id',  $tax->id)->where('reference', $expArr[$i])->whereNotNull('credit')->first();
+if(!empty($tax_journal)){
+       $tax_journal->account_id = $tax->id;
+        $tax_journal->transaction_type = 'cargo';
+       $tax_journal->name = 'Cargo Invoice';
+       $tax_journal->credit =  $taxArr[$i] *  $inv->exchange_rate;
+       $tax_journal->income_id= $pacel->id;
+          $tax_journal->exchange_rate= $inv->exchange_rate;
+        $tax_journal->added_by=auth()->user()->added_by;
+        $tax_journal->save();
+}
+
+else{
+ $client=Client::find($inv->owner_id);
+
+ $journal = new JournalEntry();
+        $journal->account_id = $tax->id;
+        $date = explode('-',$inv->date);
+        $journal->date =   $inv->date ;
+        $journal->year = $date[0];
+        $journal->month = $date[1];
+        $journal->transaction_type = 'cargo';
+        $journal->name = 'Cargo Invoice';
+        $journal->credit = $taxArr[$i] *  $inv->exchange_rate;
+       $journal->income_id= $pacel->id;
+      $journal->reference= $lists->id;
+         $journal->truck_id= $lists->truck_id;
+         $journal->currency_code =  $inv->currency_code;
+        $journal->exchange_rate= $inv->exchange_rate;
+         $journal->added_by=auth()->user()->added_by;
+           $journal->notes= "Invoice Tax with reference no " .$inv->confirmation_number. "  by Client ".  $client->name ;
+        $journal->save();
+
+}
+
+}
+
+else if($taxArr[$i] == 0){
+  $tax= AccountCodes::where('account_name','VAT OUT')->where('added_by',auth()->user()->added_by)->first();
+          $tax_journal = JournalEntry::where('transaction_type','cargo')->where('income_id', $id)->where('account_id',  $tax->id)->where('reference', $expArr[$i])->whereNotNull('credit')->first();
+if(!empty($tax_journal)){
+ $tax_journal->delete();
+}
+
+}
+
+        $codes= AccountCodes::where('account_name','Receivable and Prepayments')->where('added_by',auth()->user()->added_by)->first();
+        $journal = JournalEntry::where('transaction_type','cargo')->where('income_id', $id)->where('reference', $expArr[$i])->whereNotNull('debit')->first();
+        $journal->account_id = $codes->id;
+         $date = explode('-',$pacel->date);
+          $journal->transaction_type = 'cargo';
+       $journal->name = 'Cargo Invoice';
+       $journal->debit =( $taxArr[$i] + $costArr[$i]) *  $inv->exchange_rate;
+           $journal->income_id= $pacel->id;
+          $journal->exchange_rate= $inv->exchange_rate;
+         $journal->added_by=auth()->user()->added_by;
+        $journal->save();
+       
+                   }
+               }
+           }    
+       
+     
+              
+            return redirect(route('pacel.invoice'))->with(['success'=>'Updated Successfully']);
+
+}
+
+
+
+
+
+
     }
 
     /**
@@ -343,12 +546,17 @@ class PacelController extends Controller
                 $id=$request->id;
                 $type = $request->type;
                 if($type == 'supplier'){
-               return view('pacel.addClient');
+               //return view('pacel.addClient');
+                return view('pos.sales.client_modal');
                
                 }elseif($type == 'route'){
                     $old = Pacel::find($id);
                $region = Region::all();   
                 return view('pacel.addRoute',compact('id','old','region'));   
+                }elseif($type == 'issue'){
+                    $data= PacelInvoice::find($id);
+               $user = User::all();   
+                return view('pacel.addIssue',compact('id','data','user'));   
                 }else{
                
                  $old = Pacel::find($id);
@@ -370,7 +578,9 @@ class PacelController extends Controller
             'address' => $request['address'],
             'phone' => $request['phone'],
         'TIN' => $request['TIN'],
-            'user_id'=> auth()->user()->id,
+            'user_id'=> auth()->user()->added_by,
+            'added_by'=> auth()->user()->added_by,
+            
         ]);
         
       
@@ -390,7 +600,7 @@ class PacelController extends Controller
           'from' => $request['from'],
           'to' => $request['to'],
           'distance' => $request['distance'],
-          'added_by'=> auth()->user()->id,
+          'added_by'=> auth()->user()->added_by,
       ]);
       
     
@@ -414,6 +624,16 @@ class PacelController extends Controller
          return redirect(route('pacel_quotation.index'))->with(['success'=>'Discount for the Quotation created successfully']);
    }
 
+
+public function save_issue(Request $request)
+   {
+  PacelInvoice::where('id',$request->id)->update([
+     'issue_date' => $request->date ,
+     'issued_by' => $request->staff,
+]);
+
+         return redirect(route('invoice.details',$request->id))->with(['success'=>'Issued Successfully']);
+   }
    public function approve($id)
    {
        //
@@ -433,6 +653,7 @@ class PacelController extends Controller
                 $result['pacel_id']=$id;
                 $result['pacel_name']=$quot->pacel_name;
                 $result['pacel_number']=$quot->pacel_number;
+                 $result['confirmation_number']=$quot->confirmation_number;
                 $result['weight']=$quot->weight;
                $result['due_weight']=$quot->weight;
                 $result['start_location']= $route->from;
@@ -446,7 +667,7 @@ class PacelController extends Controller
                 $result['item_id']=$i->id;
                   $result['quantity']=$i->quantity;
                 $result['status']='2';
-                $result['added_by'] = auth()->user()->id;
+                $result['added_by'] = auth()->user()->added_by;
                 $movement=CargoCollection::create($result);
       }          
 
@@ -457,12 +678,24 @@ class PacelController extends Controller
    public function invoice()
    {
        //
-       $pacel = PacelInvoice::all();
-       $route = Route::all();
-       $users = Client::all();
-         $name = PacelList::all();
+       $pacel = PacelInvoice::where('added_by', auth()->user()->added_by)->get();
+       $route = Route::where('added_by',auth()->user()->added_by)->get(); 
+       $users = Client::where('owner_id', auth()->user()->added_by)->get();
+         $name = PacelList::where('added_by', auth()->user()->added_by)->get();
          $currency = Currency::all();
-       return view('pacel.invoice',compact('pacel','route','users','name','currency'));
+      $id="";
+       return view('pacel.invoice',compact('pacel','route','users','name','currency','id'));
+   }
+   public function edit_invoice($id)
+   {
+       //
+       $data = PacelInvoice::find($id);
+       $route = Route::where('added_by',auth()->user()->added_by)->get(); 
+       $users = Client::where('owner_id', auth()->user()->added_by)->get();
+        $name = PacelList::where('added_by', auth()->user()->added_by)->get();
+        $items = PacelInvoiceItem::where('pacel_id',$id)->get(); 
+         $currency = Currency::all();
+       return view('pacel.invoice',compact('data','route','users','name','currency','id','items'));
    }
 
       public function details($id)
@@ -483,6 +716,15 @@ class PacelController extends Controller
        $purchase->update($data);
        return redirect(route('pacel_quotation.index'))->with(['success'=>'Cancelled Successfully']);
    }
+   
+     public function disable($id)
+   {
+       //
+       $purchase = Pacel::find($id);
+       $data['status'] = 400;
+       $purchase->update($data);
+       return redirect(route('pacel_quotation.index'))->with(['success'=>'Disabled Successfully']);
+   }
 
   
 
@@ -491,7 +733,7 @@ class PacelController extends Controller
        //
        $invoice =PacelInvoice::find($id);
        $payment_method = Payment_methodes::all();
-  $bank_accounts=AccountCodes::where('account_group','Cash and Cash Equivalent')->get() ;
+  $bank_accounts=AccountCodes::where('account_status','Bank')->where('added_by',auth()->user()->added_by)->get() ;
        return view('pacel.pacel_payment',compact('invoice','payment_method','bank_accounts'));
    }
    
@@ -504,8 +746,8 @@ class PacelController extends Controller
        view()->share(['purchases'=>$purchases,'purchase_items'=> $purchase_items]);
 
        if($request->has('download')){
-       $pdf = PDF::loadView('pacel.quotation_pdf')->setPaper('a4', 'landscape');
-      return $pdf->download('CARGO PARCEL NO # ' .  $purchases->pacel_number . ".pdf");
+       $pdf = PDF::loadView('pacel.quotation_pdf')->setPaper('a4', 'potrait');
+      return $pdf->download('CARGO QUOTATION NO # ' .  $purchases->confirmation_number . ".pdf");
        }
        return view('pacel_pdfview');
    }
@@ -519,8 +761,8 @@ class PacelController extends Controller
        view()->share(['purchases'=>$purchases,'purchase_items'=> $purchase_items]);
 
        if($request->has('download')){
-       $pdf = PDF::loadView('pacel.invoice_pdf')->setPaper('a4', 'landscape');
-      return $pdf->download('CARGO INVOICE PARCEL NO # ' .  $purchases->pacel_number . ".pdf");
+       $pdf = PDF::loadView('pacel.invoice_pdf')->setPaper('a4', 'potrait');
+      return $pdf->download('CARGO INVOICE # ' .  $purchases->confirmation_number . ".pdf");
        }
        return view('invoice_pdfview');
    }

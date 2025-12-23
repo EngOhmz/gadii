@@ -13,12 +13,7 @@ class TyreActivity extends Model
 
     protected $table = "tyre_activities";
 
-    protected $fillable = [
-      'module_id',
-      'module',
-    'date',
-    'activity',  
-    'added_by'];
+     protected  $guarded = ['id'];
     
    
     public function user(){

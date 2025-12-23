@@ -7,19 +7,20 @@
         <div class="row">
             <div class="col-12 col-sm-6 col-lg-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4>Deposit</h4>
-<?php $a=1; ?>
-<!--
-                       <div class="col-8 col-sm-6 col-lg-9"></div><div class="col-4 col-sm-4 col-lg-3"> <button type="button" class="btn btn-xs btn-primary"
-                                            data-toggle="modal" data-target="#appFormModal"
-                                            data-id="{{ $a }}" data-type="invoice"
-                                            onclick="model({{ $a }},'invoice')">
-                                            <i class="icon-eye-open"> </i>
-                                           Deposit For Invoice
-                                        </button></div>
--->
-                    </div>
+<?php $a =1; ?>
+
+							<div class="card-header header-elements-sm-inline">
+								<h4 class="card-title">Deposit</h4>
+								<div class="header-elements">
+							
+									
+				                	</div>
+			                	
+							</div>
+
+					
+      
+                
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="myTab2" role="tablist">
                             <li class="nav-item">
@@ -38,38 +39,30 @@
                             <div class="tab-pane fade @if(empty($id)) active show @endif" id="home2" role="tabpanel"
                                 aria-labelledby="home-tab2">
                                 <div class="table-responsive">
-                              <table border="0" cellspacing="15" cellpadding="20">
-        <tbody>
+                                
+                              
 
-<tr>
-                 <td></td><td></td><td></td>
-        <td><b>Date Filter</b></td><td></td><td><b>Minimum date:</b></td>
-            <td><input type="text" id="min" name="min"   class="form-control "></td>
-       
-            <td><b>Maximum date:</b></td>
-            <td><input type="text" id="max" name="max"   class="form-control "></td>
-        </tr>
-    </tbody></table>
-                                    <table class="table table-striped" id="table-1">
+
+                                    <table class="table datatable-basic table-striped">
                                        <thead>
                                             <tr>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Browser: activate to sort column ascending"
-                                                    style="width: 38.531px;">#</th>
+                                                    style="width: 28.531px;">#</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Reference</th>
+                                                    style="width: 126.484px;">Reference</th>
                                                    
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Platform(s): activate to sort column ascending"
-                                                    style="width: 186.484px;">Deposit Account</th>
+                                                    style="width: 146.484px;">Deposit Account</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
-                                                    style="width: 171.219px;">Payment Account</th>
+                                                    style="width: 146.219px;">Payment Account</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="Engine version: activate to sort column ascending"
@@ -77,11 +70,11 @@
                                                       <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 78.1094px;">Date</th>
+                                                    style="width: 98.1094px;">Date</th>
                                                 <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                     rowspan="1" colspan="1"
                                                     aria-label="CSS grade: activate to sort column ascending"
-                                                    style="width: 158.1094px;">Actions</th>
+                                                    style="width: 98.1094px;">Actions</th>
                                             </tr>
                                         </thead>
                                          <tbody>
@@ -100,27 +93,31 @@
                                                 @endphp
                                                 <td>{{$bank->account_name}}</td>                                           
                                                   <td>{{number_format($row->amount,2)}} {{$row->exchange_code}}</td>
-                                                   <td>{{$row->date}}</td>
+                                                   <td>{{Carbon\Carbon::parse($row->date)->format('d/m/Y')}}</td>
 
                                                 <td>
                                                     @if($row->status == 0)
                                                    <div class="form-inline">
- <a class="list-icons-item text-primary" title="Edit" onclick="return confirm('Are you sure?')" href="{{ route('deposit.edit', $row->id)}}"> <i class="icon-pencil7"></i></a>&nbsp
 
- {!! Form::open(['route' => ['deposit.destroy',$row->id], 'method' => 'delete']) !!}
-{{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
-{{ Form::close() }}
-&nbsp
+<a class="list-icons-item text-primary" title="Edit" onclick="return confirm('Are you sure?')"   href="{{ route("deposit.edit", $row->id)}}"><i class="icon-pencil7"></i></a>
+       
+                                            {!! Form::open(['route' => ['deposit.destroy',$row->id],
+                                                    'method' => 'delete']) !!}
+                         {{ Form::button('<i class="icon-trash"></i>', ['type' => 'submit', 'style' => 'border:none;background: none;', 'class' => 'list-icons-item text-danger', 'title' => 'Delete', 'onclick' => "return confirm('Are you sure?')"]) }}
+                                                    {{ Form::close() }}
+                                                  
 
-                                                                                                                <div class="dropdown">
-							                		<a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+                                                <div class="dropdown">
+                                  <a href="#" class="list-icons-item dropdown-toggle text-teal" data-toggle="dropdown"><i class="icon-cog6"></i></a>
+                                                                <div class="dropdown-menu">
+                                                            <a  class="nav-link" title="Convert to Invoice" onclick="return confirm('Are you sure? you want to confirm')"  href="{{ route('deposit.approve', $row->id)}}">Confirm Payment</a></li>
+                                                                        
 
-													<div class="dropdown-menu">
-			      <a  class="dropdown-item" title="Confirm" onclick="return confirm('Are you sure?')"  onclick="return confirm('Are you sure? you want to confirm')"  href="{{ route('deposit.approve', $row->id)}}">Confirm Payment</a>
-													</div>
-					                			</div>
- </div>
-                                                 
+</div>
+                                </div>
+
+</div>
+                                                
                                                  
                                                     @endif
 
@@ -162,7 +159,7 @@
                                                     <div class="col-lg-8">
                                                         <input type="text" name="name" 
                                                             value="{{ isset($data) ? $data->name : ''}}"
-                                                            class="form-control">
+                                                            class="form-control" required>
                                                     </div>
                                                 </div>
                                                 
@@ -190,7 +187,7 @@
                                                 <div class="form-group row"><label
                                                         class="col-lg-2 col-form-label">Deposit Account</label>
                                                     <div class="col-lg-8">
-                                                <select class="m-b" name="account_id" id="account_id" required>
+                                                <select class="m-b account_id" name="account_id" id="account_id" required>
                                                     <option value="">Select Deposit Account</option>                                                    
                                                             @foreach ($chart_of_accounts as $chart)                                                             
                                                             <option value="{{$chart->id}}" @if(isset($data))@if($data->account_id == $chart->id) selected @endif @endif >{{$chart->account_name}}</option>
@@ -198,6 +195,19 @@
                                                              </select>
                                                     </div>
                                                 </div>
+                                        
+                                  <div class="form-group row" id="client" ><label
+                                                        class="col-lg-2 col-form-label">Client</label>
+                                                    <div class="col-lg-8">
+                                                <select class="m-b client_id" id="client_id" name="client_id" >
+                                                    <option value="">Select Client</option>                                                    
+                                                            @foreach ($client as $m)                                                             
+                                                            <option value="{{$m->id}}" @if(isset($data))@if($data->client_id == $m->id) selected @endif @endif >{{$m->name}}</option>
+                                                               @endforeach
+                                                             </select>
+                                                    </div>
+                                                </div>
+
 
                                                    <div class="form-group row"><label
                                                         class="col-lg-2 col-form-label">Bank/Cash Account</label>
@@ -253,111 +263,31 @@
 </section>
 
 <!-- discount Modal -->
-<div class="modal inmodal show" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="appFormModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
     </div>
 </div>
-</div>
-</div>
+
 
 @endsection
 
 @section('scripts')
 <script>
-var minDate, maxDate;
- 
-// Custom filtering function which will search data in column four between two values
-$.fn.dataTable.ext.search.push(
-    function( settings, data, dataIndex ) {
-        var min = minDate.val();
-        var max = maxDate.val();
-        var date = new Date( data[5] );
- 
-        if (
-            ( min === null && max === null ) ||
-            ( min === null && date <= max ) ||
-            ( min <= date   && max === null ) ||
-            ( min <= date   && date <= max )
-        ) {
-            return true;
-        }
-        return false;
-    }
-);
-
-
-
-</script>
-
-<script>
-$(document).ready(function() {
-    new TomSelect("#account_id",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
-        }
-    });
-
-    new TomSelect("#bank_id",{
-        create: false,
-        sortField: {
-            field: "text",
-            direction: "asc"
-        }
-    });
-
- // Create date inputs
-    minDate = new DateTime($('#min'), {
-        format: 'YYYY-MM-DD'
-    });
-    maxDate = new DateTime($('#max'), {
-         format: 'YYYY-MM-DD'
-    });
-
-    $('.dataTables-example').DataTable({
-        pageLength: 25,
-        responsive: true,
-        dom: '<"html5buttons"B>lTfgitp',
-        buttons: [{
-                extend: 'copy'
+       $('.datatable-basic').DataTable({
+            autoWidth: false,
+            "columnDefs": [
+                {"targets": [3]}
+            ],
+           dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
+            "language": {
+               search: '<span>Filter:</span> _INPUT_',
+                searchPlaceholder: 'Type to filter...',
+                lengthMenu: '<span>Show:</span> _MENU_',
+             paginate: { 'first': 'First', 'last': 'Last', 'next': $('html').attr('dir') == 'rtl' ? '&larr;' : '&rarr;', 'previous': $('html').attr('dir') == 'rtl' ? '&rarr;' : '&larr;' }
             },
-            {
-                extend: 'csv'
-            },
-            {
-                extend: 'excel',
-                title: 'ExampleFile'
-            },
-            {
-                extend: 'pdf',
-                title: 'ExampleFile'
-            },
-
-            {
-                extend: 'print',
-                customize: function(win) {
-                    $(win.document.body).addClass('white-bg');
-                    $(win.document.body).css('font-size', '10px');
-
-                    $(win.document.body).find('table')
-                        .addClass('compact')
-                        .css('font-size', 'inherit');
-                }
-            }
-        ]
-    
-    });
-
-  var table = $('#table-1').DataTable();
- 
-    // Refilter the table
-    $('#min, #max').on('change', function () {
-        table.draw();
-    });
-
-});
-</script>
+        
+        });
+    </script>
 
 <script type="text/javascript">
 function model(id, type) {
@@ -369,7 +299,7 @@ function model(id, type) {
 
     $.ajax({
         type: 'GET',
-      url: '{{url("findInvoice")}}',
+      url: '{{url("gl_setup/findInvoice")}}',
         data: {
             'id': id,
             'type': type,
@@ -388,6 +318,40 @@ function model(id, type) {
 
 }
 
+
+</script>
+
+<script>
+$(document).ready(function() {
+
+    $(document).on('change', '.account_id', function() {
+        var id = $(this).val();
+  console.log(id);
+      
+ $.ajax({
+            url: '{{url("gl_setup/findClient")}}',
+            type: "GET",
+            data: {
+                id: id,
+            },
+ dataType: "json",
+            success: function(data) {
+              console.log(data); 
+          $("#client").css("display", "none");
+         if (data == 'OK') {
+           $("#client").css("display", "block");   
+}
+     
+
+ }
+
+        });
+
+    });
+
+
+
+});
 
 </script>
 

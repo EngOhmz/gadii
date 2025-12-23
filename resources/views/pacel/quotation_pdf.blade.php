@@ -33,8 +33,8 @@
         width:15%;   
     }
     .logo img{
-        width:45px;
-        height:45px;
+        width:200px;
+        height:100px;
         padding-top:30px;
     }
     .logo span{
@@ -103,27 +103,61 @@ footer {
         table tfoot tr td:first-child {
             border: none;
         }
+        
+        .grid-container-element { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    grid-gap: 50px; 
+    border: 1px solid black; 
+    width: 100%; 
+} 
+.grid-child-element1 { 
+    margin: 10px; 
+    width: 100%;
+    border: 1px solid red; 
+}
+.grid-child-element2 { 
+    margin: 10px; 
+    width: 100%;
+    border: 1px solid red; 
+}
 
 </style>
 <body>
  <?php
-$settings= App\Models\System::first();
+$settings= App\Models\System::where('added_by',auth()->user()->added_by)->first();
+$items=App\Models\SystemDetails::where('system_id',$settings->id)->get();
 
 ?>
 <div class="head-title">
-    <h1 class="text-center m-0 p-0">Invoice</h1>
+    <h1 class="text-center m-0 p-0">Quotation</h1>
 </div>
-<div class="add-detail mt-10">
-    <div class="w-50 float-left mt-10">
-        <p class="m-0 pt-5 text-bold w-100">Invoice : <span class="gray-color">{{$purchases->pacel_number}}</span></p>
-        <p class="m-0 pt-5 text-bold w-100">Invoice Date : <span class="gray-color">{{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}</span></p>
 
-    </div>
-<!--
-    <div class="w-50 float-left logo mt-10">
-        <img src="{{url('public/assets/img/logo')}}/{{$settings->picture}}" >   
-    </div>
--->
+<div class="add-detail ">
+   <table class="table w-100 ">
+<tfoot>
+       
+        <tr>
+            <td class="w-50">
+                <div class="box-text">
+                      <img class="pl-lg" style="width: 133px;height:120px;" src="{{url('public/assets/img/logo')}}/{{$settings->picture}}">
+                </div>
+            </td>
+  
+                  <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td> <td><div class="box-text">  </div>  </td>
+                 
+            <td class="w-50">
+                <div class="box-text">
+                   <p> <strong>Invoice : {{$purchases->confirmation_number}}</strong></p>
+      <p> <strong>Invoice Date : {{Carbon\Carbon::parse($purchases->date)->format('d/m/Y')}}</strong></p>
+                </div>
+            </td>
+        </tr>
+</tfoot>
+    </table>
+
+
+
     <div style="clear: both;"></div>
 </div>
 <div class="table-section bill-tbl w-100 mt-10">
@@ -190,7 +224,7 @@ $settings= App\Models\System::first();
             <th class="w-50">Price</th>
             <th class="w-50">Qty</th>
             <th class="w-50">Tax</th>
-            <th class="w-50">Total</th>
+            <th class=" col-sm-2 w-50">Total</th>
         </tr>
 </thead>
         <tbody>
@@ -238,7 +272,7 @@ $settings= App\Models\System::first();
         </tr>
   <tr>
             <td colspan="5">  </td>
-                <td><b>  VAT  (18%)</b></td>
+                <td><b>  Tax</b></td>
                <td>{{number_format($tax,2)}}  {{$purchases->currency_code}}</td> 
             </td>
         </tr>
@@ -252,36 +286,40 @@ $settings= App\Models\System::first();
   </tfoot>
     </table>
 
-  <table class="table w-100 mt-10">
-<tr>
-         <td style="width: 50%;">
-            <div class="left" style="">
-        <div><u>  <h3><b>BANK DETAILS</b></h3></u> </div>
-         <div><b>Account Name</b>:  DALASHO ENTERPRISES LIMITED</div>
-        <div><b>Account Number</b>:  0150386968400 </div>
-        <div><b>Bank Name</b>: CRDB BANK</div>
-        <div><b>Branch</b>: OYSTERBAY BRANCH</div>
-        <div><b>Swift Code</b>: Corutztz</div>
-          </div>     
-        </tr>
-<!--
-    <tr>
-        <td style="width: 50%;">
-            <div class="right" style="">
-        <div><u> <h3><b> Account Details For Us-Dollar</b></h3></u> </div>
-        <div><b>Account Name</b>:  Isumba Trans Ltd</div>
-        <div><b>Account Number</b>:  10201632013 </div>
-        <div><b>Bank Name</b>: Bank of Africa</div>
-        <div><b>Branch</b>: Business Centre</div>
-        <div><b>Swift Code</b>: EUAFTZ TZ</div>
-        <div></div>
-        </div></td>
-    </tr>
--->
 
+ <br><br><br>
+ 
+  <table class="table w-100 mt-20" >
+<tfoot>
+@if(!empty($items))
+@foreach ($items->chunk(2) as $chunk)
+<tr>
+  @foreach ($chunk as $i)
+<?php
+$word_curr= App\Models\Currency::where('code',$i->exchange_code)->first();
+?>
+
+
+         <td style="width: 50%;">
+
+         <div><u> <h3><b> Account Details For {{$word_curr->name}}</b></h3></u> </div>
+         <div><b>Account Name</b>:   {{$i->account_name}}</div>
+        <div><b>Account Number</b>:   {{$i->account_number}} </div>
+        <div><b>Bank Name</b>:  {{$i->bank_name}}</div>
+        <div><b>Branch</b>:  {{$i->branch_name}}</div>
+        <div><b>Swift Code</b>:  {{$i->swift_code}}</div>
+         
+ @endforeach
+</tr>  
+ @endforeach
+@endif
+
+       
+    
+
+</tfoot>
       
 </table>
-
 
 </div>
 

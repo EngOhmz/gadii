@@ -22,7 +22,7 @@ class DriverController extends Controller
     public function index()
     {
         //
-        $driver = Driver::all();     
+        $driver = Driver::where('added_by', auth()->user()->added_by)->where('disabled', '0')->get();    
         return view('driver.driver',compact('driver'));
     }
 
@@ -46,9 +46,7 @@ class DriverController extends Controller
     {
         //
 
-        $this->validate($request,[
-            'profile' => 'image|required|max:1999',
-        ]);
+  
 
          //handle file upload
          if($request->hasFile('profile')){
@@ -56,17 +54,18 @@ class DriverController extends Controller
             $filename=pathinfo($filenameWithExt,PATHINFO_FILENAME);
             $extension=$request->file('profile')->getClientOriginalExtension();
             $fileNameToStore=$filename.'_'.time().'.'.$extension;
-            $path=$request->file('profile')->storeAs('public/assets/img/driver',$fileNameToStore);
+            $path = public_path('/assets/img/driver');
+             $request->file('profile')->move($path, $fileNameToStore);
+           
+        }
+        
+        else{
+          $fileNameToStore=null;   
         }
 
-        $data['driver_name']=$request->driver_name;
-        $data['address']=$request->address;
-        $data['referee']=$request->referee;
-        $data['experience']=$request->experience;
-         $data['type']=$request->type;
-        $data['driver_status']=$request->driver_status;
+        $data=$request->post();
         $data['profile']=$fileNameToStore;
-        $data['added_by']=auth()->user()->id;
+        $data['added_by']=auth()->user()->added_by;
         $driver= Driver::create($data);
  
         return redirect(route('driver.index'))->with(['success'=>'Driver Created Successfully']);
@@ -109,34 +108,37 @@ class DriverController extends Controller
         //
 
         $driver =  Driver::find($id);
-
+        
+        
          //handle file upload
          if($request->hasFile('profile')){
             $filenameWithExt=$request->file('profile')->getClientOriginalName();
             $filename=pathinfo($filenameWithExt,PATHINFO_FILENAME);
             $extension=$request->file('profile')->getClientOriginalExtension();
             $fileNameToStore=$filename.'_'.time().'.'.$extension;
-            $path=$request->file('profile')->storeAs('public/assets/img/driver',$fileNameToStore);
-            $data['profile']=$fileNameToStore;
+           
+             $path = public_path('/assets/img/driver');
+             $request->file('profile')->move($path, $fileNameToStore);
+             
+              
+                
         }
         else{
-            $data['profile'] = null;
+            $fileNameToStore = null;
     }
 
-        $data['driver_name']=$request->driver_name;
-        $data['address']=$request->address;
-        $data['referee']=$request->referee;
-        $data['experience']=$request->experience;
-        $data['driver_status']=$request->driver_status;  
-     $data['type']=$request->type;     
-        $data['added_by']=auth()->user()->id;
+        $data=$request->post();
+         $data['profile']=$fileNameToStore;
+        $data['added_by']=auth()->user()->added_by;
 
-        if(!empty($driver->attachment)){
+        if(!empty($driver->profile)){
         if($request->hasFile('profile')){
             unlink('public/assets/img/driver'.$driver->profile);  
            
         }
     }
+    
+  
         $driver->update($data);
 
         return redirect(route('driver.index'))->with(['success'=>'Driver Updated Successfully']);
@@ -155,7 +157,7 @@ class DriverController extends Controller
         if(!empty($driver->attachment)){
         unlink('public/assets/img/driver'.$driver->profile);
         }
-        $driver->delete();
+        $driver->update(['disabled' => '1']);
         return redirect(route('driver.index'))->with(['success'=>'Driver Deleted Successfully']);
     }
 
@@ -186,11 +188,11 @@ class DriverController extends Controller
          $start_date = $request->start_date;
         $end_date = $request->end_date;
   if(!empty($start_date) || !empty($end_date)){
-  $fuel=Fuel::where('driver_id',$id)->whereBetween('created_at',  [$start_date, $end_date])->paginate(10);                             
+  $fuel=Fuel::where('added_by', auth()->user()->added_by)->where('driver_id',$id)->whereBetween('date',  [$start_date, $end_date])->get();                              
 }
 
 else{
-  $fuel=Fuel::where('driver_id',$id)->paginate(10);    
+  $fuel=Fuel::where('added_by', auth()->user()->added_by)->where('driver_id',$id)->get();;    
 
 }
         return view('driver.fuel',compact('fuel','type','driver','start_date','end_date'));
@@ -199,17 +201,17 @@ else{
     {
         //
         $driver =  Driver::find($id);
-        $route=CargoLoading::where('driver_id',$id)->paginate(10);    
+        $route=CargoLoading::where('added_by', auth()->user()->added_by)->where('driver_id',$id)->get();     
         $type = "route";
          $start_date = $request->start_date;
         $end_date = $request->end_date;
 
         if(!empty($start_date) || !empty($end_date)){
- $route=CargoLoading::where('driver_id',$id)->whereBetween('collection_date', [$start_date, $end_date])->paginate(10);                            
+ $route=CargoLoading::where('added_by', auth()->user()->added_by)->where('driver_id',$id)->whereBetween('collection_date', [$start_date, $end_date])->get();                            
 }
 
 else{
- $route=CargoLoading::where('driver_id',$id)->paginate(10);    
+ $route=CargoLoading::where('added_by', auth()->user()->added_by)->where('driver_id',$id)->get();   
 }
         return view('driver.route',compact('route','type','driver','start_date','end_date'));
     }

@@ -95,7 +95,7 @@
        
       
                         <?php
-$settings= App\Models\System::first();
+$settings= App\Models\System::where('added_by',auth()->user()->added_by)->first();
 
 
 ?>
@@ -104,7 +104,7 @@ $settings= App\Models\System::first();
                 <tr>
                     <td style="width: 50px; border: 0px;">
                         <img style="width: 50px;height: 50px;margin-bottom: 5px;"
-                             src="src="{{url('public/assets/img/logo')}}/{{$settings->picture}}" alt="" class="img-circle"/>
+                             src="{{url('public/assets/img/logo')}}/{{$settings->picture}}" alt="" class="img-circle"/>
                     </td>
 
   <td style="border: 0px;">  <p style="margin-left: 10px;">{{$settings->name}}</p>  </td>
@@ -136,17 +136,11 @@ $settings= App\Models\System::first();
                         </td>
                         <td><strong>Payslip No :</strong> <?php echo $pay->payslip_number; ?></td>
                     </tr>
+                   
                     <tr>
-                        <td><strong>Mobile :</strong> <?php echo $employee_info->phone; ?></td>
-                      
-                            <td><strong>Email :</strong> <?php echo $employee_info->email; ?></td>
-                      
-                    </tr>
-                    <tr>
-                        <td><strong>Department :</strong> <?php echo $employee_info->department->name; ?>
-                        </td>
-                        <td><strong>Designation
-                                :</strong> <?php echo $employee_info->designation->name; ?></td>
+                        <td><strong>Department :</strong> <?php echo $employee_info->department->name; ?></td>
+                        <td><strong>Pay Date :</strong> @if(!empty($check_existing_payment)) <?php echo date('d/m/Y', strtotime($check_existing_payment->paid_date)); ?> @endif</td>
+                        
                         
                     </tr>
                 </table>

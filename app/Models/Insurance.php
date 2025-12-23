@@ -10,6 +10,11 @@ class Insurance extends Model
     use HasFactory;
     protected $table = "tbl_insurances";
 
-    protected $fillable = ['id','insurance_name','insurance_type','asset_value','insurance_amount','cover_age','start_date','end_date'];
+  protected $guarded = ['id','_token'];
+    
+      public function supplier()
+    {
+        return $this->belongsTo('App\Models\Supplier','broker_name');
+    }
    
 }

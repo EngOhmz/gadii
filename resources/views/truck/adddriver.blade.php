@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document">
+
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="formModal">Assign Driver</h5>
@@ -6,7 +6,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-           {{ Form::open(['url' => url('save_driver')]) }}
+           {{ Form::open(['url' => url('logistic_truck/save_driver')]) }}
        @method('POST')
             @csrf
         <div class="modal-body">
@@ -47,10 +47,10 @@
                                                     </div>
 
 
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-            <button type="submit" class="btn btn-primary" id="save">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        
+       <div class="modal-footer ">
+             <button class="btn btn-primary"  type="submit" id="save" ><i class="icon-checkmark3 font-size-base mr-1"></i> Save</button>
+         <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> Close</button>
         </div>
 
 
@@ -60,4 +60,11 @@
     </div>
 </div>
 
-
+@yield('scripts')
+<script>
+/*
+             * Multiple drop down select
+             */
+            $('.m-b').select2({
+                            });
+</script>
