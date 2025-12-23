@@ -1,0 +1,120 @@
+# Laravel
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+/.fleet
+/.idea
+/.vscode
+
+# Environment & Configuration
+.env
+.env.backup
+.env.production
+.env.local
+.env.*.local
+*.env
+
+# Logs
+*.log
+/storage/logs/*
+!/storage/logs/.gitignore
+
+# Cache
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+
+# Compiled assets
+/public/mix-manifest.json
+/public/build
+/public/hot
+
+# Database
+*.sql
+*.sqlite
+*.db
+admin_ema.sql
+admin_emaerp.sql
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+.phpstorm.meta.php
+
+# Testing
+/phpunit.xml
+/.phpunit.result.cache
+/coverage
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+*.orig
+
+# Uploaded files (user uploads)
+/public/uploads/*
+!/public/uploads/.gitignore
+/public/pos/*
+!/public/pos/.gitignore
+/public/files/*
+!/public/files/.gitignore
+/public/project/*
+!/public/project/.gitignore
+/public/shipments/*
+!/public/shipments/.gitignore
+
+# Attachment files
+/public/*_attachment_*.pdf
+/public/*_attachment_*.jpg
+/public/*_attachment_*.jpeg
+/public/*_attachment_*.png
+/public/*_attachment_*.jfif
+
+# Package files
+*.zip
+*.tar.gz
+*.rar
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Build files
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Composer
+composer.phar
+/vendor/
+
+# Laravel specific
+Homestead.json
+Homestead.yaml
+auth.json
+.phpunit.result.cache
+
