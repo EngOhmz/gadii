@@ -181,8 +181,18 @@
                                             <h5 class="p-md bg-items ml-13">  Client Info: </h5>
                                             <h4 class="mb0"> {{$invoices->client->name}}</h4>
                                             {{$invoices->client->address}}
-                                            <br>TIN : {{!empty($invoices->client->TIN)? $invoices->client->TIN : ''}}
-                                            <br>VRN : {{!empty($invoices->client->VRN)? $invoices->client->VRN : ''}}
+                                            @php
+                                                $isNairobi = false;
+                                                if (!empty($invoices->client->address)) {
+                                                    $isNairobi = stripos($invoices->client->address, 'Nairobi') !== false;
+                                                }
+                                            @endphp
+                                            @if($isNairobi)
+                                                <br>PIN : {{!empty($invoices->client->PIN)? $invoices->client->PIN : ''}}
+                                            @else
+                                                <br>TIN : {{!empty($invoices->client->TIN)? $invoices->client->TIN : ''}}
+                                                <br>VRN : {{!empty($invoices->client->VRN)? $invoices->client->VRN : ''}}
+                                            @endif
                                             <br>Phone : {{$invoices->client->phone}}
                                             <br> Email : <a href="mailto:{{$invoices->client->email}}">{{$invoices->client->email}}</a>
 

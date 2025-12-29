@@ -14,7 +14,7 @@ class AddPaymentTermsToPosInvoicesTable extends Migration
     public function up()
     {
         if (!Schema::hasColumn('pos_invoices', 'payment_days')) {
-            Schema::table('pos_invoices', function (Blueprint $table) {
+        Schema::table('pos_invoices', function (Blueprint $table) {
                 $table->integer('payment_days')->nullable()->after('due_date');
             });
         }
@@ -22,7 +22,7 @@ class AddPaymentTermsToPosInvoicesTable extends Migration
         if (!Schema::hasColumn('pos_invoices', 'is_due_for_payment')) {
             Schema::table('pos_invoices', function (Blueprint $table) {
                 $table->boolean('is_due_for_payment')->default(0)->after('payment_days');
-            });
+        });
         }
     }
 
@@ -40,9 +40,9 @@ class AddPaymentTermsToPosInvoicesTable extends Migration
         }
         
         if (Schema::hasColumn('pos_invoices', 'is_due_for_payment')) {
-            Schema::table('pos_invoices', function (Blueprint $table) {
+        Schema::table('pos_invoices', function (Blueprint $table) {
                 $table->dropColumn('is_due_for_payment');
-            });
+        });
         }
     }
 }

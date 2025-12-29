@@ -158,13 +158,20 @@
                                                             class="col-lg-2 col-form-label">Address</label>
 
                                                         <div class="col-lg-10">
-                                                            <textarea name="address"  class="form-control">  {{ isset($data) ? $data->address : ''}} </textarea>
+                                                            <textarea name="address" id="address" class="form-control" onkeyup="checkNairobiClient()">  {{ isset($data) ? $data->address : ''}} </textarea>
                                                                                                                     
 
 </div>
                                                     </div>
 
-                            <div class="form-group row"><label
+                            @php
+                                $isNairobi = false;
+                                if (isset($data) && !empty($data->address)) {
+                                    $isNairobi = stripos($data->address, 'Nairobi') !== false;
+                                }
+                            @endphp
+
+                            <div class="form-group row nairobi-fields" style="display: {{ $isNairobi ? 'none' : 'flex' }};"><label
                                                             class="col-lg-2 col-form-label">TIN</label>
 
                                                         <div class="col-lg-10">
@@ -174,12 +181,22 @@
                                                         </div>
                                                     </div>
 
-                                            <div class="form-group row"><label
+                                            <div class="form-group row nairobi-fields" style="display: {{ $isNairobi ? 'none' : 'flex' }};"><label
                                                             class="col-lg-2 col-form-label">VRN</label>
 
                                                         <div class="col-lg-10">
                                                             <input type="text" name="VRN"
                                                                 value="{{ isset($data) ? $data->VRN : ''}}"
+                                                                class="form-control">
+                                                        </div>
+                                                    </div>
+
+                                            <div class="form-group row nairobi-pin-field" style="display: {{ $isNairobi ? 'flex' : 'none' }};"><label
+                                                            class="col-lg-2 col-form-label">PIN</label>
+
+                                                        <div class="col-lg-10">
+                                                            <input type="text" name="PIN"
+                                                                value="{{ isset($data) ? $data->PIN : ''}}"
                                                                 class="form-control">
                                                         </div>
                                                     </div>
@@ -363,4 +380,36 @@
         });
     </script>
 <script src="{{ url('assets/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+<script>
+    function checkNairobiClient() {
+        var address = document.getElementById('address').value;
+        var isNairobi = address.toLowerCase().indexOf('nairobi') !== -1;
+        
+        var nairobiFields = document.querySelectorAll('.nairobi-fields');
+        var nairobiPinField = document.querySelector('.nairobi-pin-field');
+        
+        if (isNairobi) {
+            // Hide TIN and VRN, show PIN
+            nairobiFields.forEach(function(field) {
+                field.style.display = 'none';
+            });
+            if (nairobiPinField) {
+                nairobiPinField.style.display = 'flex';
+            }
+        } else {
+            // Show TIN and VRN, hide PIN
+            nairobiFields.forEach(function(field) {
+                field.style.display = 'flex';
+            });
+            if (nairobiPinField) {
+                nairobiPinField.style.display = 'none';
+            }
+        }
+    }
+    
+    // Check on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        checkNairobiClient();
+    });
+</script>
 @endsection

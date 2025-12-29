@@ -43,13 +43,13 @@
                                                             class="col-lg-2 col-form-label">Address</label>
 
                                                         <div class="col-lg-10">
-                                                            <textarea name="address" id="address" class="form-control" required>  </textarea>
+                                                            <textarea name="address" id="address" class="form-control" required onkeyup="checkNairobiClientModal(this)">  </textarea>
                                                                                                                     
 
 </div>
                                                     </div>
 
-  <div class="form-group row"><label
+  <div class="form-group row nairobi-fields-modal"><label
                                                             class="col-lg-2 col-form-label">TIN</label>
 
                                                         <div class="col-lg-10">
@@ -59,11 +59,21 @@
                                                         </div>
                                                     </div>
 
-   <div class="form-group row"><label
+   <div class="form-group row nairobi-fields-modal"><label
                                                             class="col-lg-2 col-form-label">VRN</label>
 
                                                         <div class="col-lg-10">
                                                             <input type="text" name="VRN"  id="VRN"
+                                                                value=""
+                                                                class="form-control">
+                                                        </div>
+                                                    </div>
+
+   <div class="form-group row nairobi-pin-field-modal" style="display: none;"><label
+                                                            class="col-lg-2 col-form-label">PIN</label>
+
+                                                        <div class="col-lg-10">
+                                                            <input type="text" name="PIN"  id="PIN"
                                                                 value=""
                                                                 class="form-control">
                                                         </div>

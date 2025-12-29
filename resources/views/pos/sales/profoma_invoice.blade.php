@@ -1533,6 +1533,20 @@
                 }
             });
         }
+        function checkNairobiClientModal(element) {
+            var address = $(element).val();
+            var isNairobi = address.toLowerCase().indexOf('nairobi') !== -1;
+            
+            if (isNairobi) {
+                // Hide TIN and VRN, show PIN
+                $('.nairobi-fields-modal').hide();
+                $('.nairobi-pin-field-modal').show();
+            } else {
+                // Show TIN and VRN, hide PIN
+                $('.nairobi-fields-modal').show();
+                $('.nairobi-pin-field-modal').hide();
+            }
+        }
         function saveItem(e) {
             console.log('Saving item');
             $.ajax({
