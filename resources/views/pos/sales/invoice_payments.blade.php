@@ -27,9 +27,29 @@
                                 <tr>
 
 
+                                    @php
+                                        // Calculate total amount from items if database values are incorrect
+                                        $invoice_items_calc = App\Models\POS\InvoiceItems::where('invoice_id', $invoice->id)->get();
+                                        $calc_subtotal = 0;
+                                        $calc_tax = 0;
+                                        foreach ($invoice_items_calc as $item) {
+                                            $calc_subtotal += $item->total_cost;
+                                            $calc_tax += $item->total_tax;
+                                        }
+                                        
+                                        // Calculate total amount: (invoice_amount + invoice_tax + shipping_cost) - discount + adjustment
+                                        $calc_total = ($calc_subtotal > 0 ? $calc_subtotal : $invoice->invoice_amount) 
+                                                    + ($calc_tax > 0 ? $calc_tax : $invoice->invoice_tax) 
+                                                    + ($invoice->shipping_cost ?? 0) 
+                                                    - ($invoice->discount ?? 0) 
+                                                    + ($invoice->adjustment ?? 0);
+                                        
+                                        // Use due_amount if it's correct (not 1.0), otherwise use calculated total
+                                        $display_due = ($invoice->due_amount > 1) ? $invoice->due_amount : $calc_total;
+                                    @endphp
                                     <td><a href="{{ route('invoice.show',$invoice->id)}}">{{ $invoice->reference_no}}
                                             </a></td>
-                                    <td>{{ $invoice->due_amount}}Tsh </td>
+                                    <td>{{ number_format($display_due, 2) }} {{ $invoice->exchange_code ?? 'Tsh' }} </td>
                                     <td> 
                                         @if($invoice->status == 1)
                                         <div class="badge badge-warning badge-shadow">Not Paid</div>
@@ -73,13 +93,33 @@
 
 
 
+                                @php
+                                    // Calculate total amount from items if database values are incorrect
+                                    $invoice_items = App\Models\POS\InvoiceItems::where('invoice_id', $invoice->id)->get();
+                                    $calculated_subtotal = 0;
+                                    $calculated_tax = 0;
+                                    foreach ($invoice_items as $item) {
+                                        $calculated_subtotal += $item->total_cost;
+                                        $calculated_tax += $item->total_tax;
+                                    }
+                                    
+                                    // Calculate total amount: (invoice_amount + invoice_tax + shipping_cost) - discount + adjustment
+                                    $total_amount = ($calculated_subtotal > 0 ? $calculated_subtotal : $invoice->invoice_amount) 
+                                                  + ($calculated_tax > 0 ? $calculated_tax : $invoice->invoice_tax) 
+                                                  + ($invoice->shipping_cost ?? 0) 
+                                                  - ($invoice->discount ?? 0) 
+                                                  + ($invoice->adjustment ?? 0);
+                                    
+                                    // Use due_amount if it's correct (not 1.0), otherwise use calculated total
+                                    $payment_amount = ($invoice->due_amount > 1) ? $invoice->due_amount : $total_amount;
+                                @endphp
                                 <div class="form-group row">
 
                                     <label class="col-lg-2 col-form-label">Amount
                                     </label>
                                     <div class="col-lg-10">
-                                        <input type="number" name="amount"
-                                            value="{{ $invoice->due_amount}}" class="form-control">
+                                        <input type="number" name="amount" step="0.01"
+                                            value="{{ $payment_amount }}" class="form-control">
 
                                             <input type="hidden" name="invoice_id"
                                             value="{{ $invoice->id }}" class="form-control">

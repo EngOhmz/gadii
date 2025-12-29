@@ -42,7 +42,7 @@ class ReturnInvoiceController extends Controller
     {
         //
         $currency= Currency::all();
-        $invoices=ReturnInvoice::all()->where('added_by',auth()->user()->added_by);
+        $invoices=ReturnInvoice::with('invoice', 'client')->where('added_by',auth()->user()->added_by)->get();
         $client=Client::all()->where('disabled','0')->where('owner_id',auth()->user()->added_by);;
         $name =Items::whereIn('type', [1,4])->where('added_by',auth()->user()->added_by)->where('bar','0')->where('disabled','0')->get(); 
         $bank_accounts=AccountCodes::where('account_status','Bank')->where('added_by',auth()->user()->added_by)->get();

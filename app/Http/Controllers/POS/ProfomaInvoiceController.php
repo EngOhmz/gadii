@@ -43,6 +43,9 @@ class ProfomaInvoiceController extends Controller
     public function index()
     {
         //
+        // Update invoices that are due for payment
+        $this->updateDueForPaymentStatus();
+        
         $currency = Currency::all();
         // $invoices = Invoice::all()->where('disabled', '0')->where('added_by', auth()->user()->added_by);
         // $invoices = Invoice::where('invoice_status', '!=', 6)->where('disabled', 0)->where('added_by', auth()->user()->added_by)->latest()->get();
@@ -124,7 +127,16 @@ class ProfomaInvoiceController extends Controller
 
         $data['client_id'] = $request->client_id;
         $data['invoice_date'] = $request->invoice_date;
-        $data['due_date'] = $request->due_date;
+        
+        // Calculate due_date from payment_days if provided
+        if ($request->has('payment_days') && !empty($request->payment_days)) {
+            $data['payment_days'] = $request->payment_days;
+            $data['due_date'] = Carbon::parse($request->invoice_date)->addDays($request->payment_days)->toDateString();
+        } else {
+            $data['due_date'] = $request->due_date;
+            $data['payment_days'] = null;
+        }
+        
         $data['location'] = $request->location;
         $data['heading'] = $request->heading;
         $data['supplier_reference'] = $request->supplier_reference;
@@ -146,6 +158,7 @@ class ProfomaInvoiceController extends Controller
         $data['good_receive'] = '0';
         // $data['invoice_status'] = '0';
         $data['invoice_status'] = null;
+        $data['is_due_for_payment'] = 0; // Initialize as not due
         $data['user_id'] = auth()->user()->id;
         $data['user_agent'] = $request->user_agent;
         $data['added_by'] = auth()->user()->added_by;
@@ -183,7 +196,7 @@ class ProfomaInvoiceController extends Controller
         $subArr = str_replace(",", "", $request->subtotal);
         $totalArr = str_replace(",", "", $request->tax);
         $amountArr = str_replace(",", "", $request->amount);
-//        $disArr = str_replace(",", "", $request->discount);
+        $disArr = str_replace(",", "", $request->discount);
 //        $shipArr = str_replace(",", "", $request->shipping_cost);
         $adjArr = str_replace(",", "", $request->adjustment);
 
@@ -194,7 +207,7 @@ class ProfomaInvoiceController extends Controller
                         'invoice_amount' => $subArr[$i],
                         'invoice_tax' => $totalArr[$i],
 //                        'shipping_cost' => $shipArr[$i],
-//                        'discount' => $disArr[$i],
+                        'discount' => $disArr[$i] ?? 0,
                         'adjustment' => $adjArr[$i],
                         'due_amount' => $amountArr[$i]
                     );
@@ -311,6 +324,7 @@ class ProfomaInvoiceController extends Controller
             $data['exchange_rate'] = $request->exchange_rate;
             
             // Generate new unique reference number starting with INV for invoice
+            // Always generate a new INV reference number when converting from proforma to invoice
             $month = date('m');
             $year = date('y');
             $pro = 1;
@@ -327,10 +341,6 @@ class ProfomaInvoiceController extends Controller
                 $pro++;
             } while (true);
             $data['reference_no'] = $newReferenceNo;
-            
-            $data['invoice_amount'] = '1';
-            $data['due_amount'] = '1';
-            $data['invoice_tax'] = '1';
             $data['good_receive'] = '1';
             $data['invoice_status'] = '1';
             $data['user_agent'] = $request->user_agent;
@@ -353,33 +363,31 @@ class ProfomaInvoiceController extends Controller
             $expArr = $request->saved_items_id;
             $savedArr = $request->item_name;
 
-
-            $subArr = str_replace(",", "", $request->subtotal);
-            $totalArr = str_replace(",", "", $request->tax);
-            $amountArr = str_replace(",", "", $request->amount);
-//            $disArr = str_replace(",", "", $request->discount);
-//            $shipArr = str_replace(",", "", $request->shipping_cost);
-            $adjArr = str_replace(",", "", $request->adjustment);
-
-            if (!empty($nameArr)) {
-                for ($i = 0; $i < count($amountArr); $i++) {
-                    if (!empty($amountArr[$i])) {
-                        $t = array(
-                            'invoice_amount' => $subArr[$i],
-                            'invoice_tax' => $totalArr[$i],
-//                            'shipping_cost' => $shipArr[$i],
-//                            'discount' => $disArr[$i],
-                            'adjustment' => $adjArr[$i],
-                            'due_amount' => $amountArr[$i]
-                        );
-
-                        Invoice::where('id', $invoice->id)->update($t);
-
-
-                    }
+            // Handle discount - it's submitted as an array but is a single value
+            $discountValue = 0;
+            if (is_array($request->discount) && !empty($request->discount[0])) {
+                $discountValue = str_replace(",", "", $request->discount[0]);
+            } elseif (!empty($request->discount)) {
+                $discountValue = str_replace(",", "", $request->discount);
+            }
+            
+            // Handle adjustment - it's submitted as an array but is a single value
+            $adjustmentValue = 0;
+            if (is_array($request->adjustment) && !empty($request->adjustment[0])) {
+                $adjustmentValue = str_replace(",", "", $request->adjustment[0]);
+            } elseif (!empty($request->adjustment)) {
+                $adjustmentValue = str_replace(",", "", $request->adjustment);
+            }
+            
+            // Handle shipping cost if provided
+            $shippingCost = 0;
+            if (!empty($request->shipping_cost)) {
+                if (is_array($request->shipping_cost) && !empty($request->shipping_cost[0])) {
+                    $shippingCost = str_replace(",", "", $request->shipping_cost[0]);
+                } else {
+                    $shippingCost = str_replace(",", "", $request->shipping_cost);
                 }
             }
-
 
             $cost['invoice_amount'] = 0;
             $cost['invoice_tax'] = 0;
@@ -424,7 +432,24 @@ class ProfomaInvoiceController extends Controller
 
                     }
                 }
-                $cost['due_amount'] = $cost['invoice_amount'] + $cost['invoice_tax'];
+                
+                // Calculate the correct totals including discount and adjustment
+                // Calculate due_amount: (invoice_amount + invoice_tax + shipping_cost) - discount + adjustment
+                $cost['due_amount'] = ($cost['invoice_amount'] + $cost['invoice_tax'] + $shippingCost) - $discountValue + $adjustmentValue;
+                
+                // Update invoice with calculated values from items (not form values)
+                // Ensure reference_no is preserved (should already be set to INV/... from earlier update)
+                $t = array(
+                    'invoice_amount' => $cost['invoice_amount'],
+                    'invoice_tax' => $cost['invoice_tax'],
+                    'shipping_cost' => $shippingCost,
+                    'discount' => $discountValue,
+                    'adjustment' => $adjustmentValue,
+                    'due_amount' => $cost['due_amount'],
+                    'reference_no' => $data['reference_no'] // Ensure INV reference is preserved
+                );
+                
+                Invoice::where('id', $invoice->id)->update($t);
 
             }
 
@@ -763,7 +788,16 @@ class ProfomaInvoiceController extends Controller
             $invoice = Invoice::find($id);
             $data['client_id'] = $request->client_id;
             $data['invoice_date'] = $request->invoice_date;
-            $data['due_date'] = $request->due_date;
+            
+            // Calculate due_date from payment_days if provided
+            if ($request->has('payment_days') && !empty($request->payment_days)) {
+                $data['payment_days'] = $request->payment_days;
+                $data['due_date'] = Carbon::parse($request->invoice_date)->addDays($request->payment_days)->toDateString();
+            } else {
+                $data['due_date'] = $request->due_date;
+                $data['payment_days'] = $request->payment_days ?? null;
+            }
+            
             $data['location'] = $request->location;
             $data['heading'] = $request->heading;
             $data['supplier_reference'] = $request->supplier_reference;
@@ -814,7 +848,13 @@ class ProfomaInvoiceController extends Controller
             $subArr = str_replace(",", "", $request->subtotal);
             $totalArr = str_replace(",", "", $request->tax);
             $amountArr = str_replace(",", "", $request->amount);
-//            $disArr = str_replace(",", "", $request->discount);
+            // Handle discount - it's submitted as an array but is a single value
+            $discountValue = 0;
+            if (is_array($request->discount) && !empty($request->discount[0])) {
+                $discountValue = str_replace(",", "", $request->discount[0]);
+            } elseif (!empty($request->discount)) {
+                $discountValue = str_replace(",", "", $request->discount);
+            }
 //            $shipArr = str_replace(",", "", $request->shipping_cost);
             $adjArr = str_replace(",", "", $request->adjustment);
 
@@ -825,7 +865,7 @@ class ProfomaInvoiceController extends Controller
                             'invoice_amount' => $subArr[$i],
                             'invoice_tax' => $totalArr[$i],
 //                            'shipping_cost' => $shipArr[$i],
-//                            'discount' => $disArr[$i],
+                            'discount' => $discountValue,
                             'adjustment' => $adjArr[$i],
                             'due_amount' => $amountArr[$i]
                         );
@@ -1122,6 +1162,40 @@ class ProfomaInvoiceController extends Controller
             return $pdf->download('PROFORMA INV NO # ' . $invoices->reference_no . ".pdf");
         }
         return view('inv_pdfview');
+    }
+
+    /**
+     * Update invoices that are due for payment
+     * This method checks all invoices and marks them as due if the due_date has passed
+     * and the invoice is not fully paid
+     */
+    public function updateDueForPaymentStatus()
+    {
+        $today = Carbon::today();
+        
+        // Get all invoices that have a due_date and are not fully paid (status != 3)
+        // Only update invoices that are not already marked as due or are paid
+        $invoices = Invoice::whereNotNull('due_date')
+            ->where('status', '!=', 3) // Not fully paid
+            ->where(function($query) use ($today) {
+                $query->where('is_due_for_payment', 0)
+                      ->orWhereNull('is_due_for_payment');
+            })
+            ->get();
+        
+        foreach ($invoices as $invoice) {
+            $dueDate = Carbon::parse($invoice->due_date);
+            
+            // If due_date has passed, mark as due for payment
+            if ($dueDate->lessThanOrEqualTo($today)) {
+                $invoice->update(['is_due_for_payment' => 1]);
+            }
+        }
+        
+        // Also unmark invoices that are fully paid
+        Invoice::where('status', 3)
+            ->where('is_due_for_payment', 1)
+            ->update(['is_due_for_payment' => 0]);
     }
 }
 

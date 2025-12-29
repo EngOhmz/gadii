@@ -79,7 +79,7 @@
                                                 <td>
                                                     <a href="{{ route('credit_note.show',$row->id)}}">{{$row->reference_no}}</a>
                                                 </td>
-                                                     <td> {{$row->invoice->reference_no }}</td>
+                                                     <td> {{$row->invoice ? $row->invoice->reference_no : 'N/A' }}</td>
                                                 <td>
                                                       {{$row->client->name }}
                                                 </td>

@@ -95,6 +95,10 @@
                                             <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                 rowspan="1" colspan="1"
                                                 aria-label="Engine version: activate to sort column ascending"
+                                                style="width: 141.219px;">Due for Payment</th>
+                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                rowspan="1" colspan="1"
+                                                aria-label="Engine version: activate to sort column ascending"
                                                 style="width: 141.219px;">Attachment</th>
                                             <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                 rowspan="1" colspan="1"
@@ -157,6 +161,15 @@
 
 
 
+                                                    </td>
+                                                    <td>
+                                                        @if ($row->status == 3)
+                                                            <span class="badge badge-success badge-shadow">Paid</span>
+                                                        @elseif (isset($row->is_due_for_payment) && $row->is_due_for_payment == 1)
+                                                            <span class="badge badge-danger badge-shadow">YES - Due for Payment</span>
+                                                        @else
+                                                            <span class="badge badge-secondary badge-shadow">NO</span>
+                                                        @endif
                                                     </td>
                                                     <td>
                                                         @if (!empty($row->profoma_attachment))
@@ -326,14 +339,24 @@
                                                 <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Invoice Date <span class="required"> * </span></label>
                                                     <div class="col-lg-4">
-                                                        <input type="date" name="invoice_date"
+                                                        <input type="date" name="invoice_date" id="invoice_date"
                                                                placeholder="0 if does not exist"
                                                                value="{{ isset($data) ? $data->invoice_date : date('Y-m-d') }}"
                                                                class="form-control">
                                                     </div>
+                                                    <label class="col-lg-2 col-form-label">Payment Days</label>
+                                                    <div class="col-lg-4">
+                                                        <input type="number" name="payment_days" id="payment_days"
+                                                               placeholder="Enter payment days (e.g., 30)"
+                                                               value="{{ isset($data) ? $data->payment_days : '' }}"
+                                                               class="form-control" min="0">
+                                                        <small class="text-muted">Due date will be calculated automatically</small>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
                                                     <label class="col-lg-2 col-form-label">Due Date <span class="required"> * </span></label>
                                                     <div class="col-lg-4">
-                                                        <input type="date" name="due_date"
+                                                        <input type="date" name="due_date" id="due_date"
                                                                placeholder="0 if does not exist"
                                                                value="{{ isset($data) ? $data->due_date : strftime(date('Y-m-d', strtotime('+10 days'))) }}"
                                                                class="form-control">
@@ -634,14 +657,14 @@
                                                                 <br>
                                                             </div>
                                                             <div class="col-lg-2" style="display: none;"></div>
-                                                            <div class="col-lg-1" style="display: none;"></div>
-                                                            <label class="col-lg-3 col-form-label" style="display: none;">Discount (-):</label>
-                                                            <div class="col-lg-6 line_items" style="display: none;">
+                                                            <div class="col-lg-1"></div>
+                                                            <label class="col-lg-3 col-form-label">Discount (-):</label>
+                                                            <div class="col-lg-6 line_items">
                                                                 <input type="number" name="discount[]"
                                                                        class="form-control item_discount" required=""
                                                                        value="{{ isset($data) ? $data->discount : '0.00' }}"><br>
                                                             </div>
-                                                            <div class="col-lg-2" style="display: none;"></div>
+                                                            <div class="col-lg-2"></div>
                                                             <div class="col-lg-1"></div>
                                                             <label class="col-lg-3 col-form-label">Total Before Adjustment:</label>
                                                             <div class="col-lg-6 line_items">
@@ -1640,5 +1663,27 @@
                 return x;
             }
         }
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Auto-calculate due_date when payment_days or invoice_date changes
+            $('#payment_days, #invoice_date').on('change keyup', function() {
+                var paymentDays = parseInt($('#payment_days').val());
+                var invoiceDate = $('#invoice_date').val();
+                
+                if (paymentDays && invoiceDate) {
+                    var date = new Date(invoiceDate);
+                    date.setDate(date.getDate() + paymentDays);
+                    
+                    // Format date as YYYY-MM-DD
+                    var year = date.getFullYear();
+                    var month = String(date.getMonth() + 1).padStart(2, '0');
+                    var day = String(date.getDate()).padStart(2, '0');
+                    var formattedDate = year + '-' + month + '-' + day;
+                    
+                    $('#due_date').val(formattedDate);
+                }
+            });
+        });
     </script>
 @endsection

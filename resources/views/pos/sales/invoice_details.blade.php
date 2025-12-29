@@ -132,9 +132,9 @@
                                         </div>
 
                                         <div class="col-lg-3 col-xs-3">
-                                            <h5 class="mb-0">HEADING : {{$invoices->heading}}</h5>
-                                            <h6 class="mb-0">CLIENT REFERENCE: {{$invoices->supplier_reference}}</h6>
-                                            <h6 class="mb-0">REF NO : {{$invoices->reference_no}}</h6>
+                                            <h5 class="mb-0">Heading : {{$invoices->heading}}</h5>
+                                            <h6 class="mb-0">Client Reference: {{$invoices->supplier_reference}}</h6>
+                                            <h6 class="mb-0">Ref No : {{$invoices->reference_no}}</h6>
                                             @if(!empty($invoices->project_id)) Project No : {{$invoices->project->project_name}} - {{$invoices->project->project_no}} @endif
                                             Invoice Date : {{Carbon\Carbon::parse($invoices->invoice_date)->format('d/m/Y')}}
                                             <br>Due Date : {{Carbon\Carbon::parse($invoices->due_date)->format('d/m/Y')}}
@@ -249,29 +249,33 @@
                                     <tr>
                                         <td colspan="5"></td>
                                         <td>Sub Total</td>
-                                        <td>{{number_format($invoices->invoice_amount,2)}}  {{$invoices->exchange_code}}</td>
+                                        <td>{{number_format($sub_total > 0 ? $sub_total : $invoices->invoice_amount,2)}}  {{$invoices->exchange_code}}</td>
                                     </tr>
 
                                     <tr>
                                         <td colspan="5"></td>
                                         <td>Total Tax </td>
-                                        <td>{{number_format($invoices->invoice_tax,2)}}  {{$invoices->exchange_code}}</td>
+                                        <td>{{number_format($tax > 0 ? $tax : $invoices->invoice_tax,2)}}  {{$invoices->exchange_code}}</td>
                                     </tr>
-{{--                                    <tr>--}}
-{{--                                        <td colspan="5"></td>--}}
-{{--                                        <td>Shipping Cost</td>--}}
-{{--                                        <td>{{number_format( $invoices->shipping_cost ,2)}}  {{$invoices->exchange_code}}</td>--}}
-{{--                                    </tr>--}}
-{{--                                    <tr>--}}
-{{--                                        <td colspan="5"></td>--}}
-{{--                                        <td>Discount</td>--}}
-{{--                                        <td>{{number_format($invoices->discount ,2)}}  {{$invoices->exchange_code}}</td>--}}
-{{--                                    </tr>--}}
+
+                                    @if(isset($invoices->discount) && $invoices->discount > 0)
+                                        <tr>
+                                            <td colspan="5"></td>
+                                            <td>Discount (-)</td>
+                                            <td class="text-danger">-{{number_format($invoices->discount,2)}}  {{$invoices->exchange_code}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5"></td>
+                                            <td>Total After Discount</td>
+                                            <td>{{number_format((($sub_total > 0 ? $sub_total : $invoices->invoice_amount) + ($tax > 0 ? $tax : $invoices->invoice_tax) + ($invoices->shipping_cost ?? 0)) - $invoices->discount,2)}}  {{$invoices->exchange_code}}</td>
+                                        </tr>
+                                    @endif
+
                                     @if($invoices->adjustment !=0)
                                         <tr>
                                             <td colspan="5"></td>
                                             <td>Total Before Adjustment</td>
-                                            <td>{{number_format(($invoices->invoice_amount + $invoices->invoice_tax + $invoices->shipping_cost)  - $invoices->discount  ,2)}}  {{$invoices->exchange_code}}</td>
+                                            <td>{{number_format((($sub_total > 0 ? $sub_total : $invoices->invoice_amount) + ($tax > 0 ? $tax : $invoices->invoice_tax) + ($invoices->shipping_cost ?? 0)) - ($invoices->discount ?? 0),2)}}  {{$invoices->exchange_code}}</td>
                                         </tr>
                                         <tr>
                                             <td colspan="5"></td>
@@ -281,20 +285,21 @@
                                     @endif
                                     <tr>
                                         <td colspan="5"></td>
-                                        <td>Total Amount</td>
-                                        <td>{{number_format(( ($invoices->invoice_amount + $invoices->invoice_tax +  $invoices->shipping_cost)  - $invoices->discount + $invoices->adjustment)  - $invoices->discount + $invoices->adjustment ,2)}}  {{$invoices->exchange_code}}</td>
+                                        <td><strong>Total Amount</strong></td>
+                                        <td><strong>{{number_format((($sub_total > 0 ? $sub_total : $invoices->invoice_amount) + ($tax > 0 ? $tax : $invoices->invoice_tax) + ($invoices->shipping_cost ?? 0)) - ($invoices->discount ?? 0) + ($invoices->adjustment ?? 0),2)}}  {{$invoices->exchange_code}}</strong></td>
                                     </tr>
 
                                     @if($invoices->status != 1 && $invoices->status != 4 &&  $invoices->invoice_status == 1)
-                                        <td colspan="5"></td>
-                                        <td>Paid Amount</p>
-                                        <td>{{number_format(( ($invoices->invoice_amount + $invoices->invoice_tax +  $invoices->shipping_cost)  - $invoices->discount + $invoices->adjustment) - $invoices->due_amount,2)}}  {{$invoices->exchange_code}}</p>
-                                            </tr>
+                                        <tr>
+                                            <td colspan="5"></td>
+                                            <td>Paid Amount</td>
+                                            <td>{{number_format((($sub_total > 0 ? $sub_total : $invoices->invoice_amount) + ($tax > 0 ? $tax : $invoices->invoice_tax) + ($invoices->shipping_cost ?? 0)) - ($invoices->discount ?? 0) + ($invoices->adjustment ?? 0) - $invoices->due_amount,2)}}  {{$invoices->exchange_code}}</td>
+                                        </tr>
 
-                                            <tr>
-                                        <td colspan="5"></td>
-                                        <td class="text-danger">Total Due</td>
-                                        <td>{{number_format($invoices->due_amount,2)}}  {{$invoices->exchange_code}}</td>
+                                        <tr>
+                                            <td colspan="5"></td>
+                                            <td class="text-danger">Total Due</td>
+                                            <td>{{number_format($invoices->due_amount,2)}}  {{$invoices->exchange_code}}</td>
                                         </tr>
                                     @endif
 
@@ -328,30 +333,49 @@
                                             <td>Total Tax </td>
                                             <td>{{number_format($tax * $invoices->exchange_rate,2)}}   {{$def->currency}}</td>
                                         </tr>
-                                      
+                                        @if(isset($invoices->shipping_cost) && $invoices->shipping_cost > 0)
+                                            <tr>
+                                                <td colspan="5"></td>
+                                                <td>Shipping Cost</td>
+                                                <td>{{number_format( $invoices->shipping_cost * $invoices->exchange_rate ,2)}}  {{$def->currency}}</td>
+                                            </tr>
+                                        @endif
+
+                                        @if(isset($invoices->discount) && $invoices->discount > 0)
+                                            <tr>
+                                                <td colspan="5"></td>
+                                                <td>Discount (-)</td>
+                                                <td class="text-danger">-{{number_format($invoices->discount * $invoices->exchange_rate ,2)}}  {{$def->currency}}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="5"></td>
+                                                <td>Total After Discount</td>
+                                                <td>{{number_format($invoices->exchange_rate * (($gland_total + ($invoices->shipping_cost ?? 0)) - $invoices->discount),2)}}  {{$def->currency}}</td>
+                                            </tr>
+                                        @endif
                                         @if($invoices->adjustment !=0)
                                             <tr>
                                                 <td colspan="5"></td>
                                                 <td>Total Before Adjustment</td>
-                                                <td>{{number_format($invoices->exchange_rate * ( ($gland_total +  $invoices->shipping_cost)  - $invoices->discount)  ,2)}}  {{$invoices->exchange_code}}</td>
+                                                <td>{{number_format($invoices->exchange_rate * (($gland_total + ($invoices->shipping_cost ?? 0)) - ($invoices->discount ?? 0)),2)}}  {{$def->currency}}</td>
                                             </tr>
                                             <tr>
                                                 <td colspan="5"></td>
                                                 <td>Adjustment</td>
-                                                <td>{{number_format($invoices->exchange_rate * $invoices->adjustment ,2)}}  {{$invoices->exchange_code}}</td>
+                                                <td>{{number_format($invoices->exchange_rate * $invoices->adjustment ,2)}}  {{$def->currency}}</td>
                                             </tr>
                                         @endif
                                         <tr>
                                             <td colspan="5"></td>
-                                            <td>Total Amount</td>
-                                            <td>{{number_format($invoices->exchange_rate * ( ($gland_total +  $invoices->shipping_cost)  - $invoices->discount + $invoices->adjustment) ,2)}}   {{$def->currency}}</td>
+                                            <td><strong>Total Amount</strong></td>
+                                            <td><strong>{{number_format($invoices->exchange_rate * (($gland_total + ($invoices->shipping_cost ?? 0)) - ($invoices->discount ?? 0) + ($invoices->adjustment ?? 0)),2)}}   {{$def->currency}}</strong></td>
                                         </tr>
 
                                         @if($invoices->status != 1 && $invoices->status != 4 &&  $invoices->invoice_status == 1)
                                             <tr>
                                                 <td colspan="5"></td>
                                                 <td>Paid Amount</td>
-                                                <td>{{number_format( $invoices->exchange_rate * ((($invoices->invoice_amount + $invoices->invoice_tax +  $invoices->shipping_cost)  - $invoices->discount + $invoices->adjustment) - $invoices->due_amount),2)}} {{$def->currency}}</td>
+                                                <td>{{number_format( $invoices->exchange_rate * (((($sub_total > 0 ? $sub_total : $invoices->invoice_amount) + ($tax > 0 ? $tax : $invoices->invoice_tax) + ($invoices->shipping_cost ?? 0)) - ($invoices->discount ?? 0) + ($invoices->adjustment ?? 0)) - $invoices->due_amount),2)}} {{$def->currency}}</td>
                                             </tr>
 
                                             <tr>
@@ -390,7 +414,7 @@
             <div class="col-12 col-md-12 col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <br><h5 class="mb0" style="text-align:center">PAYMENT DETAILS</h5>
+                        <br><h5 class="mb0" style="text-align:center">Payment Details</h5>
                         <div class="tab-content" id="myTab3Content">
                             <div class="tab-pane fade show active" id="about" role="tabpanel"
                                  aria-labelledby="home-tab2">
