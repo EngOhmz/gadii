@@ -634,6 +634,7 @@ Route::post('client-sample','ClientController@sample')->name('client.sample');
 Route::get('add_inv_item', 'POS\InvoiceController@add_item')->middleware('auth');
 Route::get('add_inv_item2', 'POS\InvoiceController2@add_item')->middleware('auth');
   Route::resource('profoma_invoice', 'POS\ProfomaInvoiceController')->middleware('auth');
+  Route::post('profoma_invoice/delete-attachment', 'POS\ProfomaInvoiceController@deleteAttachment')->name('profoma_invoice.delete_attachment')->middleware('auth');
   Route::get('convert_to_invoice/{id}', 'POS\ProfomaInvoiceController@convert_to_invoice')->name('invoice.convert_to_invoice')->middleware('auth'); 
   Route::get('check_item', 'POS\InvoiceController@check_item')->middleware('auth');
    Route::get('update_item', 'POS\InvoiceController@update_item')->middleware('auth');

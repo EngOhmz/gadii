@@ -95,10 +95,6 @@
                                             <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                 rowspan="1" colspan="1"
                                                 aria-label="Engine version: activate to sort column ascending"
-                                                style="width: 141.219px;">Due for Payment</th>
-                                            <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
-                                                rowspan="1" colspan="1"
-                                                aria-label="Engine version: activate to sort column ascending"
                                                 style="width: 141.219px;">Attachment</th>
                                             <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                 rowspan="1" colspan="1"
@@ -163,20 +159,37 @@
 
                                                     </td>
                                                     <td>
-                                                        @if ($row->status == 3)
-                                                            <span class="badge badge-success badge-shadow">Paid</span>
-                                                        @elseif (isset($row->is_due_for_payment) && $row->is_due_for_payment == 1)
-                                                            <span class="badge badge-danger badge-shadow">YES - Due for Payment</span>
-                                                        @else
-                                                            <span class="badge badge-secondary badge-shadow">NO</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if (!empty($row->profoma_attachment))
-                                                            <a href="{{ asset($row->profoma_attachment) }}" target="_blank"
-                                                               class="btn btn-sm btn-outline-primary">
-                                                                <i class="fa fa-paperclip"></i> View
-                                                            </a>
+                                                        @php
+                                                            $attachments = \App\Models\POS\ProformaInvoiceAttachment::where('invoice_id', $row->id)->get();
+                                                            // Also check for old single attachment for backward compatibility
+                                                            $hasOldAttachment = !empty($row->profoma_attachment);
+                                                        @endphp
+                                                        @if($attachments->count() > 0 || $hasOldAttachment)
+                                                            @if($attachments->count() > 0)
+                                                                <div class="dropdown">
+                                                                    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="attachmentDropdown{{ $row->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        <i class="fa fa-paperclip"></i> View ({{ $attachments->count() }})
+                                                                    </button>
+                                                                    <div class="dropdown-menu" aria-labelledby="attachmentDropdown{{ $row->id }}">
+                                                                        @foreach($attachments as $attachment)
+                                                                            <a class="dropdown-item" href="{{ asset($attachment->file_path) }}" target="_blank">
+                                                                                <i class="fa fa-file"></i> {{ $attachment->original_name ?? basename($attachment->file_path) }}
+                                                                            </a>
+                                                                        @endforeach
+                                                                        @if($hasOldAttachment)
+                                                                            <div class="dropdown-divider"></div>
+                                                                            <a class="dropdown-item" href="{{ asset($row->profoma_attachment) }}" target="_blank">
+                                                                                <i class="fa fa-file"></i> Legacy Attachment
+                                                                            </a>
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                            @elseif($hasOldAttachment)
+                                                                <a href="{{ asset($row->profoma_attachment) }}" target="_blank"
+                                                                   class="btn btn-sm btn-outline-primary">
+                                                                    <i class="fa fa-paperclip"></i> View
+                                                                </a>
+                                                            @endif
                                                         @else
                                                             <span class="text-muted">N/A</span>
                                                         @endif
@@ -450,13 +463,48 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                    <label class="col-lg-2 col-form-label">Attachment</label>
-                                                    <div class="col-lg-4">
-                                                        <input type="file" name="profoma_attachment" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
-                                                        @if(isset($data) && !empty($data->profoma_attachment))
-                                                            <a href="{{ asset($data->profoma_attachment) }}" target="_blank" class="btn btn-sm btn-primary mt-2">
-                                                                View Current Attachment
-                                                            </a>
+                                                    <label class="col-lg-2 col-form-label">Attachments</label>
+                                                    <div class="col-lg-10">
+                                                        <div id="attachments-container">
+                                                            <div class="attachment-item mb-2">
+                                                                <div class="input-group">
+                                                                    <input type="file" name="profoma_attachments[]" class="form-control attachment-file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                                                    <div class="input-group-append">
+                                                                        <button type="button" class="btn btn-danger remove-attachment" style="display: none;">
+                                                                            <i class="fas fa-times"></i> Remove
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="btn btn-sm btn-primary mt-2" id="add-attachment">
+                                                            <i class="fas fa-plus"></i> Add Another Attachment
+                                                        </button>
+                                                        
+                                                        @if(isset($data) && isset($data->id))
+                                                            @php
+                                                                $existingAttachments = \App\Models\POS\ProformaInvoiceAttachment::where('invoice_id', $data->id)->get();
+                                                            @endphp
+                                                            @if($existingAttachments->count() > 0)
+                                                                <div class="mt-3">
+                                                                    <label class="font-weight-bold">Existing Attachments:</label>
+                                                                    <div class="list-group mt-2">
+                                                                        @foreach($existingAttachments as $attachment)
+                                                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                                                <div>
+                                                                                    <a href="{{ asset($attachment->file_path) }}" target="_blank" class="text-primary">
+                                                                                        <i class="fas fa-file"></i> {{ $attachment->original_name ?? basename($attachment->file_path) }}
+                                                                                    </a>
+                                                                                    <small class="text-muted ml-2">({{ $attachment->file_type ?? 'Unknown' }})</small>
+                                                                                </div>
+                                                                                <button type="button" class="btn btn-sm btn-danger delete-existing-attachment" data-id="{{ $attachment->id }}" data-path="{{ $attachment->file_path }}">
+                                                                                    <i class="fas fa-trash"></i> Delete
+                                                                                </button>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                </div>
+                                                            @endif
                                                         @endif
                                                     </div>
                                                 </div>
@@ -757,7 +805,7 @@
                     text: 'Print',
                     title: 'Proforma Invoice',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                     },
                     customize: function(win) {
                         $(win.document.body).find('table th').eq(0).text('PI No');
@@ -768,7 +816,7 @@
                     text: 'Excel',
                     title: 'Proforma Invoice',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                         format: {
                             header: function(data, columnIdx) {
                                 if (columnIdx === 0) {
@@ -784,7 +832,7 @@
                     text: 'PDF',
                     title: 'Proforma Invoice',
                     exportOptions: {
-                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                     },
                     orientation: 'landscape',
                     pageSize: 'A4',
@@ -1696,6 +1744,73 @@
                     var formattedDate = year + '-' + month + '-' + day;
                     
                     $('#due_date').val(formattedDate);
+                }
+            });
+            
+            // Handle multiple attachments - Add new attachment field
+            $('#add-attachment').on('click', function() {
+                var newAttachment = '<div class="attachment-item mb-2">' +
+                    '<div class="input-group">' +
+                    '<input type="file" name="profoma_attachments[]" class="form-control attachment-file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">' +
+                    '<div class="input-group-append">' +
+                    '<button type="button" class="btn btn-danger remove-attachment">' +
+                    '<i class="fas fa-times"></i> Remove' +
+                    '</button>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+                $('#attachments-container').append(newAttachment);
+                updateRemoveButtons();
+            });
+            
+            // Handle remove attachment
+            $(document).on('click', '.remove-attachment', function() {
+                $(this).closest('.attachment-item').remove();
+                updateRemoveButtons();
+            });
+            
+            // Update remove buttons visibility
+            function updateRemoveButtons() {
+                var attachmentCount = $('#attachments-container .attachment-item').length;
+                if (attachmentCount > 1) {
+                    $('.remove-attachment').show();
+                } else {
+                    $('.remove-attachment').hide();
+                }
+            }
+            
+            // Initialize remove buttons visibility
+            updateRemoveButtons();
+            
+            // Handle delete existing attachment
+            $(document).on('click', '.delete-existing-attachment', function() {
+                var attachmentId = $(this).data('id');
+                var attachmentPath = $(this).data('path');
+                var attachmentRow = $(this).closest('.list-group-item');
+                
+                if (confirm('Are you sure you want to delete this attachment?')) {
+                    $.ajax({
+                        url: '{{ route("profoma_invoice.delete_attachment") }}',
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            attachment_id: attachmentId,
+                            file_path: attachmentPath
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                attachmentRow.fadeOut(300, function() {
+                                    $(this).remove();
+                                });
+                            } else {
+                                alert('Error deleting attachment: ' + (response.message || 'Unknown error'));
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error deleting attachment. Please try again.');
+                            console.error(xhr);
+                        }
+                    });
                 }
             });
         });

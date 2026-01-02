@@ -312,6 +312,10 @@
                                                         style="width: 121.219px;">Status</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                         rowspan="1" colspan="1"
+                                                        aria-label="Engine version: activate to sort column ascending"
+                                                        style="width: 141.219px;">Due for Payment</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                        rowspan="1" colspan="1"
                                                         aria-label="CSS grade: activate to sort column ascending"
                                                         style="width: 168.1094px;">Actions</th>
                                                 </tr>
@@ -383,7 +387,15 @@
                                                                 @endif
 
                                                             </td>
-
+                                                            <td>
+                                                                @if ($row->status == 3)
+                                                                    <span class="badge badge-success badge-shadow">Paid</span>
+                                                                @elseif (isset($row->is_due_for_payment) && $row->is_due_for_payment == 1)
+                                                                    <span class="badge badge-danger badge-shadow">YES - Due for Payment</span>
+                                                                @else
+                                                                    <span class="badge badge-secondary badge-shadow">NO</span>
+                                                                @endif
+                                                            </td>
 
                                                             <td>
                                                                 <?php

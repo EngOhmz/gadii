@@ -12,6 +12,7 @@ use App\Models\POS\MasterHistory;
 use App\Models\POS\InvoiceHistory;
 use App\Models\POS\InvoicePayments;
 use App\Models\POS\Items;
+use App\Models\POS\ProformaInvoiceAttachment;
 use App\Models\JournalEntry;
 use App\Models\Location;
 use App\Models\LocationManager;
@@ -163,24 +164,39 @@ class ProfomaInvoiceController extends Controller
         $data['user_agent'] = $request->user_agent;
         $data['added_by'] = auth()->user()->added_by;
 
-        if ($request->hasFile('profoma_attachment')) {
-            $profomaAttachment = $request->file('profoma_attachment');
-            $attachmentFileType = $profomaAttachment->getClientOriginalExtension();
-            $attachmentFileName = uniqid() . '_profoma_attachment_' . date('dmyhis') . '.' . $attachmentFileType;
+        // Keep old single attachment field for backward compatibility (can be removed later)
+        $data['profoma_attachment'] = null;
 
+        $invoice = Invoice::create($data);
+
+        // Handle multiple attachments
+        if ($request->hasFile('profoma_attachments')) {
             $destinationPath = public_path('uploads/profoma_attachments');
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
 
-            $profomaAttachment->move($destinationPath, $attachmentFileName);
+            foreach ($request->file('profoma_attachments') as $file) {
+                if ($file && $file->isValid()) {
+                    // Get file properties BEFORE moving the file
+                    $attachmentFileType = $file->getClientOriginalExtension();
+                    $attachmentFileName = uniqid() . '_profoma_attachment_' . date('dmyhis') . '.' . $attachmentFileType;
+                    $originalName = $file->getClientOriginalName();
+                    $fileSize = $file->getSize();
+                    
+                    // Move the file
+                    $file->move($destinationPath, $attachmentFileName);
 
-            $data['profoma_attachment'] = 'uploads/profoma_attachments/' . $attachmentFileName;
-        } else {
-            $data['profoma_attachment'] = null;
+                    ProformaInvoiceAttachment::create([
+                        'invoice_id' => $invoice->id,
+                        'file_path' => 'uploads/profoma_attachments/' . $attachmentFileName,
+                        'original_name' => $originalName,
+                        'file_type' => $attachmentFileType,
+                        'file_size' => $fileSize,
+                    ]);
+                }
+            }
         }
-
-        $invoice = Invoice::create($data);
 
         $nameArr = $request->item_name;
         $descArr = $request->description;
@@ -810,26 +826,39 @@ class ProfomaInvoiceController extends Controller
             $data['user_agent'] = $request->user_agent;
             $data['added_by'] = auth()->user()->added_by;
 
-        if ($request->hasFile('profoma_attachment')) {
-            if (!empty($invoice->profoma_attachment) && file_exists(public_path($invoice->profoma_attachment))) {
-                @unlink(public_path($invoice->profoma_attachment));
-            }
-
-            $profomaAttachment = $request->file('profoma_attachment');
-            $attachmentFileType = $profomaAttachment->getClientOriginalExtension();
-            $attachmentFileName = uniqid() . '_profoma_attachment_' . date('dmyhis') . '.' . $attachmentFileType;
-
-            $destinationPath = public_path('uploads/profoma_attachments');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-
-            $profomaAttachment->move($destinationPath, $attachmentFileName);
-
-            $data['profoma_attachment'] = 'uploads/profoma_attachments/' . $attachmentFileName;
-        }
+            // Keep old single attachment field for backward compatibility (can be removed later)
+            // Don't update profoma_attachment field if not provided
 
             $invoice->update($data);
+
+            // Handle multiple new attachments
+            if ($request->hasFile('profoma_attachments')) {
+                $destinationPath = public_path('uploads/profoma_attachments');
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+
+                foreach ($request->file('profoma_attachments') as $file) {
+                    if ($file && $file->isValid()) {
+                        // Get file properties BEFORE moving the file
+                        $attachmentFileType = $file->getClientOriginalExtension();
+                        $attachmentFileName = uniqid() . '_profoma_attachment_' . date('dmyhis') . '.' . $attachmentFileType;
+                        $originalName = $file->getClientOriginalName();
+                        $fileSize = $file->getSize();
+                        
+                        // Move the file
+                        $file->move($destinationPath, $attachmentFileName);
+
+                        ProformaInvoiceAttachment::create([
+                            'invoice_id' => $invoice->id,
+                            'file_path' => 'uploads/profoma_attachments/' . $attachmentFileName,
+                            'original_name' => $originalName,
+                            'file_type' => $attachmentFileType,
+                            'file_size' => $fileSize,
+                        ]);
+                    }
+                }
+            }
 
 
             $nameArr = $request->item_name;
@@ -1196,6 +1225,52 @@ class ProfomaInvoiceController extends Controller
         Invoice::where('status', 3)
             ->where('is_due_for_payment', 1)
             ->update(['is_due_for_payment' => 0]);
+    }
+
+    /**
+     * Delete a specific attachment
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function deleteAttachment(Request $request)
+    {
+        $request->validate([
+            'attachment_id' => 'required|exists:proforma_invoice_attachments,id',
+            'file_path' => 'required|string'
+        ]);
+
+        $attachment = ProformaInvoiceAttachment::find($request->attachment_id);
+        
+        if (!$attachment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Attachment not found'
+            ], 404);
+        }
+
+        // Check if user has permission (same added_by)
+        $invoice = Invoice::find($attachment->invoice_id);
+        if ($invoice && $invoice->added_by != auth()->user()->added_by) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        // Delete file from storage
+        $filePath = public_path($request->file_path);
+        if (file_exists($filePath)) {
+            @unlink($filePath);
+        }
+
+        // Delete record from database
+        $attachment->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attachment deleted successfully'
+        ]);
     }
 }
 

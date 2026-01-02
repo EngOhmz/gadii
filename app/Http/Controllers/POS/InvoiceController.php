@@ -64,6 +64,9 @@ class InvoiceController extends Controller
     public function index()
     {
         //
+        // Update invoices that are due for payment
+        $this->updateDueForPaymentStatus();
+        
         $currency= Currency::all();
 
         $client=Client::where('owner_id',auth()->user()->added_by)->where('disabled','0')->get();
@@ -3080,6 +3083,40 @@ $chk=SerialList::where('brand_id',$nameArr[$i])->where('location',$invoice->loca
         return view('pos.sales.commission_report',
             compact('start_date',
                 'end_date','data'));
+    }
+
+    /**
+     * Update invoices that are due for payment
+     * This method checks all invoices and marks them as due if the due_date has passed
+     * and the invoice is not fully paid
+     */
+    public function updateDueForPaymentStatus()
+    {
+        $today = Carbon::today();
+        
+        // Get all invoices that have a due_date and are not fully paid (status != 3)
+        // Only update invoices that are not already marked as due or are paid
+        $invoices = Invoice::whereNotNull('due_date')
+            ->where('status', '!=', 3) // Not fully paid
+            ->where(function($query) use ($today) {
+                $query->where('is_due_for_payment', 0)
+                      ->orWhereNull('is_due_for_payment');
+            })
+            ->get();
+        
+        foreach ($invoices as $invoice) {
+            $dueDate = Carbon::parse($invoice->due_date);
+            
+            // If due_date has passed, mark as due for payment
+            if ($dueDate->lessThanOrEqualTo($today)) {
+                $invoice->update(['is_due_for_payment' => 1]);
+            }
+        }
+        
+        // Also unmark invoices that are fully paid
+        Invoice::where('status', 3)
+            ->where('is_due_for_payment', 1)
+            ->update(['is_due_for_payment' => 0]);
     }
 
 
