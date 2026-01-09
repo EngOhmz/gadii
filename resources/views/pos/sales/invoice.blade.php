@@ -1361,11 +1361,21 @@
     <script src="{{ asset('assets/datatables/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('assets/datatables/js/buttons.print.min.js') }}"></script>
     <script>
-        var exportColumns = [0, 1, 2, 3, 4, 5, 6, 7];
+        var exportColumns = [0, 1, 2, 3, 4, 5, 6, 7, 8];
         var exportBodyFormatter = function(data, row, columnIdx, node) {
             var text = $('<div>').html(data).text().trim().replace(/\s+/g, ' ');
             if (columnIdx === 7 && /^fullypaid$/i.test(text)) {
                 text = 'Fully Paid';
+            }
+            // Format Due for Payment column
+            if (columnIdx === 8) {
+                if (/paid/i.test(text)) {
+                    text = 'Paid';
+                } else if (/yes.*due/i.test(text)) {
+                    text = 'YES - Due for Payment';
+                } else {
+                    text = 'NO';
+                }
             }
             return text;
         };
