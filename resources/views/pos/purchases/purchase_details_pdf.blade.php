@@ -213,7 +213,7 @@ $items = App\Models\SystemDetails::where('system_id', $settings->id)->get();
                 <td><div class="box-text"></div></td>
                 <td class="w-50">
                     <div class="box-text">
-                        <p style="font-size: 12px;"><strong>PO No:</strong> ............................</p>
+                        <p style="font-size: 12px;"><strong>PO No:</strong> {{ !empty($purchases->po_no) ? $purchases->po_no : '............................' }}</p>
                         <p style="font-size: 12px;"><strong>Qoute Ref No:</strong> {{$purchases->reference_no}}</p>
                         <p style="font-size: 12px;"><strong>Purchase Date:</strong> {{Carbon\Carbon::parse($purchases->purchase_date)->format('d/m/Y')}}</p>
                     </div>

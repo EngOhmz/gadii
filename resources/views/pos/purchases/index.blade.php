@@ -657,13 +657,13 @@
                                                                 value="{{ isset($data) ? $data->supplier_reference : '' }}"
                                                                 class="form-control">
                                                         </div>
-                                                        {{-- <label class="col-lg-2 col-form-label">Additional Cost</label>
+                                                        <label class="col-lg-2 col-form-label">PO No</label>
                                                         <div class="col-lg-4">
-                                                            <input type="number" name="additional_cost"
-                                                                placeholder="Enter additional cost"
-                                                                value="{{ isset($data) ? $data->additional_cost : 0 }}"
+                                                            <input type="text" name="po_no"
+                                                                placeholder="Enter PO Number"
+                                                                value="{{ isset($data) ? $data->po_no : '' }}"
                                                                 class="form-control">
-                                                        </div> --}}
+                                                        </div>
                                                     </div>
 
 

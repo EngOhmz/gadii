@@ -130,6 +130,7 @@ class PurchaseController extends Controller
         $data['branch_id'] = $request->branch_id;
         $data['supplier_reference'] = $request->supplier_reference;
         $data['purchase_heading'] = $request->purchase_heading;
+        $data['po_no'] = $request->po_no;
         $data['user_agent'] = $request->user_agent;
         $data['user_id'] = auth()->user()->id;
         $data['added_by'] = auth()->user()->added_by;
@@ -338,6 +339,7 @@ class PurchaseController extends Controller
             $data['added_by'] = auth()->user()->added_by;
             $data['supplier_reference'] = $request->supplier_reference;
             $data['purchase_heading'] = $request->purchase_heading;
+            $data['po_no'] = $request->po_no;
             
             
             if ($request->hasFile('attachment')) {
@@ -537,11 +539,29 @@ class PurchaseController extends Controller
             $data['location'] = $request->location;
             $data['exchange_code'] = $request->exchange_code;
             $data['exchange_rate'] = $request->exchange_rate;
+            $data['delivery_terms'] = $request->delivery_terms;
+            $data['payment_terms'] = $request->payment_terms;
+            $data['branch_id'] = $request->branch_id;
+            $data['supplier_reference'] = $request->supplier_reference;
+            $data['purchase_heading'] = $request->purchase_heading;
+            $data['po_no'] = $request->po_no;
             $data['purchase_amount'] = '1';
             $data['due_amount'] = '1';
             $data['purchase_tax'] = '1';
             $data['user_agent'] = $request->user_agent;
             $data['added_by'] = auth()->user()->added_by;
+
+            if ($request->hasFile('attachment')) {
+                $attachment = $request->file('attachment');
+                $attachmentFileType = $attachment->getClientOriginalExtension();
+                $attachmentFileName = uniqid() . '_attachment_' . date('dmyhis') . '.' . $attachmentFileType;
+                $destinationPath = public_path();
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+                $attachment->move($destinationPath, $attachmentFileName);
+                $data['attachment'] = $attachmentFileName;
+            }
 
             $purchase->update($data);
 
