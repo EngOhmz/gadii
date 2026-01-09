@@ -191,9 +191,9 @@ $settings = App\Models\System::where('added_by', auth()->user()->added_by)->firs
                      <div class="box-text">
                         <p style="font-size: 12px;"><strong>Client Name:</strong> {{ $invoices->client->name }}</p>
                         <p style="font-size: 12px;"><strong>Customer Reference:</strong> {{ $invoices->supplier_reference }}</p>
-                        <p style="font-size: 12px;"><strong>P/Invoice No:</strong> {{ $invoices->reference_no }}</p>
-                        <p style="font-size: 12px;"><strong>P/Invoice Date:</strong> {{ Carbon\Carbon::parse($invoices->invoice_date)->format('d/m/Y') }}</p>
-                        <p style="font-size: 12px;"><strong>P/Valid Until:</strong> {{ Carbon\Carbon::parse($invoices->delivery_date)->format('d/m/Y') }}</p>
+                        <p style="font-size: 12px;"><strong>C/No:</strong> {{ $invoices->reference_no }}</p>
+                        <p style="font-size: 12px;"><strong>Credit date:</strong> {{ Carbon\Carbon::parse($invoices->return_date)->format('d/m/Y') }}</p>
+                        <p style="font-size: 12px;"><strong>Credit valid:</strong> {{ Carbon\Carbon::parse($invoices->due_date)->format('d/m/Y') }}</p>
                     </div>
                 </td>
             </tr>
