@@ -2906,12 +2906,12 @@ $chk=SerialList::where('brand_id',$nameArr[$i])->where('location',$invoice->loca
                 }
             }
 
-            return redirect(route('invoice.index'))->with(['success'=>'Uploaded Successfully']);
+            return redirect()->back()->with(['success'=>'Uploaded Successfully']);
         }
 
         else{
 
-            return redirect(route('invoice.index'))->with(['error'=>'No File Uploaded ']);
+            return redirect()->back()->with(['error'=>'No File Uploaded ']);
         }
 
 
@@ -2962,7 +2962,7 @@ $chk=SerialList::where('brand_id',$nameArr[$i])->where('location',$invoice->loca
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json(['success' => true, 'message' => 'Attachment deleted successfully']);
         }
-        return redirect(route('invoice.index'))->with(['success'=>'Deleted Successfully']);
+        return redirect()->back()->with(['success'=>'Deleted Successfully']);
     }
 
 

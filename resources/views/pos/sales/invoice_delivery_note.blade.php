@@ -256,6 +256,22 @@
                             <h4>Delivery Note </h4>
                         </div>
                         <div class="card-body">
+                            @if (session('success'))
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="fa fa-check-circle"></i> {{ session('success') }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            @endif
+                            @if (session('error'))
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fa fa-exclamation-circle"></i> {{ session('error') }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            @endif
                             <ul class="nav nav-tabs" id="myTab2" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link @if (empty($id)) active show @endif"
@@ -306,6 +322,10 @@
                                                         rowspan="1" colspan="1"
                                                         aria-label="Engine version: activate to sort column ascending"
                                                         style="width: 141.219px;">Branch</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                        rowspan="1" colspan="1"
+                                                        aria-label="Attachments"
+                                                        style="width: 120px;">Attachments</th>
                                                     {{-- <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                         rowspan="1" colspan="1"
                                                         aria-label="Engine version: activate to sort column ascending"
@@ -326,12 +346,14 @@
                                                             )
                                                                 ->where('added_by', auth()->user()->added_by)
                                                                 ->first();
-                                                            $att = App\Models\POS\InvoiceAttachment::where(
+                                                            $attachmentsList = App\Models\POS\InvoiceAttachment::where(
                                                                 'invoice_id',
                                                                 $row->id,
                                                             )
                                                                 ->where('added_by', auth()->user()->added_by)
-                                                                ->first();
+                                                                ->orderBy('order_no')
+                                                                ->get();
+                                                            $hasOldAttachment = !empty($row->attachment);
                                                         @endphp
 
                                                         <tr class="gradeA even" role="row">
@@ -342,11 +364,12 @@
                                                             </td>
                                                             <td>
                                                                 {{ $row->heading }}
+                                                            </td>
                                                             <td>
                                                                 @if (!empty($row->client->name))
                                                                     {{ $row->client->name }}
                                                                 @endif
-                                                                </ td>
+                                                            </td>
 
 
                                                             <td>{{ Carbon\Carbon::parse($row->invoice_date)->format('d/m/Y') }}
@@ -363,6 +386,36 @@
                                                             </td>
                                                             <td>
                                                                 {{ $row->branch_id ? App\Models\Branch::find($row->branch_id)->name : 'No Branch selected' }}
+                                                            </td>
+                                                            <td>
+                                                                @if($attachmentsList->count() > 0 || $hasOldAttachment)
+                                                                    @if($attachmentsList->count() > 0)
+                                                                        <div class="dropdown d-inline-block">
+                                                                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="attachmentDropdown{{ $row->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                <i class="fa fa-paperclip"></i> View ({{ $attachmentsList->count() }})
+                                                                            </button>
+                                                                            <div class="dropdown-menu" aria-labelledby="attachmentDropdown{{ $row->id }}">
+                                                                                @foreach($attachmentsList as $att)
+                                                                                    <a class="dropdown-item" href="{{ route('view_attachment', $att->id) }}" target="_blank">
+                                                                                        <i class="fa fa-file"></i> {{ $att->original_filename }}
+                                                                                    </a>
+                                                                                @endforeach
+                                                                                @if($hasOldAttachment)
+                                                                                    <div class="dropdown-divider"></div>
+                                                                                    <a class="dropdown-item" href="{{ asset($row->attachment) }}" target="_blank">
+                                                                                        <i class="fa fa-file"></i> Legacy attachment
+                                                                                    </a>
+                                                                                @endif
+                                                                            </div>
+                                                                        </div>
+                                                                    @elseif($hasOldAttachment)
+                                                                        <a href="{{ asset($row->attachment) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                                            <i class="fa fa-paperclip"></i> View
+                                                                        </a>
+                                                                    @endif
+                                                                @else
+                                                                    <span class="text-muted">—</span>
+                                                                @endif
                                                             </td>
                                                             {{-- <td>
                                                                 @if ($row->status == 0)
@@ -1267,7 +1320,7 @@
 
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="formModal">Attachment List</h5>
+                    <h5 class="modal-title" id="formModal">Delivery Note - Attachments</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -1278,10 +1331,11 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-12 ">
-
+                                <p class="text-muted small mb-2">Existing attachments (view/download/delete below). You can add more using the dropzone.</p>
                                 <div class="table-img"></div>
 
-                                <h5>Add attachment</h5> <small> You can upload a maximum of 10 files</small>
+                                <hr class="my-3">
+                                <h5>Add attachment</h5> <small class="text-muted">You can upload a maximum of 10 files (images, PDF, Word, Excel, etc.)</small>
 
 
                                 <form id="addForm" method="post" action="{{ route('save_attachment') }}"
@@ -2698,7 +2752,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: '{{ url('pos/sales/attachModal') }}',
+                url: '{{ route('attachModal') }}',
                 data: {
                     'id': id,
                     'type': type,

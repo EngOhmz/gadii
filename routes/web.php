@@ -684,7 +684,7 @@ Route::get('add_inv_item2', 'POS\InvoiceController2@add_item')->middleware('auth
   Route::get('findInvQuantity', 'POS\InvoiceController@findQuantity'); 
   Route::get('invModal', 'POS\InvoiceController@discountModal')->middleware('auth');
   Route::get('invModal2', 'POS\InvoiceController2@discountModal')->middleware('auth');
-  Route::get('attachModal', 'POS\InvoiceController@attachModal')->middleware('auth');
+  Route::get('attachModal', 'POS\InvoiceController@attachModal')->name('attachModal')->middleware('auth');
   Route::get('approve_purchase/{id}', 'POS\InvoiceController@approve')->name('invoice.approve')->middleware('auth');  
   Route::get('cancel/{id}', 'POS\InvoiceController@cancel')->name('invoice.cancel')->middleware('auth'); 
   Route::get('receive/{id}', 'POS\InvoiceController@receive')->name('invoice.receive')->middleware('auth'); 
