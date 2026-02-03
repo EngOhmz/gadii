@@ -101,6 +101,10 @@
                                                         style="width: 141.219px;">Due for Payment</th>
                                                     <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
                                                         rowspan="1" colspan="1"
+                                                        aria-label="Attachment"
+                                                        style="width: 141.219px;">Attachment</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="DataTables_Table_0"
+                                                        rowspan="1" colspan="1"
                                                         aria-label="CSS grade: activate to sort column ascending"
                                                         style="width: 168.1094px;">Actions</th>
                                                 </tr>
@@ -115,12 +119,14 @@
                                                             )
                                                                 ->where('added_by', auth()->user()->added_by)
                                                                 ->first();
-                                                            $att = App\Models\POS\InvoiceAttachment::where(
+                                                            $attachmentsList = App\Models\POS\InvoiceAttachment::where(
                                                                 'invoice_id',
                                                                 $row->id,
                                                             )
                                                                 ->where('added_by', auth()->user()->added_by)
-                                                                ->first();
+                                                                ->orderBy('order_no')
+                                                                ->get();
+                                                            $hasOldAttachment = !empty($row->attachment);
                                                         @endphp
 
                                                         <tr class="gradeA even" role="row">
@@ -183,6 +189,37 @@
                                                             </td>
 
                                                             <td>
+                                                                @if($attachmentsList->count() > 0 || $hasOldAttachment)
+                                                                    @if($attachmentsList->count() > 0)
+                                                                        <div class="dropdown d-inline-block">
+                                                                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="attachmentDropdown{{ $row->id }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                <i class="fa fa-paperclip"></i> View ({{ $attachmentsList->count() }})
+                                                                            </button>
+                                                                            <div class="dropdown-menu" aria-labelledby="attachmentDropdown{{ $row->id }}">
+                                                                                @foreach($attachmentsList as $att)
+                                                                                    <a class="dropdown-item" href="{{ route('view_attachment', $att->id) }}" target="_blank">
+                                                                                        <i class="fa fa-file"></i> {{ $att->original_filename }}
+                                                                                    </a>
+                                                                                @endforeach
+                                                                                @if($hasOldAttachment)
+                                                                                    <div class="dropdown-divider"></div>
+                                                                                    <a class="dropdown-item" href="{{ asset($row->attachment) }}" target="_blank">
+                                                                                        <i class="fa fa-file"></i> Legacy attachment
+                                                                                    </a>
+                                                                                @endif
+                                                                            </div>
+                                                                        </div>
+                                                                    @elseif($hasOldAttachment)
+                                                                        <a href="{{ asset($row->attachment) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                                            <i class="fa fa-paperclip"></i> View
+                                                                        </a>
+                                                                    @endif
+                                                                @else
+                                                                    <span class="text-muted">N/A</span>
+                                                                @endif
+                                                            </td>
+
+                                                            <td>
                                                                 <?php
                                                                 $today = date('Y-m-d');
                                                                 $next = date('Y-m-d', strtotime('+1 month', strtotime($row->created_at)));
@@ -219,16 +256,6 @@
                                                                                 class="icon-cog6"></i></a>
 
                                                                         <div class="dropdown-menu">
-
-                                                                            @if (!empty($row->attachment))
-                                                                                <a class="nav-link" href="{{ asset($row->attachment) }}" target="_blank">
-                                                                                    <i class="fa fa-paperclip"></i> View Attachment
-                                                                                </a>
-                                                                                <a class="nav-link" href="{{ asset($row->attachment) }}" download>
-                                                                                    <i class="fa fa-download"></i> Download Attachment
-                                                                                </a>
-                                                                                <div class="dropdown-divider"></div>
-                                                                            @endif
 
                                                                             @if ($row->status != 0 && $row->status != 4 && $row->status != 3 && $row->good_receive == 1)
                                                                                 <li> <a class="nav-link" id="profile-tab2"
@@ -617,11 +644,46 @@
 
 
                                                     <div class="form-group row">
-                                                        <label class="col-lg-2 col-form-label">Attachment</label>
-                                                        <div class="col-lg-4">
-                                                            <input type="file" name="attachment" class="form-control">
-                                                            @if(isset($data) && !empty($data->attachment))
-                                                                <small class="text-muted">Current: <a href="{{ asset($data->attachment) }}" target="_blank">{{ $data->attachment }}</a></small>
+                                                        <label class="col-lg-2 col-form-label">Attachments</label>
+                                                        <div class="col-lg-10">
+                                                            <div id="attachments-container">
+                                                                <div class="attachment-item mb-2">
+                                                                    <div class="input-group">
+                                                                        <input type="file" name="invoice_attachments[]" class="form-control attachment-file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                                                        <div class="input-group-append">
+                                                                            <button type="button" class="btn btn-danger remove-attachment" style="display: none;">
+                                                                                <i class="fas fa-times"></i> Remove
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <button type="button" class="btn btn-sm btn-primary mt-2" id="add-invoice-attachment">
+                                                                <i class="fas fa-plus"></i> Add Another Attachment
+                                                            </button>
+                                                            @if(isset($data) && isset($data->id))
+                                                                @php
+                                                                    $existingInvoiceAttachments = \App\Models\POS\InvoiceAttachment::where('invoice_id', $data->id)->orderBy('order_no')->get();
+                                                                @endphp
+                                                                @if($existingInvoiceAttachments->count() > 0)
+                                                                    <div class="mt-3">
+                                                                        <label class="font-weight-bold">Existing Attachments:</label>
+                                                                        <div class="list-group mt-2">
+                                                                            @foreach($existingInvoiceAttachments as $attachment)
+                                                                                <div class="list-group-item d-flex justify-content-between align-items-center existing-invoice-attachment-row">
+                                                                                    <div>
+                                                                                        <a href="{{ route('download_attachment', $attachment->id) }}" target="_blank" class="text-primary">
+                                                                                            <i class="fas fa-file"></i> {{ $attachment->original_filename }}
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <button type="button" class="btn btn-sm btn-danger delete-existing-invoice-attachment" data-id="{{ $attachment->id }}">
+                                                                                        <i class="fas fa-trash"></i> Delete
+                                                                                    </button>
+                                                                                </div>
+                                                                            @endforeach
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
                                                             @endif
                                                         </div>
                                                     </div>
@@ -2630,8 +2692,62 @@
 
             });
 
+            // Handle multiple attachments - Add new attachment field (same as profoma)
+            $('#add-invoice-attachment').on('click', function() {
+                var newAttachment = '<div class="attachment-item mb-2">' +
+                    '<div class="input-group">' +
+                    '<input type="file" name="invoice_attachments[]" class="form-control attachment-file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">' +
+                    '<div class="input-group-append">' +
+                    '<button type="button" class="btn btn-danger remove-attachment">' +
+                    '<i class="fas fa-times"></i> Remove' +
+                    '</button>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+                $('#attachments-container').append(newAttachment);
+                updateInvoiceRemoveButtons();
+            });
 
+            $(document).on('click', '#attachments-container .remove-attachment', function() {
+                $(this).closest('.attachment-item').remove();
+                updateInvoiceRemoveButtons();
+            });
 
+            function updateInvoiceRemoveButtons() {
+                var attachmentCount = $('#attachments-container .attachment-item').length;
+                if (attachmentCount > 1) {
+                    $('#attachments-container .remove-attachment').show();
+                } else {
+                    $('#attachments-container .remove-attachment').hide();
+                }
+            }
+            updateInvoiceRemoveButtons();
+
+            // Delete existing invoice attachment via AJAX
+            $(document).on('click', '.delete-existing-invoice-attachment', function() {
+                var attachmentId = $(this).data('id');
+                var attachmentRow = $(this).closest('.existing-invoice-attachment-row');
+                if (confirm('Are you sure you want to delete this attachment?')) {
+                    $.ajax({
+                        url: '{{ url("pos/sales/delete_attachment") }}/' + attachmentId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.success) {
+                                attachmentRow.fadeOut(300, function() {
+                                    $(this).remove();
+                                });
+                            } else {
+                                alert('Error deleting attachment.');
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error deleting attachment. Please try again.');
+                            console.error(xhr);
+                        }
+                    });
+                }
+            });
         });
     </script>
 

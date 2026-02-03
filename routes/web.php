@@ -678,6 +678,7 @@ Route::get('add_inv_item2', 'POS\InvoiceController2@add_item')->middleware('auth
   Route::get('get-image-via-ajax', 'POS\InvoiceController@getImageViaAjax')->name('getImageViaAjax');
   Route::post('save_attachment', 'POS\InvoiceController@save_attachment')->name('save_attachment');
   Route::get('delete_attachment/{id}', 'POS\InvoiceController@delete_attachment')->name('delete_attachment');
+  Route::get('view_attachment/{id}', 'POS\InvoiceController@view_attachment')->name('view_attachment');
   Route::get('download_attachment/{id}', 'POS\InvoiceController@download_attachment')->name('download_attachment');
   Route::get('findInvPrice', 'POS\InvoiceController@findPrice')->middleware('auth'); 
   Route::get('findInvQuantity', 'POS\InvoiceController@findQuantity'); 

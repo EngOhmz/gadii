@@ -425,17 +425,14 @@ else{
     // }
 
 }
-
-
-
-
-        
+      
     }
     
     
     
        public function format_number(Request $request)
     {
+
         //dd($request->all());
        $id=str_replace(",","",$request->id);
        if($id > 999){
@@ -444,8 +441,6 @@ else{
        else{
         $price=$id;   
        }
-            
-
             return response()->json($price);
         
     }

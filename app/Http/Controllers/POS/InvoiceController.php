@@ -448,23 +448,35 @@ class InvoiceController extends Controller
         $data['user_agent'] = $request->user_agent;
         $data['added_by'] = auth()->user()->added_by;
 
-        // Handle attachment upload
-        if ($request->hasFile('attachment')) {
-            $attachment = $request->file('attachment');
-            $attachmentFileType = $attachment->getClientOriginalExtension();
-            $attachmentFileName = uniqid() . '_attachment_' . date('dmyhis') . '.' . $attachmentFileType;
-            $destinationPath = public_path();
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
-            $attachment->move($destinationPath, $attachmentFileName);
-            $data['attachment'] = $attachmentFileName;
-        } else {
-            $data['attachment'] = null;
-        }
+        // Keep old single attachment field for backward compatibility
+        $data['attachment'] = null;
 
         // Create the invoice
         $invoice = Invoice::create($data);
+
+        // Handle multiple attachments (same logic as profoma)
+        if ($request->hasFile('invoice_attachments')) {
+            $destinationPath = public_path('pos');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            $orderNo = 0;
+            foreach ($request->file('invoice_attachments') as $file) {
+                if ($file && $file->isValid()) {
+                    $attachmentFileType = $file->getClientOriginalExtension();
+                    $attachmentFileName = uniqid() . '_invoice_attachment_' . date('dmyhis') . '.' . $attachmentFileType;
+                    $originalName = $file->getClientOriginalName();
+                    $file->move($destinationPath, $attachmentFileName);
+                    InvoiceAttachment::create([
+                        'filename' => $attachmentFileName,
+                        'original_filename' => $originalName,
+                        'order_no' => $orderNo++,
+                        'added_by' => auth()->user()->added_by,
+                        'invoice_id' => $invoice->id,
+                    ]);
+                }
+            }
+        }
 
         // Arrays from request
         $nameArr = $request->item_name;
@@ -1133,20 +1145,32 @@ class InvoiceController extends Controller
         $data['user_agent']= $request->user_agent;
         $data['added_by']= auth()->user()->added_by;
 
-        // Handle attachment upload
-        if ($request->hasFile('attachment')) {
-            $attachment = $request->file('attachment');
-            $attachmentFileType = $attachment->getClientOriginalExtension();
-            $attachmentFileName = uniqid() . '_attachment_' . date('dmyhis') . '.' . $attachmentFileType;
-            $destinationPath = public_path();
+        $invoice->update($data);
+
+        // Handle multiple new attachments (same logic as profoma)
+        if ($request->hasFile('invoice_attachments')) {
+            $destinationPath = public_path('pos');
             if (!file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
-            $attachment->move($destinationPath, $attachmentFileName);
-            $data['attachment'] = $attachmentFileName;
+            $maxOrder = InvoiceAttachment::where('invoice_id', $invoice->id)->max('order_no') ?? -1;
+            $orderNo = $maxOrder + 1;
+            foreach ($request->file('invoice_attachments') as $file) {
+                if ($file && $file->isValid()) {
+                    $attachmentFileType = $file->getClientOriginalExtension();
+                    $attachmentFileName = uniqid() . '_invoice_attachment_' . date('dmyhis') . '.' . $attachmentFileType;
+                    $originalName = $file->getClientOriginalName();
+                    $file->move($destinationPath, $attachmentFileName);
+                    InvoiceAttachment::create([
+                        'filename' => $attachmentFileName,
+                        'original_filename' => $originalName,
+                        'order_no' => $orderNo++,
+                        'added_by' => auth()->user()->added_by,
+                        'invoice_id' => $invoice->id,
+                    ]);
+                }
+            }
         }
-
-        $invoice->update($data);
 
         $nameArr =$request->item_name ;
         $descArr =$request->description ;
@@ -1777,7 +1801,7 @@ $chk=SerialList::where('brand_id',$nameArr[$i])->where('location',$invoice->loca
         if(!empty($old_file[0])){
             foreach($old_file as $o_file){
                 $filename =  $o_file->filename;
-                $path = InvoiceController . phppublic_path('pos/') . $filename;
+                $path = public_path('pos/') . $filename;
                 if (file_exists($path)) {
                     unlink($path);
                 }
@@ -2782,7 +2806,7 @@ $chk=SerialList::where('brand_id',$nameArr[$i])->where('location',$invoice->loca
         $name = [];
         $original_name = [];
         foreach ($request->file('file') as $key => $value) {
-            $image = InvoiceController . phpuniqid() . time() . '.' . $value->getClientOriginalExtension();
+            $image = uniqid() . time() . '.' . $value->getClientOriginalExtension();
             $destinationPath = public_path().'/pos/';
             $value->move($destinationPath, $image);
             $name[] = $image;
@@ -2804,7 +2828,7 @@ $chk=SerialList::where('brand_id',$nameArr[$i])->where('location',$invoice->loca
     {
         $filename =  $request->get('filename');
         //Gallery::where('filename',$filename)->delete();
-        $path = InvoiceController . phppublic_path('pos/') . $filename;
+        $path = public_path('pos/') . $filename;
         if (file_exists($path)) {
             unlink($path);
         }
@@ -2825,7 +2849,7 @@ $chk=SerialList::where('brand_id',$nameArr[$i])->where('location',$invoice->loca
             if ($file !='.' && $file !='..' && in_array($file,$tableImages)) {
                 $og=InvoiceAttachment::where('invoice_id',$request->id)->where('filename',$file)->first();
                 $obj['name'] = $og->original_filename;
-                $file_path = InvoiceController . phppublic_path('pos/') . $file;
+                $file_path = public_path('pos/') . $file;
                 $obj['size'] = filesize($file_path);
                 $obj['path'] = url('public/pos/'.$file);
                 $obj['img'] = $file;
@@ -2896,6 +2920,22 @@ $chk=SerialList::where('brand_id',$nameArr[$i])->where('location',$invoice->loca
 
 
 
+    public function view_attachment($id)
+    {
+        $data = InvoiceAttachment::find($id);
+        if (!$data) {
+            abort(404);
+        }
+        $file = $data->filename;
+        $myFile = public_path('pos/' . $file);
+        if (!file_exists($myFile)) {
+            abort(404);
+        }
+        return response()->file($myFile, [
+            'Content-Disposition' => 'inline; filename="' . $data->original_filename . '"',
+        ]);
+    }
+
     public function download_attachment($id)
     {
         $data=InvoiceAttachment::find($id);
@@ -2909,16 +2949,19 @@ $chk=SerialList::where('brand_id',$nameArr[$i])->where('location',$invoice->loca
 
     }
 
-    public function delete_attachment($id)
+    public function delete_attachment(Request $request, $id)
     {
         $data=InvoiceAttachment::find($id);
         $filename =  $data->filename;
-        $path = InvoiceController . phppublic_path('pos/') . $filename;
+        $path = public_path('pos/') . $filename;
         if (file_exists($path)) {
             unlink($path);
         }
         $data->delete();
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => 'Attachment deleted successfully']);
+        }
         return redirect(route('invoice.index'))->with(['success'=>'Deleted Successfully']);
     }
 
